@@ -494,6 +494,29 @@ class ServiceDesk extends General
         return $returnArray;
     }
 
+    public function consultarValidadoresTII(string $key = '')
+    {
+        if ($key === '') {
+            $key = $this->modeloServiceDesck->consulta("select SDKey from cat_v3_usuarios where Id = 2")[0]['SDKey'];
+        }
+        $input_data = '{"operation":{"details":{"department":""}}}';
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
+        $datosSD = $this->getDatosSD($this->UrlUsers . '?' . $this->FIELDS);
+        $this->validarError($datosSD);
+        $returnArray = [];
+        $i = 0;
+
+        foreach ($datosSD->operation->details as $key => $value) {
+            $returnArray[$i]['userId'] = $value->userid;
+            $returnArray[$i]['userName'] = $value->username;
+            $returnArray[$i]['userEmail'] = $value->emailid;
+            $returnArray[$i]['department'] = $value->department;
+            $i++;
+        }
+
+        return $returnArray;
+    }
+
     public function getViewId(string $viewname, string $key)
     {
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_REQUEST_FILTERS&TECHNICIAN_KEY=' . $key;

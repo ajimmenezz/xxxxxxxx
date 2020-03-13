@@ -9,6 +9,7 @@ class DeviceTransfer extends General
 
     private $db;
     private $sd;
+    private $serviceInfo;
     private $mail;
 
     public function __construct()
@@ -17,6 +18,7 @@ class DeviceTransfer extends General
         $this->db = \Modelos\Modelo_DeviceTransfer::factory();
         $this->sd = \Librerias\WebServices\ServiceDesk::factory();
         $this->mail = \Librerias\Generales\Correo::factory();
+        $this->serviceInfo = \Librerias\WebServices\InformacionServicios::factory();
     }
 
     public function deviceTransferAndDeviceRequestForm(array $data)
@@ -144,5 +146,32 @@ class DeviceTransfer extends General
 
 
         return $bodyText;
+    }
+
+    public function requestQuote(array $dataForm)
+    {
+        $files = '';
+        if (!empty($_FILES)) {
+            $CI = parent::getCI();
+            $folder = 'Servicios/Servicio-' . $dataForm['idServicio'] . '/SolicitudCotizacion/';
+            $files = implode(',', setMultiplesArchivos($CI, 'archivosSolicitudCotizacion', $folder));
+        }
+
+        $data = [
+            'movementId' => $dataForm['id'],
+            'assignTo' => $dataForm['reasignar'],
+            'annotations' => $dataForm['comentarios'],
+            'files' => $files,
+            'serviceId' => $dataForm['idServicio']
+        ];
+
+        $result = $this->db->requestQuote($data);
+
+        if ($result['code'] == 200) {
+            $pdf = $this->serviceInfo->definirPDFTraslado(['servicio' => $result['serviceInfo']['IdServicio'], 'folio' => $result['serviceInfo']['Folio']]);
+            return ['code' => 200, 'file' => $pdf, 'data' => $data];
+        } else {
+            return $result;
+        }
     }
 }

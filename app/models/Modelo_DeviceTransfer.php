@@ -252,6 +252,16 @@ class Modelo_DeviceTransfer extends Modelo_Base
         $this->iniciaTransaccion();
         $generalsService = $this->getGeneralsService($data['serviceId'])[0];
 
+        $branchWarehouseId = $this->getBranchWarehouseId($generalsService['Sucursal']);
+        $technicianWarehouseId = $this->getTechnicianWareahouseId($this->user['Id']);
+        $censoInfo = $this->getCensoIdFromService($data['serviceId']);
+
+        if ($data['backupDevice'] !== "") {
+            $this->updateWarehousesBackupUse($data, $censoInfo, $branchWarehouseId, $technicianWarehouseId);
+        }
+
+        $inventoryId = $this->updateWarehousesForTransfer($data, $censoInfo, $branchWarehouseId, $technicianWarehouseId);
+
         $this->insertar("t_equipos_allab", [
             'IdServicio' => $data['serviceId'],
             'IdPersonalValida' => $data['validator'],
@@ -264,17 +274,9 @@ class Modelo_DeviceTransfer extends Modelo_Base
             'FechaEstatus' => date('Y-m-d H:i:s'),
             'IdTecnicoSolicita' => $this->user['Id'],
             'Flag' => 0,
-            'IdInventarioRespaldo' => $data['backupDevice']
+            'IdInventarioRespaldo' => $data['backupDevice'],
+            'IdInventarioRetiro' => $inventoryId
         ]);
-
-        $branchWarehouseId = $this->getBranchWarehouseId($generalsService['Sucursal']);
-        $technicianWarehouseId = $this->getTechnicianWareahouseId($this->user['Id']);
-        $censoInfo = $this->getCensoIdFromService($data['serviceId']);
-
-        if ($data['backupDevice'] !== "") {
-            $this->updateWarehousesBackupUse($data, $censoInfo, $branchWarehouseId, $technicianWarehouseId);
-        }
-        $this->updateWarehousesForTransfer($data, $censoInfo, $branchWarehouseId, $technicianWarehouseId);
 
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
@@ -360,6 +362,7 @@ class Modelo_DeviceTransfer extends Modelo_Base
                 'IdEstatus' => 22,
                 'Bloqueado' => 0
             ], ['Id' => $inventoryId[0]['Id']]);
+            $newInventoryId = $inventoryId[0]['Id'];
         } else {
             $this->insertar("t_inventario", [
                 'IdAlmacen' => $technicianWarehouseId,
@@ -370,6 +373,7 @@ class Modelo_DeviceTransfer extends Modelo_Base
                 'Serie' => $censoInfo['Serie'],
                 'Bloqueado' => 0
             ]);
+            $newInventoryId = $this->ultimoId();
         }
 
         //Inserta el movimiento de salida del equipo dañado del almacén de la sucursal
@@ -400,6 +404,8 @@ class Modelo_DeviceTransfer extends Modelo_Base
             'Serie' => $censoInfo['Serie'],
             'Fecha' => mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'))
         ]);
+
+        return $newInventoryId;
     }
 
     private function getBranchWarehouseId($branchid)
@@ -609,5 +615,89 @@ class Modelo_DeviceTransfer extends Modelo_Base
         from t_equipos_allab_envio_tecnico teaet
         where teaet.IdRegistro = '" . $movementId . "' 
         and teaet.IdEstatusEnvio <> 6");
+    }
+
+    public function requestQuote($data)
+    {
+        $this->iniciaTransaccion();
+
+        $serviceInfo = $this->consulta("
+        select 
+        tst.Id as IdServicio,
+        ts.*,
+        tst.* 
+        from t_solicitudes ts 
+        inner join t_servicios_ticket tst on ts.Id = tst.IdSolicitud 
+        where tst.Id = '" . $data['serviceId'] . "'")[0];
+
+        $quoteRequestId = null;
+        if (in_array($data['assignTo'], [15306, 8706])) {
+            $quoteRequestId = $this->insertQuoteRequest($serviceInfo, $data['annotations'], $data['files']);
+        }
+
+        $laboratoryCheckId = $this->getLaboratoryCheckInfo($data['movementId']);
+
+        $this->insertar("t_equipos_allab_revision_laboratorio_historial", [
+            'IdRevision' => $laboratoryCheckId,
+            'IdUsuario' => $this->user['Id'],
+            'Fecha' => date('Y-m-d H:i:s'),
+            'Comentarios' => $data['annotations'],
+            'Archivos' => $data['files'],
+            'IdSolicitudCotizacion' => $quoteRequestId,
+            'IdUsuarioSD' => $data['assignTo']
+        ]);
+
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400, 'error' => $this->tipoError()];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'serviceInfo' => $serviceInfo];
+        }
+    }
+
+    private function insertQuoteRequest($serviceInfo, $annotations, $files)
+    {
+        $this->insertar("t_solicitudes", [
+            'IdTipoSolicitud' => 3,
+            'IdEstatus' => 1,
+            'IdDepartamento' => 21,
+            'IdPrioridad' => 2,
+            'Ticket' => $serviceInfo['Ticket'],
+            'Folio' => $serviceInfo['Folio'],
+            'Fechacreacion' => date('Y-m-d H:i:s'),
+            'Solicita' => $this->user['Id'],
+            'IdServicioOrigen' => $serviceInfo['IdServicio']
+        ]);
+
+        $requestId = $this->ultimoId();
+        $this->insertar("t_solicitudes_internas", [
+            'IdSolicitud' => $requestId,
+            'Asunto' => 'Solicitud de cotización',
+            'Descripcion' => $annotations,
+            'Evidencias' => $files
+        ]);
+
+        return $requestId;
+    }
+
+    private function getLaboratoryCheckInfo($movementId)
+    {
+        $result = $this->consulta("
+        select 
+        * 
+        from t_equipos_allab_revision_laboratorio 
+        where IdRegistro = '" . $movementId . "'");
+        if (!empty($result)) {
+            return $result[0]['Id'];
+        } else {
+            $this->insertar("t_equipos_allab_revision_laboratorio", [
+                'IdRegistro' => $movementId,
+                'IdEstatus' => 29,
+                'IdUsuario' => $this->user['Id'],
+                'Fecha' => date('Y-m-d H:i:s')
+            ]);
+            return $this->ultimoId();
+        }
     }
 }

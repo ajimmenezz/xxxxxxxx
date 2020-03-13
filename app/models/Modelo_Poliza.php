@@ -1804,6 +1804,8 @@ class Modelo_Poliza extends Modelo_Base
 
         $this->cambiarEsatus($datos);
 
+        $this->setInventoryAsAvailable($datos['id']);
+
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
@@ -1811,6 +1813,14 @@ class Modelo_Poliza extends Modelo_Base
         } else {
             $this->commitTransaccion();
             return ['code' => 200];
+        }
+    }
+
+    private function setInventoryAsAvailable($movementId)
+    {
+        $inventoryId = $this->consulta("select IdInventarioRetiro from t_equipos_allab where Id = '" . $movementId . "'")[0];
+        if ($inventoryId['IdInventarioRetiro'] > 0) {
+            $this->actualizar("t_inventario", ['IdEstatus' => 17], ['Id' => $inventoryId['IdInventarioRetiro']]);
         }
     }
 
@@ -1831,7 +1841,7 @@ class Modelo_Poliza extends Modelo_Base
                                     where tear.IdRegistro = " ' . $IdRegistro . '" order by tear.Id asc');
         return $consulta;
     }
-    
+
     public function consultaEquiposAllabRecepcionesLaboratorio(string $IdRegistro)
     {
         $consulta = $this->consulta('select 
@@ -1853,7 +1863,7 @@ class Modelo_Poliza extends Modelo_Base
                                     where tearl.IdRegistro = " ' . $IdRegistro . ' "');
         return $consulta;
     }
-    
+
     public function consultaEquiposAllabRevicionLaboratorio(array $datos)
     {
         $consulta = $this->consulta('SELECT * FROM t_equipos_allab_revision_laboratorio WHERE IdRegistro = " ' . $datos['id'] . ' "');
@@ -1998,7 +2008,16 @@ class Modelo_Poliza extends Modelo_Base
 
     public function cambiarEsatus(array $datos)
     {
-        $resultado = $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'Flag' => $datos['flag'], 'FechaEstatus' => $datos['fecha'], 'idUsuario' => $datos['idUsuario']), ['Id' => $datos['id']]);
+        $resultado = $this->actualizar(
+            't_equipos_allab',
+            [
+                'IdEstatus' => $datos['idEstatus'],
+                'Flag' => $datos['flag'],
+                'FechaEstatus' => $datos['fecha'],
+                'IdUsuario' => $this->usuario['Id']
+            ],
+            ['Id' => $datos['id']]
+        );
 
         if (!empty($resultado)) {
             return TRUE;

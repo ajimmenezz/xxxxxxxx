@@ -34,6 +34,9 @@ class Controller_DeviceTransfer extends Base
             case 'CancelMovementDeviceTransfer':
                 $result = $this->deviceTransferLibrary->cancelMovementDeviceTransfer($this->input->post());
                 break;
+            case 'RequestQuote':
+                $result = $this->deviceTransferLibrary->requestQuote($this->input->post());
+                break;
             default:
                 $result = FALSE;
                 break;
