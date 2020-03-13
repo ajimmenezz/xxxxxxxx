@@ -625,7 +625,7 @@ class Modelo_DeviceTransfer extends Modelo_Base
 
         $quoteRequestId = null;
         if (in_array($data['assignTo'], [15306])) {
-        //if (in_array($data['assignTo'], [15306, 8706])) {
+            //if (in_array($data['assignTo'], [15306, 8706])) {
             $quoteRequestId = $this->insertQuoteRequest($serviceInfo, $data['annotations'], $data['files']);
         }
 
@@ -752,5 +752,73 @@ class Modelo_DeviceTransfer extends Modelo_Base
             $this->commitTransaccion();
             return ['code' => 200];
         }
+    }
+
+    public function getMovementGeneralsForPdf($serviceId)
+    {
+        return $this->consulta("
+        select
+        folioByServicio(tst.Id) as Folio,
+        tst.Ticket,
+        cliente(cs.IdCliente) as Cliente,
+        cs.Nombre as Sucursal,
+        tipoServicio(tst.IdTipoServicio) as TipoServicio,
+        tst.IdEstatus,
+        estatus(tst.IdEstatus) as Estatus,
+        nombreUsuario(tst.Atiende) as Atiende,
+        (select Nombre from cat_perfiles where Id = (select IdPerfil from cat_v3_usuarios where Id = tst.Atiende)) as Perfil,
+        (select Nombre from cat_v3_equipos_allab_tipo_movimiento where Id = tea.IdTipoMovimiento) as TipoMovimiento,
+        concat(modelo(tcg.IdModelo),' NS:',tcg.Serie) as EquipoRetirado,
+        if(
+            tea.IdInventarioRespaldo > 0,
+            concat(CONVERT(modelo(ti.IdProducto) USING utf8),' NS:',CONVERT(ti.Serie USING utf8)),
+            'NO SE DEJA EQUIPO DE RESPALDO'
+        ) as EquipoRespaldo,
+        tea.Id as IdMovimiento,
+        concat(
+            if(tcd.IdTipoDiagnostico = 4, 
+                    (select Nombre from cat_v3_fallas_refaccion where Id = tcd.IdFalla), 
+                    (select Nombre from cat_v3_fallas_equipo where Id = tcd.IdFalla)
+            ),' (',
+            if(IdTipoDiagnostico = 4, 
+                    (select Nombre from cat_v3_tipos_falla where Id = (select IdTipoFalla from cat_v3_fallas_refaccion where Id = tcd.IdFalla)), 
+                    (select Nombre from cat_v3_tipos_falla where Id = (select IdTipoFalla from cat_v3_fallas_equipo where Id = tcd.IdFalla))
+            ),')'
+        ) as Falla,
+        tcd.Evidencias as EvidenciasDiagnostico,
+        tcd.Observaciones as ObservacionesDiagnostico
+        from t_servicios_ticket tst
+        inner join cat_v3_sucursales cs on tst.Idsucursal = cs.Id
+        inner join t_correctivos_generales tcg on tcg.IdServicio = tst.Id
+        inner join t_correctivos_diagnostico tcd on tcd.Id = (select MAX(Id) from t_correctivos_diagnostico where IdServicio = tst.Id)
+        inner join t_equipos_allab tea on tea.IdServicio = tst.Id and tea.IdEstatus <> 6
+        left join t_inventario ti on tea.IdInventarioRespaldo = ti.Id and tea.IdInventarioRespaldo > 0
+        where tst.Id = '" . $serviceId . "'")[0];
+    }
+
+    public function getReceiptHistory($serviceId)
+    {
+        return $this->consulta("
+        select 
+        estatus(tear.IdEstatus) as Estatus,
+        nombreUsuario(tear.IdUsuario) as Usuario,
+        tear.Fecha
+        from t_equipos_allab_recepciones tear 
+        where tear.IdRegistro = (select Id from t_equipos_allab where IdServicio = '" . $serviceId . "' and IdEstatus <> 6)
+        order by Fecha desc");
+    }
+
+    public function getLaboratoryCommentsHistory($serviceId)
+    {
+        return $this->consulta("
+        select 
+        nombreUsuario(tearlh.IdUsuario) as Usuario,
+        (select Nombre from cat_perfiles where Id = (select IdPerfil from cat_v3_usuarios where Id = tearlh.IdUsuario)) as Perfil,
+        tearlh.Fecha,
+        tearlh.Comentarios as Descripcion,
+        tearlh.Archivos as Evidencias
+        from t_equipos_allab_revision_laboratorio tearl
+        inner join t_equipos_allab_revision_laboratorio_historial tearlh on tearl.Id = tearlh.IdRevision
+        where tearl.IdRegistro = (select Id from t_equipos_allab where IdServicio = '" . $serviceId . "' and IdEstatus <> 6)");
     }
 }
