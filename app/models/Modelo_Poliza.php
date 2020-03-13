@@ -1145,8 +1145,8 @@ class Modelo_Poliza extends Modelo_Base
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','48')
-                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '34')
+                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '34') OR tea.IdEstatus = '38' AND Flag = '0'
                                     END)
                                     AND tea.IdEstatus <> '6'");
 
@@ -1194,8 +1194,8 @@ class Modelo_Poliza extends Modelo_Base
                                         v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                         (CASE
-                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39', '48', '49')
-                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '28', '29', '30', '31',  '32', '33', '34', '36', '39', '48', '49')
+                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '32', '39', '49')
+                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '32', '34', '39', '49')
                                             WHEN
                                                 tea.IdTipoMovimiento = '3'
                                             THEN
@@ -1235,8 +1235,8 @@ class Modelo_Poliza extends Modelo_Base
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39','48','49') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
-                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','28','29','33','39','48','49') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','33')
+                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('28','29','33')
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
                                     END)
                                     AND tea.IdEstatus <> '6'");
