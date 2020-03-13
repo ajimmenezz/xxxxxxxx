@@ -21,6 +21,7 @@ class InformacionServicios extends General
     private $pdf;
     private $x;
     private $y;
+    private $db;
 
     public function __construct()
     {
@@ -36,6 +37,7 @@ class InformacionServicios extends General
         $this->DBC = \Modelos\Modelo_Censos::factory();
         $this->DBM = \Modelos\Modelo_Mantenimiento::factory();
         $this->DBP = \Modelos\Modelo_Poliza::factory();
+        $this->db = \Modelos\Modelo_DeviceTransfer::factory();
     }
 
     //    public function MostrarDatosSD(string $folio) {
@@ -1598,25 +1600,7 @@ class InformacionServicios extends General
     {
         $this->pdf = new PDFAux();
         $header = 'Movimientos a laboratorio';
-
-        $firmas = array();
-        $firmaTecnico = $this->getFirmasTecnico($datos['servicio']);
-        if (!is_null($firmaTecnico)) {
-            $firmas['FirmaTecnico'] = $firmaTecnico['FirmaTecnico'];
-            $firmas['Tecnico'] = $firmaTecnico['Tecnico'];
-        }
-        $firmaGerente = $this->getFirmasGerenteTicket($datos['servicio']);
-        if (!is_null($firmaGerente)) {
-            $firmas['Firma'] = $firmaGerente['Firma'];
-            $firmas['Gerente'] = $firmaGerente['Gerente'];
-            $firmas['FechaFirma'] = $firmaGerente['FechaFirma'];
-        } else {
-            $firmaGerente = $this->getFirmasGerenteDiagnostico($datos['servicio']);
-            $firmas['Firma'] = $firmaGerente['Firma'];
-            $firmas['Gerente'] = $firmaGerente['Gerente'];
-            $firmas['FechaFirma'] = $firmaGerente['FechaFirma'];
-        }
-        $this->pdf->setDato($firmas);
+       
         $this->pdf->AliasNbPages();
 
         $generales = $this->getGeneralesServicio($datos['servicio']);

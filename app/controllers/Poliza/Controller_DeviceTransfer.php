@@ -12,7 +12,7 @@ class Controller_DeviceTransfer extends Base
         parent::__construct();
         $this->deviceTransferLibrary = \Librerias\Poliza\DeviceTransfer::factory();
     }
-    
+
     public function manejarEvento(string $evento = null)
     {
         switch ($evento) {
@@ -36,6 +36,12 @@ class Controller_DeviceTransfer extends Base
                 break;
             case 'RequestQuote':
                 $result = $this->deviceTransferLibrary->requestQuote($this->input->post());
+                break;
+            case 'CancelQuoteRequest':
+                $result = $this->deviceTransferLibrary->cancelQuoteRequest($this->input->post());
+                break;
+            case 'CreatePdf':
+                $result = $this->deviceTransferLibrary->createPdf($this->input->post());
                 break;
             default:
                 $result = FALSE;

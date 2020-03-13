@@ -303,7 +303,22 @@ $(function() {
     var idTabla = arguments[0];
     var idServicio = arguments[1];
 
-    $(".btnRegresarTabla").removeClass("hidden");
+    $(".btnRegresarTabla, #exportPdfButton").removeClass("hidden");
+    $("#exportPdfButton").attr("data-id", idServicio);
+
+    $("#exportPdfButton").off("click");
+    $("#exportPdfButton").on("click", function() {
+      evento.enviarEvento(
+        "/Poliza/DeviceTransfer/CreatePdf",
+        {
+          serviceId: $("#exportPdfButton").attr("data-id")
+        },
+        "#divListaEquiposEnviados",
+        function(response) {
+          window.open(response.file, "_blank");
+        }
+      );
+    });
 
     $(".btnRegresarTabla").off("click");
     $(".btnRegresarTabla").on("click", function() {
@@ -323,7 +338,8 @@ $(function() {
       $("#seccionFormulariosSinGuia").addClass("hidden");
       $("#seccionFormulariosGuia").addClass("hidden");
       $("#seccionFormulariosValidacion").addClass("hidden");
-      $(".btnRegresarTabla").addClass("hidden");
+      $(".btnRegresarTabla, #exportPdfButton").addClass("hidden");
+      $("#exportPdfButton").attr("data-id", "");
     });
 
     $("#listaTicket").on("change", function() {
@@ -1805,6 +1821,35 @@ $(function() {
       }
     });
 
+    $("#cancelCotizacionButton").off("click");
+    $("#cancelCotizacionButton").on("click", function() {
+      evento.enviarEvento(
+        "/Poliza/DeviceTransfer/CancelQuoteRequest",
+        {
+          commentId: $(this).attr("data-commentid"),
+          movementId: $(this).attr("data-movementid")
+        },
+        "#panelLaboratorioHistorial",
+        function(response) {
+          if (response.code == 200) {
+            formulario(
+              response.data.serviceId,
+              response.data.componentId,
+              response.data.statusId,
+              response.data.movementId
+            );
+          } else {
+            evento.mostrarMensaje(
+              "#errorSolicitarCotizacion",
+              false,
+              "Ocurrió un error al cancelar la solicitud de cotización. Por favor recargue su página y vuelva a intentarlo.",
+              4000
+            );
+          }
+        }
+      );
+    });
+
     $("#solicitarCotizacionButton").off("click");
     $("#solicitarCotizacionButton").on("click", function() {
       var reasignar = $("#serviceDeskValidators option:selected").val();
@@ -1843,23 +1888,19 @@ $(function() {
         "/Poliza/DeviceTransfer/RequestQuote",
         "#panelLaboratorioHistorial",
         datos,
-        function(respuesta) {
-          if (respuesta.code == 200) {
-            evento.mostrarMensaje(
-              "#errorSolicitarCotizacion",
-              true,
-              "Se ha guardado solicitado la cotización y se asignó el incidente de Service Desk",
-              6000
+        function(response) {
+          if (response.code == 200) {
+            formulario(
+              response.data.serviceId,
+              response.data.componentId,
+              response.data.statusId,
+              response.data.movementId
             );
-            $("#comentariosObservaciones")
-              .val("")
-              .text("");
-            file.limpiar("#archivosSolicitudCotizacion");
           } else {
             evento.mostrarMensaje(
               "#errorSolicitarCotizacion",
               false,
-              "Ocurrió un error al guardar el comnetario. Por favor recargue su página y vuelva a intentarlo.",
+              "Ocurrió un error al guardar la solicitu de cotización. Por favor recargue su página y vuelva a intentarlo.",
               4000
             );
           }

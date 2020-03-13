@@ -24,6 +24,7 @@ class Seguimientos extends General
     private $DBCensos;
     private $Excel;
     private $SimpleXLSX;
+    private $db;
 
     public function __construct()
     {
@@ -43,6 +44,7 @@ class Seguimientos extends General
         $this->DBCensos = \Modelos\Modelo_Censos::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
         $this->DBIC = \Modelos\Modelo_InventarioConsignacion::factory();
+        $this->db = \Modelos\Modelo_DeviceTransfer::factory();
 
         parent::getCI()->load->helper('dividestringconviertearray');
     }
@@ -4971,7 +4973,8 @@ class Seguimientos extends General
         ));
         $data['listRefaccionesUtilizadasServicio'] = $this->DBP->consultaListaRefaccionesUtilizadasServicio($datos['idServicio']);
         $data['cotizacionAnterior'] = $this->DBP->previousQuoteQuery($datos['idServicio']);
-        $data['validatorsSD'] = $this->ServiceDesk->consultarValidadoresTII($this->usuario['SDKey']);
+        $data['validatorsSD'] = $this->ServiceDesk->consultarValidadoresTII($this->usuario['SDKey']);                
+        $data['quoteRequest'] = $this->db->getQuoteRequestInfo($datos['idServicio']);
 
         $formulario = array('formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE), 'datos' => $data);
         return $formulario;

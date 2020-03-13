@@ -11,6 +11,7 @@ class DeviceTransfer extends General
     private $sd;
     private $serviceInfo;
     private $mail;
+    private $user;
 
     public function __construct()
     {
@@ -19,6 +20,7 @@ class DeviceTransfer extends General
         $this->sd = \Librerias\WebServices\ServiceDesk::factory();
         $this->mail = \Librerias\Generales\Correo::factory();
         $this->serviceInfo = \Librerias\WebServices\InformacionServicios::factory();
+        $this->user = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
     public function deviceTransferAndDeviceRequestForm(array $data)
@@ -169,9 +171,63 @@ class DeviceTransfer extends General
 
         if ($result['code'] == 200) {
             $pdf = $this->serviceInfo->definirPDFTraslado(['servicio' => $result['serviceInfo']['IdServicio'], 'folio' => $result['serviceInfo']['Folio']]);
-            return ['code' => 200, 'file' => $pdf, 'data' => $data];
+            $movementInfo = $this->db->getDeviceMovementData(null, $data['movementId']);
+            $dataReturn = [
+                'serviceId' => $data['serviceId'],
+                'componentId' => $movementInfo[0]['IdRefaccion'],
+                'statusId' => $movementInfo[0]['IdEstatus'],
+                'movementId' => $data['movementId']
+            ];
+
+            if ($movementInfo[0]['Folio'] > 0) {
+                $sdNote = '<div>' . $data['annotations'] . '</div>                
+                <div>
+                    Se agrega el link del archivo que contiene la información del traslado del equipo al laboratorio, asi como las observaciones de cada área.
+                </div>
+                <div>
+                    <a target="_blank" href="http://' . $_SERVER['SERVER_NAME'] . $pdf . '">DOCUMENTO PDF</a>
+                </div>';
+                $this->sd->setNoteServiceDesk($this->user['SDKey'], $movementInfo[0]['Folio'], $sdNote);
+                $this->sd->reasignarFolioSD($movementInfo[0]['Folio'], $data['assignTo'], $this->user['SDKey']);
+            }
+
+            return ['code' => 200, 'file' => $pdf, 'data' => $dataReturn];
         } else {
             return $result;
         }
+    }
+
+    public function cancelQuoteRequest(array $data)
+    {
+        $result = $this->db->cancelQuoteRequest($data['commentId']);
+        if ($result['code'] == 200) {
+            $movementInfo = $this->db->getDeviceMovementData(null, $data['movementId']);
+            $dataReturn = [
+                'serviceId' => $movementInfo[0]['IdServicio'],
+                'componentId' => $movementInfo[0]['IdRefaccion'],
+                'statusId' => $movementInfo[0]['IdEstatus'],
+                'movementId' => $data['movementId']
+            ];
+
+            if ($movementInfo[0]['Folio'] > 0) {
+                $sdNote = '
+                <div>
+                    Se encontró un error con la solicitud de cotización y fué cancelada. También se reasigna el incidente al encargado de laboratorio.
+                </div>';
+                $this->sd->setNoteServiceDesk($this->user['SDKey'], $movementInfo[0]['Folio'], $sdNote);
+                $this->sd->reasignarFolioSD($movementInfo[0]['Folio'], 14731, $this->user['SDKey']);
+            }
+
+            return ['code' => 200, 'data' => $dataReturn];
+        } else {
+            return $result;
+        }
+    }
+
+    public function createPdf(array $data)
+    {
+        $serviceInfo = $this->db->getServiceInfo($data['serviceId']);
+        $pdf = $this->serviceInfo->definirPDFTraslado(['servicio' => $serviceInfo['IdServicio'], 'folio' => $serviceInfo['Folio']]);
+        return ['code' => 200, 'file' => $pdf];
     }
 }

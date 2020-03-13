@@ -621,17 +621,11 @@ class Modelo_DeviceTransfer extends Modelo_Base
     {
         $this->iniciaTransaccion();
 
-        $serviceInfo = $this->consulta("
-        select 
-        tst.Id as IdServicio,
-        ts.*,
-        tst.* 
-        from t_solicitudes ts 
-        inner join t_servicios_ticket tst on ts.Id = tst.IdSolicitud 
-        where tst.Id = '" . $data['serviceId'] . "'")[0];
+        $serviceInfo = $this->getServiceInfo($data['serviceId']);
 
         $quoteRequestId = null;
-        if (in_array($data['assignTo'], [15306, 8706])) {
+        if (in_array($data['assignTo'], [15306])) {
+        //if (in_array($data['assignTo'], [15306, 8706])) {
             $quoteRequestId = $this->insertQuoteRequest($serviceInfo, $data['annotations'], $data['files']);
         }
 
@@ -698,6 +692,65 @@ class Modelo_DeviceTransfer extends Modelo_Base
                 'Fecha' => date('Y-m-d H:i:s')
             ]);
             return $this->ultimoId();
+        }
+    }
+
+    public function getServiceInfo($serviceId)
+    {
+        return $this->consulta("
+        select 
+        tst.Id as IdServicio,
+        ts.*,
+        tst.* 
+        from t_solicitudes ts 
+        inner join t_servicios_ticket tst on ts.Id = tst.IdSolicitud 
+        where tst.Id = '" . $serviceId . "'")[0];
+    }
+
+    public function getQuoteRequestInfo($serviceId)
+    {
+        return $this->consulta("
+        select 
+        tearl.IdRegistro,
+        tearlh.Id,
+        tearlh.Comentarios,
+        tearlh.Archivos,
+        tearlh.IdUsuarioSD,
+        ts.Id as IdSolicitud,
+        ts.IdEstatus as EstatusSolicitud
+        from t_equipos_allab_revision_laboratorio tearl
+        inner join t_equipos_allab_revision_laboratorio_historial tearlh on tearl.Id = tearlh.IdRevision
+        left join t_solicitudes ts on ts.Id = tearlh.IdSolicitudCotizacion
+        where tearl.IdRegistro = (select Id from t_equipos_allab where IdServicio = '" . $serviceId . "' and Idestatus <> 6 limit 1)
+        and (
+            (tearlh.IdSolicitudCotizacion is not null and tearlh.IdSolicitudCotizacion > 0) 
+            or 
+            (tearlh.IdUsuarioSD is not null and tearlh.IdUsuarioSD > 0)             
+        )");
+    }
+
+    public function cancelQuoteRequest($commentId)
+    {
+        $this->iniciaTransaccion();
+
+        $commentInfo = $this->consulta("
+        select 
+        * 
+        from t_equipos_allab_revision_laboratorio_historial 
+        where Id = '" . $commentId . "'")[0];
+
+        if ($commentInfo['IdSolicitudCotizacion'] > 0) {
+            $this->actualizar("t_solicitudes", ['IdEstatus' => 6], ['Id' => $commentInfo['IdSolicitudCotizacion']]);
+        }
+
+        $this->eliminar("t_equipos_allab_revision_laboratorio_historial", ['Id' => $commentId]);
+
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400, 'error' => $this->tipoError()];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
         }
     }
 }

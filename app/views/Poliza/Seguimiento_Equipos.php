@@ -6,7 +6,10 @@
         </div>
         <div class="col-md-6 col-xs-6 text-right">
             <label class="btnRegresarTabla btn btn-success hidden">
-                <i class="fa fa fa-reply"></i> Regresar
+                <i class="fa fa-reply"></i> Regresar
+            </label> 
+            <label id="exportPdfButton" data-id="" class="btn btn-danger hidden">
+                <i class="fa fa-file-pdf-o"></i> Exportar PDF
             </label> 
         </div>
     </div>
