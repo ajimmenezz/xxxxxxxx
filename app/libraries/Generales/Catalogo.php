@@ -13,13 +13,16 @@ class Catalogo extends General
 {
 
     private $DBC;
+    private $user;
 
     public function __construct()
     {
         parent::__construct();
         $this->DBC = \Modelos\Modelo_Catalogo::factory();
+        parent::getCI()->load->library('session');
         parent::getCI()->load->helper('date');
         parent::getCI()->load->helper('conversionpalabra');
+        $this->user = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
     /*
@@ -1269,7 +1272,7 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catAlmacenesVirtuales(string $operacion, array $datos = null, array $where = null)
+    public function catAlmacenesVirtuales(string $operacion, array $datos = null, array $where = null, $infoUsuario = array())
     {
         switch ($operacion) {
                 //Inserta en la tabla
@@ -1306,29 +1309,7 @@ class Catalogo extends General
                 break;
                 //Obtiene Informacion 
             case '3';
-                $this->DBC->queryBolean("
-                insert into cat_v3_almacenes_virtuales(IdTipoAlmacen,IdReferenciaAlmacen,Nombre, Flag)
-                select 
-                1,
-                cu.Id,
-                concat('Almacén de ',nombreUsuario(cu.Id)),
-                1
-                from cat_v3_usuarios cu
-                where cu.Id 
-                not in (select IdReferenciaAlmacen from cat_v3_almacenes_virtuales where IdTipoAlmacen = 1)
-                and cu.Flag = 1
-                and cu.Id <> 1");
-                $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
-                $query = ''
-                    . 'select '
-                    . 'cav.Id, '
-                    . 'cav.Nombre, '
-                    . 'ctav.Nombre as Tipo, '
-                    . 'cav.IdReferenciaAlmacen as Referencia, '
-                    . 'cav.Flag '
-                    . 'from cat_v3_almacenes_virtuales cav '
-                    . 'inner join cat_v3_tipos_almacenes_virtuales ctav on cav.IdtipoAlmacen = ctav.Id';
-                return $this->DBC->getJuntarTablas($query);
+                return $this->DBC->getAlmacenesVirtuales(null, null, $infoUsuario);
                 break;
             default:
                 break;
@@ -1575,7 +1556,7 @@ class Catalogo extends General
                     return FALSE;
                 } else {
                     $consulta = $this->DBC->setArticulo('cat_v3_modelos_equipo', array('Marca' => $datos['marca'], 'Nombre' => strtoupper($datos['nombre']), 'NoParte' => strtoupper($datos['parte']), 'Flag' => '1'));
-                    if (!empty($consulta)) {                                                                    
+                    if (!empty($consulta)) {
                         return $this->catModelosEquipo('3');
                     } else {
                         return FALSE;
@@ -1599,7 +1580,7 @@ class Catalogo extends General
                         'Flag' => $datos['estatus']
                     ), array('Id' => $datos['id']));
                     if (!empty($consulta)) {
-                        $query = 'select * from v_equipos where Id = "' . $datos['id'] . '"';                 
+                        $query = 'select * from v_equipos where Id = "' . $datos['id'] . '"';
                         return $this->catModelosEquipo('3');
                     } else {
                         return $this->catModelosEquipo('3');
