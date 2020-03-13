@@ -73,7 +73,7 @@ class Archivo {
         $temporal = $_SERVER['DOCUMENT_ROOT'] . '/storage/Archivos/' . $carpeta;
 
         if (!file_exists($temporal)) {
-            mkdir($temporal, 0777, true);
+            mkdir($temporal, 0775, true);
         }
 
         foreach ($imagenes as $key => $imagen) {
