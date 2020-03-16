@@ -1456,11 +1456,6 @@ class InformacionServicios extends General {
         } else {
             $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', str_replace(' ', '_', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio'] . $nombreExtra));
         }
-        
-        if (file_exists($carpeta)) {
-            mkdir($carpeta, 0775, true);
-            unlink($carpeta);
-        }
 
         $this->setHeaderPDF("Resumen de Incidente Service Desk", $generales['SD']);
 
