@@ -36,12 +36,12 @@ class Controller_Tester extends Base {
 //                $resultado = $this->SD->getResolucionFolio($datos['key'], $datos['folio']);                                
 //                $resultado = $this->SD->getTecnicosSD($datos['key']);                                
 //                    $resultado = $this->SD->setResolucionServiceDesk($datos['key'], $datos['folio'], 'prueba');
-//                    $resultado = $this->SD->getFolios($datos['key']);
+                    $resultado = $this->SD->getFolios($datos['key']);
 //                    $resultado = $this->SD->setNoteServiceDesk($datos['key'], $datos['folio'], 'prueba');
 //                    $resultado = $this->SD->setWorkLogServiceDesk($datos['key'], $datos['folio'], 'prueba');
 //                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
 //                    $resultado = $this->SD->consultarDepartamentoTI($datos['key']);
-                    $resultado = $this->SD->validarAPIKey($datos['key']);
+//                    $resultado = $this->SD->validarAPIKey($datos['key']);
 //                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
                 } catch (\Exception $ex) {
                     $resultado = $ex->getMessage();
