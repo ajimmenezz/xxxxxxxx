@@ -27,6 +27,7 @@ if (!empty($datosValidacion)) {
         <ul class="nav nav-pills col-md-6 col-sm-6 col-xs-12">
             <li class="active"><a href="#revisionHistorial" data-toggle="tab">Historial</a></li>
             <li><a href="#refaccionUtilizada" data-toggle="tab">Refacciones Utilizadas</a></li>
+            <li><a href="#solicitarCotizacionDiv" data-toggle="tab">Solicitar Cotización</a></li>
         </ul>
         <div class="col-md-6 col-sm-6 col-xs-12 <?php echo $datosCloncluirRevision ?>">
             <div class="form-group text-right">
@@ -49,8 +50,8 @@ if (!empty($datosValidacion)) {
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <label class="f-w-600 f-s-13">Adjuntos</label> 
-                            <input id="archivosLabHistorial"  name="archivosLabHistorial[]" type="file" multiple />
+                            <label class="f-w-600 f-s-13">Adjuntos</label>
+                            <input id="archivosLabHistorial" name="archivosLabHistorial[]" type="file" multiple />
                         </div>
                     </div>
                     <div class="row">
@@ -86,14 +87,14 @@ if (!empty($datosValidacion)) {
                         <?php
                         if (empty($componentesEquipo)) {
                             if ($cotizacionAnterior[0]['Total'] <= 0) {
-                                ?>
+                        ?>
                                 <a id="btnSolicitarCotizacionRevisionLaboratorio" class="btn btn-primary f-s-13"><i class="fa fa-usd"></i> Solicitar Cotización</a>
-                                <?php
+                            <?php
                             }
                         } else {
                             ?>
-                            <a id = "btnAgregarRefaccion" class = "btn btn-success f-s-13"><i class = "fa fa-plus"></i> Agregar Refacción</a>
-                            <?php
+                            <a id="btnAgregarRefaccion" class="btn btn-success f-s-13"><i class="fa fa-plus"></i> Agregar Refacción</a>
+                        <?php
                         }
                         ?>
 
@@ -128,15 +129,15 @@ if (!empty($datosValidacion)) {
                                             echo '</tr>';
                                         }
                                     }
-                                    ?>  
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="col-md-12 m-t-20">
-                        <div class="alert alert-warning fade in m-b-15">                            
-                            Para eliminar el registro de la tabla solo tiene que dar click sobre fila para eliminarlo.                            
-                        </div>                        
+                        <div class="alert alert-warning fade in m-b-15">
+                            Para eliminar el registro de la tabla solo tiene que dar click sobre fila para eliminarlo.
+                        </div>
                     </div>
                 </div>
                 <div class="row <?php echo $tablaRefaccionUtilizada ?>">
@@ -163,12 +164,124 @@ if (!empty($datosValidacion)) {
                                             echo '</tr>';
                                         }
                                     }
-                                    ?>  
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="tab-pane fade" id="solicitarCotizacionDiv">
+                <?php
+                if (isset($quoteRequest) && count($quoteRequest) > 0) {
+                    $sdValidator = '';
+
+                    if (isset($validatorsSD) && count($validatorsSD) > 0) {
+                        foreach ($validatorsSD as $k => $v) {
+                            if ($v['userId'] == $quoteRequest[0]['IdUsuarioSD']) {
+                                $sdValidator = $v['userName'];
+                            }
+                        }
+                    }
+
+                    $files = explode(",", $quoteRequest[0]['Archivos']);
+
+                    echo '
+                        <div class="row">
+                            <div class="col-md-6 col-sm-8 col-xs-12 form-group">
+                                <label class="f-s-13 f-w-600">Reasignar en Service Desk a *:</label>
+                                <label class="f-s-13 f-w-600 form-control">' . $sdValidator . '</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="f-w-600 f-s-13">Solicitud de cotización: *</label>
+                                    <label class="f-s-13 f-w-600 form-control">' . $quoteRequest[0]['Comentarios'] . '</label>                                    
+                                </div>
+                            </div>
+                        </div>
+                    ';
+                    if (count($files) > 0) {
+                        echo '
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="f-w-600 f-s-13">Adjuntos:</label>
+                                    <label class="f-w-600 f-s-13 form-control">
+                                    ';
+                        foreach ($files as $file) {
+                            echo '      <a target="_blank" href="' . $file . '">' . $file . '</a><br />';
+                        }
+                        echo '                                        
+                                    </label>
+                                </div>
+                            </div>
+                        </div>';
+
+                        if ($quoteRequest[0]['EstatusSolicitud'] == 1 || $quoteRequest[0]['IdSolicitud'] == '') {
+                            echo '
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div id="errorSolicitarCotizacion"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                                    <a id="cancelCotizacionButton" data-movementid="' . $quoteRequest[0]['IdRegistro'] . '" data-commentid="' . $quoteRequest[0]['Id'] . '" class="btn btn-sm btn-danger m-t-10 m-r-10 f-w-600 f-s-13"> Cancelar solicitud de cotización</a>
+                                </div>
+                            </div>
+                            ';
+                        }
+                    }
+                } else {
+                ?>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-8 col-xs-12 form-group">
+                            <label class="f-s-13 f-w-600">Reasignar en Service Desk a *:</label>
+                            <select id="serviceDeskValidators" class="form-control" style="width:100%">
+                                <option value="">Selecciona . . .</option>
+                                <?php
+                                if (isset($validatorsSD) && count($validatorsSD) > 0) {
+                                    foreach ($validatorsSD as $k => $v) {
+                                        if (in_array($v['userId'], [3306, 350, 351, 346, 345, 15306, 8706])) {
+                                            echo '<option value="' . $v['userId'] . '">' . $v['userName'] . '</option>';
+                                        }
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label class="f-w-600 f-s-13">Solicitud de cotización: *</label>
+                                <textarea class="form-control" id="solicitudCotizacionTexto" rows="5" placeholder=""></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label class="f-w-600 f-s-13">Adjuntos</label>
+                                <input id="archivosSolicitudCotizacion" name="archivosSolicitudCotizacion[]" type="file" multiple />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div id="errorSolicitarCotizacion"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                            <a id="solicitarCotizacionButton" class="btn btn-sm btn-warning m-t-10 m-r-10 f-w-600 f-s-13"> Solicitar y reasignar</a>
+                        </div>
+                    </div>
+                <?php
+                }
+                ?>
             </div>
         </div>
     </div>

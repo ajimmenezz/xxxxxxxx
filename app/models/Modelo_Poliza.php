@@ -992,7 +992,7 @@ class Modelo_Poliza extends Modelo_Base
     public function estatusAllab($idServicio)
     {
         if (!empty($idServicio)) {
-            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "'");
+            $consulta = $this->consulta("SELECT * FROM t_equipos_allab WHERE IdServicio = '" . $idServicio . "' and IdEstatus <> 6");
             foreach ($consulta as $value) {
                 return ['Id' => $value['Id'], 'IdEstatus' => $value['IdEstatus'], 'Flag' => $value['Flag'], 'IdTipoMovimiento' => $value['IdTipoMovimiento']];
             }
@@ -1064,7 +1064,7 @@ class Modelo_Poliza extends Modelo_Base
                                     WHERE
                                         cvrc.IdResponsableInterno = '" . $usuario . "'
                                         AND    
-                                        tea.IdEstatus != '6'");
+                                        tea.IdEstatus <> '6'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1090,7 +1090,7 @@ class Modelo_Poliza extends Modelo_Base
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
-                                    WHERE tea.IdUsuario = '" . $usuario . "'
+                                    WHERE tea.IdTecnicoSolicita = '" . $usuario . "'
                                     AND tea.IdEstatus NOT IN('31','6')");
 
         if (!empty($consulta)) {
@@ -1117,7 +1117,7 @@ class Modelo_Poliza extends Modelo_Base
                                     FROM t_equipos_allab tea
                                     INNER JOIN t_servicios_ticket tst ON tst.Id = tea.IdServicio
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
-                                    WHERE tea.IdEstatus IN(" . $estatus . ")");
+                                    WHERE tea.IdEstatus IN(" . $estatus . ") AND tea.IdEstatus <> 6");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1145,10 +1145,10 @@ class Modelo_Poliza extends Modelo_Base
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '32','33','34','36','37','48')
-                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '30', '34', '36') OR tea.IdEstatus = '38' AND Flag = '0'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '34')
+                                        WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '34') OR tea.IdEstatus = '38' AND Flag = '0'
                                     END)
-                                    AND tea.IdEstatus != '6'");
+                                    AND tea.IdEstatus <> '6'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1194,8 +1194,8 @@ class Modelo_Poliza extends Modelo_Base
                                         v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                         (CASE
-                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '28', '29', '30', '32', '33', '34', '36', '39', '48', '49')
-                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '28', '29', '30', '31',  '32', '33', '34', '36', '39', '48', '49')
+                                            WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('4', '12', '32', '39', '49')
+                                            WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('2','4', '12', '32', '34', '39', '49')
                                             WHEN
                                                 tea.IdTipoMovimiento = '3'
                                             THEN
@@ -1207,7 +1207,7 @@ class Modelo_Poliza extends Modelo_Base
                                                     WHERE
                                                         IdRegistro = tea.Id) = '7'
                                         END)
-                                        AND tea.IdEstatus != '6'");
+                                        AND tea.IdEstatus <> '6'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1235,11 +1235,11 @@ class Modelo_Poliza extends Modelo_Base
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','30','32','33','4','34','36','39','48','49') OR tea.IdEstatus = '2' AND Flag = '1' OR tea.IdEstatus = '12' AND Flag = '0'
-                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('12','28','29','33','39','48','49') OR tea.IdEstatus = '4' AND Flag = '1' OR tea.IdEstatus = '2' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','33')
+                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('28','29','33')
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
                                     END)
-                                    AND tea.IdEstatus != '6'");
+                                    AND tea.IdEstatus <> '6'");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1283,7 +1283,8 @@ class Modelo_Poliza extends Modelo_Base
                                     INNER JOIN
                                             t_correctivos_diagnostico tcd ON tcd.IdServicio = tea.IdServicio
                                     WHERE 
-                                            tea.IdServicio = '" . $datos['idServicio'] . "'");
+                                            tea.IdServicio = '" . $datos['idServicio'] . "'
+                                    AND tea.IdEstatus <> 6 ");
 
         if (!empty($consulta)) {
             return $consulta;
@@ -1550,7 +1551,8 @@ class Modelo_Poliza extends Modelo_Base
                             from t_inventario 
                             where IdTipoProducto = 1 
                             and IdProducto = '" . $datosEquipo['IdModelo'] . "' 
-                            and Serie = '" . $datosEquipo['Serie'] . "'");
+                            and Serie = '" . $datosEquipo['Serie'] . "' 
+                            and Serie <> 'ILEGIBLE'");
                             if (!empty($idInventario) && isset($idInventario[0]['Id']) && $idInventario[0]['Id'] > 0) {
                                 $this->actualizar("t_inventario", [
                                     'IdAlmacen' => $value['IdAlmacen'],
@@ -1802,6 +1804,8 @@ class Modelo_Poliza extends Modelo_Base
 
         $this->cambiarEsatus($datos);
 
+        $this->setInventoryAsAvailable($datos['id']);
+
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
@@ -1809,6 +1813,14 @@ class Modelo_Poliza extends Modelo_Base
         } else {
             $this->commitTransaccion();
             return ['code' => 200];
+        }
+    }
+
+    private function setInventoryAsAvailable($movementId)
+    {
+        $inventoryId = $this->consulta("select IdInventarioRetiro from t_equipos_allab where Id = '" . $movementId . "'")[0];
+        if ($inventoryId['IdInventarioRetiro'] > 0) {
+            $this->actualizar("t_inventario", ['IdEstatus' => 17], ['Id' => $inventoryId['IdInventarioRetiro']]);
         }
     }
 
@@ -1829,7 +1841,7 @@ class Modelo_Poliza extends Modelo_Base
                                     where tear.IdRegistro = " ' . $IdRegistro . '" order by tear.Id asc');
         return $consulta;
     }
-    
+
     public function consultaEquiposAllabRecepcionesLaboratorio(string $IdRegistro)
     {
         $consulta = $this->consulta('select 
@@ -1851,7 +1863,7 @@ class Modelo_Poliza extends Modelo_Base
                                     where tearl.IdRegistro = " ' . $IdRegistro . ' "');
         return $consulta;
     }
-    
+
     public function consultaEquiposAllabRevicionLaboratorio(array $datos)
     {
         $consulta = $this->consulta('SELECT * FROM t_equipos_allab_revision_laboratorio WHERE IdRegistro = " ' . $datos['id'] . ' "');
@@ -1996,7 +2008,16 @@ class Modelo_Poliza extends Modelo_Base
 
     public function cambiarEsatus(array $datos)
     {
-        $resultado = $this->actualizar('t_equipos_allab', array('IdEstatus' => $datos['idEstatus'], 'Flag' => $datos['flag'], 'FechaEstatus' => $datos['fecha']), ['Id' => $datos['id']]);
+        $resultado = $this->actualizar(
+            't_equipos_allab',
+            [
+                'IdEstatus' => $datos['idEstatus'],
+                'Flag' => $datos['flag'],
+                'FechaEstatus' => $datos['fecha'],
+                'IdUsuario' => $this->usuario['Id']
+            ],
+            ['Id' => $datos['id']]
+        );
 
         if (!empty($resultado)) {
             return TRUE;
@@ -2079,7 +2100,8 @@ class Modelo_Poliza extends Modelo_Base
                                              *, nombreUsuario(IdUsuario) NombreUsuario,
                                              nombreUsuario(IdTecnicoSolicita) Tecnico
                                          FROM t_equipos_allab 
-                                         WHERE IdServicio = '" . $idServicio . "'");
+                                         WHERE IdServicio = '" . $idServicio . "'
+                                         and IdEstatus <> 6");
         } else {
             $consulta = $this->consulta("SELECT * FROM t_equipos_allab");
         }
@@ -2272,7 +2294,8 @@ class Modelo_Poliza extends Modelo_Base
                                         INNER JOIN t_inventario ti
                                         ON tearlr.IdInventario = ti.Id
                                         WHERE tea.IdServicio = " ' . $idServicio . ' "
-                                        AND tearlr.Flag = "1"');
+                                        AND tearlr.Flag = "1"
+                                        and tea.Idestatus <> 6');
 
         return $equipoDanado;
     }
@@ -2386,7 +2409,8 @@ class Modelo_Poliza extends Modelo_Base
                                             t_equipos_allab_solicitud_refaccion teasr
                                         INNER join t_equipos_allab tea
                                         ON teasr.IdRegistro = tea.Id
-                                        WHERE tea.IdServicio = " ' . $idServicio . ' "');
+                                        WHERE tea.IdServicio = " ' . $idServicio . ' " 
+                                        AND tea.IdEstatus <> 6');
 
         return $consulta;
     }
@@ -2473,7 +2497,7 @@ class Modelo_Poliza extends Modelo_Base
                                             t_inventario ti ON teasrr.IdInventario = ti.Id
                                                 INNER JOIN t_equipos_allab tea ON teasr.IdRegistro = tea.Id
                                         WHERE
-                                            tea.IdServicio = "' . $datos['idServicio'] . '"');
+                                            tea.IdServicio = "' . $datos['idServicio'] . '" AND tea.IdEstatus <> 6');
 
         return $consulta;
     }

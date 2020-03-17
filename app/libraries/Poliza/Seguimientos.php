@@ -23,6 +23,7 @@ class Seguimientos extends General {
     private $DBCensos;
     private $Excel;
     private $SimpleXLSX;
+    private $db;
 
     public function __construct() {
         parent::__construct();
@@ -40,6 +41,8 @@ class Seguimientos extends General {
         $this->MSicsa = \Modelos\Modelo_Sicsa::factory();
         $this->DBCensos = \Modelos\Modelo_Censos::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
+        $this->DBIC = \Modelos\Modelo_InventarioConsignacion::factory();
+        $this->db = \Modelos\Modelo_DeviceTransfer::factory();
 
         parent::getCI()->load->helper('dividestringconviertearray');
     }
@@ -2601,10 +2604,12 @@ class Seguimientos extends General {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
         $this->DBS->actualizarSeguimiento(
-                't_servicios_ticket', array(
-            'IdEstatus' => $datos['estatus'],
-            'FechaConclusion' => $fecha
-                ), array('Id' => $datos['servicio'])
+            't_servicios_ticket',
+            array(
+                'IdEstatus' => $datos['estatus'],
+                'FechaConclusion' => $fecha
+            ),
+            array('Id' => $datos['servicio'])
         );
     }
 
@@ -4810,6 +4815,8 @@ class Seguimientos extends General {
         ));
         $data['listRefaccionesUtilizadasServicio'] = $this->DBP->consultaListaRefaccionesUtilizadasServicio($datos['idServicio']);
         $data['cotizacionAnterior'] = $this->DBP->previousQuoteQuery($datos['idServicio']);
+        $data['validatorsSD'] = $this->ServiceDesk->consultarValidadoresTII($this->usuario['SDKey']);                
+        $data['quoteRequest'] = $this->db->getQuoteRequestInfo($datos['idServicio']);
 
         $formulario = array('formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE), 'datos' => $data);
         return $formulario;
@@ -4990,10 +4997,11 @@ class Seguimientos extends General {
     public function guardarRecepcionTecnico(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = $result = null;
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionTecnico/';
         $archivos = "";
+        $datosAllabAnterior = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionTecnico', $carpeta);
             if ($archivos) {
@@ -5035,6 +5043,8 @@ class Seguimientos extends General {
                 'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200
             ];
+            $this->traspasoEquipo(array('origenUsuario' => $datosAllabAnterior[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllabAnterior[0]['IdInventarioRetiro']]));
+
             return $mensaje;
         } else {
             $mensaje = [
@@ -5047,12 +5057,12 @@ class Seguimientos extends General {
 
     public function guardarRecepcionLogistica(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
-
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = $result = null;
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionLogistica/';
         $archivos = "";
+        $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionLogistica', $carpeta);
             if ($archivos) {
@@ -5087,6 +5097,9 @@ class Seguimientos extends General {
                 'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200
             ];
+
+            $this->traspasoEquipo(array('origenUsuario' => $datosAllab[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllab[0]['IdInventarioRetiro']]));
+
             return $mensaje;
         } else {
             $mensaje = [
@@ -5100,10 +5113,11 @@ class Seguimientos extends General {
     public function guardarRecepcionAlmacen(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $archivos = $result = null;
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionAlmacen/';
         $archivos = "";
+        $datosAllabAnterior = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionAlmacen', $carpeta);
             if ($archivos) {
@@ -5147,6 +5161,9 @@ class Seguimientos extends General {
                     'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                     'code' => 200
                 ];
+
+                $this->traspasoEquipo(array('origenUsuario' => $datosAllabAnterior[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllabAnterior[0]['IdInventarioRetiro']]));
+
                 return $mensaje;
             } else {
                 $mensaje = [
@@ -5190,6 +5207,9 @@ class Seguimientos extends General {
                     'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                     'code' => 200
                 ];
+
+                $this->traspasoEquipo(array('origenUsuario' => $datosAllabAnterior[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllabAnterior[0]['IdInventarioRetiro']]));
+
                 return $mensaje;
             } else {
                 $mensaje = [
@@ -5208,6 +5228,8 @@ class Seguimientos extends General {
         $CI = parent::getCI();
         $carpeta = 'Servicios/Servicio-' . $datos['idServicio'] . '/solicitudesEquipo/Solicitud_' . $datos['id'] . '/RecepcionLaboratorio/';
         $archivos = "";
+        $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+
         if (!empty($_FILES)) {
             $archivos = setMultiplesArchivos($CI, 'evidenciaRecepcionLab', $carpeta);
             if ($archivos) {
@@ -5242,6 +5264,9 @@ class Seguimientos extends General {
                 'tablaEquiposEnviadosSolicitados' => $this->mostrarTabla(),
                 'code' => 200
             ];
+
+            $this->traspasoEquipo(array('origenUsuario' => $datosAllab[0]['IdUsuario'], 'destinoUsuario' => $datos['idUsuario'], 'equipos' => [$datosAllab[0]['IdInventarioRetiro']]));
+
             return $mensaje;
         } else {
             $mensaje = [
@@ -5250,6 +5275,14 @@ class Seguimientos extends General {
             ];
             return $mensaje;
         }
+    }
+
+    public function traspasoEquipo(array $datos)
+    {
+        $idInvetarioOrigen = $this->DBIC->getAlmacenesVirtualesPorUsuario($datos['origenUsuario']);
+        $idInvetarioDestino = $this->DBIC->getAlmacenesVirtualesPorUsuario($datos['destinoUsuario']);
+
+        $this->DBIC->traspasarProductos(array('origen' => $idInvetarioOrigen[0]['Id'], 'destino' => $idInvetarioDestino[0]['Id'], 'equipos' => $datos['equipos']));
     }
 
     public function consultaServiciosTecnico(array $datos) {
@@ -6508,14 +6541,14 @@ class Seguimientos extends General {
 
         $viewHtml .= '<div>Paqueteria: ' . $dataTechnicalShipment[0]['Paqueteria'] . '</div>';
         $viewHtml .= '<div>Fecha de envío: ' . $dataTechnicalShipment[0]['Fecha'] . '</div>';
-//        $viewHtml .= '<div>Evidencia de envío: </div>';
-//        $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosEnvio']);
-//        foreach ($evidence as $value) {
-//            if ($value != '') {
-//                $counter++;
-//                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-//            }
-//        }
+        //        $viewHtml .= '<div>Evidencia de envío: </div>';
+        //        $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosEnvio']);
+        //        foreach ($evidence as $value) {
+        //            if ($value != '') {
+        //                $counter++;
+        //                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+        //            }
+        //        }
 
 
         return $viewHtml;
@@ -6529,14 +6562,14 @@ class Seguimientos extends General {
         $viewHtml .= '<div>**Recepción por Almacén**</div>';
         $viewHtml .= '<div>Recibió en almacén: ' . $dataWarehouse['recepcion'][0]['UsuarioRecibe'] . '</div>';
         $viewHtml .= '<div>Fecha recibida en almacén: ' . $dataWarehouse['recepcion'][0]['Fecha'] . '</div>';
-//        $viewHtml .= '<div>Evidencia de recepción en almacén: </div>';
-//        $evidence = explode(',', $dataWarehouse['recepcion'][0]['Archivos']);
-//        foreach ($evidence as $value) {
-//            if ($value != '') {
-//                $counter++;
-//                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-//            }
-//        }
+        //        $viewHtml .= '<div>Evidencia de recepción en almacén: </div>';
+        //        $evidence = explode(',', $dataWarehouse['recepcion'][0]['Archivos']);
+        //        foreach ($evidence as $value) {
+        //            if ($value != '') {
+        //                $counter++;
+        //                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+        //            }
+        //        }
 
         return $viewHtml;
     }
@@ -6553,16 +6586,16 @@ class Seguimientos extends General {
             $viewHtml .= '<div>Usuario: ' . $value['Usuario'] . '</div>';
             $viewHtml .= '<div>Fecha: ' . $value['Fecha'] . '</div>';
             $viewHtml .= '<div>Nota: ' . $value['Nota'] . '</div>';
-//            if ($value['Adjuntos'] !== '') {
-//                $viewHtml .= '<div>Adjunto: : <a href="http://' . $host . $value['Adjuntos'] . '">Archivo</a></div>';
-//                $evidence = explode(',', $value['Adjuntos']);
-//                foreach ($evidence as $value2) {
-//                    if ($value2 != '') {
-//                        $counter++;
-//                        $viewHtml .= "<a href='http://" . $host . $value2 . "'>Archivo" . $counter . "</a> &nbsp ";
-//                    }
-//                }
-//            }
+            //            if ($value['Adjuntos'] !== '') {
+            //                $viewHtml .= '<div>Adjunto: : <a href="http://' . $host . $value['Adjuntos'] . '">Archivo</a></div>';
+            //                $evidence = explode(',', $value['Adjuntos']);
+            //                foreach ($evidence as $value2) {
+            //                    if ($value2 != '') {
+            //                        $counter++;
+            //                        $viewHtml .= "<a href='http://" . $host . $value2 . "'>Archivo" . $counter . "</a> &nbsp ";
+            //                    }
+            //                }
+            //            }
         }
 
         return $viewHtml;
@@ -6601,14 +6634,14 @@ class Seguimientos extends General {
         }
 
         $viewHtml .= '<div>Recibe: ' . $dataLogistica[0]['Recibe'] . '</div>';
-//        $viewHtml .= '<div>Evidencia de envío: </div>';
-//        $evidence = explode(',', $dataLogistica[0]['ArchivosEntrega']);
-//        foreach ($evidence as $value) {
-//            if ($value != '') {
-//                $counter++;
-//                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-//            }
-//        }
+        //        $viewHtml .= '<div>Evidencia de envío: </div>';
+        //        $evidence = explode(',', $dataLogistica[0]['ArchivosEntrega']);
+        //        foreach ($evidence as $value) {
+        //            if ($value != '') {
+        //                $counter++;
+        //                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+        //            }
+        //        }
 
         return $viewHtml;
     }
@@ -6623,17 +6656,17 @@ class Seguimientos extends General {
         $viewHtml .= '<div>Guia: ' . $dataTechnicalShipment[0]['Guia'] . '</div>';
         $viewHtml .= '<div>Comentarios: ' . $dataTechnicalShipment[0]['ComentariosSolicitud'] . '</div>';
 
-//        if ($dataTechnicalShipment[0]['ArchivosSolicitud'] !== NULL) {
-//            $viewHtml .= '<div>Evidencia:</div>';
-//            $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosSolicitud']);
-//
-//            foreach ($evidence as $value) {
-//                if ($value != '') {
-//                    $counter++;
-//                    $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-//                }
-//            }
-//        }
+        //        if ($dataTechnicalShipment[0]['ArchivosSolicitud'] !== NULL) {
+        //            $viewHtml .= '<div>Evidencia:</div>';
+        //            $evidence = explode(',', $dataTechnicalShipment[0]['ArchivosSolicitud']);
+        //
+        //            foreach ($evidence as $value) {
+        //                if ($value != '') {
+        //                    $counter++;
+        //                    $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+        //                }
+        //            }
+        //        }
 
         return $viewHtml;
     }
@@ -6648,14 +6681,14 @@ class Seguimientos extends General {
         $viewHtml .= '<div>**Recepción por Técnico**</div>';
         $viewHtml .= '<div>Recibió Técnico: ' . $dataTechnicalReception['recepcion'][0]['UsuarioRecibe'] . '</div>';
         $viewHtml .= '<div>Fecha recibida del Técnico: ' . $dataTechnicalReception['recepcion'][0]['Fecha'] . '</div>';
-//        $viewHtml .= '<div>Evidencia de recepción del Técnico: </div>';
-//        $evidence = explode(',', $dataTechnicalReception['recepcion'][0]['Archivos']);
-//        foreach ($evidence as $value) {
-//            if ($value != '') {
-//                $counter++;
-//                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
-//            }
-//        }
+        //        $viewHtml .= '<div>Evidencia de recepción del Técnico: </div>';
+        //        $evidence = explode(',', $dataTechnicalReception['recepcion'][0]['Archivos']);
+        //        foreach ($evidence as $value) {
+        //            if ($value != '') {
+        //                $counter++;
+        //                $viewHtml .= "<a href='http://" . $host . $value . "'>Archivo" . $counter . "</a> &nbsp ";
+        //            }
+        //        }
         return $viewHtml;
     }
 
@@ -6970,7 +7003,8 @@ class Seguimientos extends General {
         return "http://" . $_SERVER['SERVER_NAME'] . "/" . $ruta;
     }
 
-    private function count_value_in_array($array, $value) {
+    private function count_value_in_array($array, $value)
+    {
         $counts = array_count_values($array);
         return $counts[$value];
     }
