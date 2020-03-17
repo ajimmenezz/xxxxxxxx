@@ -53,6 +53,7 @@ $(function() {
     select.crearSelect("#listRefaccionUtil");
     select.crearSelect("#listDondeRecibe");
     select.crearSelect("#listChofer");
+    iniciasolicitudCotizacion();
 
     //obtener valor fecha
     $("#fechaEnvio").val();
