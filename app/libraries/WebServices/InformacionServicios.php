@@ -829,7 +829,7 @@ class InformacionServicios extends General {
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
     }
 
-    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE) {
+    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE, bool $concluirSD = TRUE) {
         $folio = $this->DBST->consultaFolio($servicio);
 
         if ($folio !== '0') {
@@ -844,7 +844,9 @@ class InformacionServicios extends General {
                 );
                 $servicios = $this->verificarTodosServiciosFolio($datos);
 
-                $this->cambiarEstatusResolucionSD($datos, $servicios);
+                if ($concluirSD) {
+                    $this->cambiarEstatusResolucionSD($datos, $servicios);
+                }
             }
         }
         return ['code' => 200, 'message' => 'correcto'];
@@ -1013,8 +1015,14 @@ class InformacionServicios extends General {
         } else {
             $servicioConcluir = FALSE;
         }
+        
+        if (isset($datos['concluirSD']) && $datos['concluirSD'] === 'true') {
+            $concluirSD = TRUE;
+        } else {
+            $concluirSD = FALSE;
+        }
 
-        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir);
+        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir, $concluirSD);
 
         return ['code' => 200, 'message' => 'correcto'];
     }
@@ -1456,7 +1464,7 @@ class InformacionServicios extends General {
         } else {
             $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', str_replace(' ', '_', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio'] . $nombreExtra));
         }
-        
+
         $this->setHeaderPDF("Resumen de Incidente Service Desk", $generales['SD']);
 
         $this->setCoordinates(10);
