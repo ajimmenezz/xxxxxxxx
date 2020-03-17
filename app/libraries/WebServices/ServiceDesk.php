@@ -438,7 +438,7 @@ class ServiceDesk extends General {
 
         return $returnArray;
     }
-    
+
     public function consultarValidadoresTI(string $key) {
         $input_data = '{"operation":{"details":{"department":""}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
@@ -448,10 +448,10 @@ class ServiceDesk extends General {
         $i = 0;
 
         foreach ($datosSD->operation->details as $key => $value) {
-            if ($value->department === 'Soporte TI' || 
-                    $value->department === 'Mesa de Ayuda - Zona 1' || 
-                    $value->department === 'Mesa de Ayuda - Zona 2' || 
-                    $value->department === 'Mesa de Ayuda - Zona 3' || 
+            if ($value->department === 'Soporte TI' ||
+                    $value->department === 'Mesa de Ayuda - Zona 1' ||
+                    $value->department === 'Mesa de Ayuda - Zona 2' ||
+                    $value->department === 'Mesa de Ayuda - Zona 3' ||
                     $value->department === 'Mesa de Ayuda - Zona 4') {
                 $returnArray[$i]['userId'] = $value->userid;
                 $returnArray[$i]['userName'] = $value->username;
@@ -545,6 +545,25 @@ class ServiceDesk extends General {
                 . "&INPUT_DATA=" . urlencode($input_data);
         $datosSD = $this->getDatosSD($this->Url . '/?' . $FIELDS);
         $this->validarError($datosSD);
+        return $datosSD;
+    }
+
+    public function cambiarReporteFalsoServiceDesk(string $key, string $folio, string $reporteFalso) {
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio;
+        $input_data = ''
+                . '{'
+                . ' "operation": {'
+                . '     "details": {'
+                . '             "Reporte en Falso": "' . $reporteFalso . '"
+                    }'
+                . ' }'
+                . '}';
+        $FIELDS = "format=json&"
+                . "OPERATION_NAME=EDIT_REQUEST&"
+                . "INPUT_DATA=" . urlencode($input_data) . "&"
+                . "TECHNICIAN_KEY=" . $key;
+
+        $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
         return $datosSD;
     }
 

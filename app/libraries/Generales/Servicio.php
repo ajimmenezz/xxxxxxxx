@@ -1710,7 +1710,7 @@ class Servicio extends General {
 
             $tipoServicio = $verificarServicioSinClaficar[0]['IdTipoServicio'];
 
-            if (in_array($tipoServicio, [11, '11'])) {
+            if (in_array($tipoServicio, [11, '11', 50, '50'])) {
                 $this->borrarCensos($datos['servicio']);
             }
 
@@ -1819,10 +1819,8 @@ class Servicio extends General {
                         . "where IdServicio = '" . $value['IdServicio'] . "' "
                         . "and IdArea = '" . $value['IdArea'] . "' "
                         . "and Punto > " . $value['Puntos']);
-            }
-        }
-
-        $this->DBS->queryBolean("delete
+                
+                $this->DBS->queryBolean("delete
                                     from t_censos
                                     where IdServicio = '" . $value['IdServicio'] . "'
                                     and IdArea not in (
@@ -1830,6 +1828,8 @@ class Servicio extends General {
                                                     IdArea 
                                                     from t_censos_puntos 
                                                     where IdServicio = '" . $value['IdServicio'] . "')");
+            }
+        }
     }
 
     public function enviar_Reporte_PDF(array $datos) {
@@ -1843,14 +1843,14 @@ class Servicio extends General {
             $imgFirma = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirma));
             $dataFirma = base64_decode($imgFirma);
             $imgFirmaTecnico = $datos['imgFirmaTecnico'];
-            $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
-            $dataFirmaTecnico = base64_decode($imgFirmaTecnico);
+//            $imgFirmaTecnico = str_replace(' ', '+', str_replace('data:image/png;base64,', '', $imgFirmaTecnico));
+//            $dataFirmaTecnico = base64_decode($imgFirmaTecnico);
             $folio = $this->DBS->consultaFolio($datos['servicio']);
 
             $direccionFirma = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'Firma_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
             $direccionFirmaTecnico = '/storage/Archivos/imagenesFirmas/' . str_replace(' ', '_', 'FirmaTecnico_' . $datos['ticket'] . '_' . $datos['servicio']) . '.png';
             file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirma, $dataFirma);
-            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
+//            file_put_contents($_SERVER['DOCUMENT_ROOT'] . $direccionFirmaTecnico, $dataFirmaTecnico);
 
             if ($datos['encargadoTI'] !== NULL) {
                 $encargadoTI = $datos['encargadoTI'];
@@ -1877,8 +1877,8 @@ class Servicio extends General {
                 'NombreFirma' => $datos['recibe'],
                 'CorreoCopiaFirma' => $correo,
                 'FechaFirma' => $fecha,
-                'IdTecnicoFirma' => $idTecnico,
-                'FirmaTecnico' => $imgFirmaTecnico,
+//                'IdTecnicoFirma' => $idTecnico,
+//                'FirmaTecnico' => $imgFirmaTecnico,
                 'IdValidaCinemex' => $encargadoTI,
                 'IdEstatus' => '5'
                     ), array('Id' => $datos['servicio']));
@@ -1966,7 +1966,7 @@ class Servicio extends General {
             $this->DBS->terminaTransaccion();
             return TRUE;
         } catch (\Exception $ex) {
-            return $ex;
+            return $ex->getMessage();
         }
     }
 
@@ -2153,8 +2153,18 @@ class Servicio extends General {
 
         return TRUE;
     }
+    
+    private function ticketByServicio($servicio) {
+        $consulta = $this->DBS->consulta("select Ticket from t_servicios_ticket where Id = '".$servicio."' limit 1");
+        if($consulta){
+            return $consulta[0];
+        }else{
+            return null;
+        }
+    }
 
     public function cambiarEstatus(string $fecha, array $datos, array $datosExtra = NULL, string $status) {
+        $datos['ticket'] = $this->ticketByServicio($datos['servicio'])["Ticket"];
         $cambiarEstatus = $this->DBS->actualizarServicio('t_servicios_ticket', array(
             'IdEstatus' => $status,
             'FechaConclusion' => $fecha
@@ -2851,6 +2861,15 @@ class Servicio extends General {
             $verificarSeguimiento = $this->verificarServiciosDepartamento($tipo[0]['IdTipoServicio']);
 
             switch ($tipo[0]['IdTipoServicio']) {
+                case '27': case 27:
+                    $titulo = 'Resumen de Servicio - Correctivo Proactivo';
+                    $datosServicio = $this->DBB->getGeneralesServicioGeneral($value['Id']);
+                    if (count($datosServicio) > 0) {
+                        $contenido .= $this->getDetallesSinClasificar($value['Id'], true);
+                    } else {
+                        $contenido .= $this->getDetallesCorrectivo($value['Id']);
+                    }
+                    break;
                 case '20': case 20:
                     $titulo = 'Resumen de Servicio - Correctivo';
                     $contenido .= $this->getDetallesCorrectivo($value['Id']);
@@ -2990,7 +3009,7 @@ class Servicio extends General {
     public function varificarTecnicoPoliza() {
         $usuario = $this->Usuario->getDatosUsuario();
 
-        $tecnicoPoliza = $this->DBS->getServicios('SELECT * FROM cat_v3_usuarios WHERE Id = "' . $usuario['IdPerfil'] . '" AND IdPerfil in(57,64)');
+        $tecnicoPoliza = $this->DBS->getServicios('SELECT * FROM cat_v3_usuarios WHERE Id = "' . $usuario['IdPerfil'] . '" AND IdPerfil in(57,64, 83)');
 
         if ($tecnicoPoliza === FALSE) {
             return TRUE;

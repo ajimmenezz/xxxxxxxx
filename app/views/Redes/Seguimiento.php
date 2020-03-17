@@ -46,6 +46,7 @@
                             <th class="all">Estatus</th>
                             <th class="never">IdEstatus</th>
                             <th class="all">Folio</th>
+                            <th class="all">Complejo</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,6 +63,7 @@
                                 echo '<td>' . $value['IdEstatus'] . '</td>';
                                 ($value['Folio'] === '0') ? $folio = '' : $folio = $value['Folio'];
                                 echo '<td>' . $folio . '</td>';
+                                echo '<td>' . $value['Sucursal'] . '</td>';
                                 echo '</tr>';
                             }
                         }

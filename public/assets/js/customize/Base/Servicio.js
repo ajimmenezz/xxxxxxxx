@@ -431,18 +431,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
 //                    if (respuesta === true) {
                 _this.validarTecnicoPoliza();
 
-                var html = '<div class="row" m-t-10">\n\
-                                        <div id="col-md-12 text-center">\n\
-                                            <div id="campoLapizTecnico"></div>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                    <div class="row m-t-20">\n\
-                                        <div class="col-md-12 text-center">\n\
-                                            <br>\n\
-                                            <label>Firma del técnico</label><br>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                    <br>';
+                var html = '';
 
                 $('#btnModalConfirmar').addClass('hidden');
                 $('#btnModalConfirmar').off('click');
@@ -1206,6 +1195,7 @@ Servicio.prototype.modalCampoFirma = function () {
                                 _this.enviarEvento('/Generales/Servicio/Concluir_SinClasificar', dataMandar, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
                                         $('#modal-dialogo').modal('hide');
+                                        location.reload();
 //                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                     } else {
                                         $('#modal-dialogo').modal('hide');
@@ -1268,6 +1258,7 @@ Servicio.prototype.modalCampoFirma = function () {
                             _this.enviarEvento('/Generales/Servicio/Concluir_SinClasificar', dataMandar, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
                                     $('#modal-dialogo').modal('hide');
+                                    location.reload();
 //                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                 } else {
                                     $('#modal-dialogo').modal('hide');
@@ -1449,10 +1440,10 @@ Servicio.prototype.validarCamposFirma = function () {
     var myBoard = _this.campoLapiz('campoLapiz');
 
     //si es verdadero se creara el campo de la firma del tecnico
-    if (campoFirmaTecnico) {
-        var myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
-
-    }
+//    if (campoFirmaTecnico) {
+//        var myBoardTecnico = _this.campoLapiz('campoLapizTecnico');
+//
+//    }
 
     $('#btnGuardarFirma').off('click');
     $('#btnGuardarFirma').on('click', function () {
@@ -1467,35 +1458,35 @@ Servicio.prototype.validarCamposFirma = function () {
                 if (correo.length > 0) {
                     if (_this.validarCorreoArray(correo)) {
                         if (imgInputFirma !== '') {
-                            if (campoFirmaTecnico) {
-                                var imgFirmaTecnico = myBoardTecnico.getImg();
-                                var imgInputFirmaTecnico = (myBoardTecnico.blankCanvas == imgFirmaTecnico) ? '' : imgFirmaTecnico;
-
+//                            if (campoFirmaTecnico) {
+////                                var imgFirmaTecnico = myBoardTecnico.getImg();
+////                                var imgInputFirmaTecnico = (myBoardTecnico.blankCanvas == imgFirmaTecnico) ? '' : imgFirmaTecnico;
+//
                                 if (encargadoTI === undefined) {
                                     encargadoTI = null
                                 }
 
-                                var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
-                                if (imgInputFirmaTecnico !== '') {
-                                    _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
-                                        if (respuesta === true) {
-                                            if (evidencias != false) {
-                                                _this.enviarEvidenciaAsociado(evidencias);
-                                            } else {
-                                                _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
-                                            }
-                                        } else {
-                                            _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
-                                        }
-                                        myBoard.clearWebStorage();
-                                        myBoardTecnico.clearWebStorage();
-                                    });
-                                } else {
-                                    evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del Tecnico.', 3000);
-                                }
-                            } else {
+//                                var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
+//                                if (imgInputFirmaTecnico !== '') {
+//                                    _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
+//                                        if (respuesta === true) {
+//                                            if (evidencias != false) {
+//                                                _this.enviarEvidenciaAsociado(evidencias);
+//                                            } else {
+//                                                _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+//                                            }
+//                                        } else {
+//                                            _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+//                                        }
+//                                        myBoard.clearWebStorage();
+////                                        myBoardTecnico.clearWebStorage();
+//                                    });
+//                                } else {
+//                                    evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del Tecnico.', 3000);
+//                                }
+//                            } else {
                                 var imgFirmaTecnico = null;
-                                encargadoTI = null;
+//                                encargadoTI = null;
                                 var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
                                 _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
@@ -1508,9 +1499,9 @@ Servicio.prototype.validarCamposFirma = function () {
                                         _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                     }
                                     myBoard.clearWebStorage();
-                                    myBoardTecnico.clearWebStorage();
+//                                    myBoardTecnico.clearWebStorage();
                                 });
-                            }
+//                            }
                         } else {
                             evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma de quien Recibe.', 3000);
                         }
@@ -1519,35 +1510,35 @@ Servicio.prototype.validarCamposFirma = function () {
                     }
                 } else {
                     if (imgInputFirma !== '') {
-                        if (campoFirmaTecnico) {
-                            var imgFirmaTecnico = myBoardTecnico.getImg();
-                            var imgInputFirmaTecnico = (myBoardTecnico.blankCanvas == imgFirmaTecnico) ? '' : imgFirmaTecnico;
+//                        if (campoFirmaTecnico) {
+//                            var imgFirmaTecnico = myBoardTecnico.getImg();
+//                            var imgInputFirmaTecnico = (myBoardTecnico.blankCanvas == imgFirmaTecnico) ? '' : imgFirmaTecnico;
 
                             if (encargadoTI === undefined) {
                                 encargadoTI = null
                             }
 
-                            var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
-                            if (imgInputFirmaTecnico !== '') {
-                                _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
-                                    if (respuesta === true) {
-                                        if (evidencias != false) {
-                                            _this.enviarEvidenciaAsociado(evidencias);
-                                        } else {
-                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
-                                        }
-                                    } else {
-                                        _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
-                                    }
-                                    myBoard.clearWebStorage();
-                                    myBoardTecnico.clearWebStorage();
-                                });
-                            } else {
-                                evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del Tecnico.', 3000);
-                            }
-                        } else {
+//                            var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
+//                            if (imgInputFirmaTecnico !== '') {
+//                                _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
+//                                    if (respuesta === true) {
+//                                        if (evidencias != false) {
+//                                            _this.enviarEvidenciaAsociado(evidencias);
+//                                        } else {
+//                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
+//                                        }
+//                                    } else {
+//                                        _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+//                                    }
+//                                    myBoard.clearWebStorage();
+////                                    myBoardTecnico.clearWebStorage();
+//                                });
+//                            } else {
+//                                evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del Tecnico.', 3000);
+//                            }
+//                        } else {
                             var imgFirmaTecnico = null;
-                            encargadoTI = null;
+//                            encargadoTI = null;
                             var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
                             _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
                                 if (respuesta === true) {
@@ -1560,9 +1551,9 @@ Servicio.prototype.validarCamposFirma = function () {
                                     _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
                                 }
                                 myBoard.clearWebStorage();
-                                myBoardTecnico.clearWebStorage();
+//                                myBoardTecnico.clearWebStorage();
                             });
-                        }
+//                        }
                     } else {
                         evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma de quien Recibe.', 3000);
                     }

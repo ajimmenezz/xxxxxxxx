@@ -22,7 +22,7 @@
                 <li id="btnSubirInformacionSD"><a href="#"><i class="fa fa-cloud-upload"></i> Subir Información SD</a></li>
                 <?php
                 if($datosServicio["IdEstatus"] == 3)
-                    echo '<li id="solicitarTraslado"><a href="#"><i class="fa fa-mail-reply-all"></i> Generar Traslado</a></li>';
+                    echo '<li class="solicitarTraslado"><a href="#"><i class="fa fa-mail-reply-all"></i> Generar Traslado</a></li>';
                 ?>
             </ul>
         </div>
@@ -63,7 +63,14 @@
             <div class="panel-body">
                 <div class="row m-r-10">
                     <div class="col-md-7">
-                        <h3 class="m-t-10">Información Servicio Correctivo</h3>
+                        <?php
+                            if($datosServicio['IdTipoServicio'] == 20){
+                                echo '<h3 class="m-t-10">Información Servicio Correctivo</h3>';
+                            }else{
+                                echo '<h3 class="m-t-10">Información Servicio Proactivo</h3>';
+                            }
+                        ?>
+                        
                     </div>
                     <div class="col-md-5 text-right">
                         <?php
@@ -1351,7 +1358,7 @@
 
                             <ul class="nav nav-pills">
                                 <li class="active"><a href="#entrega-equipo" data-toggle="tab">Entrega del Equipo (Local - Trigo)</a></li>
-                                <li><a href="#eviar-equipo" data-toggle="tab">Enviar Equipo (Foraneo)</a></li>
+                                <li><a href="#eviar-equipo" data-toggle="tab">Enviar Equipo (Foráneo)</a></li>
                                 <li><a href="#entrega-ti" data-toggle="tab">Entrega a TI</a></li>
                             </ul>
                             <div class="tab-content">
@@ -1390,14 +1397,22 @@
                                 </div>
                                 <div class="tab-pane fade" id="eviar-equipo">
                                     <div class="well"> 
-                                        <ul class="nav nav-pills">
+<!--                                        <ul class="nav nav-pills">
                                             <li class="active"><a href="#formaEnvio" data-toggle="tab">Paqueteria o Consolidado</a></li>
                                             <li class=""><a href="#entregaEquipo" data-toggle="tab">Entrega</a></li>
-                                        </ul>
+                                        </ul>-->
+                                        <div id="botonTraslado" class="row m-t-10">
+                                            <div class="col-md-12">
+                                                <div class="form-group text-center">
+                                                    <br>
+                                                    <a id="" href="javascript:;" class="btn btn-primary m-r-5 solicitarTraslado"><i class="fa fa-external-link"></i> Solicitar Traslado</a>                            
+                                                </div>
+                                            </div>
+                                        </div>
+<!--
                                         <div class="tab-content">
                                             <div class="tab-pane fade active in" id="formaEnvio">
-
-                                                <!--Empezando formulario para Consolidado o Paqueteria-->
+                                                Empezando formulario para Consolidado o Paqueteria
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="form-group">
@@ -1420,8 +1435,8 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="inputGuiaGarantia">Guía *</label>
-                                                            <?php (empty($informacion['envioEquipo'][0]['Guia'])) ? $valor = '' : $valor = $informacion['envioEquipo'][0]['Guia']; ?>
-                                                            <input id="inputGuiaGarantia" type="text" class="form-control"  placeholder="Ingrese el dato" value="<?php echo $valor; ?>"/>
+                                                            <?php // (empty($informacion['envioEquipo'][0]['Guia'])) ? $valor = '' : $valor = $informacion['envioEquipo'][0]['Guia']; ?>
+                                                            <input id="inputGuiaGarantia" type="text" class="form-control"  placeholder="Ingrese el dato" value="<?php // echo $valor; ?>"/>
                                                         </div>
                                                     </div>                               
                                                 </div>
@@ -1429,8 +1444,8 @@
                                                     <div class="col-md-12">                                    
                                                         <div class="form-group">
                                                             <label for="inputComentariosEnvioGarantia">Comentarios de Envío</label>
-                                                            <?php (empty($informacion['envioEquipo'][0]['ComentariosEnvio'])) ? $valor = '' : $valor = $informacion['envioEquipo'][0]['ComentariosEnvio']; ?>
-                                                            <textarea id="inputComentariosEnvioGarantia" class="form-control " placeholder="Ingrese los comentarios" rows="3" ><?php echo $valor; ?></textarea>
+                                                            <?php // (empty($informacion['envioEquipo'][0]['ComentariosEnvio'])) ? $valor = '' : $valor = $informacion['envioEquipo'][0]['ComentariosEnvio']; ?>
+                                                            <textarea id="inputComentariosEnvioGarantia" class="form-control " placeholder="Ingrese los comentarios" rows="3" ><?php // echo $valor; ?></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1443,21 +1458,21 @@
                                                     </div>
                                                 </div>
 
-                                                <!--Empezando el mensaje de error-->
+                                                Empezando el mensaje de error
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div id="errorGuardarEnvioGarantia"></div>
                                                     </div>
                                                 </div>
-                                                <!--Finalizando el mensaje de error-->
+                                                Finalizando el mensaje de error
 
-                                                <!--Empezando botones para guardar el envio-->
+                                                Empezando botones para guardar el envio
                                                 <div class="row">
                                                     <div class="col-md-12 text-center m-t-20">
                                                         <button id="btnGuardarEnvioGarantia" type="button" class="btn btn-sm btn-primary" ><i class="fa fa-floppy-o"></i> Guardar Cambios</button>
                                                     </div>
                                                 </div>
-                                                <!--Finalizando botones para guardar el envio-->
+                                                Finalizando botones para guardar el envio
 
                                             </div>
                                             <div class="tab-pane fade" id="entregaEquipo">
@@ -1472,9 +1487,9 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="entregaFechaGarantia">Fecha y Hora *</label>
-                                                            <?php (empty($informacion['envioEquipo'][0]['FechaCapturaRecepcion'])) ? $valor = '' : $valor = $informacion['envioEquipo'][0]['FechaCapturaRecepcion']; ?>
+                                                            <?php // (empty($informacion['envioEquipo'][0]['FechaCapturaRecepcion'])) ? $valor = '' : $valor = $informacion['envioEquipo'][0]['FechaCapturaRecepcion']; ?>
                                                             <div id="entregaFechaGarantia" class="input-group date">
-                                                                <input id="entregaFechaEnvioGarantia" type="text" class="form-control entregaGarantia" placeholder="Fecha" value="<?php echo $valor; ?>" disabled/><span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                                <input id="entregaFechaEnvioGarantia" type="text" class="form-control entregaGarantia" placeholder="Fecha" value="<?php // echo $valor; ?>" disabled/><span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                                             </div>                                           
                                                         </div>
                                                     </div>
@@ -1484,9 +1499,9 @@
                                                             <select id="selectEquipoRespaldoEntregaEnvioGarantia" class="form-control entregaGarantia" style="width: 100%" disabled>
                                                                 <option value="">Seleccionar</option>
                                                                 <?php
-                                                                foreach ($informacion['listaUsuarios'] as $item) {
-                                                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-                                                                }
+//                                                                foreach ($informacion['listaUsuarios'] as $item) {
+//                                                                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+//                                                                }
                                                                 ?>
                                                             </select>
                                                         </div>
@@ -1496,8 +1511,8 @@
                                                     <div class="col-md-12">                                    
                                                         <div class="form-group">
                                                             <label for="inputComentarioEntregaEnvioGarantia">Comentarios de Entrega</label>
-                                                            <?php (empty($informacion['envioEquipo'][0]['ComentariosEntrega'])) ? $valor = '' : $valor = $informacion['envioEquipo'][0]['ComentariosEntrega']; ?>
-                                                            <textarea id="inputComentarioEntregaEnvioGarantia" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" disabled><?php echo $valor; ?></textarea>
+                                                            <?php // (empty($informacion['envioEquipo'][0]['ComentariosEntrega'])) ? $valor = '' : $valor = $informacion['envioEquipo'][0]['ComentariosEntrega']; ?>
+                                                            <textarea id="inputComentarioEntregaEnvioGarantia" class="form-control entregaGarantia" placeholder="Ingrese los comentarios" rows="3" disabled><?php // echo $valor; ?></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1509,24 +1524,24 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!--Empezando el mensaje de error-->
+                                                Empezando el mensaje de error
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div id="errorGuardarEnvioEntregaGarantia"></div>
                                                     </div>
                                                 </div>
-                                                <!--Finalizando el mensaje de error-->
+                                                Finalizando el mensaje de error
 
-                                                <!--Empezando botones para guardar entrega-->
+                                                Empezando botones para guardar entrega
                                                 <div class="row">
                                                     <div class="col-md-12 text-center m-t-20">
                                                         <button id="btnGuardarEnvioEntregaGarantia" type="button" class="btn btn-sm btn-primary entregaGarantia" disabled><i class="fa fa-floppy-o"></i> Guardar Cambios</button>
                                                     </div>
                                                 </div>
-                                                <!--Finalizando botones para guardar entrega-->
-
+                                                Finalizando botones para guardar entrega
                                             </div>
                                         </div>
+-->
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="entrega-ti">

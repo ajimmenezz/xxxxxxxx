@@ -85,6 +85,7 @@ $route['Administrador/Seguimiento/(:any)'] = 'Administrador/Controller_Seguimien
 $route['Poliza/(:any)'] = 'Poliza/Controller_Poliza/desplegarPantalla/$1';
 $route['Poliza/Evento/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
 $route['Poliza/Seguimiento/(:any)'] = 'Poliza/Controller_Seguimiento/manejarEvento/$1';
+$route['Poliza/DeviceTransfer/(:any)'] = 'Poliza/Controller_DeviceTransfer/manejarEvento/$1';
 $route['Poliza/EventoCatalogoRegionesCliente/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
 $route['Poliza/EventoCatalogos/(:any)'] = 'Poliza/Controller_Catalogos/manejarEvento/$1';
 $route['Poliza/ReportesPoliza/(:any)'] = 'Poliza/Controller_ReportesPoliza/manejarEvento/$1';

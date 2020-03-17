@@ -4,7 +4,6 @@ use Controladores\Controller_Base as Base;
 
 class Controller_Seguimiento extends Base
 {
-
     private $Seguimientos;
     private $Servicio;
     private $notas;
@@ -421,6 +420,9 @@ class Controller_Seguimiento extends Base
                 break;
             case 'UploadCensoTemplate':
                 $resultado = $this->Seguimientos->UploadCensoTemplate($this->input->post());
+                break;
+            case 'VerificarDuplicidadCenso':
+                $resultado = $this->Seguimientos->verificarDuplicidadCenso($this->input->post());
                 break;
             default:
                 $resultado = FALSE;
