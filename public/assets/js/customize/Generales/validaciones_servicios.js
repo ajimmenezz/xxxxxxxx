@@ -55,30 +55,60 @@ $(function () {
     var eventosValidacionServicios = function () {
         var datosTablaServicios = arguments[0];
 
+//        $('#btnValidarServicio').on('click', function () {
+//            var modalMensaje = evento.mensajeValidar("¿Realmente quiere Concluir el Servicio?");
+//            $('#btnModalConfirmar').addClass('hidden');
+//            $('#btnModalAbortar').addClass('hidden');
+//            evento.mostrarModal('Advertencia', modalMensaje);
+//            $('#btnModalConfirmar').off('click');
+//            $('#btnAceptarConfirmacion').on('click', function () {
+//                $('#btnAceptarConfirmacion').attr('disabled', 'disabled');
+//                $('#btnCancelarConfirmacion').attr('disabled', 'disabled');
+//                var data = {'servicio': datosTablaServicios[1], ticket: datosTablaServicios[2], idSolicitud: datosTablaServicios[0], servicioConcluir: false};
+//                evento.enviarEvento('Servicio/Verificar_Servicio', data, '#modal-dialogo', function (respuesta) {
+//                    if (respuesta.code === 200) {
+//                        evento.mensajeConfirmacion('Se Valido con Exito', 'Correcto');
+//                    } else {
+//                        evento.mensajeConfirmacion('Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador. (' + respuesta.message + ')', 'Error');
+//                    }
+//                });
+//            });
+//            //Envento para cerrar el modal
+//            $('#btnCancelarConfirmacion').on('click', function () {
+//                evento.cerrarModal();
+//            });
+//        });
+
         $('#btnValidarServicio').on('click', function () {
-            var modalMensaje = evento.mensajeValidar("¿Realmente quiere Concluir el Servicio?");
+            var modalMensaje = evento.mensajeValidar("¿Quiere concluir el Ticket en SD?");
             $('#btnModalConfirmar').addClass('hidden');
             $('#btnModalAbortar').addClass('hidden');
             evento.mostrarModal('Advertencia', modalMensaje);
             $('#btnModalConfirmar').off('click');
+
+            var data = {'servicio': datosTablaServicios[1],
+                ticket: datosTablaServicios[2],
+                idSolicitud: datosTablaServicios[0],
+                servicioConcluir: false};
+
+            $("#btnAceptarConfirmacion").off("click");
             $('#btnAceptarConfirmacion').on('click', function () {
-                $('#btnAceptarConfirmacion').attr('disabled', 'disabled');
-                $('#btnCancelarConfirmacion').attr('disabled', 'disabled');
-                var data = {'servicio': datosTablaServicios[1], ticket: datosTablaServicios[2], idSolicitud: datosTablaServicios[0], servicioConcluir: false};
-                evento.enviarEvento('Servicio/Verificar_Servicio', data, '#modal-dialogo', function (respuesta) {
-                    if (respuesta.code === 200) {
-                        evento.mensajeConfirmacion('Se Valido con Exito', 'Correcto');
-                    } else {
-                        evento.mensajeConfirmacion('Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador. (' + respuesta.message + ')', 'Error');
-                    }
-                });
+                data.concluirSD = true;
+                validarServicio(data);
             });
+
+            $("#btnNoConCluirConfirmacion").off("click");
+            $('#btnNoConCluirConfirmacion').on('click', function () {
+                data.concluirSD = false;
+                validarServicio(data);
+            });
+
             //Envento para cerrar el modal
             $('#btnCancelarConfirmacion').on('click', function () {
                 evento.cerrarModal();
             });
         });
-        
+
         $('#btnRechazarServicio').on('click', function () {
             var modalMensaje = evento.mensajeValidar("¿Realmente quiere rechazar el servicio?");
             $('#btnModalConfirmar').addClass('hidden');
@@ -119,6 +149,19 @@ $(function () {
             $("#seccion-reporte").removeClass("hidden");
         })
     };
+
+    var validarServicio = function (data) {
+        $('#btnAceptarConfirmacion').attr('disabled', 'disabled');
+        $('#btnCancelarConfirmacion').attr('disabled', 'disabled');
+
+        evento.enviarEvento('Servicio/Verificar_Servicio', data, '#modal-dialogo', function (respuesta) {
+            if (respuesta.code === 200) {
+                evento.mensajeConfirmacion('Se Valido con Exito', 'Correcto');
+            } else {
+                evento.mensajeConfirmacion('Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador. (' + respuesta.message + ')', 'Error');
+            }
+        });
+    }
 
     var modalRecharServicio = function () {
         var html = '<div id="seccionRechazarServicio" > ';
