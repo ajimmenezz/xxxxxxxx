@@ -1046,7 +1046,7 @@ class Seguimientos extends General {
                                 ), array('Id' => $datos['servicio']));
                         $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
                         $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
-                        
+
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
                             $this->DBS->actualizarSeguimiento(
@@ -2604,12 +2604,10 @@ class Seguimientos extends General {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
 
         $this->DBS->actualizarSeguimiento(
-            't_servicios_ticket',
-            array(
-                'IdEstatus' => $datos['estatus'],
-                'FechaConclusion' => $fecha
-            ),
-            array('Id' => $datos['servicio'])
+                't_servicios_ticket', array(
+            'IdEstatus' => $datos['estatus'],
+            'FechaConclusion' => $fecha
+                ), array('Id' => $datos['servicio'])
         );
     }
 
@@ -4815,7 +4813,7 @@ class Seguimientos extends General {
         ));
         $data['listRefaccionesUtilizadasServicio'] = $this->DBP->consultaListaRefaccionesUtilizadasServicio($datos['idServicio']);
         $data['cotizacionAnterior'] = $this->DBP->previousQuoteQuery($datos['idServicio']);
-        $data['validatorsSD'] = $this->ServiceDesk->consultarValidadoresTII($this->usuario['SDKey']);                
+        $data['validatorsSD'] = $this->ServiceDesk->consultarValidadoresTII($this->usuario['SDKey']);
         $data['quoteRequest'] = $this->db->getQuoteRequestInfo($datos['idServicio']);
 
         $formulario = array('formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE), 'datos' => $data);
@@ -5277,8 +5275,7 @@ class Seguimientos extends General {
         }
     }
 
-    public function traspasoEquipo(array $datos)
-    {
+    public function traspasoEquipo(array $datos) {
         $idInvetarioOrigen = $this->DBIC->getAlmacenesVirtualesPorUsuario($datos['origenUsuario']);
         $idInvetarioDestino = $this->DBIC->getAlmacenesVirtualesPorUsuario($datos['destinoUsuario']);
 
@@ -5590,6 +5587,8 @@ class Seguimientos extends General {
                 $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
                 $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
                 $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+                
+                $this->validarSDRevisionLaboratorio($datos['idServicio']);
                 $this->toAssignSD(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
                 $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
 
@@ -5616,6 +5615,11 @@ class Seguimientos extends General {
             ];
             return $mensaje;
         }
+    }
+
+    public function validarSDRevisionLaboratorio(string $servicio) {
+        $revisionLaboratorio = $this->db->getLaboratoryRevisionHistory($servicio);
+        var_dump($revisionLaboratorio[0]['IdUsuario']);
     }
 
     public function guardarEnvioLogistica(array $datos) {
@@ -7003,8 +7007,7 @@ class Seguimientos extends General {
         return "http://" . $_SERVER['SERVER_NAME'] . "/" . $ruta;
     }
 
-    private function count_value_in_array($array, $value)
-    {
+    private function count_value_in_array($array, $value) {
         $counts = array_count_values($array);
         return $counts[$value];
     }
