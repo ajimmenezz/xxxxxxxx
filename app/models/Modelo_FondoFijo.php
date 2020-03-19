@@ -811,7 +811,7 @@ class Modelo_FondoFijo extends Modelo_Base
         $ids = implode(",", $empleados);
 
         $condicion = " and tfm.IdUsuarioFondoFijo <> '" . $this->usuario['Id'] . "' ";
-        if (in_array($this->usuario['Id'], [2, 43])) {
+        if (in_array($this->usuario['Id'], [2, 43, 73])) {
             $condicion = "";
         }
 
