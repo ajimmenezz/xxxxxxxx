@@ -181,7 +181,7 @@ class ServiciosTicket extends General
             ' . $whereFolio . '
             and (concat(",",csd.IdDepartamentos,",") like "%,' . $departamento . ',%" or tst.IdTipoServicio = 9) 
             group by tst.Id desc '
-                . $queryUnion;                
+                . $queryUnion;
             return $this->DBST->getServicios($query);
         }
     }
@@ -506,6 +506,7 @@ class ServiciosTicket extends General
                          * que usará algún componente y equipo completo del stock de inventario a consignación
                          */
                         $data['usarStock'] = (in_array(293, $usuario['PermisosAdicionales']) || in_array(293, $usuario['Permisos'])) ? true : false;
+                        $data['usarStock'] = true;
                         if (isset($data['informacion']['informacionDatosGeneralesCorrectivo'][0])) {
                             $data['inventarioComponentes'] = $this->DBA->getComponentesDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $componentesUtilizadosStock);
                             $data['inventarioEquipos'] = $this->DBA->getEquiposDisponiblesParaServicio($usuario['Id'], $data['informacion']['informacionDatosGeneralesCorrectivo'][0]['IdModelo'], $equiposUtilizadosStock);
