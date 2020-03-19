@@ -789,5 +789,51 @@ class Busqueda extends General {
         ];
         return parent::getCI()->load->view("Generales/Modal/tablaServicios", $data, TRUE);
     }
+    
+    public function exportarCenso(array $datos = null){
+        $listaCenso = $this->DBB->getinfoEqiposCenso($datos['servicio']);
+        
+        $host = $_SERVER['SERVER_NAME'];
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $liga = 'http://siccob.solutions';
+        } else {
+            $liga = 'http://' . $host;
+        }
+        
+        if($listaCenso){
+            $this->Excel->createSheet('Censo', 0);
+            $this->Excel->setActiveSheet(0);
+            $arrayTitulos = [
+                'Sucursal',
+                'Área de Atención',
+                'Punto',
+                'Línea de Equipo',
+                'Sublínea de Equipo',
+                'Marca',
+                'Modelo',
+                'Serie',
+                'Terminal'];
+            $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+            $arrayWidth = [30, 15, 8, 20, 20, 20, 30, 30, 20];
+            $this->Excel->setColumnsWidth('A', $arrayWidth);
+            $arrayAlign = ['justify', 'center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
+
+            $this->Excel->setTableContent('A', 1, $listaCenso, true, $arrayAlign);
+            
+            $nombreArchivo = 'Censo-'.$listaCenso[0]['Sucursal'] .'_'. $datos['servicio'] . '.xlsx';
+            $nombreArchivo = trim($nombreArchivo);
+            $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
+
+            $path = "../public/storage/Archivos/Reportes/";
+            if (!is_dir($path)) {
+                mkdir($path, 775, true);
+            }
+            $this->Excel->saveFile($ruta);
+
+            return ['ruta' => $liga . '/storage/Archivos/Reportes/' . $nombreArchivo];
+        } else {
+            return false;
+        }
+    }
 
 }
