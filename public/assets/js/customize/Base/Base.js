@@ -408,9 +408,8 @@ Base.prototype.mensajeValidar = function () {
                       </div>';
     html += '<div class="row m-t-20">\n\
                                 <div class="col-md-12 text-center">\n\
-                                    <button id="btnAceptarConfirmacion" type="button" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Concluir SD</button>\n\
-                                    <button id="btnNoConCluirConfirmacion" type="button" class="btn btn-sm btn-warning"><i class="fa fa-check-square"></i> No Concluir SD</button>\n\
-                                    <button id="btnCancelarConfirmacion" type="button" class="btn btn-sm btn-default"><i class="fa fa-times"></i> Cancelar</button>\n\
+                                    <button id="btnAceptarConfirmacion" type="button" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Aceptar</button>\n\
+                                    <button id="btnCancelarConfirmacion" type="button" class="btn btn-sm btn-warning"><i class="fa fa-times"></i> Cancelar</button>\n\
                                 </div>\n\
                             </div>\n\
                         </div>';
