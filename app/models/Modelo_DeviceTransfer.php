@@ -786,14 +786,12 @@ class Modelo_DeviceTransfer extends Modelo_Base {
     }
 
     public function getLaboratoryRevisionHistory($serviceId) {
-        return $this->consulta("
-        select 
-        estatus(tear.IdEstatus) as Estatus,
-        nombreUsuario(tear.IdUsuario) as Usuario,
-        tear.Fecha
-        from t_equipos_allab_recepciones tear 
-        where tear.IdRegistro = (select Id from t_equipos_allab where IdServicio = '" . $serviceId . "' and IdEstatus <> 6)
-        order by Fecha desc");
+        return $this->consulta("SELECT
+                                tearlh.*
+                                FROM t_equipos_allab_revision_laboratorio_historial tearlh
+                                        INNER JOIN t_equipos_allab_revision_laboratorio tearl
+                                        ON tearlh.IdRevision = tearl.Id
+                                where tearl.IdRegistro = (select Id from t_equipos_allab where IdServicio = '" . $serviceId . "' and IdEstatus <> 6)");
     }
 
 }

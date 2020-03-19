@@ -5148,6 +5148,9 @@ class Seguimientos extends General {
                 $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
                 $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
                 $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+
+
+
                 $this->toAssignSD(array('idStatus' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
                 $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 28, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
 
@@ -5194,8 +5197,12 @@ class Seguimientos extends General {
                 $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
                 $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 48, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
                 $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
-                $this->toAssignSD(array('idStatus' => 48, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
-                $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 48, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+                $asignacionSD = $this->validarSDRevisionLaboratorio($datos['idServicio']);
+
+                if ($asignacionSD) {
+                    $this->toAssignSD(array('idStatus' => 48, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+                    $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 48, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+                }
 
                 $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => $datos['idEstatus']));
                 $mensaje = [
@@ -5584,13 +5591,16 @@ class Seguimientos extends General {
 
             $resultado = $this->DBP->actualizarEquiposAllabRevicionLaboratorio($datos);
             if ($resultado['code'] === 200) {
-                $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
-                $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
-                $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
-                
-                $this->validarSDRevisionLaboratorio($datos['idServicio']);
-                $this->toAssignSD(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
-                $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+                $asignacionSD = $this->validarSDRevisionLaboratorio($datos['idServicio']);
+
+                if ($asignacionSD) {
+                    $textoCorreo = '<p>Se le pide que le dé seguimiento a la solicitud de equipo del servicio: <strong>' . $datos['idServicio'] . '</strong>.</p>';
+                    $dataEmailProfiles = $this->creationOfTeamRequestEmailList(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idTechnical' => $datosAllab[0]['IdUsuario']));
+                    $this->enviarCorreoConcluido($dataEmailProfiles, 'Seguimiento solicitud de equipo', $textoCorreo);
+
+                    $this->toAssignSD(array('idStatus' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento'], 'idService' => $datos['idServicio']));
+                    $this->sendTextSD(array('service' => $datos['idServicio'], 'statusRequest' => 39, 'movementType' => $datosAllab[0]['IdTipoMovimiento']));
+                }
 
                 $formularios = $this->mostrarVistaPorUsuario(array('idServicio' => $datos['idServicio'], 'idEstatus' => 39));
                 $mensaje = [
@@ -5619,7 +5629,12 @@ class Seguimientos extends General {
 
     public function validarSDRevisionLaboratorio(string $servicio) {
         $revisionLaboratorio = $this->db->getLaboratoryRevisionHistory($servicio);
-        var_dump($revisionLaboratorio[0]['IdUsuario']);
+
+        if (!empty($revisionLaboratorio[0]['IdUsuarioSD'])) {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
     }
 
     public function guardarEnvioLogistica(array $datos) {

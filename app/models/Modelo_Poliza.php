@@ -1235,8 +1235,8 @@ class Modelo_Poliza extends Modelo_Base
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','33')
-                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('28','29','33')
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('28','29','33') OR tea.IdEstatus = '2' AND Flag = '1'
+                                        WHEN tea.IdTipoMovimiento = '2' THEN tea.IdEstatus IN ('28','29','33') OR tea.IdEstatus = '2' AND Flag = '1'
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('41')
                                     END)
                                     AND tea.IdEstatus <> '6'");
