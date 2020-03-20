@@ -1482,6 +1482,7 @@ class Seguimientos extends General {
             'IdModelo' => $datos['equipo'],
             'Cantidad' => $datos['cantidad']
         );
+
         $dataCorrectivosProblemas = array(
             'IdServicio' => $datos['servicio'],
             'IdTipoProblema' => '3',
@@ -2000,8 +2001,9 @@ class Seguimientos extends General {
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
+        
         if ($permisoPDF) {
-            $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+            $PDF = '<br>Ver PDF <a href="' . $path["link"] . '" target="_blank">Aquí</a>';
         } else {
             $PDF = '';
         }
