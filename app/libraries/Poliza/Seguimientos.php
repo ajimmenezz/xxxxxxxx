@@ -4882,7 +4882,7 @@ class Seguimientos extends General {
 
         if ($resultado['code'] == 200) {
             $serviceInfo = $this->DBP->getServiceInfo($datos['idServicio']);
-            $pdf = $this->InformacionServicios->definirPDFTraslado(['servicio' =>  $serviceInfo['idServicio'], 'folio' => $serviceInfo['Folio']]);
+            $pdf = $this->InformacionServicios->definirPDFTraslado(['servicio' =>  $datos['idServicio'], 'folio' => $serviceInfo['Folio']]);
 
             if ($serviceInfo['Folio'] > 0) {
                 $sdNote = '<div>' . $datos['comentarios'] . '</div>                
