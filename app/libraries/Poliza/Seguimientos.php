@@ -429,7 +429,8 @@ class Seguimientos extends General {
                                                                 ON cvmeq.Id = Marca
                                                             INNER JOIN cat_v3_sublineas_equipo cvse
                                                                 ON cvse.Id = Sublinea
-                                                            WHERE cvme.Id = "' . $datos['equipo'] . '"');
+                                                            WHERE cvme.Id = "' . $datos['equipo'] . '"
+                                                            AND cvme.Flag = "1"');
         if ($idLinea[0]['Linea'] === '1') {
             $lineas = '1,10';
         } else {
