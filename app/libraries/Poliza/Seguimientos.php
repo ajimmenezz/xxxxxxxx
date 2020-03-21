@@ -4880,6 +4880,26 @@ class Seguimientos extends General {
 
         $resultado = $this->DBP->insertarEquiposAllabRevicionLaboratorioHistorial($datos);
 
+        if ($resultado['code'] == 200) {
+            $serviceInfo = $this->DBP->getServiceInfo($datos['idServicio']);
+            $pdf = $this->InformacionServicios->definirPDFTraslado(['servicio' =>  $serviceInfo['idServicio'], 'folio' => $serviceInfo['Folio']]);
+
+            if ($serviceInfo['Folio'] > 0) {
+                $sdNote = '<div>' . $datos['comentarios'] . '</div>                
+                <div>
+                    Se agrega el link del archivo que contiene la información del traslado del equipo al laboratorio, asi como las observaciones de cada área
+                </div>
+                <div>
+                    <a target="_blank" href="http://' . $_SERVER['SERVER_NAME'] . $pdf . '">DOCUMENTO PDF</a>
+                </div>';
+                $this->ServiceDesk->setNoteServiceDesk($usuario['SDKey'], $serviceInfo['Folio'], $sdNote);                
+            }
+
+            return ['code' => 200, 'file' => $pdf];
+        } else {
+            return $resultado;
+        }
+
         return $resultado;
     }
 

@@ -2579,4 +2579,15 @@ class Modelo_Poliza extends Modelo_Base {
         return $consulta;
     }
 
+    public function getServiceInfo($serviceId) {
+        return $this->consulta("
+        select 
+        tst.Id as IdServicio,
+        ts.*,
+        tst.* 
+        from t_solicitudes ts 
+        inner join t_servicios_ticket tst on ts.Id = tst.IdSolicitud 
+        where tst.Id = '" . $serviceId . "'")[0];
+    }
+
 }
