@@ -4892,7 +4892,7 @@ class Seguimientos extends General {
                 <div>
                     <a target="_blank" href="http://' . $_SERVER['SERVER_NAME'] . $pdf . '">DOCUMENTO PDF</a>
                 </div>';
-                $this->ServiceDesk->setNoteServiceDesk($usuario['SDKey'], $serviceInfo['Folio'], $sdNote);                
+                $this->ServiceDesk->setNoteServiceDesk($usuario['SDKey'], $movementInfo[0]['Folio'], $sdNote);                
             }
 
             return ['code' => 200, 'file' => $pdf];
