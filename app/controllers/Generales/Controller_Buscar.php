@@ -41,6 +41,9 @@ class Controller_Buscar extends Base{
             case 'Detalles':
                 $resultado = $this->busqueda->detalles($this->input->post());
                 break;
+            case 'ExportarCenso':
+                $resultado = $this->busqueda->exportarCenso($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

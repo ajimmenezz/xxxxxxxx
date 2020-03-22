@@ -292,6 +292,7 @@
                         Acciones <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
+                        <li id="btnDownloadTemplateCenso" class="hidden"><a href="#"><i class="fa fa-download"></i> Exportar Excel</a></li>
                         <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
                         <li id="btnExportarPdf" data-id-servicio=""><a href="#"><i class="fa fa-file-pdf-o"></i> Exportar Pdf</a></li>
                         <li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>

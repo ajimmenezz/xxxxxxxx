@@ -5972,7 +5972,7 @@ $(function() {
       evento.enviarEvento(
         "Seguimiento/ConsultaAtiendeAlmacen",
         {},
-        "#confirmarSolicitud",
+        "#modal-dialogo",
         function(respuesta) {
           $("#selectAtiendeSolcitud").removeAttr("disabled", "disabled");
           $("#selectAtiendeSolcitud")
@@ -8047,7 +8047,7 @@ $(function() {
     file.enviarArchivos(
       "#evidenciasAutorizacion",
       "Seguimiento/guardarInformacionEquipoRespaldo",
-      "#formularioPersonalAutoriza",
+      "#modal-dialogo",
       data,
       function(respuesta) {
         $("#btnGuardarAutorizacion").removeClass("disabled");
@@ -8135,7 +8135,7 @@ $(function() {
   };
   var guardarSolicitudEquipoRespaldo = function() {
     var data = arguments[0];
-    $("#btnModalConfirmar").addClass("disabled");
+//    $("#btnModalConfirmar").addClass("disabled");
     if (
       validarCampos(
         $("#selectAtiendeSolcitud").val(),
@@ -8156,7 +8156,7 @@ $(function() {
       evento.enviarEvento(
         "Seguimiento/guardarCrearSolicitarEquipoRespaldo",
         dataEquipoRespaldo,
-        "#confirmarSolicitud",
+        "#modal-dialogo",
         function(respuesta) {
           $("#btnModalConfirmar").removeClass("disabled");
           if (respuesta instanceof Array || respuesta instanceof Object) {

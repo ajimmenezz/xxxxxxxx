@@ -56,35 +56,43 @@ $(function () {
         var datosTablaServicios = arguments[0];
 
         $('#btnValidarServicio').on('click', function () {
-            var modalMensaje = evento.mensajeValidar("¿Realmente quiere Concluir el Servicio?");
+            var modalMensaje = mensajeValidarServicio("¿Quiere concluir el Ticket en SD?");
             $('#btnModalConfirmar').addClass('hidden');
             $('#btnModalAbortar').addClass('hidden');
             evento.mostrarModal('Advertencia', modalMensaje);
             $('#btnModalConfirmar').off('click');
+
+            var data = {'servicio': datosTablaServicios[1],
+                ticket: datosTablaServicios[2],
+                idSolicitud: datosTablaServicios[0],
+                servicioConcluir: false};
+
+            $("#btnAceptarConfirmacion").off("click");
             $('#btnAceptarConfirmacion').on('click', function () {
-                $('#btnAceptarConfirmacion').attr('disabled', 'disabled');
-                $('#btnCancelarConfirmacion').attr('disabled', 'disabled');
-                var data = {'servicio': datosTablaServicios[1], ticket: datosTablaServicios[2], idSolicitud: datosTablaServicios[0], servicioConcluir: false};
-                evento.enviarEvento('Servicio/Verificar_Servicio', data, '#modal-dialogo', function (respuesta) {
-                    if (respuesta.code === 200) {
-                        evento.mensajeConfirmacion('Se Valido con Exito', 'Correcto');
-                    } else {
-                        evento.mensajeConfirmacion('Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador. (' + respuesta.message + ')', 'Error');
-                    }
-                });
+                data.concluirSD = true;
+                validarServicio(data);
             });
+
+            $("#btnNoConCluirConfirmacion").off("click");
+            $('#btnNoConCluirConfirmacion').on('click', function () {
+                data.concluirSD = false;
+                validarServicio(data);
+            });
+
             //Envento para cerrar el modal
             $('#btnCancelarConfirmacion').on('click', function () {
                 evento.cerrarModal();
             });
         });
-        
+
         $('#btnRechazarServicio').on('click', function () {
             var modalMensaje = evento.mensajeValidar("¿Realmente quiere rechazar el servicio?");
             $('#btnModalConfirmar').addClass('hidden');
             $('#btnModalAbortar').addClass('hidden');
             evento.mostrarModal('Advertencia', modalMensaje);
             $('#btnModalConfirmar').off('click');
+            
+            $("#btnAceptarConfirmacion").off("click");
             $('#btnAceptarConfirmacion').on('click', function () {
                 var formularioRechazarServicio = modalRecharServicio();
                 $('#btnModalConfirmar').addClass('hidden');
@@ -119,6 +127,40 @@ $(function () {
             $("#seccion-reporte").removeClass("hidden");
         })
     };
+    
+    var mensajeValidarServicio = function () {
+    var mensaje = arguments[0];
+    $('#btnModalConfirmar').addClass('hidden');
+    $('#btnModalAbortar').addClass('hidden');
+    var html = '<div id="seccionConfirmacion" >\n\
+                        <div class="row">\n\
+                            <div id="mensaje-modal" class="col-md-12 text-center">\n\
+                                <h3>' + mensaje + '</h3>\n\
+                            </div>\n\
+                      </div>';
+    html += '<div class="row m-t-20">\n\
+                                <div class="col-md-12 text-center">\n\
+                                    <button id="btnAceptarConfirmacion" type="button" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Concluir SD</button>\n\
+                                    <button id="btnNoConCluirConfirmacion" type="button" class="btn btn-sm btn-warning"><i class="fa fa-check-square"></i> No Concluir SD</button>\n\
+                                    <button id="btnCancelarConfirmacion" type="button" class="btn btn-sm btn-default"><i class="fa fa-times"></i> Cancelar</button>\n\
+                                </div>\n\
+                            </div>\n\
+                        </div>';
+    return html;
+};
+
+    var validarServicio = function (data) {
+        $('#btnAceptarConfirmacion').attr('disabled', 'disabled');
+        $('#btnCancelarConfirmacion').attr('disabled', 'disabled');
+
+        evento.enviarEvento('Servicio/Verificar_Servicio', data, '#modal-dialogo', function (respuesta) {
+            if (respuesta.code === 200) {
+                evento.mensajeConfirmacion('Se Valido con Exito', 'Correcto');
+            } else {
+                evento.mensajeConfirmacion('Ocurrió un error al subir la información. Intente de nuevo o contacte al administrador. (' + respuesta.message + ')', 'Error');
+            }
+        });
+    }
 
     var modalRecharServicio = function () {
         var html = '<div id="seccionRechazarServicio" > ';
