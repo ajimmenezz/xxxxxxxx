@@ -2951,6 +2951,7 @@ class Seguimientos extends General
         } else if (in_array('309', $usuario['PermisosAdicionales']) || in_array('309', $usuario['Permisos'])) {
             switch ($idPerfil) {
                 case '51':
+                case '61': 
                 case '62': // Almacen
                     $datosServicio = $this->DBP->consultaTablaServicioAllabPerfilAlmacen(); // Todas las Solicitudes de equipo
                     break;
@@ -2993,6 +2994,7 @@ class Seguimientos extends General
                     return $this->formulariosTecnico($datos, $idEstatus, $flag, $permisos, $permisosAdionales);
                     break;
                 case '51':
+                case '61': // Almacen
                 case '62': // Almacen
                     if ($idEstatus === '2' && $flag === '0') {
                         if ($estatus['IdTipoMovimiento'] === '2') {
