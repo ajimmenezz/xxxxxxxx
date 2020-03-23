@@ -605,4 +605,24 @@ class ServiceDesk extends General
         $this->validarError($datosSD);
         return $datosSD;
     }
+
+    public function cambiarReporteFalsoServiceDesk(string $key, string $folio, string $reporteFalso) {
+        $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio;
+        $input_data = ''
+                . '{'
+                . ' "operation": {'
+                . '     "details": {'
+                . '             "Reporte en Falso": "' . $reporteFalso . '"
+                    }'
+                . ' }'
+                . '}';
+        $FIELDS = "format=json&"
+                . "OPERATION_NAME=EDIT_REQUEST&"
+                . "INPUT_DATA=" . urlencode($input_data) . "&"
+                . "TECHNICIAN_KEY=" . $key;
+
+        $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
+        return $datosSD;
+    }
+
 }

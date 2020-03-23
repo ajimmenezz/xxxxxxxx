@@ -88,7 +88,7 @@ if (!empty($datosValidacion)) {
                         if (empty($componentesEquipo)) {
                             if ($cotizacionAnterior[0]['Total'] <= 0) {
                         ?>
-                                <a id="btnSolicitarCotizacionRevisionLaboratorio" class="btn btn-primary f-s-13"><i class="fa fa-usd"></i> Solicitar Cotización</a>
+                                <!--<a id="btnSolicitarCotizacionRevisionLaboratorio" class="btn btn-primary f-s-13"><i class="fa fa-usd"></i> Solicitar Cotización</a>-->
                             <?php
                             }
                         } else {
