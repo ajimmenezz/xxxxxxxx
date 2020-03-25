@@ -1635,7 +1635,7 @@ class Servicio extends General {
     public function Concluir_SinClasificar(array $datos = null) {
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        $evidenciasAnteriores = '';
+        
         $consulta = $this->DBS->consultaGeneral('SELECT Id, Archivos FROM t_servicios_generales WHERE IdServicio =' . $datos['servicio']);
 
         $verificarServicioSinClaficar = $this->DBS->consultaGeneral('SELECT 
@@ -1676,7 +1676,7 @@ class Servicio extends General {
                     $datosConcluir = array($datos['datosConcluir']);
                 }
 
-                if ($verificarServicioSinClaficar[0]['IdTipoServicio'] === '41') {
+                if ($tipoServicio === '41') {
                     if ($datos['perfil'] != 54 || $datos['perfil'] != 78) {
                         $cambiarEstatus = $this->cambiarEstatus($fecha, $datos, NULL, '4');
                     }
