@@ -1966,6 +1966,9 @@ class Catalogo extends General
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus ' . $flag . ' order by Nombre');
                 break;
+            case '4';
+                return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus WHERE Descripcion = "Inventario Virtual"');
+                break;
             case '5';
                 return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus where Id not in (11,13) order by Nombre');
                 break;

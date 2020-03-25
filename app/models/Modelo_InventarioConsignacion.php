@@ -779,4 +779,8 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
+    public function editarEstatusAlmacen(array $datos) {
+        $respuesta = $this->actualizar("t_inventario", ['IdEstatus' => $datos['idEstatus']], ['Id' => $datos['idInventario']]);
+    }
+
 }

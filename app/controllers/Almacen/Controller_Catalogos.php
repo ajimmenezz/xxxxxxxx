@@ -174,6 +174,9 @@ class Controller_Catalogos extends Base {
             case 'MostrarHistorialEquipo':
                 $resultado = $this->catalogosAlmacen->mostrarHistorialEquipo($this->input->post());
                 break;
+            case 'CambiarEstatus':
+                $resultado = $this->catalogosAlmacen->cambiarEstatus($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
