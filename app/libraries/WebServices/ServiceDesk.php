@@ -164,7 +164,7 @@ class ServiceDesk extends General {
         $datosSD = $this->getDatosSD($this->Url . '/' . $folio . '?' . $this->FIELDS);
 
         if ($datosSD !== NULL) {
-//            $this->validarError($datosSD);
+            $this->validarError($datosSD);
         } else {
             $datosSD = 'Sin respuesta con ServiceDesk';
         }

@@ -156,11 +156,13 @@ class InformacionServicios extends General {
                 $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
             } else {
                 if (!empty($servicios)) {
-                    foreach ($servicios as $key => $value) {
-                        if ($value['IdEstatus'] === '3') {
+                    if ($datos['concluirSD']) {
+                        foreach ($servicios as $key => $value) {
+                            if ($value['IdEstatus'] === '3') {
 //                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
-                        } else {
-                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
+                            } else {
+                                $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
+                            }
                         }
                     }
                     $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
@@ -844,9 +846,9 @@ class InformacionServicios extends General {
                 );
                 $servicios = $this->verificarTodosServiciosFolio($datos);
 
-                if ($concluirSD) {
-                    $this->cambiarEstatusResolucionSD($datos, $servicios);
-                }
+                $datos['concluirSD'] = $concluirSD;
+
+                $this->cambiarEstatusResolucionSD($datos, $servicios);
             }
         }
         return ['code' => 200, 'message' => 'correcto'];
@@ -1015,7 +1017,7 @@ class InformacionServicios extends General {
         } else {
             $servicioConcluir = FALSE;
         }
-        
+
         if (isset($datos['concluirSD']) && $datos['concluirSD'] === 'true') {
             $concluirSD = TRUE;
         } else {
