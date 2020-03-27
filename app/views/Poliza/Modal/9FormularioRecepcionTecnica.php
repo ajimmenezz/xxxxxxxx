@@ -82,11 +82,11 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelectInput ?>">
-                                <label class="f-w-600 f-s-13">Evidencia de recepción *</label> 
+                                <label class="f-w-600 f-s-13">Evidencia de recepción</label> 
                                 <input id="evidenciaRecepcionTecnico"  name="evidenciaRecepcionTecnico[]" type="file" multiple />
                             </div>
                             <div class="form-group <?php echo $mostrarInputFile ?>">
-                                <label class="f-w-600 f-s-13">Evidencia de recepción *</label>      
+                                <label class="f-w-600 f-s-13">Evidencia de recepción</label>      
                                 <div id="" class=" evidencia">
                                     <?php
                                     $archivosEnvia = explode(',', $archivoRecepcion);

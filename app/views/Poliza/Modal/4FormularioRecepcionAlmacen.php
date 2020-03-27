@@ -5,18 +5,10 @@ if (!empty($datosRecepcion['recepcion'])) {
         $fecha = $value['Fecha'];
         $mostrarSelect = "hidden";
         $mostrarInput = "";
-
-        if (!empty($value['Archivos'])) {
-            $archivoRecepcion = $value['Archivos'];
-            $mostrarInputFile = "";
-            $mostrarSelectInput = "hidden";
-            $mostrarAdjuntos = "disabled";
-        } else {
-            $archivoRecepcion = "";
-            $mostrarInputFile = "hidden";
-            $mostrarSelectInput = "";
-            $mostrarAdjuntos = "";
-        }
+        $archivoRecepcion = $value['Archivos'];
+        $mostrarInputFile = "";
+        $mostrarSelectInput = "hidden";
+        $mostrarAdjuntos = "disabled";
     }
 } else {
     $nombreRecibe = "";
@@ -86,48 +78,50 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelectInput ?>">
-                                <label class="f-w-600 f-s-13">Evidencia de recepción *</label> 
+                                <label class="f-w-600 f-s-13">Evidencia de recepción</label> 
                                 <input id="evidenciaRecepcionAlmacen"  name="evidenciaRecepcionAlmacen[]" type="file" multiple />
                             </div>
                             <div class="form-group <?php echo $mostrarInputFile ?>">
-                                <label class="f-w-600 f-s-13">Evidencia de recepción *</label>      
+                                <label class="f-w-600 f-s-13">Evidencia de recepción</label>      
                                 <div id="" class=" evidencia">
                                     <?php
-                                    $archivosEnvia = explode(',', $archivoRecepcion);
-                                    foreach ($archivosEnvia as $value) {
-                                        $pathInfo = pathinfo($value);
-                                        if (array_key_exists("extension", $pathInfo)) {
-                                            switch (strtolower($pathInfo['extension'])) {
-                                                case 'doc': case 'docx':
-                                                    $scr = '/assets/img/Iconos/word_icon.png';
-                                                    break;
-                                                case 'xls': case 'xlsx':
-                                                    $scr = '/assets/img/Iconos/excel_icon.png';
-                                                    break;
-                                                case 'pdf':
-                                                    $scr = '/assets/img/Iconos/pdf_icon.png';
-                                                    break;
-                                                case 'jpg': case 'jpeg': case 'bmp': case 'gif': case 'png':
-                                                    $scr = $value;
-                                                    break;
-                                                default :
-                                                    $scr = '/assets/img/Iconos/file_icon.png';
-                                                    break;
+                                    if (!empty($archivoRecepcion)) {
+                                        $archivosEnvia = explode(',', $archivoRecepcion);
+                                        foreach ($archivosEnvia as $value) {
+                                            $pathInfo = pathinfo($value);
+                                            if (array_key_exists("extension", $pathInfo)) {
+                                                switch (strtolower($pathInfo['extension'])) {
+                                                    case 'doc': case 'docx':
+                                                        $scr = '/assets/img/Iconos/word_icon.png';
+                                                        break;
+                                                    case 'xls': case 'xlsx':
+                                                        $scr = '/assets/img/Iconos/excel_icon.png';
+                                                        break;
+                                                    case 'pdf':
+                                                        $scr = '/assets/img/Iconos/pdf_icon.png';
+                                                        break;
+                                                    case 'jpg': case 'jpeg': case 'bmp': case 'gif': case 'png':
+                                                        $scr = $value;
+                                                        break;
+                                                    default :
+                                                        $scr = '/assets/img/Iconos/file_icon.png';
+                                                        break;
+                                                }
+                                            } else {
+                                                $scr = '/assets/img/Iconos/file_icon.png';
                                             }
-                                        } else {
-                                            $scr = '/assets/img/Iconos/file_icon.png';
-                                        }
 
-                                        if (strtolower($pathInfo['extension']) === 'jpg' || strtolower($pathInfo['extension']) === 'jpeg' || strtolower($pathInfo['extension']) === 'bmp' || strtolower($pathInfo['extension']) === 'gif' || strtolower($pathInfo['extension']) === 'png') {
-                                            ?>
-                                            <a class="m-l-5 m-r-5" href="<?php echo $scr ?>" data-lightbox="image-<?php echo$scr ?>">
-                                                <img src="<?php echo $scr ?>" style="max-height:115px !important;" />
-                                            </a>
-                                            <?php
-                                        } else {
-                                            ?>
-                                            <a href="<?php echo $value ?>" target="_blank"><img src="<?php echo $scr ?>" style="max-height:115px !important;" /></a>
-                                            <?php
+                                            if (strtolower($pathInfo['extension']) === 'jpg' || strtolower($pathInfo['extension']) === 'jpeg' || strtolower($pathInfo['extension']) === 'bmp' || strtolower($pathInfo['extension']) === 'gif' || strtolower($pathInfo['extension']) === 'png') {
+                                                ?>
+                                                <a class="m-l-5 m-r-5" href="<?php echo $scr ?>" data-lightbox="image-<?php echo$scr ?>">
+                                                    <img src="<?php echo $scr ?>" style="max-height:115px !important;" />
+                                                </a>
+                                                <?php
+                                            } else {
+                                                ?>
+                                                <a href="<?php echo $value ?>" target="_blank"><img src="<?php echo $scr ?>" style="max-height:115px !important;" /></a>
+                                                <?php
+                                            }
                                         }
                                     }
                                     ?>

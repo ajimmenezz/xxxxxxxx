@@ -82,7 +82,7 @@ if (!empty($datosRecepcion['recepcionProblema'])) {
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group <?php echo $mostrarSelectInput ?>">
-                                <label class="f-w-600 f-s-13">Evidencia de recepción *</label> 
+                                <label class="f-w-600 f-s-13">Evidencia de recepción</label> 
                                 <input id="evidenciaRecepcionLab"  name="evidenciaRecepcionLab[]" type="file" multiple />
                             </div>
                             <div class="form-group <?php echo $mostrarInputFile ?>">
