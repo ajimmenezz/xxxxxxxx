@@ -431,10 +431,14 @@ class Seguimientos extends General {
                                                                 ON cvse.Id = Sublinea
                                                             WHERE cvme.Id = "' . $datos['equipo'] . '"
                                                             AND cvme.Flag = "1"');
-        if ($idLinea[0]['Linea'] === '1') {
-            $lineas = '1,10';
+        if (!empty($idLinea)) {
+            if ($idLinea[0]['Linea'] === '1') {
+                $lineas = '1,10';
+            } else {
+                $lineas = $idLinea[0]['Linea'];
+            }
         } else {
-            $lineas = $idLinea[0]['Linea'];
+            $lineas = '""';
         }
 
         $consulta = $this->DBS->consultaGeneralSeguimiento('select 
@@ -1044,7 +1048,7 @@ class Seguimientos extends General {
                                 ), array('Id' => $datos['servicio']));
                         $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
                         $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
-                        
+
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
                             $this->DBS->actualizarSeguimiento(
@@ -2002,7 +2006,7 @@ class Seguimientos extends General {
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-        
+
         if ($permisoPDF) {
             $PDF = '<br>Ver PDF <a href="' . $path["link"] . '" target="_blank">Aquí</a>';
         } else {
