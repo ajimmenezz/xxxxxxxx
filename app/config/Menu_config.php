@@ -2287,6 +2287,24 @@ $config['Laboratorio'] = array(
             'jquery-tag-it/js/tag-it.min'
         ),
         'Permiso' => 'VLASE'
+    ),
+    'Seguimiento-Rehabilitacion' => array(
+        'liga' => 'Rehabilitación de Equipos',
+        'icono' => '',
+        'Url' => '/Laboratorio/SeguimientoRehabilitacion',
+        'css' => array(
+            
+        ),
+        'pluginsCss' => array(
+            
+        ),
+        'js' => array(
+            'Base/Base', 'Laboratorio/SeguimientoRehabilitacion'
+        ),
+        'pluginsJs' => array(
+            
+        ),
+        'Permiso' => 'VRHPV'
     )
 );
 
