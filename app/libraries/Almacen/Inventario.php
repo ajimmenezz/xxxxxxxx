@@ -17,7 +17,7 @@ class Inventario{
     }
     
     public function getInventarioId(string $idInventario) {
-        return $this->DBI->getInventarioUsuario($idInventario);
+        return $this->DBI->getInventarioId($idInventario);
     }
 
 }

@@ -21,7 +21,16 @@ class Rehabilitacion extends General {
         
         
         //IniciaPruebas
-        $this->inventario->getInventarioId(array());
+        $data = array();
+        
+        $inventario = $this->inventario->getInventarioId('19550');
+        $data['infoBitacora']['id'] = $inventario[0]['Id'];
+        $data['infoBitacora']['modelo'] = $inventario[0]['Producto'];
+        $data['infoBitacora']['serie'] = $inventario[0]['Serie'];
+        $data['infoBitacora']['estatus'] = $inventario[0]['Estatus'];
+        $data['infoBitacora']['ticketFolio'] = '0';
+        $data['infoBitacora']['comentarios'] = array();
+        var_dump($data);
         //TerminaPruebas
         return $this->inventario->getInventarioUsuario($usuario['Id']);
     }
