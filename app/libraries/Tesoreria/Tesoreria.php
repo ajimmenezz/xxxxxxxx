@@ -461,15 +461,15 @@ class Tesoreria extends General {
 //                return 'La etiqueta Clave de Unidad no existe';
 //            }
 
-            if (isset($nodoConcepto["@attributes"]['ClaveProdServ'])) {
-                if (in_array($nodoConcepto["@attributes"]['ClaveProdServ'], $arrayCatalogoServicio)) {
-                    $resultadoConcepto = TRUE;
-                } else {
-                    return 'La Clave(s) del producto y/o servicio es incorrecto';
-                }
-            } else {
-                return 'La etiqueta La Clave(s) del producto y/o servicio no existe';
-            }
+//            if (isset($nodoConcepto["@attributes"]['ClaveProdServ'])) {
+//                if (in_array($nodoConcepto["@attributes"]['ClaveProdServ'], $arrayCatalogoServicio)) {
+//                    $resultadoConcepto = TRUE;
+//                } else {
+//                    return 'La Clave(s) del producto y/o servicio es incorrecto';
+//                }
+//            } else {
+//                return 'La etiqueta La Clave(s) del producto y/o servicio no existe';
+//            }
 
             if (isset($nodoConcepto["@attributes"]['Descripcion'])) {
                 $stringTicket = strpos($nodoConcepto["@attributes"]['Descripcion'], 'TICKET');
