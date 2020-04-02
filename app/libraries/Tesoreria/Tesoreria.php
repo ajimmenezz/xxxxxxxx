@@ -500,26 +500,42 @@ class Tesoreria extends General {
 
     public function totalVueltasFactura(array $datos) {
         $totalFactura = 0;
-        $iva = $this->ivaOutsorcing();
+        $ivaVuelta = $this->ivaOutsorcingVuelta();
+        $ivaViatico = $this->ivaOutsorcingViatico();
 
         foreach ($datos as $k => $v) {
-            $montoIvaVuelta = number_format($v['Monto'] * $iva / 100, 2);
+            $montoIvaVuelta = number_format($v['Monto'] * $ivaVuelta / 100, 2);
             $montoIvaVuelta = str_replace(',', '', $montoIvaVuelta);
             $totalIvaMontoVuelta = $v['Monto'] + (float) $montoIvaVuelta;
-            $sumaMontoViatico = $totalIvaMontoVuelta + $v['Viatico'];
+            $viaticoIvaVuelta = number_format($v['Viatico'] * $ivaViatico / 100, 2);
+            $viaticoIvaVuelta = str_replace(',', '', $viaticoIvaVuelta);
+            $totalIvaViaticoVuelta = $v['Viatico'] + (float) $viaticoIvaVuelta;
+            $sumaMontoViatico = $totalIvaMontoVuelta + $totalIvaViaticoVuelta;
             $totalFactura = $totalFactura + $sumaMontoViatico;
         }
 
         return (float) $totalFactura;
     }
 
-    public function ivaOutsorcing() {
+    public function ivaOutsorcingVuelta() {
         $usuario = $this->Usuario->getDatosUsuario();
 
         if ($usuario['Id'] === '119') {
             $iva = 5;
         } else {
             $iva = 10;
+        }
+
+        return $iva;
+    }
+    
+    public function ivaOutsorcingViatico() {
+        $usuario = $this->Usuario->getDatosUsuario();
+
+        if ($usuario['Id'] === '119') {
+            $iva = 8;
+        } else {
+            $iva = 16;
         }
 
         return $iva;
