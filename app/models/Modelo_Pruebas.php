@@ -14,7 +14,8 @@ class Modelo_Pruebas extends Modelo_Base
         $this->user = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
-    public function getActivePersonal(){
+    public function getActivePersonal()
+    {
         return $this->consulta("
         select 
         cu.Id,
@@ -29,5 +30,40 @@ class Modelo_Pruebas extends Modelo_Base
         where cu.IdPerfil in (39,46,51,52,57,59,64,83) 
         and cu.Flag = 1
         order by Nombre, ApPaterno, ApMaterno");
+    }
+
+    public function branches()
+    {
+        return $this->consulta("
+        select
+        cs.Id,
+        cs.Nombre,
+        concat(
+            cs.Calle,
+            ' ',
+            if(NoExt like '%sn%', '', concat('#',cs.NoExt)),
+            ', ',
+            cc.Nombre,
+            ', ',
+            cm.Nombre,
+            ', ',
+            ce.Nombre
+        ) as Direccion
+        from cat_v3_sucursales cs
+        inner join cat_v3_paises cp on cp.Id = cs.IdPais
+        inner join cat_v3_estados ce on ce.Id = cs.IdEstado
+        inner join cat_v3_municipios cm on cm.Id = cs.IdMunicipio
+        inner join cat_v3_colonias cc on cc.Id = cs.IdColonia
+        where cs.IdCliente = 1
+        and cs.Flag = 1 
+        and cs.Latitud is null");
+    }
+
+    public function updateBranchGeoloc($branchId, $lat, $lon)
+    {
+        $this->actualizar("cat_v3_sucursales", [
+            'Latitud' => $lat, 
+            'Longitud' => $lon
+        ], ['Id' => $branchId]);
     }
 }
