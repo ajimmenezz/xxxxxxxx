@@ -3,10 +3,11 @@
 namespace Librerias\Laboratorio;
 
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\Almacen\Inventario as Inventario;
 
 class Rehabilitacion extends General {
 
-    private $DBI;
+    private $inventario;
 
     public function __construct() {
         parent::__construct();
@@ -16,7 +17,15 @@ class Rehabilitacion extends General {
 
     public function getAlmacenUsuario() {
         $usuario = $this->Usuario->getDatosUsuario();
-        return $this->DBI->getAlmacenUsuario($usuario['Id']);
+        $this->inventario = new Inventario();
+        
+        
+        //IniciaPruebas
+        $this->inventario->getInventarioId(array());
+        //TerminaPruebas
+        return $this->inventario->getInventarioUsuario($usuario['Id']);
     }
+    
+    
 
 }
