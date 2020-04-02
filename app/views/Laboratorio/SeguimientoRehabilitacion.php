@@ -52,11 +52,6 @@
                     </table>
                 </div>
             </div>
-<!--            <pre>
-                <?php
-//                var_dump($datos['equipos']);
-                ?>
-            </pre>-->
         </div>
         <!--Finalizando cuerpo del panel-->
     </div>
