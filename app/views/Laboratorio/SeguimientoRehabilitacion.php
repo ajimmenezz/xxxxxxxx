@@ -37,6 +37,17 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php
+                                foreach ($datos['data'] as $value) {
+                                    echo "<tr>";
+                                        echo '<td>'.$value['Id'].'</td>';
+                                        echo '<td>'.$value['Producto'].'</td>';
+                                        echo '<td>'.$value['Serie'].'</td>';
+                                        echo '<td>'.$value['Estatus'].'</td>';
+                                        echo '<td>0</td>';
+                                    echo "</tr>";
+                                }
+                            ?>
                         </tbody>
                     </table>
                 </div>
