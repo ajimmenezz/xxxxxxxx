@@ -779,4 +779,33 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
+    public function editarEstatusAlmacen(array $datos) {
+        $respuesta = $this->actualizar("t_inventario", ['IdEstatus' => $datos['idEstatus']], ['Id' => $datos['idInventario']]);
+    }
+    
+    public function getAlmacenUsuario(string $usuario) {
+        $consulta = $this->consulta("SELECT 
+                                        inve.Id,
+                                        CASE inve.IdtipoProducto
+                                            WHEN 1 THEN MODELO(inve.IdProducto)
+                                        END AS Producto,
+                                        Serie,
+                                        ESTATUS(inve.IdEstatus) AS Estatus
+                                    FROM
+                                        t_inventario inve
+                                    WHERE
+                                        IdAlmacen = (SELECT 
+                                        cvav.Id
+                                    FROM
+                                        cat_v3_almacenes_virtuales cvav
+                                            INNER JOIN
+                                        cat_v3_usuarios cvu ON cvu.Id = cvav.IdReferenciaAlmacen
+                                    WHERE
+                                        cvav.IdTipoAlmacen = 1 AND cvu.Id = '" . $usuario . "')
+                                            AND inve.IdtipoProducto = 1
+                                            AND inve.Cantidad > 0
+                                            AND inve.IdEstatus IN (22,25)");
+        return $consulta;
+    }
+
 }

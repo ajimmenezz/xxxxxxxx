@@ -506,10 +506,7 @@ class Tesoreria extends General {
             $montoIvaVuelta = number_format($v['Monto'] * $iva / 100, 2);
             $montoIvaVuelta = str_replace(',', '', $montoIvaVuelta);
             $totalIvaMontoVuelta = $v['Monto'] + (float) $montoIvaVuelta;
-            $viaticoIvaVuelta = number_format($v['Viatico'] * $iva / 100, 2);
-            $viaticoIvaVuelta = str_replace(',', '', $viaticoIvaVuelta);
-            $totalIvaViaticoVuelta = $v['Viatico'] + (float) $viaticoIvaVuelta;
-            $sumaMontoViatico = $totalIvaMontoVuelta + $totalIvaViaticoVuelta;
+            $sumaMontoViatico = $totalIvaMontoVuelta + $v['Viatico'];
             $totalFactura = $totalFactura + $sumaMontoViatico;
         }
 

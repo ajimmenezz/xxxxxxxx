@@ -54,6 +54,7 @@ class Secciones extends General
     private $gestorProyectos;
     private $gestorDashboard;
     private $inventarios;
+    private $rehabilitacion;
 
     public function __construct()
     {
@@ -105,6 +106,7 @@ class Secciones extends General
         $this->prime = \Librerias\Prime\Inventario::factory();
         $this->seccionCE = new \Librerias\V2\PaquetesTicket\GestorServicios();
         $this->inventarios = \Librerias\Poliza\Inventario::factory();
+        $this->rehabilitacion = \Librerias\Laboratorio\Rehabilitacion::factory();
 
         $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
@@ -596,6 +598,9 @@ class Secciones extends General
                 break;
             case 'Poliza/Inventarios':
                 $datos['data'] = $this->inventarios->getInventoryFiltersData();
+                break;
+            case 'Laboratorio/SeguimientoRehabilitacion':
+                $datos['data'] = $this->rehabilitacion->getAlmacenUsuario();
                 break;
             default:
                 break;
