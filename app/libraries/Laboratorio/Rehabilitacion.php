@@ -27,7 +27,7 @@ class Rehabilitacion extends General {
         $infoModelo = $this->infoModelo($datos['id']);
         $data['infoBitacora'] = $infoModelo;
         $data['infoBitacora']['comentarios'] = $this->notasInventario($datos['id']);
-        
+
         return $data;
     }
 
@@ -55,6 +55,29 @@ class Rehabilitacion extends General {
         }
 
         return $comentarios;
+    }
+
+    public function setComentario(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $archivos = NULL;
+        $fechaCaptura = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        if (!empty($_FILES)) {
+            $CI = parent::getCI();
+            $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasNota/';
+            $archivos = setMultiplesArchivos($CI, 'archivosAgregarNotas', $carpeta);
+            $archivos = implode(',', $archivos);
+        }
+
+        $datos['idUsuario'] = $usuario['Id'];
+        $datos['fecha'] = $fechaCaptura;
+        $datos['evidencia'] = $archivos;
+
+        if ($datos['operacion'] === 'actualizar') {
+            $this->inventario->actualizarNotasInventario($datos);
+        } else {
+            $this->inventario->setArrayNotaInventario($datos);
+        }
     }
 
 }

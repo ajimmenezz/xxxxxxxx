@@ -821,7 +821,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                         Id = '" . $idInventario . "'");
         return $consulta;
     }
-    
+
     public function getNotasInventarioId(string $idInventario) {
         $consulta = $this->consulta("SELECT 
                                         *,
@@ -831,6 +831,14 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                     WHERE
                                         Id = '" . $idInventario . "'");
         return $consulta;
+    }
+
+    public function actualizarNotasInventario(array $datos, array $where) {
+        $this->actualizar('t_notas_inventario', $datos, $where);
+    }
+
+    public function setNotaInventario(array $datos) {
+        $this->insertar('t_notas_inventario', $datos);
     }
 
 }

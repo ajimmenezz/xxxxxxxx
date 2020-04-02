@@ -26,6 +26,9 @@ class Controller_Rehabilitacion extends Base {
             case 'InfoBitacora':
                 $resultado = $this->rehabilitacion->getModelo($this->input->post());
                 break;
+            case 'SetComentario':
+                $resultado = $this->rehabilitacion->setComentario($this->input->post());
+                break;
         }
         echo json_encode($resultado);
     }
