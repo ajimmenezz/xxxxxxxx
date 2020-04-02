@@ -600,7 +600,7 @@ class Secciones extends General
                 $datos['data'] = $this->inventarios->getInventoryFiltersData();
                 break;
             case 'Laboratorio/SeguimientoRehabilitacion':
-                $datos['data'] = $this->rehabilitacion->getAlmacenUsuario();
+                $datos['equipos'] = $this->rehabilitacion->getAlmacenUsuario();
                 break;
             default:
                 break;

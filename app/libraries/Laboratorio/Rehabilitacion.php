@@ -3,10 +3,11 @@
 namespace Librerias\Laboratorio;
 
 use Controladores\Controller_Datos_Usuario as General;
+use Librerias\Almacen\Inventario as Inventario;
 
 class Rehabilitacion extends General {
 
-    private $DBI;
+    private $inventario;
 
     public function __construct() {
         parent::__construct();
@@ -16,7 +17,24 @@ class Rehabilitacion extends General {
 
     public function getAlmacenUsuario() {
         $usuario = $this->Usuario->getDatosUsuario();
-        return $this->DBI->getAlmacenUsuario($usuario['Id']);
+        $this->inventario = new Inventario();
+        
+        
+        //IniciaPruebas
+        $data = array();
+        
+        $inventario = $this->inventario->getInventarioId('19550');
+        $data['infoBitacora']['id'] = $inventario[0]['Id'];
+        $data['infoBitacora']['modelo'] = $inventario[0]['Producto'];
+        $data['infoBitacora']['serie'] = $inventario[0]['Serie'];
+        $data['infoBitacora']['estatus'] = $inventario[0]['Estatus'];
+        $data['infoBitacora']['ticketFolio'] = '0';
+        $data['infoBitacora']['comentarios'] = array();
+        var_dump($data);
+        //TerminaPruebas
+        return $this->inventario->getInventarioUsuario($usuario['Id']);
     }
+    
+    
 
 }

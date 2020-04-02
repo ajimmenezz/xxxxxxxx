@@ -782,8 +782,8 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
     public function editarEstatusAlmacen(array $datos) {
         $respuesta = $this->actualizar("t_inventario", ['IdEstatus' => $datos['idEstatus']], ['Id' => $datos['idInventario']]);
     }
-    
-    public function getAlmacenUsuario(string $usuario) {
+
+    public function getInventarioUsuario(string $usuario) {
         $consulta = $this->consulta("SELECT 
                                         inve.Id,
                                         CASE inve.IdtipoProducto
@@ -805,6 +805,20 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                             AND inve.IdtipoProducto = 1
                                             AND inve.Cantidad > 0
                                             AND inve.IdEstatus IN (22,25)");
+        return $consulta;
+    }
+
+    public function getInventarioId(string $idInventario) {
+        $consulta = $this->consulta("SELECT 
+                                        CASE inve.IdtipoProducto
+                                            WHEN 1 THEN MODELO(inve.IdProducto)
+                                        END AS Producto,
+                                        inve.*,
+                                        ESTATUS(inve.IdEstatus) AS Estatus
+                                    FROM
+                                        t_inventario inve
+                                    WHERE
+                                        Id = '" . $idInventario . "'");
         return $consulta;
     }
 
