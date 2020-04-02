@@ -2293,18 +2293,40 @@ $config['Laboratorio'] = array(
         'icono' => '',
         'Url' => '/Laboratorio/SeguimientoRehabilitacion',
         'css' => array(
-            
+            'Proyecto/tareasTecnico'
         ),
         'pluginsCss' => array(
-            
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'DrawingBoard/css/drawingboard.min',
+            'jquery-fileUpload/css/fileinput.min',
+            'parsley/src/parsley'
         ),
         'js' => array(
-            'Base/Base', 'Laboratorio/SeguimientoRehabilitacion'
+            'Base/Base',
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Modal',
+            'Componentes/HerramientasWeb/Collapse',
+//            'Componentes/HerramientasWeb/Fecha',
+            'Componentes/Selects/Select',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/Tabla',
+            'Componentes/Tablas/TablaBasica',
+            'Componentes/FileUpload/Upload',
+            'Componentes/FileUpload/FileUpload_Basico',
+            'Laboratorio/SeguimientoRehabilitacion'
         ),
         'pluginsJs' => array(
-            
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'DrawingBoard/js/drawingboard.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
         ),
-        'Permiso' => 'VRHPV'
+        'Permiso' => 'VRE'
     )
 );
 
