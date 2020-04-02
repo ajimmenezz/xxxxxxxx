@@ -451,15 +451,15 @@ class Tesoreria extends General {
 
         foreach ($datos as $k => $nodoConcepto) {
             $nodoConcepto = (array) $nodoConcepto;
-            if (isset($nodoConcepto["@attributes"]['ClaveUnidad'])) {
-                if ($nodoConcepto["@attributes"]['ClaveUnidad'] === 'E48' || $nodoConcepto["@attributes"]['ClaveUnidad'] === 'E048') {
-                    $resultadoConcepto = TRUE;
-                } else {
-                    return 'La Clave de Unidad es incorrecta';
-                }
-            } else {
-                return 'La etiqueta Clave de Unidad no existe';
-            }
+//            if (isset($nodoConcepto["@attributes"]['ClaveUnidad'])) {
+//                if ($nodoConcepto["@attributes"]['ClaveUnidad'] === 'E48' || $nodoConcepto["@attributes"]['ClaveUnidad'] === 'E048') {
+//                    $resultadoConcepto = TRUE;
+//                } else {
+//                    return 'La Clave de Unidad es incorrecta';
+//                }
+//            } else {
+//                return 'La etiqueta Clave de Unidad no existe';
+//            }
 
             if (isset($nodoConcepto["@attributes"]['ClaveProdServ'])) {
                 if (in_array($nodoConcepto["@attributes"]['ClaveProdServ'], $arrayCatalogoServicio)) {
