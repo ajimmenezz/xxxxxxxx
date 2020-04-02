@@ -37,10 +37,26 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php
+                            foreach ($datos['equipos'] as $value) {
+                                echo "<tr>";
+                                echo '<td>' . $value['Id'] . '</td>';
+                                echo '<td>' . $value['Producto'] . '</td>';
+                                echo '<td>' . $value['Serie'] . '</td>';
+                                echo '<td>' . $value['Estatus'] . '</td>';
+                                echo '<td>0</td>';
+                                echo "</tr>";
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
             </div>
+<!--            <pre>
+                <?php
+//                var_dump($datos['equipos']);
+                ?>
+            </pre>-->
         </div>
         <!--Finalizando cuerpo del panel-->
     </div>
@@ -66,9 +82,19 @@
             <div class="tab-pane fade active in" id="infoBitacora">
                 <div class="panel-body">
                     <!--Empieza encabezado del panel-->
-                    <div class="col-md-12">
-                        <h4>Historial de la bitácora de seguimiento</h4>
-                        <div class="underline m-b-15 m-t-15"></div>
+                    <div class="row">
+                        <div class="col-lg-8 col-md-9 col-sm-6 col-xs-6">
+                            <h4 class="page-header">Historial de la bitácora de seguimiento</h4>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">
+                            <label id="btnConcluirRevision" class="btn btn-primary">Concluir Revisión</label>  
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">
+                            <label id="btnAgregarComentario" class="btn btn-warning">Agregar Comentario</label>  
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
                     </div>
                     <!--Finaliza encabezado del panel-->
                 </div>
@@ -129,6 +155,21 @@
                             </table>
                         </div>
                     </div>
+                    <!--Empieza comentario deshuesar-->
+                    <div class="col-md-12"><br></div>
+                    <div class="col-md-12" style="background-color: papayawhip">
+                        <p></p>
+                        <p><strong>Importante:</strong> Al presionar el botón “Deshuesar Equipo”, todos los componentes con sus respectivos estatus serán trasladados a sus inventario y el equipo será marcado para destrucción.</p>
+                    </div>
+                    <!--Termina comentario deshuesar-->
+                    <!--Comienza boton concluir-->
+                    <div class="col-md-12"><br></div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <label id="btnConcluirRevision" class="btn btn-primary">Deshuesar y Concluir</label>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <!--Termina boton concluir-->
                 </div>
             </div>
             <!--Finalizando cuerpo del panel de infoDeshuesar-->
