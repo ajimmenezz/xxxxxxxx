@@ -19,5 +19,9 @@ class Inventario{
     public function getInventarioId(string $idInventario) {
         return $this->DBI->getInventarioId($idInventario);
     }
+    
+    public function getNotasInventarioId(string $idInventario) {
+        return $this->DBI->getNotasInventarioId($idInventario);
+    }
 
 }

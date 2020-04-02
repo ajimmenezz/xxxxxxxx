@@ -821,5 +821,16 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                         Id = '" . $idInventario . "'");
         return $consulta;
     }
+    
+    public function getNotasInventarioId(string $idInventario) {
+        $consulta = $this->consulta("SELECT 
+                                        *,
+                                        nombreUsuario(IdUsuario) AS Usuario
+                                    FROM
+                                        t_notas_inventario
+                                    WHERE
+                                        Id = '" . $idInventario . "'");
+        return $consulta;
+    }
 
 }

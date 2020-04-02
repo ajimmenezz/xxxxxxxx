@@ -18,23 +18,43 @@ class Rehabilitacion extends General {
     public function getAlmacenUsuario() {
         $usuario = $this->Usuario->getDatosUsuario();
         $this->inventario = new Inventario();
-        
-        
-        //IniciaPruebas
-        $data = array();
-        
-        $inventario = $this->inventario->getInventarioId('19550');
-        $data['infoBitacora']['id'] = $inventario[0]['Id'];
-        $data['infoBitacora']['modelo'] = $inventario[0]['Producto'];
-        $data['infoBitacora']['serie'] = $inventario[0]['Serie'];
-        $data['infoBitacora']['estatus'] = $inventario[0]['Estatus'];
-        $data['infoBitacora']['ticketFolio'] = '0';
-        $data['infoBitacora']['comentarios'] = array();
-        var_dump($data);
-        //TerminaPruebas
+
         return $this->inventario->getInventarioUsuario($usuario['Id']);
     }
-    
-    
+
+    public function getModelo(array $datos) {
+        $data = array();
+        $infoModelo = $this->infoModelo($datos['id']);
+        $data['infoBitacora'] = $infoModelo;
+        $data['infoBitacora']['comentarios'] = $this->notasInventario($datos['id']);
+        
+        return $data;
+    }
+
+    public function infoModelo(string $idInventario) {
+        $infoModelo = array();
+        $inventario = $this->inventario->getInventarioId($idInventario);
+        $infoModelo['id'] = $inventario[0]['Id'];
+        $infoModelo['modelo'] = $inventario[0]['Producto'];
+        $infoModelo['serie'] = $inventario[0]['Serie'];
+        $infoModelo['estatus'] = $inventario[0]['Estatus'];
+        $infoModelo['ticketFolio'] = '0';
+
+        return $infoModelo;
+    }
+
+    public function notasInventario(string $idInventario) {
+        $comentarios = array();
+        $notasInventario = $this->inventario->getNotasInventarioId($idInventario);
+
+        foreach ($notasInventario as $key => $value) {
+            $comentarios[$key]['nombre'] = $value['Usuario'];
+            $comentarios[$key]['comentario'] = $value['Nota'];
+            $comentarios[$key]['fecha'] = $value['Fecha'];
+            $comentarios[$key]['evidencias'] = $value['Archivos'];
+        }
+
+        return $comentarios;
+    }
 
 }

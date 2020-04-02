@@ -23,21 +23,12 @@ class Controller_Rehabilitacion extends Base {
 
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
-            //Seccion Regiones Logistica
-            case 'InfoInicial':
-                $resultado = $this->dashboard->infoInicial($this->input->post());
+            case 'InfoBitacora':
+                $resultado = $this->rehabilitacion->getModelo($this->input->post());
                 break;
         }
         echo json_encode($resultado);
     }
     
-    public function sendModel(array $datos){
-        $datos['id'] = '19550';
-        $inventario = new Inventario();
-        $infoBitacora = array();
-        
-        
-        var_dump($inventario->getInventarioId($datos['id']));
-    } 
 
 }
