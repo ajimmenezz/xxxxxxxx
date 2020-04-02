@@ -21,7 +21,8 @@ $(function () {
                 id: datosFila[0],
                 modelo: datosFila[1]
             }
-            peticion.enviar('#panelRehabilitacionEquiposTabla', '', sendModel, function () {
+            peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/InfoBitacora', sendModel, function (respuesta) {
+                console.log(respuesta);
                 $('.cambioVistas').removeClass('hidden');
                 $('#panelRehabilitacionEquiposTabla').addClass('hidden');
             });
