@@ -120,6 +120,11 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div id="collapseComentarios">
+                                
+                            </div>
+                        </div>
                     </div>
                     <!--Terminando informacion del equipo-->
                 </div>
