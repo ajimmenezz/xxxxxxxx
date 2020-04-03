@@ -19,6 +19,9 @@ class Controller_Pruebas extends Base
             case 'UpdateBranchesGeocode':
                 $resultado = $this->pruebas->updateBranchesGeocode();
                 break;
+            case 'UpdateUsersGeocode':
+                $resultado = $this->pruebas->updateUsersGeocode();
+                break;
             default:
                 $resultado = FALSE;
                 break;

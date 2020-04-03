@@ -66,4 +66,26 @@ class Modelo_Pruebas extends Modelo_Base
             'Longitud' => $lon
         ], ['Id' => $branchId]);
     }
+
+    public function updateUserGeocode($userId, $lat, $lon)
+    {
+        $this->actualizar("t_rh_personal", [
+            'Latitud' => $lat, 
+            'Longitud' => $lon
+        ], ['IdUsuario' => $userId]);
+    }
+
+    public function users(){
+        return $this->consulta("
+        select 
+        cu.Id,
+        nombreUsuario(cu.Id) as Usuario,
+        tp.Domicilio
+        from cat_v3_usuarios cu
+        inner join t_rh_personal tp on cu.Id = tp.IdUsuario
+        where cu.Flag  = 1
+        and tp.Domicilio is not null
+        and tp.Domicilio <> ''
+        and Latitud is null");
+    }
 }
