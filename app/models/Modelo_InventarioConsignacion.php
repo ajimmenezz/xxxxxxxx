@@ -829,7 +829,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                     FROM
                                         t_notas_inventario
                                     WHERE
-                                        Id = '" . $idInventario . "'");
+                                        IdInventario = '" . $idInventario . "'");
         return $consulta;
     }
 

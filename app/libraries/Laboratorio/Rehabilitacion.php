@@ -14,7 +14,7 @@ class Rehabilitacion extends General {
         parent::__construct();
         $this->DBI = \Modelos\Modelo_InventarioConsignacion::factory();
         $this->inventario = new Inventario();
-        parent::getCI()->load->helper('date');
+        parent::getCI()->load->helper(array('FileUpload', 'date'));
     }
 
     public function getAlmacenUsuario() {
@@ -30,7 +30,8 @@ class Rehabilitacion extends General {
         $data['infoBitacora']['comentarios'] = $this->inventario->getNotasInventarioId($datos['id']);
         $equipo = new Equipo($infoModelo['idModelo']);
         $data['infoBitacora']['refacciones'] = $equipo->getRefaccionesEquipo();
-        return $data;
+
+        return array('response' => 200, 'datos' => $data);
     }
 
     public function setComentario(array $datos) {
@@ -41,20 +42,23 @@ class Rehabilitacion extends General {
 
         if (!empty($_FILES)) {
             $CI = parent::getCI();
-            $carpeta = 'Servicios/Servicio-' . $datos['servicio'] . '/EvidenciasNota/';
-            $archivos = setMultiplesArchivos($CI, 'archivosAgregarNotas', $carpeta);
+            $carpeta = 'Inventarios/Inventario-' . $datos['idInventario'] . '/EvidenciasNota/';
+            $archivos = setMultiplesArchivos($CI, 'agregarEvidencia', $carpeta);
             $archivos = implode(',', $archivos);
         }
 
-        $datos['idUsuario'] = $usuario['Id'];
+        $datos['usuario'] = $usuario['Id'];
         $datos['fecha'] = $fechaCaptura;
         $datos['evidencia'] = $archivos;
+        $datos['estatus'] = '25';
 
         if ($datos['operacion'] === 'actualizar') {
             $this->inventario->actualizarNotasInventario($datos);
         } else {
-            $this->inventario->setArrayNotaInventario($datos);
+            $this->inventario->setNotaInventario($datos);
         }
+                
+        return array('response' => 200, 'datos' => $this->inventario->getNotasInventarioId($datos['idInventario']));
     }
 
 }

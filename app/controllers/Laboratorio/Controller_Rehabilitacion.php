@@ -34,7 +34,7 @@ class Controller_Rehabilitacion extends Base {
             }
             echo json_encode($resultado);
         } catch (\Exception $ex) {
-            echo json_encode(array('code' => 400, 'message' => $ex->getMessage()));
+            echo json_encode(array('response' => 400, 'message' => $ex->getMessage()));
         }
     }
 

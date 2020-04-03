@@ -28,11 +28,11 @@ $(function () {
             peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/InfoBitacora', sendModel, function (respuesta) {
                 console.log(respuesta);
                 infoEquipo = {
-                    inventario: respuesta.infoBitacora.id,
-                    modelo: respuesta.infoBitacora.modelo,
-                    serie: respuesta.infoBitacora.serie,
-                    estatus: respuesta.infoBitacora.estatus,
-                    ticket: respuesta.infoBitacora.ticketFolio
+                    inventario: respuesta.datos.infoBitacora.id,
+                    modelo: respuesta.datos.infoBitacora.modelo,
+                    serie: respuesta.datos.infoBitacora.serie,
+                    estatus: respuesta.datos.infoBitacora.estatus,
+                    ticket: respuesta.datos.infoBitacora.ticketFolio
                 }
                 cargaInformacionEquipo(infoEquipo);
                 $('.cambioVistas').removeClass('hidden');

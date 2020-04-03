@@ -228,7 +228,7 @@
                         <div class="col-md-12">
                             <label>Evidencia</label><br>
                             <div id="archivoProblema" class="form-group">
-                                <input id="agregarEvidencia" name="agregarEvidenciaProblema[]" type="file" multiple>
+                                <input id="agregarEvidencia" name="agregarEvidencia[]" type="file" multiple>
                             </div>
                         </div>
                     </form>
