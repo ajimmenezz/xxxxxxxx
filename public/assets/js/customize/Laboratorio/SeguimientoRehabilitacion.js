@@ -35,6 +35,7 @@ $(function () {
                     ticket: respuesta.infoBitacora.ticketFolio
                 }
                 cargaInformacionEquipo(infoEquipo);
+                agregarContenidoDeshuesar(respuesta.infoBitacora.refacciones);
                 $('.cambioVistas').removeClass('hidden');
                 $('#panelRehabilitacionEquiposTabla').addClass('hidden');
             });
@@ -52,6 +53,7 @@ $(function () {
             ticket: ''
         }
         cargaInformacionEquipo(infoEquipo);
+        tablaDeshuesar.limpiartabla();
     });
 
     $('#btnAceptarComentario').on('click', function () {
@@ -79,6 +81,20 @@ $(function () {
         $('#cargaSerie').val(infoEquipo.serie);
         $('#cargaEstatus').val(infoEquipo.estatus);
         $('#cargaTicket').val(infoEquipo.ticket);
+    }
+
+    function agregarContenidoDeshuesar(refacciones) {
+        if (refacciones.length > 0) {
+            tablaDeshuesar.limpiartabla();
+            $.each(refacciones, function (key, value) {
+                tablaDeshuesar.agregarDatosFila([
+                    value.Id,
+                    value.Nombre,
+                    '<input id="cargaTicket" type="text" class="form-control" style="width: 100%"/>',
+                    '<input id="cargaTicket" type="text" class="form-control" style="width: 100%"/>'
+                ]);
+            });
+        }
     }
 });
 
