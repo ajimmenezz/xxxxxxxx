@@ -4,6 +4,7 @@ namespace Librerias\Laboratorio;
 
 use Controladores\Controller_Datos_Usuario as General;
 use Librerias\Almacen\Inventario as Inventario;
+use Librerias\Almacen\Equipo as Equipo;
 
 class Rehabilitacion extends General {
 
@@ -18,7 +19,7 @@ class Rehabilitacion extends General {
 
     public function getAlmacenUsuario() {
         $usuario = $this->Usuario->getDatosUsuario();
-        
+
         return $this->inventario->getInventarioUsuario($usuario['Id']);
     }
 
@@ -27,7 +28,8 @@ class Rehabilitacion extends General {
         $infoModelo = $this->inventario->getInventarioId($datos['id']);
         $data['infoBitacora'] = $infoModelo;
         $data['infoBitacora']['comentarios'] = $this->inventario->getNotasInventarioId($datos['id']);
-
+        $equipo = new Equipo($infoModelo['idModelo']);
+        $data['infoBitacora']['refacciones'] = $equipo->getRefaccionesEquipo();
         return $data;
     }
 
