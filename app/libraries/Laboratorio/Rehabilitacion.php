@@ -32,6 +32,8 @@ class Rehabilitacion extends General {
     }
 
     public function infoModelo(string $idInventario) {
+        /*agrege esto equi pues no me reconoce $this->inventario lo mismo ocurre al probar setComentario*/
+        $this->inventario = new Inventario();
         $infoModelo = array();
         $inventario = $this->inventario->getInventarioId($idInventario);
         $infoModelo['id'] = $inventario[0]['Id'];
@@ -58,6 +60,7 @@ class Rehabilitacion extends General {
     }
 
     public function setComentario(array $datos) {
+        $this->inventario = new Inventario();
         $usuario = $this->Usuario->getDatosUsuario();
         $archivos = NULL;
         $fechaCaptura = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));

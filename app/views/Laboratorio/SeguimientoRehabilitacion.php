@@ -85,13 +85,43 @@
                             <label id="btnConcluirRevision" class="btn btn-primary">Concluir Revisión</label>  
                         </div>
                         <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">
-                            <label id="btnAgregarComentario" class="btn btn-warning">Agregar Comentario</label>  
+                            <label id="btnAgregarComentario" href="#modalAgregarComentario" class="btn btn-warning" data-toggle="modal">Agregar Comentario</label>  
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="underline m-b-15 m-t-15"></div>
                         </div>
                     </div>
                     <!--Finaliza encabezado del panel-->
+                    <!--Empezando informacion del equipo-->
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-sm-3 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Modelo</label>
+                                    <input id="cargaModelo" type="text" class="form-control" style="width: 100%" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Serie</label>
+                                    <input id="cargaSerie" type="text" class="form-control" style="width: 100%" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Estatus</label>
+                                    <input id="cargaEstatus" type="text" class="form-control" style="width: 100%" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Ticket/Folio</label>
+                                    <input id="cargaTicket" type="text" class="form-control" style="width: 100%" disabled/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Terminando informacion del equipo-->
                 </div>
             </div>
             <!--Finalizando cuerpo del panel de infoBitacora-->
@@ -159,11 +189,11 @@
                     <!--Termina comentario deshuesar-->
                     <!--Comienza boton concluir-->
                     <div class="col-md-12"><br></div>
-                    <div class="col-md-4"></div>
-                    <div class="col-md-4">
+                    <div class="col-sm-4 col-md-4"></div>
+                    <div class="col-sm-4 col-md-4">
                         <label id="btnConcluirRevision" class="btn btn-primary">Deshuesar y Concluir</label>
                     </div>
-                    <div class="col-md-4"></div>
+                    <div class="col-sm-4 col-md-4"></div>
                     <!--Termina boton concluir-->
                 </div>
             </div>
@@ -175,3 +205,43 @@
     <!-- Finalizando panel-->
 </div>
 <!-- Finalizando contenido -->
+
+<!--Empieza modal de reportar problemas-->
+<div id="modalAgregarComentario" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Agregar Comentario</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <form id="formAgregarComentario" data-parsley-validate="true" enctype="multipart/form-data">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Comentario *</label>
+                                <textarea id="textareaComentario" class="form-control" rows="4" data-parsley-required="true"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label>Evidencia</label><br>
+                            <div id="archivoProblema" class="form-group">
+                                <input id="agregarEvidencia" name="agregarEvidenciaProblema[]" type="file" multiple>
+                            </div>
+                        </div>
+                    </form>
+                </div>   
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarComentario" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCancelarComentario" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finaliza modal de reportar problemas-->

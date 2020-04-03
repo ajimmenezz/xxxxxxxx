@@ -10,6 +10,9 @@ $(function () {
 
     let tablaPrincipal = new TablaBasica('data-tablaModelos');
 
+    let infoEquipo = null;
+    let evidenciasComentarios = new FileUpload_Basico('agregarEvidencia', {url: 'SeguimientoRehabilitacion/SetComentario', extensiones: ['jpg', 'jpeg', 'png']});
+    evidenciasComentarios.iniciarFileUpload();
     let tablaRefaccion = new TablaBasica('data-tablaRefaccion');
     let tablaDeshuesar = new TablaBasica('data-tablaDeshuesar');
 
@@ -23,6 +26,13 @@ $(function () {
             }
             peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/InfoBitacora', sendModel, function (respuesta) {
                 console.log(respuesta);
+                infoEquipo = {
+                    modelo: respuesta.infoBitacora.modelo,
+                    serie: respuesta.infoBitacora.serie,
+                    estatus: respuesta.infoBitacora.estatus,
+                    ticket: respuesta.infoBitacora.ticketFolio
+                }
+                cargaInformacionEquipo(infoEquipo);
                 $('.cambioVistas').removeClass('hidden');
                 $('#panelRehabilitacionEquiposTabla').addClass('hidden');
             });
@@ -32,8 +42,39 @@ $(function () {
     $('#btnRegresar').on('click', function () {
         $('.cambioVistas').addClass('hidden');
         $('#panelRehabilitacionEquiposTabla').removeClass('hidden');
+        infoEquipo = {
+            modelo: '',
+            serie: '',
+            estatus: '',
+            ticket: ''
+        }
+        cargaInformacionEquipo(infoEquipo);
     });
 
+    $('#btnAceptarComentario').on('click', function () {
+        if (evento.validarFormulario('#formAgregarComentario')) {
+            let sendComment = {
+                comentario: $('#textareaComentario').val(),
+                operacion: 'agregar',
+                evidencias: false
+            }
+            if ($('#agregarEvidencia').val() !== '') {
+                evidenciasComentarios.enviarPeticionServidor('#modalAgregarComentario', sendComment, function (respuesta) {
+                    console.log(respuesta);
+                });
+            } else {
+                peticion.enviar('modalAgregarComentario', 'SeguimientoRehabilitacion/SetComentario', sendComment, function (respuesta) {
+                    console.log(respuesta);
+                });
+            }
+        }
+    });
 
+    function cargaInformacionEquipo(infoEquipo) {
+        $('#cargaModelo').val(infoEquipo.modelo);
+        $('#cargaSerie').val(infoEquipo.serie);
+        $('#cargaEstatus').val(infoEquipo.estatus);
+        $('#cargaTicket').val(infoEquipo.ticket);
+    }
 });
 
