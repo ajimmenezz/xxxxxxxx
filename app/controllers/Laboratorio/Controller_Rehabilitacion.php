@@ -1,17 +1,15 @@
 <?php
 
 use Controladores\Controller_Base as Base;
-
 use Librerias\Almacen\Inventario as Inventario;
 
 class Controller_Rehabilitacion extends Base {
 
-    private $rehabilitacion;  
-    
+    private $rehabilitacion;
 
     public function __construct() {
         parent::__construct();
-        $this->rehabilitacion = \Librerias\Laboratorio\Rehabilitacion::factory();        
+        $this->rehabilitacion = \Librerias\Laboratorio\Rehabilitacion::factory();
     }
 
     /*
@@ -22,16 +20,22 @@ class Controller_Rehabilitacion extends Base {
      */
 
     public function manejarEvento(string $evento = null) {
-        switch ($evento) {
-            case 'InfoBitacora':
-                $resultado = $this->rehabilitacion->getModelo($this->input->post());
-                break;
-            case 'SetComentario':
-                $resultado = $this->rehabilitacion->setComentario($this->input->post());
-                break;
+        try {
+            switch ($evento) {
+                case 'InfoBitacora':
+                    $resultado = $this->rehabilitacion->getModelo($this->input->post());
+                    break;
+                case 'SetComentario':
+                    $resultado = $this->rehabilitacion->setComentario($this->input->post());
+                    break;
+                default:
+                    $resultado = FALSE;
+                    break;
+            }
+            echo json_encode($resultado);
+        } catch (\Exception $ex) {
+            echo json_encode(array('code' => 400, 'message' => $ex->getMessage()));
         }
-        echo json_encode($resultado);
     }
-    
 
 }

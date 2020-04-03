@@ -11,6 +11,7 @@ $(function () {
     let tablaPrincipal = new TablaBasica('data-tablaModelos');
 
     let infoEquipo = null;
+    let inventario = null;
     let evidenciasComentarios = new FileUpload_Basico('agregarEvidencia', {url: 'SeguimientoRehabilitacion/SetComentario', extensiones: ['jpg', 'jpeg', 'png']});
     evidenciasComentarios.iniciarFileUpload();
     let tablaRefaccion = new TablaBasica('data-tablaRefaccion');
@@ -27,6 +28,7 @@ $(function () {
             peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/InfoBitacora', sendModel, function (respuesta) {
                 console.log(respuesta);
                 infoEquipo = {
+                    inventario: respuesta.infoBitacora.id,
                     modelo: respuesta.infoBitacora.modelo,
                     serie: respuesta.infoBitacora.serie,
                     estatus: respuesta.infoBitacora.estatus,
@@ -43,6 +45,7 @@ $(function () {
         $('.cambioVistas').addClass('hidden');
         $('#panelRehabilitacionEquiposTabla').removeClass('hidden');
         infoEquipo = {
+            inventario: '',
             modelo: '',
             serie: '',
             estatus: '',
@@ -54,6 +57,7 @@ $(function () {
     $('#btnAceptarComentario').on('click', function () {
         if (evento.validarFormulario('#formAgregarComentario')) {
             let sendComment = {
+                idInventario: infoEquipo.inventario,
                 comentario: $('#textareaComentario').val(),
                 operacion: 'agregar',
                 evidencias: false
