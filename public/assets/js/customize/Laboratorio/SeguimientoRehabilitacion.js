@@ -114,15 +114,22 @@ $(function () {
     }
 
     function agregarContenidoComentarios(comentarios) {
+        console.log(comentarios);
         collapseComentarios.limpiarCollapse();
         if (comentarios.length > 0) {
             let datos = [];
             let contador = 0;
             $.each(comentarios, function (key, value) {
-                datos[contador] = {titulo: value.nombre, contenido: value.comentario};
+                datos[contador] = {
+                    titulo: value.nombre,
+                    fecha: value.fecha,
+                    contenido: value.comentario,
+                    evidencias: value.evidencias,
+                    boton: 'Editar'
+                };
                 contador++;
             });
-            collapseComentarios.multipleCollapse(datos);
+            collapseComentarios.multipleCardMedia(datos);
         }
     }
 
@@ -133,8 +140,8 @@ $(function () {
                 tablaDeshuesar.agregarDatosFila([
                     value.Id,
                     value.Nombre,
-                    '<input id="cargaTicket" type="text" class="form-control" style="width: 100%"/>',
-                    '<input id="cargaTicket" type="text" class="form-control" style="width: 100%"/>'
+                    '',
+                    ''
                 ]);
             });
         }
