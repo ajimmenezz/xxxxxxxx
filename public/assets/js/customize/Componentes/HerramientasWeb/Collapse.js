@@ -32,4 +32,8 @@ class Collapse {
             contador++;
         });
     }
+    
+    limpiarCollapse(){
+        this.objetoCollapse.empty();
+    }
 }
