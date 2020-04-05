@@ -20,7 +20,8 @@ class Modelo_Equipo extends Modelo_Base {
         return $consulta;
     }
     
-    public function getRefaccionesEquipoRehabilitacion(string $idModelo) {        
+    public function getRefaccionesEquipoRehabilitacion(array $datos) {  
+ 
         $consulta = $this->consulta("SELECT 
                                         cvce.Id,
                                         cvce.Nombre,
@@ -29,8 +30,8 @@ class Modelo_Equipo extends Modelo_Base {
                                         FROM cat_v3_componentes_equipo AS cvce
                                         LEFT JOIN t_inventario_rehabilitacion_refaccion AS tirr
                                         ON tirr.IdRefaccion = cvce.Id
-                                        WHERE cvce.IdModelo = '" .  $idModelo . "'
-                                        AND cvce.Flag = 1");
+                                        WHERE cvce.IdModelo = '" .  $datos['idEquipo'] . "'
+                                        AND cvce.Flag = 1" . $datos['where']);
         return $consulta;
     }
 

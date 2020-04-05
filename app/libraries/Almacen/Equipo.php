@@ -22,8 +22,8 @@ class Equipo {
         return $this->DBE->getRefaccionesEquipo($this->idEquipo, $where);
     }
     
-    public function getRefaccionesEquipoRehabilitacion(){
-        return $this->DBE->getRefaccionesEquipoRehabilitacion($this->idEquipo);
+    public function getRefaccionesEquipoRehabilitacion(string $where = ''){
+        return $this->DBE->getRefaccionesEquipoRehabilitacion(array('idEquipo' => $this->idEquipo, 'where' => $where));
     }
     
 }

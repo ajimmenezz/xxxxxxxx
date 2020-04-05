@@ -846,4 +846,12 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
+    public function setInventarioRehabilitacionRefaccion(array $datos) {
+        $this->insertar('t_inventario_rehabilitacion_refaccion', $datos);
+    }
+
+    public function actualizarInventarioRehabilitacionRefaccion(array $datos, array $where) {
+        $this->actualizar('t_inventario_rehabilitacion_refaccion', $datos, $where);
+    }
+
 }
