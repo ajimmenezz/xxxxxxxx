@@ -37,7 +37,7 @@ class Rehabilitacion extends General {
             $whereId = '';
         }
         
-        $data['infoBitacora']['refacciones'] = $equipo->getRefaccionesEquipoWhere($whereId);
+        $data['infoBitacora']['refacciones'] = $equipo->getRefaccionesEquipoRehabilitacion($whereId);
         $data['infoBitacora']['deshuesar'] = $equipo->getRefaccionesEquipo();
 
         return array('response' => 200, 'datos' => $data);

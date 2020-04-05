@@ -23,7 +23,7 @@ class Equipo {
     }
     
     public function getRefaccionesEquipoRehabilitacion(){
-        return $this->DBE->getRefaccionesEquipo($this->idEquipo);
+        return $this->DBE->getRefaccionesEquipoRehabilitacion($this->idEquipo);
     }
     
 }
