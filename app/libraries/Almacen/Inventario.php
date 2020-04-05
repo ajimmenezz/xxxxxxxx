@@ -62,5 +62,22 @@ class Inventario {
             'Archivos' => $datos['evidencia'],
             'Fecha' => $datos['fecha']);
     }
-
+    
+    public function getIdsRehabilitacion(string $idInventario = ''){
+        $arrayIds = array();
+        
+        if(!empty($idInventario)){
+            $whereInventario = "AND IdInventario <> '" . $idInventario . "'";
+        }else{
+            $whereInventario = "";
+        }
+        
+        $inventarioRehabilitacion = $this->DBI->getInventarioRehabilitacionRefaccion("WHERE Bloqueado = '1' " . $whereInventario);
+        
+        foreach ($inventarioRehabilitacion as $key => $value) {
+            array_push($arrayIds, $value['IdRefaccion']);
+        }
+        
+        return implode(',', $arrayIds);
+    }
 }

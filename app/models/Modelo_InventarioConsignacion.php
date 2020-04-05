@@ -841,4 +841,9 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         $this->insertar('t_notas_inventario', $datos);
     }
 
+    public function getInventarioRehabilitacionRefaccion(string $where) {
+        $consulta = $this->consulta("SELECT * FROM t_inventario_rehabilitacion_refaccion " . $where);
+        return $consulta;
+    }
+
 }

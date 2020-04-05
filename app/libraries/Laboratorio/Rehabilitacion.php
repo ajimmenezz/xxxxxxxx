@@ -29,7 +29,16 @@ class Rehabilitacion extends General {
         $data['infoBitacora'] = $infoModelo;
         $data['infoBitacora']['comentarios'] = $this->inventario->getNotasInventarioId($datos['id']);
         $equipo = new Equipo($infoModelo['idModelo']);
-        $data['infoBitacora']['refacciones'] = $equipo->getRefaccionesEquipo();
+        $idsRehabilitacion = $this->inventario->getIdsRehabilitacion($datos['id']);
+        
+        if(!empty($idsRehabilitacion)){
+            $whereId = ' AND Id NOT IN(' . $idsRehabilitacion . ')';
+        }else{
+            $whereId = '';
+        }
+        
+        $data['infoBitacora']['refacciones'] = $equipo->getRefaccionesEquipoWhere($whereId);
+        $data['infoBitacora']['deshuesar'] = $equipo->getRefaccionesEquipo();
 
         return array('response' => 200, 'datos' => $data);
     }
