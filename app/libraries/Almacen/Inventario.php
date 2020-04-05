@@ -63,4 +63,40 @@ class Inventario {
             'Fecha' => $datos['fecha']);
     }
 
+    public function getIdsRehabilitacion(string $idInventario = '') {
+        $arrayIds = array();
+
+        if (!empty($idInventario)) {
+            $whereInventario = "AND IdInventario <> '" . $idInventario . "'";
+        } else {
+            $whereInventario = "";
+        }
+
+        $inventarioRehabilitacion = $this->DBI->getInventarioRehabilitacionRefaccion("WHERE Bloqueado = '1' " . $whereInventario);
+
+        foreach ($inventarioRehabilitacion as $key => $value) {
+            array_push($arrayIds, $value['IdRefaccion']);
+        }
+
+        return implode(',', $arrayIds);
+    }
+
+    public function setInventarioRehabilitacionRefaccion(array $datos) {
+        $inventarioReabilitacioRefaccion = $this->DBI->getInventarioRehabilitacionRefaccion('WHERE IdInventario = "' . $datos['id'] . '" AND IdRefaccion = "' . $datos['idRefaccion'] . '"');
+
+        if (empty($inventarioReabilitacioRefaccion)) {
+            $this->DBI->setInventarioRehabilitacionRefaccion(array(
+                'IdInventario' => $datos['id'],
+                'IdRefaccion' => $datos['idRefaccion'],
+                'Bloqueado' => 1
+            ));
+        } else {
+            $this->DBI->actualizarInventarioRehabilitacionRefaccion(array(
+                'IdInventario' => $datos['id'],
+                'IdRefaccion' => $datos['idRefaccion'],
+                'Bloqueado' => $datos['bloqueado']
+            ),array('IdInventario' => $datos['id'], 'IdRefaccion' => $datos['idRefaccion']));
+        }
+    }
+
 }

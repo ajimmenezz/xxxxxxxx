@@ -28,6 +28,9 @@ class Controller_Rehabilitacion extends Base {
                 case 'SetComentario':
                     $resultado = $this->rehabilitacion->setComentario($this->input->post());
                     break;
+                case 'RefaccionRehabilitacion':
+                    $resultado = $this->rehabilitacion->setRefaccionRehabilitacion($this->input->post());
+                    break;
                 default:
                     $resultado = FALSE;
                     break;

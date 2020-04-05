@@ -9,6 +9,7 @@ use Librerias\Almacen\Equipo as Equipo;
 class Rehabilitacion extends General {
 
     private $inventario;
+    private $equipo;
 
     public function __construct() {
         parent::__construct();
@@ -28,10 +29,24 @@ class Rehabilitacion extends General {
         $infoModelo = $this->inventario->getInventarioId($datos['id']);
         $data['infoBitacora'] = $infoModelo;
         $data['infoBitacora']['comentarios'] = $this->inventario->getNotasInventarioId($datos['id']);
-        $equipo = new Equipo($infoModelo['idModelo']);
-        $data['infoBitacora']['refacciones'] = $equipo->getRefaccionesEquipo();
+        $this->equipo = new Equipo($infoModelo['idModelo']);
+        $rafaccionesRehabilitacion = $this->setRefaccionesRehabitiacion($datos);
+        $data['infoBitacora']['refacciones'] = $rafaccionesRehabilitacion;
+        $data['infoBitacora']['deshuesar'] = $this->equipo->getRefaccionesEquipo();
 
         return array('response' => 200, 'datos' => $data);
+    }
+
+    public function setRefaccionesRehabitiacion(array $datos) {
+        $idsRehabilitacion = $this->inventario->getIdsRehabilitacion($datos['id']);
+
+        if (!empty($idsRehabilitacion)) {
+            $whereId = ' AND cvce.Id NOT IN(' . $idsRehabilitacion . ')';
+        } else {
+            $whereId = '';
+        }
+
+        return $this->equipo->getRefaccionesEquipoRehabilitacion($whereId);
     }
 
     public function setComentario(array $datos) {
@@ -51,14 +66,24 @@ class Rehabilitacion extends General {
         $datos['fecha'] = $fechaCaptura;
         $datos['evidencia'] = $archivos;
         $datos['estatus'] = '25';
-
+        
         if ($datos['operacion'] === 'actualizar') {
             $this->inventario->actualizarNotasInventario($datos);
         } else {
             $this->inventario->setNotaInventario($datos);
         }
-                
+
         return array('response' => 200, 'datos' => $this->inventario->getNotasInventarioId($datos['idInventario']));
+    }
+
+    public function setRefaccionRehabilitacion(array $datos) {
+//        $datos['id'] = '18284';
+//        $datos['idRefaccion'] = '197';
+//        $datos['bloqueado'] = 1;
+        $this->inventario->setInventarioRehabilitacionRefaccion($datos);
+        $infoModelo = $this->inventario->getInventarioId($datos['idInventario']);
+        $this->equipo = new Equipo($infoModelo['idModelo']);
+        return $this->setRefaccionesRehabitiacion($datos);
     }
 
 }

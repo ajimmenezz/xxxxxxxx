@@ -17,5 +17,13 @@ class Equipo {
     public function getRefaccionesEquipo(){
         return $this->DBE->getRefaccionesEquipo($this->idEquipo);
     }
-
+    
+    public function getRefaccionesEquipoWhere(string $where = ''){
+        return $this->DBE->getRefaccionesEquipo($this->idEquipo, $where);
+    }
+    
+    public function getRefaccionesEquipoRehabilitacion(string $where = ''){
+        return $this->DBE->getRefaccionesEquipoRehabilitacion(array('idEquipo' => $this->idEquipo, 'where' => $where));
+    }
+    
 }
