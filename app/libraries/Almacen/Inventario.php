@@ -98,5 +98,9 @@ class Inventario {
             ),array('IdInventario' => $datos['id'], 'IdRefaccion' => $datos['idRefaccion']));
         }
     }
+    
+    public function editarEstatusAlmacen(array $datos){
+        $this->DBI->editarEstatusAlmacen($datos);
+    }
 
 }

@@ -31,6 +31,9 @@ class Controller_Rehabilitacion extends Base {
                 case 'RefaccionRehabilitacion':
                     $resultado = $this->rehabilitacion->setRefaccionRehabilitacion($this->input->post());
                     break;
+                case 'ConcluirRehabilitacion':
+                    $resultado = $this->rehabilitacion->concluirRehabilitacion($this->input->post());
+                    break;
                 default:
                     $resultado = FALSE;
                     break;

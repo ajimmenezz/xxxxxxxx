@@ -66,7 +66,7 @@ class Rehabilitacion extends General {
         $datos['fecha'] = $fechaCaptura;
         $datos['evidencia'] = $archivos;
         $datos['estatus'] = '25';
-        
+
         if ($datos['operacion'] === 'actualizar') {
             $this->inventario->actualizarNotasInventario($datos);
         } else {
@@ -83,7 +83,20 @@ class Rehabilitacion extends General {
         $this->inventario->setInventarioRehabilitacionRefaccion($datos);
         $infoModelo = $this->inventario->getInventarioId($datos['idInventario']);
         $this->equipo = new Equipo($infoModelo['idModelo']);
-        return $this->setRefaccionesRehabitiacion($datos);
+
+        return array('response' => 200, 'datos' => $this->setRefaccionesRehabitiacion($datos));
+    }
+
+    public function concluirRehabilitacion(array $datos) {
+//        $datos['id'] = '18284';
+        $comentarios = $this->inventario->getNotasInventarioId($datos['id']);
+
+        if (!empty($comentarios)) {
+            $this->inventario->editarEstatusAlmacen(array('idInventario' => $datos['id'], 'idEstatus' => '17'));
+            return array('response' => 200);
+        } else {
+            throw new \Exception(array('response' => 400, 'message' => 'Falta agregar al menos un comentario.'));
+        }
     }
 
 }
