@@ -15,6 +15,8 @@ $(function () {
     evidenciasComentarios.iniciarFileUpload();
     let collapseComentarios = new Collapse('collapseComentarios');
     let infoEquipo = null;
+    let esActualizarComentario = false;
+    let idComentario = null;
 
     tablaPrincipal.evento(function () {
         let datosTabla = tablaPrincipal.datosTabla();
@@ -77,6 +79,8 @@ $(function () {
             let indice = $(this).attr('data-key');
             let posicion = indice.split('-')[1];
             let htmlEvidencias = '', evidencias = null;
+            esActualizarComentario = true;
+            idComentario = comentarios[posicion].id;
             $('#modalAgregarComentario').modal('show');
 
             $('#textareaComentario').val(comentarios[posicion].comentario);
@@ -163,8 +167,13 @@ $(function () {
             let sendComment = {
                 idInventario: infoEquipo.inventario,
                 comentario: $('#textareaComentario').val(),
-                operacion: 'agregar',
                 evidencias: false
+            }
+            if(esActualizarComentario){
+                sendComment.operacion = 'actualizar';
+                sendComment.id = idComentario;
+            } else{
+                sendComment.operacion = 'agregar';
             }
             if ($('#agregarEvidencia').val() !== '') {
                 evidenciasComentarios.enviarPeticionServidor('#modalAgregarComentario', sendComment, function (respuesta) {
@@ -210,6 +219,8 @@ $(function () {
 
     $('#btnCancelarComentario').on('click', function () {
         limpiarCamposComentarios();
+        esActualizarComentario = false;
+        idComentario = null;
     });
 
     function limpiarCamposComentarios() {

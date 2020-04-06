@@ -35,12 +35,18 @@ class Collapse {
 
     iniciarCardMedia(informacion) {
         let html = '';
+        let evidencias = null;
         if(informacion.evidencias !== null){
-            html = '<div class="col-md-3 col-sm-3 col-xs-3">\n\
-                                            <div id="img" class="evidencia">\n\
-                                                <img src ="..' + informacion.evidencias + '" />\n\
-                                            </div>\n\
-                                        </div>';
+            evidencias = informacion.evidencias.split(',');
+                $.each(evidencias, function (key, value) {
+                    if (value !== '') {
+                        html += '<div class="col-md-3 col-sm-3 col-xs-3">\n\
+                                                <div id="img" class="evidencia">\n\
+                                                    <img src ="..' + value + '" />\n\
+                                                </div>\n\
+                                            </div>';
+                    }
+                });
         }
         this.objetoCollapse.append('<li class="media media-sm">\n\
                                         <div class="media-body">\n\
