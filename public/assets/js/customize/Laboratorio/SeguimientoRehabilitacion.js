@@ -26,7 +26,7 @@ $(function () {
             }
             peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/InfoBitacora', sendModel, function (respuesta) {
                 if (respuesta.response === 200) {
-                    console.log(respuesta);
+//                    console.log(respuesta);
                     infoEquipo = {
                         inventario: respuesta.datos.infoBitacora.id,
                         modelo: respuesta.datos.infoBitacora.modelo,
@@ -72,6 +72,33 @@ $(function () {
             });
             collapseComentarios.multipleCardMedia(datos);
         }
+
+        $(".cardUtileria").on('click', function () {
+            let indice = $(this).attr('data-key');
+            let posicion = indice.split('-')[1];
+            let htmlEvidencias = '', evidencias = null;
+            $('#modalAgregarComentario').modal('show');
+
+            $('#textareaComentario').val(comentarios[posicion].comentario);
+            if (comentarios[posicion].evidencias !== null) {
+                evidencias = comentarios[posicion].evidencias.split(',');
+                $.each(evidencias, function (key, value) {
+                    if (value !== '') {
+                        htmlEvidencias += '<div class="col-md-3 col-sm-3 col-xs-3">\n\
+                                                <div id="img" class="evidencia">\n\
+                                                    <img src ="..' + value + '" />\n\
+                                                    <div class="eliminarEvidencia bloqueoConclusionBtn" data-value="' + value + '" data-key="' + key + '">\n\
+                                                        <a href="#">\n\
+                                                            <i class="fa fa-trash text-danger"></i>\n\
+                                                        </a>\n\
+                                                    </div>\n\
+                                                </div>\n\
+                                            </div>';
+                    }
+                });
+                $('#existenEvidencias').append(htmlEvidencias);
+            }
+        });
     }
 
     function agregarContenidoRefacciones(refacciones) {
@@ -104,12 +131,12 @@ $(function () {
                 idRefaccion: datosFila[0],
                 bloqueado: datosFila[1]
             }
-//                peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
-//                    if (respuesta.response === 200) {
-                        console.log("enviar: ");
-                        console.log(sendReview);
-//                    }
-//                });
+//            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
+//                if (respuesta.response === 200) {
+                    console.log("enviar: ");
+                    console.log(sendReview);
+//                }
+//            });
         });
     });
 
@@ -142,6 +169,7 @@ $(function () {
             if ($('#agregarEvidencia').val() !== '') {
                 evidenciasComentarios.enviarPeticionServidor('#modalAgregarComentario', sendComment, function (respuesta) {
                     if (respuesta.response === 200) {
+                        limpiarCamposComentarios();
                         agregarContenidoComentarios(respuesta.datos);
                         $('#modalAgregarComentario').modal('hide');
                     } else {
@@ -152,6 +180,7 @@ $(function () {
             } else {
                 peticion.enviar('modalAgregarComentario', 'SeguimientoRehabilitacion/SetComentario', sendComment, function (respuesta) {
                     if (respuesta.response === 200) {
+                        limpiarCamposComentarios();
                         agregarContenidoComentarios(respuesta.datos);
                         $('#modalAgregarComentario').modal('hide');
                     } else {
@@ -160,7 +189,6 @@ $(function () {
                     }
                 });
             }
-            limpiarCamposComentarios();
         }
     });
 
@@ -187,6 +215,7 @@ $(function () {
     function limpiarCamposComentarios() {
         $('#textareaComentario').val('');
         evidenciasComentarios.limpiarElemento();
+        $('#existenEvidencias').empty();
     }
 
 });
