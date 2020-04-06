@@ -151,6 +151,7 @@
                                 <thead>
                                     <tr>
                                         <th class="never">IdRefaccion</th>
+                                        <th class="never">Bloqueado</th>
                                         <th class="all">Refacción</th>
                                         <th class="all">Serie</th>
                                         <th class="all">Selección</th>
