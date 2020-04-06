@@ -22,21 +22,37 @@ class Collapse {
                                         </div>\n\
                                     </div>');
     }
+    
+    multipleCollapse(datos = []) {
+        let _this = this;
+        let contador = 0;
+
+        $.each(datos, function (key, valor) {
+            _this.iniciarCollapse(valor.titulo, valor.contenido, 'collapse' + contador);
+            contador++;
+        });
+    }
 
     iniciarCardMedia(informacion) {
         let html = '';
+        let evidencias = null;
         if(informacion.evidencias !== null){
-            html = '<div class="col-md-3 col-sm-3 col-xs-3">\n\
-                                            <div id="img" class="evidencia">\n\
-                                                <img src =".' + informacion.evidencias + '" />\n\
-                                            </div>\n\
-                                        </div>';
+            evidencias = informacion.evidencias.split(',');
+                $.each(evidencias, function (key, value) {
+                    if (value !== '') {
+                        html += '<div class="col-md-3 col-sm-3 col-xs-3">\n\
+                                                <div id="img" class="evidencia">\n\
+                                                    <img src ="..' + value + '" />\n\
+                                                </div>\n\
+                                            </div>';
+                    }
+                });
         }
         this.objetoCollapse.append('<li class="media media-sm">\n\
                                         <div class="media-body">\n\
                                             <div class="row">\n\
                                                 <div class="col-md-9 col-sm-6 col-xs-12">\n\
-                                                    <h1 class="page-header">' + informacion.titulo + ' <a href="javascript:;" id="'+informacion.href+'" class="btn btn-sm btn-primary m-r-5">'+informacion.accion+'</a></h1>\n\
+                                                    <h1 class="page-header">' + informacion.titulo + ' <a href="javascript:;" id="'+informacion.href+'" data-key="' + informacion.href + '" class="btn btn-sm btn-primary m-r-5 cardUtileria">'+informacion.accion+'</a></h1>\n\
                                                 </div>\n\
                                                 <div class="col-md-3 col-sm-6 col-xs-12 text-right cambioVistas hidden">\n\
                                                     <label>'+informacion.subtitulo+'</label>\n\
@@ -48,32 +64,20 @@ class Collapse {
                                     </li>');
     }
 
-    multipleCollapse(datos = []) {
-        let _this = this;
-        let contador = 0;
-
-        $.each(datos, function (key, valor) {
-            _this.iniciarCollapse(valor.titulo, valor.contenido, 'collapse' + contador);
-            contador++;
-        });
-    }
-
     multipleCardMedia(datos = []) {
         let _this = this;
-        let contador = 0;
         let infoCard = null;
 
         $.each(datos, function (key, valor) {
             infoCard = {
                 titulo: valor.titulo,
                 contenido: valor.contenido,
-                href: 'card' + contador,
+                href: 'card-' + key,
                 evidencias: valor.evidencias,
                 subtitulo: valor.fecha,
                 accion: valor.boton
             }
             _this.iniciarCardMedia(infoCard);
-            contador++;
         });
     }
 
