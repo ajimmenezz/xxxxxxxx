@@ -34,6 +34,7 @@ class Inventario {
         $notasInventario = $this->DBI->getNotasInventarioId($idInventario);
 
         foreach ($notasInventario as $key => $value) {
+            $comentarios[$key]['id'] = $value['Id'];
             $comentarios[$key]['nombre'] = $value['Usuario'];
             $comentarios[$key]['comentario'] = $value['Nota'];
             $comentarios[$key]['fecha'] = $value['Fecha'];
