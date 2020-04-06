@@ -120,10 +120,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
                         <div class="col-sm-12 col-md-12 col-lg-12">
-                            <div id="collapseComentarios">
-                                
-                            </div>
+                            <ul class="media-list media-list-with-divider">
+                                <div id="collapseComentarios">
+
+                                </div>
+                            </ul>
                         </div>
                     </div>
                     <!--Terminando informacion del equipo-->
@@ -146,6 +151,7 @@
                                 <thead>
                                     <tr>
                                         <th class="never">IdRefaccion</th>
+                                        <th class="never">Bloqueado</th>
                                         <th class="all">Refacción</th>
                                         <th class="all">Serie</th>
                                         <th class="all">Selección</th>
