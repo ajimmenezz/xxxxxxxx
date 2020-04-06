@@ -81,7 +81,7 @@ class Rehabilitacion extends General {
 //        $datos['idRefaccion'] = '197';
 //        $datos['bloqueado'] = 1;
         $this->inventario->setInventarioRehabilitacionRefaccion($datos);
-        $infoModelo = $this->inventario->getInventarioId($datos['idInventario']);
+        $infoModelo = $this->inventario->getInventarioId($datos['id']);
         $this->equipo = new Equipo($infoModelo['idModelo']);
 
         return array('response' => 200, 'datos' => $this->setRefaccionesRehabitiacion($datos));
@@ -97,6 +97,10 @@ class Rehabilitacion extends General {
         } else {
             throw new \Exception(array('response' => 400, 'message' => 'Falta agregar al menos un comentario.'));
         }
+    }
+    
+    public function concluirDeshuesar(array $datos){
+        var_dump($datos);   
     }
 
 }
