@@ -82,7 +82,7 @@ $(function () {
                     value.Id,
                     value.Bloqueado,
                     value.Nombre,
-                    value.NoParte,
+                    value.Serie,
                     '<div class="checkbox">\n\
                         <label>\n\
                             <input id="addRefaccion-' + key + '" class="checkRefacciones" data-key="' + key + '" type="checkbox" />\n\
