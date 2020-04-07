@@ -96,7 +96,6 @@ class Rehabilitacion extends General {
             $usuario = $this->Usuario->getDatosUsuario();
             $datos['idUsuario'] = $usuario['Id'];
             $this->inventario->setRevisionRehabilitacion($datos);
-//            $this->inventario->editarEstatusAlmacen(array('idInventario' => $datos['id'], 'idEstatus' => '17'));
             return array('response' => 200);
         } else {
             return array('response' => 400, 'message' => 'Falta agregar al menos un comentario.');
@@ -104,18 +103,11 @@ class Rehabilitacion extends General {
     }
 
     public function concluirDeshuesar(array $datos) {
-//        $datos['id'] = '18284';
         $comentarios = $this->inventario->getNotasInventarioId($datos['id']);
         
         if (!empty($comentarios)) {
             $usuario = $this->Usuario->getDatosUsuario();
-            $datos = array();
-
-            $datos[0]['idUsuario'] = $usuario['Id'];
-            $datos[0]['id'] = '18284';
-            $datos[0]['idRefaccion'] = '192';
-            $datos[0]['idEstatus'] = '17';
-            $datos[0]['serie'] = '';
+            $datos['idUsuario'] = $usuario['Id'];
 
             $this->inventario->setRefaccionDeshueso($datos);
 

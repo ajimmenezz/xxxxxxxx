@@ -967,6 +967,8 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                     "Fecha" => $fecha[0]['Fecha']
                 ]);
             }
+            
+            $this->editarEstatusAlmacen(array('idEstatus' => '17', 'idInventario' => $registroInventario));
         }
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();

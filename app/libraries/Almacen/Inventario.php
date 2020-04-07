@@ -106,19 +106,18 @@ class Inventario {
 
     public function setRefaccionDeshueso(array $datos) {
         $arrayRefacciones = array();
+        $datosAlmacen = $this->DBI->getDatosAlmacenVirtualUsuario($datos['idUsuario']);
 
-        $datosAlmacen = $this->DBI->getDatosAlmacenVirtualUsuario($datos[0]['idUsuario']);
-
-        foreach ($datos as $key => $value) {
+        foreach ($datos['infoDeshueso'] as $key => $value) {
             $arrayRefacciones[$key]['IdAlmacen'] = $datosAlmacen['Id'];
-            $arrayRefacciones[$key]['IdProducto'] = $value['idRefaccion'];
+            $arrayRefacciones[$key]['IdProducto'] = $value[0];
             $arrayRefacciones[$key]['IdTipoProducto'] = '2';
-            $arrayRefacciones[$key]['IdEstatus'] = $value['idEstatus'];
+            $arrayRefacciones[$key]['IdEstatus'] = $value[2];
             $arrayRefacciones[$key]['Cantidad'] = '1';
-            $arrayRefacciones[$key]['Serie'] = $value['serie'];
+            $arrayRefacciones[$key]['Serie'] = $value[0];
         }
-
-        $this->DBI->guardarRefaccionesDeshueso($arrayRefacciones, $datos[0]['id']);
+        
+        $this->DBI->guardarRefaccionesDeshueso($arrayRefacciones, $datos['id']);
     }
 
     public function setRevisionRehabilitacion(array $datos) {
