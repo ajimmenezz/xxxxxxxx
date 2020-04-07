@@ -153,6 +153,7 @@
                                     <tr>
                                         <th class="never">IdRefaccion</th>
                                         <th class="never">Bloqueado</th>
+                                        <th class="never">Key</th>
                                         <th class="all">Refacción</th>
                                         <th class="all">Serie</th>
                                         <th class="all">Selección</th>
