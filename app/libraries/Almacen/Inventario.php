@@ -116,7 +116,7 @@ class Inventario {
             $arrayRefacciones[$key]['Cantidad'] = '1';
             $arrayRefacciones[$key]['Serie'] = $value[3];
         }
-        
+
         $this->DBI->guardarRefaccionesDeshueso($arrayRefacciones, $datos['id']);
     }
 
@@ -135,16 +135,20 @@ class Inventario {
             $arrayRefacciones[$key]['Cantidad'] = '1';
             $arrayRefacciones[$key]['Serie'] = $datosInventario[0]['Serie'];
         }
-        
+
         $this->DBI->setRevisionRehabilitacion($arrayRefacciones, $datos['id']);
     }
-    
-    public function getNotaInventarioWhere(string $where){
+
+    public function getNotaInventarioWhere(string $where) {
         return $this->DBI->getNotasInventarioId($where);
-    } 
-    
+    }
+
     public function getEstatusProductoConsignacion() {
         return $this->DBI->getEstatusProductoConsignacion();
+    }
+
+    public function actualizarEvidencaNotaInventario(array $datos) {
+        $this->DBI->actualizarNotasInventario(array('Archivos' => $datos['archivo']), array('Id' => $datos['id']));
     }
 
 }

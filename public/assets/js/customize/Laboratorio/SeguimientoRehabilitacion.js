@@ -115,10 +115,12 @@ $(function () {
                 });
                 let deleteEvidencia = {
                     archivo: archivo,
-                    id: idComentario
+                    id: idComentario,
+                    idInventario: idInventario
                 }
-                peticion.enviar('modalAgregarComentario', 'SeguimientoRehabilitacion/', deleteEvidencia, function (respuesta) {
+                peticion.enviar('modalAgregarComentario', 'SeguimientoRehabilitacion/EliminiarEvidencia', deleteEvidencia, function (respuesta) {
                     if (respuesta.response === 200) {
+                        agregarContenidoComentarios(respuesta.datos);
                         $(`#img-${indice}`).addClass('hidden');
                     }
                 });
@@ -240,7 +242,7 @@ $(function () {
         let sendReview = {
             id: idInventario
         }
-        peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/ConcluirRehabilitacion', sendReview, function (respuesta) {
+        peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/ConcluirRehabilitacion', sendReview, function (respuesta) {
             if (respuesta.response === 200) {
                 peticion.mostrarMensaje('#mensajeConcluir', true, 'Se ha concluido la revisión', 3000);
                 setTimeout(function () {
@@ -280,7 +282,7 @@ $(function () {
         if (continuarDeshueso) {
             sendBoning.infoDeshueso = tablaDeshuesarTemp;
 
-            peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/ConcluirDeshuesar', sendBoning, function (respuesta) {
+            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/ConcluirDeshuesar', sendBoning, function (respuesta) {
                 if (respuesta.response === 200) {
                     peticion.mostrarMensaje('#mensajeConcluirDeshuesar', true, 'Se ha concluido la revisión', 3000);
                     setTimeout(function () {

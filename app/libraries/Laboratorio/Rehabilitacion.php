@@ -86,15 +86,14 @@ class Rehabilitacion extends General {
             $evidencia = $archivos . ',' . $notaInventario[0]['Archivos'];
         } elseif (!empty($notaInventario[0]['Archivos'])) {
             $evidencia = $notaInventario[0]['Archivos'];
+        }else{
+            $evidencia = $archivos;
         }
         
         return $evidencia;
     }
 
     public function setRefaccionRehabilitacion(array $datos) {
-//        $datos['id'] = '18284';
-//        $datos['idRefaccion'] = '197';
-//        $datos['bloqueado'] = 1;
         $this->inventario->setInventarioRehabilitacionRefaccion($datos);
         $infoModelo = $this->inventario->getInventarioId($datos['id']);
         $this->equipo = new Equipo($infoModelo['idModelo']);
@@ -103,7 +102,6 @@ class Rehabilitacion extends General {
     }
 
     public function concluirRehabilitacion(array $datos) {
-//        $datos['id'] = '18284';
         $comentarios = $this->inventario->getNotasInventarioId($datos['id']);
 
         if (!empty($comentarios)) {
@@ -129,6 +127,23 @@ class Rehabilitacion extends General {
         } else {
             return array('response' => 400, 'message' => 'Falta agregar al menos un comentario.');
         }
+    }
+    
+    public function deleteEvidencia(array $datos){
+        $notaInventario = $this->inventario->getNotaInventarioWhere(' WHERE Id = ' . $datos['id']);
+        $archivos = explode(',', $notaInventario[0]['Archivos']);
+        
+        foreach ($archivos as $key => $value) {
+            if($value === $datos['archivo']){
+                unset($archivos[$key]);
+            }
+        }
+        
+        $archivos = implode(',', $archivos);
+
+        $this->inventario->actualizarEvidencaNotaInventario(array('id' => $datos['id'], 'archivo' => $archivos));
+        
+        return array('response' => 200, 'datos' => $this->inventario->getNotasInventarioId($datos['idInventario']));
     }
 
 }

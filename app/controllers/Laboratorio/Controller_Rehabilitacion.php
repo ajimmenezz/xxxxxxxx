@@ -37,6 +37,9 @@ class Controller_Rehabilitacion extends Base {
                 case 'ConcluirDeshuesar':
                     $resultado = $this->rehabilitacion->concluirDeshuesar($this->input->post());
                     break;
+                case 'EliminiarEvidencia':
+                    $resultado = $this->rehabilitacion->deleteEvidencia($this->input->post());
+                    break;
                 default:
                     $resultado = FALSE;
                     break;
