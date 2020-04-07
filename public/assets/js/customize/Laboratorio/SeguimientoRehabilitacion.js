@@ -128,8 +128,11 @@ $(function () {
         let datosFila = tablaRefaccion.datosFila(this);
         let sendReview = null;
 
-        $(".checkRefacciones").off('click');
-        $(".checkRefacciones").click(function () {
+//        $(".checkRefacciones").off('click');
+//        $(".checkRefacciones").click(function () {
+        $('input[type="checkbox"]').click(function () {
+            if ($(this).prop("checked") === true) {
+            }
             sendReview = {
                 idInventario: infoEquipo.inventario,
                 idRefaccion: datosFila[0],
@@ -137,8 +140,8 @@ $(function () {
             }
 //            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
 //                if (respuesta.response === 200) {
-                    console.log("enviar: ");
-                    console.log(sendReview);
+            console.log("enviar: ");
+            console.log(sendReview);
 //                }
 //            });
         });
@@ -169,10 +172,10 @@ $(function () {
                 comentario: $('#textareaComentario').val(),
                 evidencias: false
             }
-            if(esActualizarComentario){
+            if (esActualizarComentario) {
                 sendComment.operacion = 'actualizar';
                 sendComment.id = idComentario;
-            } else{
+            } else {
                 sendComment.operacion = 'agregar';
             }
             if ($('#agregarEvidencia').val() !== '') {
