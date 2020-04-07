@@ -113,7 +113,7 @@ class Utileria {
             window.location.href = "Logout";
         } else {
             window.location.href = url;
-        }
+    }
     }
 
     //Plugin Elementos
@@ -126,7 +126,7 @@ class Utileria {
 
         if (elemento.hasClass('hidden')) {
             elemento.removeClass('hidden');
-        }
+    }
     }
 
     ocultarElemento(objeto = null) {
@@ -138,8 +138,40 @@ class Utileria {
 
         if (!elemento.hasClass('hidden')) {
             elemento.addClass('hidden');
+    }
+    }
+    mostrarMensaje(objeto, tipo, mensaje, duración) {
+        switch (tipo) {
+            case false:
+                var error = '<div class="alert alert-danger fade in m-b-15" id="mensajeError">\n\
+                                <strong>Error: </strong>\n\
+                               ' + mensaje + '\n\
+                            </div>';
+                $(objeto).empty().append(error);
+                setTimeout(function () {
+                    $('#mensajeError').fadeOut('slow', function () {
+                        $(this).remove();
+                    });
+                }, duración);
+                break;
+                
+            case true:
+                var exito = '<div class="alert alert-success fade in m-b-15" id="mensajeExito">\n\
+                                <strong>Éxito: </strong>\n\
+                               ' + mensaje + '\n\
+                            </div>';
+                $(objeto).empty().append(exito);
+                setTimeout(function () {
+                    $('#mensajeExito').fadeOut('slow', function () {
+                        $(this).remove();
+                    });
+                }, duración);
+                break;
+            default:
+                break;
         }
     }
+    ;
 }
 
 

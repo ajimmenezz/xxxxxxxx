@@ -91,6 +91,9 @@
                             <div class="underline m-b-15 m-t-15"></div>
                         </div>
                     </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div id="mensajeConcluir"></div>
+                        </div>
                     <!--Finaliza encabezado del panel-->
                     <!--Empezando informacion del equipo-->
                     <div class="row">
@@ -125,9 +128,7 @@
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <ul class="media-list media-list-with-divider">
-                                <div id="collapseComentarios">
-
-                                </div>
+                                <div id="collapseComentarios"></div>
                             </ul>
                         </div>
                     </div>
