@@ -726,6 +726,51 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $return_array;
     }
 
+    public function guardarRefaccionesDeshueso($data, $registroInventario) {
+        $this->iniciaTransaccion();
+        $return_array = [
+            'estatus' => 500
+        ];
+
+        $fecha = $this->consulta("select now() as Fecha;");
+
+        $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
+        if (!empty($inventario)) {
+            $this->actualizar("t_inventario", ['Cantidad' => 0], ['Id' => $inventario[0]['Id']]);
+
+            foreach ($data as $key => $value) {
+                $this->insertar("t_inventario", [
+                    "IdAlmacen" => $value['IdAlmacen'],
+                    "IdTipoProducto" => $value['IdTipoProducto'],
+                    "IdProducto" => $value['IdProducto'],
+                    "IdEstatus" => $value['IdEstatus'],
+                    "Cantidad" => $value['Cantidad'],
+                    "Serie" => $value['Serie'],
+                    "IdEquipoDeshuesado" => $inventario[0]['Id']
+                ]);
+
+                $this->insertar('t_movimientos_inventario', [
+                    "IdTipoMovimiento" => 7,
+                    "IdAlmacen" => $value['IdAlmacen'],
+                    "IdTipoProducto" => $value['IdTipoProducto'],
+                    "IdProducto" => $value['IdProducto'],
+                    "IdEstatus" => $value['IdEstatus'],
+                    "IdUsuario" => $this->usuario['Id'],
+                    "Cantidad" => $value['Cantidad'],
+                    "Serie" => $value['Serie'],
+                    "Fecha" => $fecha[0]['Fecha']
+                ]);
+            }
+        }
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->commitTransaccion();
+            $return_array['estatus'] = 200;
+        }
+        return $return_array;
+    }
+
     public function buscaSerieDuplicada(array $datos) {
         $consulta = $this->consulta(""
                 . "select Serie "
@@ -852,6 +897,11 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
 
     public function actualizarInventarioRehabilitacionRefaccion(array $datos, array $where) {
         $this->actualizar('t_inventario_rehabilitacion_refaccion', $datos, $where);
+    }
+
+    public function getDatosAlmacenVirtualUsuario(string $idUsuario) {
+        $consulta = $this->consulta("select * from cat_v3_almacenes_virtuales where IdReferenciaAlmacen = '" . $idUsuario . "'");
+        return $consulta[0];
     }
 
 }

@@ -130,8 +130,8 @@ $(function () {
         let sendReview = null;
 
 //        $(".checkRefacciones").off('click');
-//        $(".checkRefacciones").click(function () {
-        $('input[type="checkbox"]').click(function () {
+        $(".checkRefacciones").change(function () {
+//        $('input[type="checkbox"]').change(function () {
             if ($(this).prop("checked") === true) {
             }
             sendReview = {

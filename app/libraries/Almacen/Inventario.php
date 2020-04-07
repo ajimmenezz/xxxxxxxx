@@ -96,12 +96,29 @@ class Inventario {
                 'IdInventario' => $datos['id'],
                 'IdRefaccion' => $datos['idRefaccion'],
                 'Bloqueado' => $datos['bloqueado']
-            ),array('IdInventario' => $datos['id'], 'IdRefaccion' => $datos['idRefaccion']));
+                    ), array('IdInventario' => $datos['id'], 'IdRefaccion' => $datos['idRefaccion']));
         }
     }
-    
-    public function editarEstatusAlmacen(array $datos){
+
+    public function editarEstatusAlmacen(array $datos) {
         $this->DBI->editarEstatusAlmacen($datos);
+    }
+
+    public function setRefaccionDeshueso(array $datos) {
+        $arrayRefacciones = array();
+        
+        $datosAlmacen = $this->DBI->getDatosAlmacenVirtualUsuario($datos[0]['idUsuario']);
+ 
+        foreach ($datos as $key => $value) {
+            $arrayRefacciones[$key]['IdAlmacen'] = $datosAlmacen['Id'];
+            $arrayRefacciones[$key]['IdProducto'] = $value['idRefaccion'];
+            $arrayRefacciones[$key]['IdTipoProducto'] = '2';
+            $arrayRefacciones[$key]['IdEstatus'] = $value['idEstatus'];
+            $arrayRefacciones[$key]['Cantidad'] = '1';
+            $arrayRefacciones[$key]['Serie'] = $value['serie'];
+        }
+        
+        $this->DBI->guardarRefaccionesDeshueso($arrayRefacciones, $datos[0]['id']);
     }
 
 }
