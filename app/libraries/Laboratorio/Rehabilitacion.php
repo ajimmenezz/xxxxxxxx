@@ -33,6 +33,7 @@ class Rehabilitacion extends General {
         $rafaccionesRehabilitacion = $this->setRefaccionesRehabitiacion($datos);
         $data['infoBitacora']['refacciones'] = $rafaccionesRehabilitacion;
         $data['infoBitacora']['deshuesar'] = $this->equipo->getRefaccionesEquipo();
+        $data['infoBitacora']['estatusDeshuesar'] = $this->inventario->getEstatusProductoConsignacion();
 
         return array('response' => 200, 'datos' => $data);
     }

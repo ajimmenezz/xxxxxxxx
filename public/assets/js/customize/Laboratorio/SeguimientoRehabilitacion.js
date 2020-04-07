@@ -104,25 +104,25 @@ $(function () {
                 });
                 $('#existenEvidencias').append(htmlEvidencias);
             }
-            
+
             $('.eliminarEvidencia').on('click', function () {
-            let archivo = $(this).attr('data-value');
-            let indice = $(this).attr('data-key');
-            $.each(evidencias, function (key, value) {
-                if (key == indice) {
-                    delete evidencias[key];
+                let archivo = $(this).attr('data-value');
+                let indice = $(this).attr('data-key');
+                $.each(evidencias, function (key, value) {
+                    if (key == indice) {
+                        delete evidencias[key];
+                    }
+                });
+                let deleteEvidencia = {
+                    archivo: archivo,
+                    id: idComentario
                 }
+                peticion.enviar('modalAgregarComentario', 'SeguimientoRehabilitacion/', deleteEvidencia, function (respuesta) {
+                    if (respuesta.response === 200) {
+                        $(`#img-${indice}`).addClass('hidden');
+                    }
+                });
             });
-            let deleteEvidencia = {
-                archivo: archivo,
-                id: idComentario
-            }
-            peticion.enviar('modalAgregarComentario', 'SeguimientoRehabilitacion/', deleteEvidencia, function (respuesta) {
-                if (respuesta.response === 200) {
-                    $(`#img-${indice}`).addClass('hidden');
-                }
-            });
-        });
         });
     }
 
@@ -149,22 +149,36 @@ $(function () {
         let datosFila = tablaRefaccion.datosFila(this);
         let sendReview = null;
 
-//        $(".checkRefacciones").off('click');
-        $(".checkRefacciones").change(function () {
-//        $('input[type="checkbox"]').change(function () {
-            if ($(this).prop("checked") === true) {
-            }
-            sendReview = {
-                idInventario: infoEquipo.inventario,
-                idRefaccion: datosFila[0],
-                bloqueado: datosFila[1]
-            }
-//            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
-//                if (respuesta.response === 200) {
-            console.log(sendReview);
-//                }
-//            });
+
+        let a = [];
+        $(".checkRefacciones:checked").each(function () {
+            a.push($(this).data('key'));
         });
+        console.log(a);
+
+//        $(".checkRefacciones").off('click');
+//        $('input[type="checkbox"]').off('click');
+//        $(".checkRefacciones").change(function () {
+////        $('input[type="checkbox"]').change(function () {
+////            console.log($(this).data("key"));
+//            
+//            console.log($('.checkRefacciones').attr('data-key'));
+//            
+//            if ($(this).prop("checked") === true) {
+//                
+//            }
+//            
+//            sendReview = {
+//                id: infoEquipo.inventario,
+//                idRefaccion: datosFila[0],
+//                bloqueado: datosFila[1]
+//            }
+////            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
+////                if (respuesta.response === 200) {
+//            console.log(sendReview);
+////                }
+////            });
+//        });
     });
 
     function agregarContenidoDeshuesar(deshuesar) {
