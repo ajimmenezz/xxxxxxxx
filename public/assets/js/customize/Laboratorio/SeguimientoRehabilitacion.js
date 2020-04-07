@@ -60,6 +60,7 @@ $(function () {
 
     function agregarContenidoComentarios(comentarios) {
         collapseComentarios.limpiarCollapse();
+        let evidencias = null
         if (comentarios.length > 0) {
             let datos = [];
             let contador = 0;
@@ -79,20 +80,20 @@ $(function () {
         $(".cardUtileria").on('click', function () {
             let indice = $(this).attr('data-key');
             let posicion = indice.split('-')[1];
-            let htmlEvidencias = '', evidencias = null;
+            let htmlEvidencias = '';
             esActualizarComentario = true;
             idComentario = comentarios[posicion].id;
             $('#modalAgregarComentario').modal('show');
+            evidencias = comentarios[posicion].evidencias.split(',');
 
             $('#textareaComentario').val(comentarios[posicion].comentario);
             if (comentarios[posicion].evidencias !== null) {
-                evidencias = comentarios[posicion].evidencias.split(',');
                 $.each(evidencias, function (key, value) {
                     if (value !== '') {
                         htmlEvidencias += '<div class="col-md-3 col-sm-3 col-xs-3">\n\
-                                                <div id="img" class="evidencia">\n\
+                                                <div id="img-' + key + '" class="evidencia">\n\
                                                     <img src ="..' + value + '" />\n\
-                                                    <div class="eliminarEvidencia bloqueoConclusionBtn" data-value="' + value + '" data-key="' + key + '">\n\
+                                                    <div class="eliminarEvidencia" data-value="' + value + '" data-key="' + key + '">\n\
                                                         <a href="#">\n\
                                                             <i class="fa fa-trash text-danger"></i>\n\
                                                         </a>\n\
@@ -103,6 +104,25 @@ $(function () {
                 });
                 $('#existenEvidencias').append(htmlEvidencias);
             }
+            
+            $('.eliminarEvidencia').on('click', function () {
+            let archivo = $(this).attr('data-value');
+            let indice = $(this).attr('data-key');
+            $.each(evidencias, function (key, value) {
+                if (key == indice) {
+                    delete evidencias[key];
+                }
+            });
+            let deleteEvidencia = {
+                archivo: archivo,
+                id: idComentario
+            }
+            peticion.enviar('modalAgregarComentario', 'SeguimientoRehabilitacion/', deleteEvidencia, function (respuesta) {
+                if (respuesta.response === 200) {
+                    $(`#img-${indice}`).addClass('hidden');
+                }
+            });
+        });
         });
     }
 
@@ -141,7 +161,6 @@ $(function () {
             }
 //            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
 //                if (respuesta.response === 200) {
-            console.log("enviar: ");
             console.log(sendReview);
 //                }
 //            });
@@ -155,12 +174,12 @@ $(function () {
                 tablaDeshuesar.agregarDatosFila([
                     value.Id,
                     value.Nombre,
-                    '<select id="" class="form-control" style="width: 100%">\n\
+                    '<select id="selectDeshuesar' + key + '" class="form-control" style="width: 100%">\n\
                         <option value="">Seleccionar</option>\n\
-                        <option value="Disponible">Disponible</option>\n\
-                        <option value="Dañado">Dañado</option>\n\
+                        <option value="17">Disponible</option>\n\
+                        <option value="22">Dañado</option>\n\
                     </select>',
-                    '<input type="text" class="form-control" style="width: 100%" placeholder="ILEGIBLE"/>'
+                    '<input id="inputDeshuesar' + key + '" type="text" class="form-control" style="width: 100%" placeholder="ILEGIBLE"/>'
                 ]);
             });
         }
@@ -212,13 +231,54 @@ $(function () {
         peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/ConcluirRehabilitacion', sendReview, function (respuesta) {
             if (respuesta.response === 200) {
                 peticion.mostrarMensaje('#mensajeConcluir', true, 'Se ha concluido la revisión', 3000);
-                setTimeout(function(){
+                setTimeout(function () {
                     location.reload();
-                  }, 2000);
+                }, 2000);
             } else {
                 evento.mostrarMensaje('#mensajeConcluir', false, respuesta.message, 3000);
             }
         });
+    });
+
+    $('#btnConcluirDeshuesar').on('click', function () {
+        let tablaDeshuesarTemp = {};
+        let continuarDeshueso = true;
+        let infoTablaDeshuesar = tablaDeshuesar.datosTabla();
+        let sendBoning = {
+            id: idInventario
+        }
+
+        $.each(infoTablaDeshuesar, function (key, value) {
+            tablaDeshuesarTemp[key] = infoTablaDeshuesar[key];
+            tablaDeshuesarTemp[key] = infoTablaDeshuesar[key];
+        });
+        $.each(infoTablaDeshuesar, function (key, value) {
+            if ($(`#selectDeshuesar${key}`).val() === '') {
+                continuarDeshueso = false;
+                evento.mostrarMensaje('#mensajeConcluirDeshuesar', false, 'Te faltan datos en las refacciones', 3000);
+            }
+            tablaDeshuesarTemp[key][2] = $(`#selectDeshuesar${key}`).val();
+            if ($(`#inputDeshuesar${key}`).val() === '') {
+                tablaDeshuesarTemp[key][3] = "ILEGIBLE";
+            } else {
+                tablaDeshuesarTemp[key][3] = $(`#inputDeshuesar${key}`).val();
+            }
+        });
+
+        if (continuarDeshueso) {
+            sendBoning.infoDeshueso = tablaDeshuesarTemp;
+
+            peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/ConcluirDeshuesar', sendBoning, function (respuesta) {
+                if (respuesta.response === 200) {
+                    peticion.mostrarMensaje('#mensajeConcluirDeshuesar', true, 'Se ha concluido la revisión', 3000);
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    evento.mostrarMensaje('#mensajeConcluirDeshuesar', false, respuesta.message, 3000);
+                }
+            });
+        }
     });
 
     $('#btnRegresar').on('click', function () {

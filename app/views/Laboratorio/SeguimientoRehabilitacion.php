@@ -91,9 +91,9 @@
                             <div class="underline m-b-15 m-t-15"></div>
                         </div>
                     </div>
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div id="mensajeConcluir"></div>
-                        </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div id="mensajeConcluir"></div>
+                    </div>
                     <!--Finaliza encabezado del panel-->
                     <!--Empezando informacion del equipo-->
                     <div class="row">
@@ -198,12 +198,15 @@
                         <p></p>
                         <p><strong>Importante:</strong> Al presionar el botón “Deshuesar Equipo”, todos los componentes con sus respectivos estatus serán trasladados a sus inventario y el equipo será marcado para destrucción.</p>
                     </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div id="mensajeConcluirDeshuesar"></div>
+                    </div>
                     <!--Termina comentario deshuesar-->
                     <!--Comienza boton concluir-->
                     <div class="col-md-12"><br></div>
                     <div class="col-sm-4 col-md-4"></div>
                     <div class="col-sm-4 col-md-4">
-                        <label id="btnConcluirRevision" class="btn btn-primary">Deshuesar y Concluir</label>
+                        <label id="btnConcluirDeshuesar" class="btn btn-primary">Deshuesar y Concluir</label>
                     </div>
                     <div class="col-sm-4 col-md-4"></div>
                     <!--Termina boton concluir-->
