@@ -40,7 +40,7 @@ $(function () {
                     cargaInformacionEquipo(infoEquipo);
                     agregarContenidoComentarios(respuesta.datos.infoBitacora.comentarios);
                     agregarContenidoRefacciones(respuesta.datos.infoBitacora.refacciones);
-                    agregarContenidoDeshuesar(respuesta.datos.infoBitacora.deshuesar);
+                    agregarContenidoDeshuesar(respuesta.datos.infoBitacora.deshuesar, respuesta.datos.infoBitacora.estatusDeshuesar);
                     $('.cambioVistas').removeClass('hidden');
                     $('#panelRehabilitacionEquiposTabla').addClass('hidden');
                 } else {
@@ -184,18 +184,20 @@ $(function () {
         });
     });
 
-    function agregarContenidoDeshuesar(deshuesar) {
+    function agregarContenidoDeshuesar(deshuesar, estatusDeshuesar) {
         if (deshuesar.length > 0) {
             tablaDeshuesar.limpiartabla();
             $.each(deshuesar, function (key, value) {
+                let htmlSelect = '<option value="">Seleccionar</option>';
+                
+                $.each(estatusDeshuesar, function (k, v) {
+                    htmlSelect += '<option value="' + v.Id + '">' + v.Nombre + '</option>';
+                });
+                                
                 tablaDeshuesar.agregarDatosFila([
                     value.Id,
                     value.Nombre,
-                    '<select id="selectDeshuesar' + key + '" class="form-control" style="width: 100%">\n\
-                        <option value="">Seleccionar</option>\n\
-                        <option value="17">Disponible</option>\n\
-                        <option value="22">Dañado</option>\n\
-                    </select>',
+                    '<select id="selectDeshuesar' + key + '" class="form-control" style="width: 100%">' + htmlSelect + '</select>',
                     '<input id="inputDeshuesar' + key + '" type="text" class="form-control" style="width: 100%" placeholder="ILEGIBLE"/>'
                 ]);
             });
