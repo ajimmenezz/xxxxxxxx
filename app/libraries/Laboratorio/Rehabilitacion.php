@@ -66,15 +66,28 @@ class Rehabilitacion extends General {
         $datos['usuario'] = $usuario['Id'];
         $datos['fecha'] = $fechaCaptura;
         $datos['evidencia'] = $archivos;
-        $datos['estatus'] = '25';
+        $datos['estatus'] = 25;
 
         if ($datos['operacion'] === 'actualizar') {
+            $datos['evidencia'] = $this->evidenciaActualizarNota($datos['id'], $archivos);
             $this->inventario->actualizarNotasInventario($datos);
         } else {
             $this->inventario->setNotaInventario($datos);
         }
 
         return array('response' => 200, 'datos' => $this->inventario->getNotasInventarioId($datos['idInventario']));
+    }
+
+    public function evidenciaActualizarNota(string $idNota, $archivos) {
+        $notaInventario = $this->inventario->getNotaInventarioWhere("WHERE Id = '" . $idNota . "'");
+
+        if (!empty($notaInventario[0]['Archivos']) && !empty($archivos)) {
+            $evidencia = $archivos . ',' . $notaInventario[0]['Archivos'];
+        } elseif (!empty($notaInventario[0]['Archivos'])) {
+            $evidencia = $notaInventario[0]['Archivos'];
+        }
+        
+        return $evidencia;
     }
 
     public function setRefaccionRehabilitacion(array $datos) {
@@ -104,7 +117,7 @@ class Rehabilitacion extends General {
 
     public function concluirDeshuesar(array $datos) {
         $comentarios = $this->inventario->getNotasInventarioId($datos['id']);
-        
+
         if (!empty($comentarios)) {
             $usuario = $this->Usuario->getDatosUsuario();
             $datos['idUsuario'] = $usuario['Id'];

@@ -31,7 +31,7 @@ class Inventario {
 
     public function getNotasInventarioId(string $idInventario) {
         $comentarios = array();
-        $notasInventario = $this->DBI->getNotasInventarioId($idInventario);
+        $notasInventario = $this->DBI->getNotasInventarioId("WHERE IdInventario = '" . $idInventario . "'");
 
         foreach ($notasInventario as $key => $value) {
             $comentarios[$key]['id'] = $value['Id'];
@@ -114,7 +114,7 @@ class Inventario {
             $arrayRefacciones[$key]['IdTipoProducto'] = '2';
             $arrayRefacciones[$key]['IdEstatus'] = $value[2];
             $arrayRefacciones[$key]['Cantidad'] = '1';
-            $arrayRefacciones[$key]['Serie'] = $value[0];
+            $arrayRefacciones[$key]['Serie'] = $value[3];
         }
         
         $this->DBI->guardarRefaccionesDeshueso($arrayRefacciones, $datos['id']);
@@ -136,6 +136,10 @@ class Inventario {
         }
         
         $this->DBI->setRevisionRehabilitacion($arrayRefacciones, $datos['id']);
+    }
+    
+    public function getNotaInventarioWhere(string $where){
+        return $this->DBI->getNotasInventarioId($where);
     }
 
 }

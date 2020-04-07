@@ -881,14 +881,12 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
-    public function getNotasInventarioId(string $idInventario) {
+    public function getNotasInventarioId(string $where) {
         $consulta = $this->consulta("SELECT 
                                         *,
                                         nombreUsuario(IdUsuario) AS Usuario
                                     FROM
-                                        t_notas_inventario
-                                    WHERE
-                                        IdInventario = '" . $idInventario . "'");
+                                        t_notas_inventario " . $where);
         return $consulta;
     }
 
