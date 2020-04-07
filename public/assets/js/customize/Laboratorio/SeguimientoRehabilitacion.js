@@ -14,6 +14,7 @@ $(function () {
     let evidenciasComentarios = new FileUpload_Basico('agregarEvidencia', {url: 'SeguimientoRehabilitacion/SetComentario', extensiones: ['jpg', 'jpeg', 'png']});
     evidenciasComentarios.iniciarFileUpload();
     let collapseComentarios = new Collapse('collapseComentarios');
+    let idInventario = null;
     let infoEquipo = null;
     let esActualizarComentario = false;
     let idComentario = null;
@@ -28,7 +29,7 @@ $(function () {
             }
             peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/InfoBitacora', sendModel, function (respuesta) {
                 if (respuesta.response === 200) {
-//                    console.log(respuesta);
+                    idInventario = respuesta.datos.infoBitacora.id;
                     infoEquipo = {
                         inventario: respuesta.datos.infoBitacora.id,
                         modelo: respuesta.datos.infoBitacora.modelo,
@@ -137,8 +138,8 @@ $(function () {
             }
 //            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
 //                if (respuesta.response === 200) {
-                    console.log("enviar: ");
-                    console.log(sendReview);
+            console.log("enviar: ");
+            console.log(sendReview);
 //                }
 //            });
         });
@@ -169,10 +170,10 @@ $(function () {
                 comentario: $('#textareaComentario').val(),
                 evidencias: false
             }
-            if(esActualizarComentario){
+            if (esActualizarComentario) {
                 sendComment.operacion = 'actualizar';
                 sendComment.id = idComentario;
-            } else{
+            } else {
                 sendComment.operacion = 'agregar';
             }
             if ($('#agregarEvidencia').val() !== '') {
@@ -201,9 +202,26 @@ $(function () {
         }
     });
 
+    $('#btnConcluirRevision').on('click', function () {
+        let sendReview = {
+            id: idInventario
+        }
+        peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/ConcluirRehabilitacion', sendReview, function (respuesta) {
+            if (respuesta.response === 200) {
+                peticion.mostrarMensaje('#mensajeConcluir', true, 'Se ha concluido la revisión', 3000);
+                setTimeout(function(){
+                    location.reload();
+                  }, 2000);
+            } else {
+                evento.mostrarMensaje('#mensajeConcluir', false, respuesta.message, 3000);
+            }
+        });
+    });
+
     $('#btnRegresar').on('click', function () {
         $('.cambioVistas').addClass('hidden');
         $('#panelRehabilitacionEquiposTabla').removeClass('hidden');
+        idInventario = null;
         infoEquipo = {
             inventario: '',
             modelo: '',

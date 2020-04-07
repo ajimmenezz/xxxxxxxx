@@ -95,7 +95,7 @@ class Rehabilitacion extends General {
             $this->inventario->editarEstatusAlmacen(array('idInventario' => $datos['id'], 'idEstatus' => '17'));
             return array('response' => 200);
         } else {
-            throw new \Exception(array('response' => 400, 'message' => 'Falta agregar al menos un comentario.'));
+            return array('response' => 400, 'message' => 'Falta agregar al menos un comentario.');
         }
     }
     
