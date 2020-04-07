@@ -150,7 +150,7 @@ $(function () {
         let datosFila = tablaRefaccion.datosFila(this);
         let sendReview = null;
         sendReview = {
-            idInventario: infoEquipo.inventario,
+            id: infoEquipo.inventario,
             idRefaccion: datosFila[0],
             bloqueado: datosFila[1]
         }

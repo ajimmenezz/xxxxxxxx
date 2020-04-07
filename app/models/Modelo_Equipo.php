@@ -44,7 +44,7 @@ class Modelo_Equipo extends Modelo_Base {
                                                 Id = '" .  $datos['idEquipo'] . "')
                                             AND cvce.Flag = 1
                                             AND ti.IdTipoProducto = 2 "
-                                            . $datos['where']);
+                                            . $datos['where'] . " GROUP BY cvce.Id, ti.Serie");
         return $consulta;
     }
 
