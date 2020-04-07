@@ -220,6 +220,24 @@ $(function () {
             }
         });
     });
+    
+    $('#btnConcluirDeshuesar').on('click', function () {
+        let infoTablaDeshuesar = tablaDeshuesar.datosTabla();
+        let sendBoning = {
+            id: idInventario
+        }
+        console.log(infoTablaDeshuesar[0]);
+//        peticion.enviar('panelRehabilitacionEquiposTabla', 'SeguimientoRehabilitacion/ConcluirDeshuesar', sendBoning, function (respuesta) {
+//            if (respuesta.response === 200) {
+//                peticion.mostrarMensaje('#mensajeConcluirDeshuesar', true, 'Se ha concluido la revisión', 3000);
+//                setTimeout(function(){
+//                    location.reload();
+//                  }, 2000);
+//            } else {
+//                evento.mostrarMensaje('#mensajeConcluirDeshuesar', false, respuesta.message, 3000);
+//            }
+//        });
+    });
 
     $('#btnRegresar').on('click', function () {
         $('.cambioVistas').addClass('hidden');
