@@ -99,9 +99,20 @@ class Rehabilitacion extends General {
             throw new \Exception(array('response' => 400, 'message' => 'Falta agregar al menos un comentario.'));
         }
     }
-    
-    public function concluirDeshuesar(array $datos){
-        var_dump($datos);   
+
+    public function concluirDeshuesar(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
+        $datos = array();
+
+        $datos[0]['idUsuario'] = $usuario['Id'];
+        $datos[0]['id'] = '18284';
+        $datos[0]['idRefaccion'] = '192';
+        $datos[0]['idEstatus'] = '17';
+        $datos[0]['serie'] = '';
+
+        $this->inventario->setRefaccionDeshueso($datos);
+
+        return array('response' => 200);
     }
 
 }
