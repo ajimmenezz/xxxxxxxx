@@ -127,20 +127,30 @@ $(function () {
     }
 
     function agregarContenidoRefacciones(refacciones) {
+        let checkRef = '';
         if (refacciones.length > 0) {
             tablaRefaccion.limpiartabla();
             $.each(refacciones, function (key, value) {
+                if (value.Bloqueado == 1) {
+                    checkRef = '<div class="checkbox">\n\
+                                    <label>\n\
+                                        <input class="checkRefacciones" type="checkbox" checked/>\n\
+                                    </label>\n\
+                                </div>'
+                } else {
+                    checkRef = '<div class="checkbox">\n\
+                                    <label>\n\
+                                        <input class="checkRefacciones" type="checkbox"/>\n\
+                                    </label>\n\
+                                </div>'
+                }
                 tablaRefaccion.agregarDatosFila([
                     value.Id,
                     value.Bloqueado,
                     key,
                     value.Nombre,
                     value.Serie,
-                    '<div class="checkbox">\n\
-                        <label>\n\
-                            <input id="addRefaccion-' + key + '" class="checkRefacciones" data-key="' + key + '" type="checkbox" />\n\
-                        </label>\n\
-                    </div>'
+                    checkRef
                 ]);
             });
         }
@@ -150,7 +160,7 @@ $(function () {
         let datosFila = tablaRefaccion.datosFila(this);
         let sendReview = null;
         sendReview = {
-            idInventario: infoEquipo.inventario,
+            id: infoEquipo.inventario,
             idRefaccion: datosFila[0],
             bloqueado: datosFila[1]
         }
@@ -164,32 +174,9 @@ $(function () {
         peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
             if (respuesta.response === 200) {
                 console.log(respuesta);
+                agregarContenidoRefacciones(respuesta.datos)
             }
         });
-
-//        $(".checkRefacciones").off('click');
-//        $('input[type="checkbox"]').off('click');
-//        $(".checkRefacciones").change(function () {
-////        $('input[type="checkbox"]').change(function () {
-////            console.log($(this).data("key"));
-//            
-//            console.log($('.checkRefacciones').attr('data-key'));
-//            
-//            if ($(this).prop("checked") === true) {
-//                
-//            }
-//            
-//            sendReview = {
-//                id: infoEquipo.inventario,
-//                idRefaccion: datosFila[0],
-//                bloqueado: datosFila[1]
-//            }
-////            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
-////                if (respuesta.response === 200) {
-//            console.log(sendReview);
-////                }
-////            });
-//        });
     });
 
     function agregarContenidoDeshuesar(deshuesar) {
