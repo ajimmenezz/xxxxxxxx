@@ -114,7 +114,7 @@ $(function () {
                     value.Id,
                     value.Bloqueado,
                     value.Nombre,
-                    value.NoParte,
+                    value.Serie,
                     '<div class="checkbox">\n\
                         <label>\n\
                             <input id="addRefaccion-' + key + '" class="checkRefacciones" data-key="' + key + '" type="checkbox" />\n\
@@ -129,8 +129,11 @@ $(function () {
         let datosFila = tablaRefaccion.datosFila(this);
         let sendReview = null;
 
-        $(".checkRefacciones").off('click');
-        $(".checkRefacciones").click(function () {
+//        $(".checkRefacciones").off('click');
+//        $(".checkRefacciones").click(function () {
+        $('input[type="checkbox"]').click(function () {
+            if ($(this).prop("checked") === true) {
+            }
             sendReview = {
                 idInventario: infoEquipo.inventario,
                 idRefaccion: datosFila[0],

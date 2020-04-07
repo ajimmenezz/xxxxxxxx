@@ -38,12 +38,13 @@ class Rehabilitacion extends General {
     }
 
     public function setRefaccionesRehabitiacion(array $datos) {
+        $usuario = $this->Usuario->getDatosUsuario();
         $idsRehabilitacion = $this->inventario->getIdsRehabilitacion($datos['id']);
 
         if (!empty($idsRehabilitacion)) {
-            $whereId = ' AND cvce.Id NOT IN(' . $idsRehabilitacion . ')';
+            $whereId = 'AND cvav.IdReferenciaAlmacen = "' . $usuario['Id'] . '" AND cvce.Id NOT IN(' . $idsRehabilitacion . ')';
         } else {
-            $whereId = '';
+            $whereId = 'AND cvav.IdReferenciaAlmacen = "' . $usuario['Id'] . '"';
         }
 
         return $this->equipo->getRefaccionesEquipoRehabilitacion($whereId);
