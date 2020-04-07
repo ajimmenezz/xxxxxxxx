@@ -166,6 +166,30 @@ $(function () {
                 console.log(respuesta);
             }
         });
+
+//        $(".checkRefacciones").off('click');
+//        $('input[type="checkbox"]').off('click');
+//        $(".checkRefacciones").change(function () {
+////        $('input[type="checkbox"]').change(function () {
+////            console.log($(this).data("key"));
+//            
+//            console.log($('.checkRefacciones').attr('data-key'));
+//            
+//            if ($(this).prop("checked") === true) {
+//                
+//            }
+//            
+//            sendReview = {
+//                id: infoEquipo.inventario,
+//                idRefaccion: datosFila[0],
+//                bloqueado: datosFila[1]
+//            }
+////            peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
+////                if (respuesta.response === 200) {
+//            console.log(sendReview);
+////                }
+////            });
+//        });
     });
 
     function agregarContenidoDeshuesar(deshuesar) {

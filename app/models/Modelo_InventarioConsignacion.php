@@ -881,14 +881,12 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
-    public function getNotasInventarioId(string $idInventario) {
+    public function getNotasInventarioId(string $where) {
         $consulta = $this->consulta("SELECT 
                                         *,
                                         nombreUsuario(IdUsuario) AS Usuario
                                     FROM
-                                        t_notas_inventario
-                                    WHERE
-                                        IdInventario = '" . $idInventario . "'");
+                                        t_notas_inventario " . $where);
         return $consulta;
     }
 
@@ -924,52 +922,55 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
             'estatus' => 500
         ];
 
-        $fecha = $this->consulta("select now() as Fecha;");
+        if (!empty($data)) {
+            $fecha = $this->consulta("select now() as Fecha;");
+            $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
 
-        $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
-        if (!empty($inventario)) {
-            $this->actualizar("t_inventario", ['Cantidad' => 0], ['Id' => $inventario[0]['Id']]);
-            $this->insertar('t_movimientos_inventario', [
-                "IdTipoMovimiento" => 8,
-                "IdAlmacen" => $inventario[0]['IdAlmacen'],
-                "IdTipoProducto" => $inventario[0]['IdTipoProducto'],
-                "IdProducto" => $inventario[0]['IdProducto'],
-                "IdEstatus" => $inventario[0]['IdEstatus'],
-                "IdUsuario" => $this->usuario['Id'],
-                "Cantidad" => $inventario[0]['Cantidad'],
-                "Serie" => $inventario[0]['Serie'],
-                "Fecha" => $fecha[0]['Fecha']
-            ]);
-
-            $idSalida = $this->connectDBPrueba()->insert_id();
-
-            foreach ($data as $key => $value) {
-                $this->insertar("t_inventario", [
-                    "IdAlmacen" => $value['IdAlmacen'],
-                    "IdTipoProducto" => $value['IdTipoProducto'],
-                    "IdProducto" => $value['IdProducto'],
-                    "IdEstatus" => $value['IdEstatus'],
-                    "Cantidad" => $value['Cantidad'],
-                    "Serie" => $value['Serie'],
-                    "IdEquipoDeshuesado" => $inventario[0]['Id']
-                ]);
-
+            if (!empty($inventario)) {
                 $this->insertar('t_movimientos_inventario', [
-                    "IdMovimientoEnlazado" => $idSalida,
-                    "IdTipoMovimiento" => 9,
-                    "IdAlmacen" => $value['IdAlmacen'],
-                    "IdTipoProducto" => $value['IdTipoProducto'],
-                    "IdProducto" => $value['IdProducto'],
-                    "IdEstatus" => $value['IdEstatus'],
+                    "IdTipoMovimiento" => 8,
+                    "IdAlmacen" => $inventario[0]['IdAlmacen'],
+                    "IdTipoProducto" => $inventario[0]['IdTipoProducto'],
+                    "IdProducto" => $inventario[0]['IdProducto'],
+                    "IdEstatus" => $inventario[0]['IdEstatus'],
                     "IdUsuario" => $this->usuario['Id'],
-                    "Cantidad" => $value['Cantidad'],
-                    "Serie" => $value['Serie'],
+                    "Cantidad" => $inventario[0]['Cantidad'],
+                    "Serie" => $inventario[0]['Serie'],
                     "Fecha" => $fecha[0]['Fecha']
                 ]);
+
+                $idSalida = $this->connectDBPrueba()->insert_id();
+
+                foreach ($data as $key => $value) {
+                    $this->insertar("t_inventario", [
+                        "IdAlmacen" => $value['IdAlmacen'],
+                        "IdTipoProducto" => $value['IdTipoProducto'],
+                        "IdProducto" => $value['IdProducto'],
+                        "IdEstatus" => $value['IdEstatus'],
+                        "Cantidad" => $value['Cantidad'],
+                        "Serie" => $value['Serie'],
+                        "IdEquipoDeshuesado" => $inventario[0]['Id']
+                    ]);
+
+                    $this->insertar('t_movimientos_inventario', [
+                        "IdMovimientoEnlazado" => $idSalida,
+                        "IdTipoMovimiento" => 9,
+                        "IdAlmacen" => $value['IdAlmacen'],
+                        "IdTipoProducto" => $value['IdTipoProducto'],
+                        "IdProducto" => $value['IdProducto'],
+                        "IdEstatus" => $value['IdEstatus'],
+                        "IdUsuario" => $this->usuario['Id'],
+                        "Cantidad" => $value['Cantidad'],
+                        "Serie" => $value['Serie'],
+                        "Fecha" => $fecha[0]['Fecha']
+                    ]);
+                }
             }
-            
-            $this->editarEstatusAlmacen(array('idEstatus' => '17', 'idInventario' => $registroInventario));
         }
+        
+        $this->editarEstatusAlmacen(array('idEstatus' => '17', 'idInventario' => $registroInventario));
+        $this->actualizar("t_inventario", ['Cantidad' => 0], ['Id' => $registroInventario]);
+        
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
         } else {
