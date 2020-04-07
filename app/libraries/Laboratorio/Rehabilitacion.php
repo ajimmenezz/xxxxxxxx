@@ -93,7 +93,10 @@ class Rehabilitacion extends General {
         $comentarios = $this->inventario->getNotasInventarioId($datos['id']);
 
         if (!empty($comentarios)) {
-            $this->inventario->editarEstatusAlmacen(array('idInventario' => $datos['id'], 'idEstatus' => '17'));
+            $usuario = $this->Usuario->getDatosUsuario();
+            $datos['idUsuario'] = $usuario['Id'];
+            $this->inventario->setRevisionRehabilitacion($datos);
+//            $this->inventario->editarEstatusAlmacen(array('idInventario' => $datos['id'], 'idEstatus' => '17'));
             return array('response' => 200);
         } else {
             return array('response' => 400, 'message' => 'Falta agregar al menos un comentario.');
@@ -116,9 +119,6 @@ class Rehabilitacion extends General {
 
             $this->inventario->setRefaccionDeshueso($datos);
 
-            return array('response' => 200);
-
-            $comentarios = $this->inventario->getNotasInventarioId($datos['id']);
             return array('response' => 200);
         } else {
             return array('response' => 400, 'message' => 'Falta agregar al menos un comentario.');

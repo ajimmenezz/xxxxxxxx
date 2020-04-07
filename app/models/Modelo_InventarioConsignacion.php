@@ -833,6 +833,13 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                         inve.Id,
                                         CASE inve.IdtipoProducto
                                             WHEN 1 THEN MODELO(inve.IdProducto)
+                                            WHEN 2 THEN
+                                                CONCAT(
+                                                        (select Nombre from cat_v3_componentes_equipo where Id = inve.IdProducto), 
+                                                        ' (',
+                                                        modelo((select IdModelo from cat_v3_componentes_equipo where Id = inve.IdProducto)),
+                                                        ')'
+                                                        )
                                         END AS Producto,
                                         Serie,
                                         ESTATUS(inve.IdEstatus) AS Estatus
@@ -857,6 +864,13 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         $consulta = $this->consulta("SELECT 
                                         CASE inve.IdtipoProducto
                                             WHEN 1 THEN MODELO(inve.IdProducto)
+                                            WHEN 2 THEN
+                                                CONCAT(
+                                                        (select Nombre from cat_v3_componentes_equipo where Id = inve.IdProducto), 
+                                                        ' (',
+                                                        modelo((select IdModelo from cat_v3_componentes_equipo where Id = inve.IdProducto)),
+                                                        ')'
+                                                        )
                                         END AS Producto,
                                         inve.*,
                                         ESTATUS(inve.IdEstatus) AS Estatus
@@ -902,6 +916,65 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
     public function getDatosAlmacenVirtualUsuario(string $idUsuario) {
         $consulta = $this->consulta("select * from cat_v3_almacenes_virtuales where IdReferenciaAlmacen = '" . $idUsuario . "'");
         return $consulta[0];
+    }
+
+    public function setRevisionRehabilitacion($data, $registroInventario) {
+        $this->iniciaTransaccion();
+        $return_array = [
+            'estatus' => 500
+        ];
+
+        $fecha = $this->consulta("select now() as Fecha;");
+
+        $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
+        if (!empty($inventario)) {
+            $this->actualizar("t_inventario", ['Cantidad' => 0], ['Id' => $inventario[0]['Id']]);
+            $this->insertar('t_movimientos_inventario', [
+                "IdTipoMovimiento" => 8,
+                "IdAlmacen" => $inventario[0]['IdAlmacen'],
+                "IdTipoProducto" => $inventario[0]['IdTipoProducto'],
+                "IdProducto" => $inventario[0]['IdProducto'],
+                "IdEstatus" => $inventario[0]['IdEstatus'],
+                "IdUsuario" => $this->usuario['Id'],
+                "Cantidad" => $inventario[0]['Cantidad'],
+                "Serie" => $inventario[0]['Serie'],
+                "Fecha" => $fecha[0]['Fecha']
+            ]);
+
+            $idSalida = $this->connectDBPrueba()->insert_id();
+
+            foreach ($data as $key => $value) {
+                $this->insertar("t_inventario", [
+                    "IdAlmacen" => $value['IdAlmacen'],
+                    "IdTipoProducto" => $value['IdTipoProducto'],
+                    "IdProducto" => $value['IdProducto'],
+                    "IdEstatus" => $value['IdEstatus'],
+                    "Cantidad" => $value['Cantidad'],
+                    "Serie" => $value['Serie'],
+                    "IdEquipoDeshuesado" => $inventario[0]['Id']
+                ]);
+
+                $this->insertar('t_movimientos_inventario', [
+                    "IdMovimientoEnlazado" => $idSalida,
+                    "IdTipoMovimiento" => 9,
+                    "IdAlmacen" => $value['IdAlmacen'],
+                    "IdTipoProducto" => $value['IdTipoProducto'],
+                    "IdProducto" => $value['IdProducto'],
+                    "IdEstatus" => $value['IdEstatus'],
+                    "IdUsuario" => $this->usuario['Id'],
+                    "Cantidad" => $value['Cantidad'],
+                    "Serie" => $value['Serie'],
+                    "Fecha" => $fecha[0]['Fecha']
+                ]);
+            }
+        }
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->commitTransaccion();
+            $return_array['estatus'] = 200;
+        }
+        return $return_array;
     }
 
 }
