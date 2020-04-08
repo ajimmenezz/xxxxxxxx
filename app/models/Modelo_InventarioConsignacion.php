@@ -967,10 +967,10 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                 }
             }
         }
-        
+
         $this->editarEstatusAlmacen(array('idEstatus' => '17', 'idInventario' => $registroInventario));
         $this->actualizar("t_inventario", ['Cantidad' => 0], ['Id' => $registroInventario]);
-        
+
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
         } else {
@@ -978,6 +978,45 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
             $return_array['estatus'] = 200;
         }
         return $return_array;
+    }
+
+    public function getInventarioRefaccionesUsuario(array $datos) {
+        $consulta = $this->consulta("SELECT 
+                                        ti.Id AS IdInventario,
+                                        ti.IdProducto AS IdRefaccion,
+                                        cvce.Nombre,
+                                        ti.Serie,
+                                        CASE tirr.Bloqueado
+                                            WHEN 0 THEN 0
+                                            WHEN 1 THEN 1
+                                            ELSE 0
+                                        END AS Bloqueado
+                                    FROM
+                                        t_inventario ti
+                                            LEFT JOIN
+                                        cat_v3_componentes_equipo cvce ON cvce.Id = ti.IdProducto
+                                            INNER JOIN
+                                        cat_v3_modelos_equipo cvme ON cvme.Id = cvce.IdModelo
+                                            INNER JOIN
+                                        cat_v3_marcas_equipo cvm ON cvm.Id = cvme.Marca
+                                            LEFT JOIN
+                                        cat_v3_almacenes_virtuales cvav ON cvav.Id = ti.IdAlmacen
+                                            LEFT JOIN
+                                        t_inventario_rehabilitacion_refaccion AS tirr ON  tirr.IdInventarioRefaccion = ti.Id
+                                    WHERE
+                                        ti.IdTipoProducto = 2
+                                            AND cvm.Sublinea = (SELECT 
+                                                SUBLINEABYMODELO(Id)
+                                            FROM
+                                                cat_v3_modelos_equipo
+                                            WHERE
+                                                Id = '" .  $datos['idEquipo'] . "') " . 
+                                        $datos['where']);
+        return $consulta;
+    }
+    
+    public function actualizarInventario(array $datos, array $where){
+        $this->actualizar('t_inventario', $datos, $where);
     }
 
 }

@@ -68,7 +68,7 @@ class Inventario {
         $arrayIds = array();
 
         if (!empty($idInventario)) {
-            $whereInventario = "AND IdInventario <> '" . $idInventario . "'";
+            $whereInventario = "AND IdInventarioEquipo <> '" . $idInventario . "'";
         } else {
             $whereInventario = "";
         }
@@ -76,27 +76,37 @@ class Inventario {
         $inventarioRehabilitacion = $this->DBI->getInventarioRehabilitacionRefaccion("WHERE Bloqueado = '1' " . $whereInventario);
 
         foreach ($inventarioRehabilitacion as $key => $value) {
-            array_push($arrayIds, $value['IdRefaccion']);
+            array_push($arrayIds, $value['IdInventarioRefaccion']);
         }
 
         return implode(',', $arrayIds);
     }
 
     public function setInventarioRehabilitacionRefaccion(array $datos) {
-        $inventarioReabilitacioRefaccion = $this->DBI->getInventarioRehabilitacionRefaccion('WHERE IdInventario = "' . $datos['id'] . '" AND IdRefaccion = "' . $datos['idRefaccion'] . '"');
+        $this->DBI->iniciaTransaccion();
+
+        $inventarioReabilitacioRefaccion = $this->DBI->getInventarioRehabilitacionRefaccion('WHERE IdInventarioEquipo = "' . $datos['id'] . '" AND IdInventarioRefaccion = "' . $datos['idRefaccion'] . '"', $datos['id']);
 
         if (empty($inventarioReabilitacioRefaccion)) {
             $this->DBI->setInventarioRehabilitacionRefaccion(array(
-                'IdInventario' => $datos['id'],
-                'IdRefaccion' => $datos['idRefaccion'],
+                'IdInventarioEquipo' => $datos['id'],
+                'IdInventarioRefaccion' => $datos['idRefaccion'],
                 'Bloqueado' => 1
             ));
         } else {
             $this->DBI->actualizarInventarioRehabilitacionRefaccion(array(
-                'IdInventario' => $datos['id'],
-                'IdRefaccion' => $datos['idRefaccion'],
+                'IdInventarioEquipo' => $datos['id'],
+                'IdInventarioRefaccion' => $datos['idRefaccion'],
                 'Bloqueado' => $datos['bloqueado']
-                    ), array('IdInventario' => $datos['id'], 'IdRefaccion' => $datos['idRefaccion']));
+                    ), array('IdInventarioEquipo' => $datos['id'], 'IdInventarioRefaccion' => $datos['idRefaccion']));
+        }
+        
+        $this->DBI->actualizarInventario(array('Bloqueado' => 1), array('Id' => $datos['id']));
+
+        if ($this->DBI->estatusTransaccion() === FALSE) {
+            $this->DBI->roolbackTransaccion();
+        } else {
+            $this->DBI->commitTransaccion();
         }
     }
 
@@ -122,14 +132,13 @@ class Inventario {
 
     public function setRevisionRehabilitacion(array $datos) {
         $arrayRefacciones = array();
-        $refacciones = $this->DBI->getInventarioRehabilitacionRefaccion('WHERE IdInventario = "' . $datos['id'] . '" AND Bloqueado = 1');
+        $refacciones = $this->DBI->getInventarioRehabilitacionRefaccion('WHERE IdInventarioEquipo = "' . $datos['id'] . '" AND Bloqueado = 1');
         $datosAlmacen = $this->DBI->getDatosAlmacenVirtualUsuario($datos['idUsuario']);
 
         foreach ($refacciones as $key => $value) {
-            $datosInventario = $this->DBI->getInventarioId($datosAlmacen['Id']);
-            $refacciones = $this->DBI->getInventarioRehabilitacionRefaccion('WHERE IdInventario = "' . $datos['id'] . '" AND Bloqueado = 1');
+            $datosInventario = $this->DBI->getInventarioId($value['IdInventarioRefaccion']);
             $arrayRefacciones[$key]['IdAlmacen'] = $datosAlmacen['Id'];
-            $arrayRefacciones[$key]['IdProducto'] = $value['IdRefaccion'];
+            $arrayRefacciones[$key]['IdProducto'] = $datosInventario[0]['IdProducto'];
             $arrayRefacciones[$key]['IdTipoProducto'] = '2';
             $arrayRefacciones[$key]['IdEstatus'] = '40';
             $arrayRefacciones[$key]['Cantidad'] = '1';
@@ -149,6 +158,10 @@ class Inventario {
 
     public function actualizarEvidencaNotaInventario(array $datos) {
         $this->DBI->actualizarNotasInventario(array('Archivos' => $datos['archivo']), array('Id' => $datos['id']));
+    }
+    
+    public function getInventarioRefaccionesUsuario(array $datos){
+        return $this->DBI->getInventarioRefaccionesUsuario($datos);
     }
 
 }

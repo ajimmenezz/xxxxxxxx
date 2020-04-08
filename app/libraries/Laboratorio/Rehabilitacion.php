@@ -30,7 +30,7 @@ class Rehabilitacion extends General {
         $data['infoBitacora'] = $infoModelo;
         $data['infoBitacora']['comentarios'] = $this->inventario->getNotasInventarioId($datos['id']);
         $this->equipo = new Equipo($infoModelo['idModelo']);
-        $rafaccionesRehabilitacion = $this->setRefaccionesRehabitiacion($datos);
+        $rafaccionesRehabilitacion = $this->setRefaccionesRehabilitacion(array('idModelo' => $infoModelo['idModelo'], 'id' => $datos['id']));
         $data['infoBitacora']['refacciones'] = $rafaccionesRehabilitacion;
         $data['infoBitacora']['deshuesar'] = $this->equipo->getRefaccionesEquipo();
         $data['infoBitacora']['estatusDeshuesar'] = $this->inventario->getEstatusProductoConsignacion();
@@ -38,17 +38,17 @@ class Rehabilitacion extends General {
         return array('response' => 200, 'datos' => $data);
     }
 
-    public function setRefaccionesRehabitiacion(array $datos) {
+    public function setRefaccionesRehabilitacion(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $idsRehabilitacion = $this->inventario->getIdsRehabilitacion($datos['id']);
 
         if (!empty($idsRehabilitacion)) {
-            $whereId = 'AND cvav.IdReferenciaAlmacen = "' . $usuario['Id'] . '" AND cvce.Id NOT IN(' . $idsRehabilitacion . ')';
+            $where = 'AND cvav.IdReferenciaAlmacen = "' . $usuario['Id'] . '" AND ti.Id NOT IN(' . $idsRehabilitacion . ')';
         } else {
-            $whereId = 'AND cvav.IdReferenciaAlmacen = "' . $usuario['Id'] . '"';
+            $where = 'AND cvav.IdReferenciaAlmacen = "' . $usuario['Id'] . '"';
         }
 
-        return $this->equipo->getRefaccionesEquipoRehabilitacion($whereId);
+        return $this->inventario->getInventarioRefaccionesUsuario(array('idEquipo' => $datos['idModelo'], 'where' => $where));
     }
 
     public function setComentario(array $datos) {
@@ -96,9 +96,8 @@ class Rehabilitacion extends General {
     public function setRefaccionRehabilitacion(array $datos) {
         $this->inventario->setInventarioRehabilitacionRefaccion($datos);
         $infoModelo = $this->inventario->getInventarioId($datos['id']);
-        $this->equipo = new Equipo($infoModelo['idModelo']);
 
-        return array('response' => 200, 'datos' => $this->setRefaccionesRehabitiacion($datos));
+        return array('response' => 200, 'datos' => $this->setRefaccionesRehabilitacion(array('idModelo' => $infoModelo['idModelo'], 'id' => $datos['id'])));
     }
 
     public function concluirRehabilitacion(array $datos) {

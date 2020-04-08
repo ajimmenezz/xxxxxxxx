@@ -147,7 +147,7 @@ $(function () {
                                 </div>'
                 }
                 tablaRefaccion.agregarDatosFila([
-                    value.Id,
+                    value.IdInventario,
                     value.Bloqueado,
                     key,
                     value.Nombre,
@@ -177,6 +177,7 @@ $(function () {
         } else {
             $(`#addRefaccion-${datosFila[2]}`).prop("checked", true).change();
         }
+
         peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
             if (respuesta.response === 200) {
                 agregarContenidoRefacciones(respuesta.datos);
@@ -189,11 +190,11 @@ $(function () {
             tablaDeshuesar.limpiartabla();
             $.each(deshuesar, function (key, value) {
                 let htmlSelect = '<option value="">Seleccionar</option>';
-                
+
                 $.each(estatusDeshuesar, function (k, v) {
                     htmlSelect += '<option value="' + v.Id + '">' + v.Nombre + '</option>';
                 });
-                                
+
                 tablaDeshuesar.agregarDatosFila([
                     value.Id,
                     value.Nombre,
