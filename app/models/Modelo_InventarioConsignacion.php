@@ -831,49 +831,73 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
     public function getInventarioUsuario(string $usuario) {
         $consulta = $this->consulta("SELECT 
                                         inve.Id,
-                                        CASE inve.IdtipoProducto
-                                            WHEN 1 THEN MODELO(inve.IdProducto)
-                                            WHEN 2 THEN
-                                                CONCAT(
-                                                        (select Nombre from cat_v3_componentes_equipo where Id = inve.IdProducto), 
-                                                        ' (',
-                                                        modelo((select IdModelo from cat_v3_componentes_equipo where Id = inve.IdProducto)),
-                                                        ')'
-                                                        )
-                                        END AS Producto,
-                                        Serie,
-                                        ESTATUS(inve.IdEstatus) AS Estatus
+                                        modelo(inve.IdProducto) AS Producto,
+                                        inve.Serie,
+                                        estatus(inve.IdEstatus) AS Estatus,
+                                            CONCAT(ticketByServicio((SELECT 
+                                                            IdServicio
+                                                        FROM
+                                                            t_movimientos_inventario
+                                                        WHERE
+                                                            IdProducto = inve.IdProducto
+                                                                AND IdAlmacen = inve.IdAlmacen
+                                                                AND Serie = inve.Serie
+                                                                AND IdTipoMovimiento = 5
+                                                        LIMIT 1)),
+                                            '/',
+                                            folioByServicio((SELECT 
+                                                            IdServicio
+                                                        FROM
+                                                            t_movimientos_inventario
+                                                        WHERE
+                                                            IdProducto = inve.IdProducto
+                                                                AND IdAlmacen = inve.IdAlmacen
+                                                                AND Serie = inve.Serie
+                                                                AND IdTipoMovimiento = 5
+                                                        LIMIT 1))) TicketFolio
                                     FROM
                                         t_inventario inve
                                     WHERE
-                                        IdAlmacen = (SELECT 
-                                        cvav.Id
-                                    FROM
-                                        cat_v3_almacenes_virtuales cvav
-                                            INNER JOIN
-                                        cat_v3_usuarios cvu ON cvu.Id = cvav.IdReferenciaAlmacen
-                                    WHERE
-                                        cvav.IdTipoAlmacen = 1 AND cvu.Id = '" . $usuario . "')
+                                        inve.IdAlmacen IN (SELECT 
+                                                Id
+                                            FROM
+                                                cat_v3_almacenes_virtuales
+                                            WHERE
+                                                (IdTipoAlmacen = 1
+                                                    AND IdReferenciaAlmacen = '" . $usuario . "')
+                                                    OR (IdTipoAlmacen = 4 AND IdResponsable = '" . $usuario . "'))
                                             AND inve.IdtipoProducto = 1
                                             AND inve.Cantidad > 0
-                                            AND inve.IdEstatus IN (22,25)");
+                                            AND inve.IdEstatus IN (22 , 25)");
         return $consulta;
     }
 
     public function getInventarioId(string $idInventario) {
         $consulta = $this->consulta("SELECT 
-                                        CASE inve.IdtipoProducto
-                                            WHEN 1 THEN MODELO(inve.IdProducto)
-                                            WHEN 2 THEN
-                                                CONCAT(
-                                                        (select Nombre from cat_v3_componentes_equipo where Id = inve.IdProducto), 
-                                                        ' (',
-                                                        modelo((select IdModelo from cat_v3_componentes_equipo where Id = inve.IdProducto)),
-                                                        ')'
-                                                        )
-                                        END AS Producto,
+                                        modelo(inve.IdProducto) AS Producto,
                                         inve.*,
-                                        ESTATUS(inve.IdEstatus) AS Estatus
+                                        estatus(inve.IdEstatus) AS Estatus,
+                                        CONCAT(ticketByServicio((SELECT 
+                                                            IdServicio
+                                                        FROM
+                                                            t_movimientos_inventario
+                                                        WHERE
+                                                            IdProducto = inve.IdProducto
+                                                                AND IdAlmacen = inve.IdAlmacen
+                                                                AND Serie = inve.Serie
+                                                                AND IdTipoMovimiento = 5
+                                                        LIMIT 1)),
+                                            '/',
+                                            folioByServicio((SELECT 
+                                                            IdServicio
+                                                        FROM
+                                                            t_movimientos_inventario
+                                                        WHERE
+                                                            IdProducto = inve.IdProducto
+                                                                AND IdAlmacen = inve.IdAlmacen
+                                                                AND Serie = inve.Serie
+                                                                AND IdTipoMovimiento = 5
+                                                        LIMIT 1))) TicketFolio
                                     FROM
                                         t_inventario inve
                                     WHERE
