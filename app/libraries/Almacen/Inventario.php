@@ -24,7 +24,7 @@ class Inventario {
         $infoModelo['serie'] = $inventario[0]['Serie'];
         $infoModelo['estatus'] = $inventario[0]['Estatus'];
         $infoModelo['idModelo'] = $inventario[0]['IdProducto'];
-        $infoModelo['ticketFolio'] = '0';
+        $infoModelo['ticketFolio'] = $inventario[0]['TicketFolio'];
 
         return $infoModelo;
     }
