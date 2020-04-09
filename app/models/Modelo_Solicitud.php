@@ -417,7 +417,8 @@ class Modelo_Solicitud extends Modelo_Base {
     public function getFolioSolicitudesAbiertas() {
         $consulta = $this->consulta("SELECT
                                         Id,
-                                        Folio
+                                        Folio,
+                                        Ticket
                                     FROM
                                         t_solicitudes
                                     WHERE

@@ -166,6 +166,11 @@ class Catalogos extends General {
         $almacen = $this->DB->getDatosAlmacenVirtual($datos['datos'][0]);
 
         if (in_array($almacen['IdTipoAlmacen'], [1, 4])) {
+            $arrayExtra = array(
+                'permisoEditarEstatus' => (in_array('338', $this->usuario['Permisos'])) ? true : false,
+                'permisoAdicionalEditarEstatus' => (in_array('338', $this->usuario['PermisosAdicionales'])) ? true : false,
+                'estatus' => $this->catalogo->catStatus('4'));
+
             $data = [
                 'tiposMovimientos' => $this->DB->getTiposMovimientosInventario(),
                 'tiposProductos' => $this->DB->getTiposProductosInvenario(),
@@ -177,7 +182,7 @@ class Catalogos extends General {
                 'inventarioInicial' => (in_array('214', $this->usuario['Permisos'])) ? true : false,
                 'alta' => $this->DB->getNewAltaInicial()
             ];
-            return array('html' => parent::getCI()->load->view('Almacen/Modal/InventarioAlmacen', $data, TRUE), 'tipoAlmacen' => $almacen['IdTipoAlmacen']);
+            return array('html' => parent::getCI()->load->view('Almacen/Modal/InventarioAlmacen', $data, TRUE), 'tipoAlmacen' => $almacen['IdTipoAlmacen'], 'arrayExtra' => $arrayExtra);
         } else if ($almacen['IdTipoAlmacen'] == 2) {
             $data = [
                 'datos' => $datos['datos'],
@@ -713,6 +718,16 @@ class Catalogos extends General {
     public function mostrarHistorialEquipo(array $datos) {
         $movimientos = $this->DB->getMovimientosByAlmacen(0, ['serie' => $datos['id']]);
         return $movimientos;
+    }
+
+    public function cambiarEstatus(array $datos) {
+        try {
+            $this->DB->editarEstatusAlmacen($datos);
+            $invetarioPoliza = $this->DB->getInventarioPoliza($datos['idAlmacenVirtual']);
+            return ['code' => 200, 'message' => 'Correcto', 'datos' => $invetarioPoliza];
+        } catch (Exception $ex) {
+            return ['code' => 400, 'message' => $ex];
+        }
     }
 
 }

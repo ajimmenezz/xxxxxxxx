@@ -431,10 +431,14 @@ class Seguimientos extends General {
                                                                 ON cvse.Id = Sublinea
                                                             WHERE cvme.Id = "' . $datos['equipo'] . '"
                                                             AND cvme.Flag = "1"');
-        if ($idLinea[0]['Linea'] === '1') {
-            $lineas = '1,10';
+        if (!empty($idLinea)) {
+            if ($idLinea[0]['Linea'] === '1') {
+                $lineas = '1,10';
+            } else {
+                $lineas = $idLinea[0]['Linea'];
+            }
         } else {
-            $lineas = $idLinea[0]['Linea'];
+            $lineas = '""';
         }
 
         $consulta = $this->DBS->consultaGeneralSeguimiento('select 
@@ -1044,7 +1048,7 @@ class Seguimientos extends General {
                                 ), array('Id' => $datos['servicio']));
                         $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
                         $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
-                        
+
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
                             $this->DBS->actualizarSeguimiento(
@@ -2002,7 +2006,7 @@ class Seguimientos extends General {
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
-        
+
         if ($permisoPDF) {
             $PDF = '<br>Ver PDF <a href="' . $path["link"] . '" target="_blank">Aquí</a>';
         } else {
@@ -2199,33 +2203,33 @@ class Seguimientos extends General {
     public function sobreEscribirServicioCenso(string $servicio, string $sucursal) {
         $verificarCensoExistente = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_censos WHERE IdServicio = "' . $servicio . '"');
         if (empty($verificarCensoExistente)) {
-            $this->DBS->consultaQuery(
-                    'insert into t_censos
-                                    select 
-                                    null,
-                                    "' . $servicio . '", 
-                                    IdArea, 
-                                    IdModelo, 
-                                    Punto, 
-                                    Serie, 
-                                    Extra,
-                                    1,
-                                    0,
-				    17,
-				    IdSistemaOperativo,
-				    MAC,
-                                    NombreRed,
-                                    IdEstatusSoftwareRQ,
-				    Forced
-                                    from t_censos 
-                                    where IdServicio = (
-                                                    select IdServicio 
-                                                    from t_censos_generales tcg inner join t_servicios_ticket tst
-                                                    on tcg.IdServicio = tst.Id
-                                                    WHERE tcg.IdSucursal = "' . $sucursal . '"
-                                                    and tst.IdEstatus = 4
-                                                    order by IdServicio desc limit 1)'
-            );
+            // $this->DBS->consultaQuery(
+            //         'insert into t_censos
+            //                         select 
+            //                         null,
+            //                         "' . $servicio . '", 
+            //                         IdArea, 
+            //                         IdModelo, 
+            //                         Punto, 
+            //                         Serie, 
+            //                         Extra,
+            //                         1,
+            //                         0,
+			// 	    17,
+			// 	    IdSistemaOperativo,
+			// 	    MAC,
+            //                         NombreRed,
+            //                         IdEstatusSoftwareRQ,
+			// 	    Forced
+            //                         from t_censos 
+            //                         where IdServicio = (
+            //                                         select IdServicio 
+            //                                         from t_censos_generales tcg inner join t_servicios_ticket tst
+            //                                         on tcg.IdServicio = tst.Id
+            //                                         WHERE tcg.IdSucursal = "' . $sucursal . '"
+            //                                         and tst.IdEstatus = 4
+            //                                         order by IdServicio desc limit 1)'
+            // );
 
             $this->DBS->queryBolean("insert into t_censos_puntos
                                     select

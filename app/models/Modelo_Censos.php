@@ -649,27 +649,27 @@ class Modelo_Censos extends Modelo_Base
         where IdServicio = (
             select MAX(Id) from t_servicios_ticket where IdSucursal = '" . $sucursal . "' and IdTipoServicio = 11 and IdEstatus = 4
         )");
-        $this->queryBolean("
-        insert into t_censos (IdServicio,IdArea,IdModelo,Punto,Serie,Extra,Existe,Danado,IdEstatus,IdSistemaOperativo,MAC,NombreRed,IdEstatusSoftwareRQ)
-        select 
-            " . $servicio . ",
-            tc.IdArea,
-            tc.IdModelo,
-            tc.Punto,
-            tc.Serie,
-            tc.Extra,
-            tc.Existe,
-            tc.Danado,
-            tc.IdEstatus,
-            tc.IdSistemaOperativo,
-            tc.MAC,
-            tc.NombreRed,
-            tc.IdEstatusSoftwareRQ
-            from t_censos tc
-            inner join t_censos_puntos tcp on tc.IdServicio = tcp.IdServicio and tc.IdArea  = tcp.IdArea and tc.Punto <= tcp.Puntos
-            where tc.IdServicio = (
-                select MAX(Id) from t_servicios_ticket where IdSucursal = '" . $sucursal . "' and IdTipoServicio = 11 and IdEstatus = 4
-            )");
+        // $this->queryBolean("
+        // insert into t_censos (IdServicio,IdArea,IdModelo,Punto,Serie,Extra,Existe,Danado,IdEstatus,IdSistemaOperativo,MAC,NombreRed,IdEstatusSoftwareRQ)
+        // select 
+        //     " . $servicio . ",
+        //     tc.IdArea,
+        //     tc.IdModelo,
+        //     tc.Punto,
+        //     tc.Serie,
+        //     tc.Extra,
+        //     tc.Existe,
+        //     tc.Danado,
+        //     tc.IdEstatus,
+        //     tc.IdSistemaOperativo,
+        //     tc.MAC,
+        //     tc.NombreRed,
+        //     tc.IdEstatusSoftwareRQ
+        //     from t_censos tc
+        //     inner join t_censos_puntos tcp on tc.IdServicio = tcp.IdServicio and tc.IdArea  = tcp.IdArea and tc.Punto <= tcp.Puntos
+        //     where tc.IdServicio = (
+        //         select MAX(Id) from t_servicios_ticket where IdSucursal = '" . $sucursal . "' and IdTipoServicio = 11 and IdEstatus = 4
+        //     )");
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
