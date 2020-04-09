@@ -159,8 +159,6 @@
                                         <th class="all">Selección</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -177,23 +175,23 @@
                         <div class="underline m-b-15 m-t-15"></div>
                     </div>
                     <!--Finaliza encabezado del panel-->
-                    <div class="col-md-12">                       
+                    <div class="col-md-12 hidden">                       
                         <div  id="tablaDeshuesar" class="table-responsive">
                             <table id="data-tablaDeshuesar" class="table table-bordered" style="cursor:pointer; background: white" width="100%">
                                 <thead>
                                     <tr>
                                         <th class="never">IdRefaccion</th>
                                         <th class="all">Refacción</th>
-                                        <th class="all">Estatus</th>
-                                        <th class="all">Serie</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                </tbody>
                             </table>
                         </div>
                     </div>
                     <!--Empieza comentario deshuesar-->
+                    <div class="col-md-12"><br></div>
+                    <div class="row col-md-12">
+                        <div id="nuevaTabla"></div>
+                    </div>
                     <div class="col-md-12"><br></div>
                     <div class="col-md-12" style="background-color: papayawhip">
                         <p></p>

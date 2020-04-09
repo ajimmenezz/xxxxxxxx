@@ -185,20 +185,41 @@ $(function () {
     });
 
     function agregarContenidoDeshuesar(deshuesar) {
+        $('#nuevaTabla').empty();
+        let htmDeshueso = '';
         if (deshuesar.length > 0) {
             tablaDeshuesar.limpiartabla();
             $.each(deshuesar, function (key, value) {
                 tablaDeshuesar.agregarDatosFila([
                     value.Id,
-                    value.Nombre,
-                    '<select id="selectDeshuesar' + key + '" class="form-control" style="width: 100%">\n\
-                        <option value="">Seleccionar</option>\n\
-                        <option value="17">Disponible</option>\n\
-                        <option value="22">Dañado</option>\n\
-                    </select>',
-                    '<input id="inputDeshuesar' + key + '" type="text" class="form-control" style="width: 100%" placeholder="ILEGIBLE"/>'
+                    value.Nombre
                 ]);
             });
+            $.each(deshuesar, function (key, value) {
+                htmDeshueso += '<div class="col-sm-4 col-md-4 col-lg-4">\n\
+                                <div class="form-group">\n\
+                                    <label>Refaccion</label>\n\
+                                    <input id="cargaRefaccion' + key + '" type="text" class="form-control" value="'+value.Nombre+'" data-key="' + value.Id + '" style="width: 100%" disabled/>\n\
+                                </div>\n\
+                            </div>\n\
+                            <div class="col-sm-4 col-md-4 col-lg-4">\n\
+                                <div class="form-group">\n\
+                                    <label>Estatus</label>\n\
+                                    <select id="selectDeshuesar' + key + '" class="form-control" style="width: 100%">\n\
+                                        <option value="">Seleccionar</option>\n\
+                                        <option value="17">Disponible</option>\n\
+                                        <option value="22">Dañado</option>\n\
+                                    </select>\n\
+                                </div>\n\
+                            </div>\n\
+                            <div class="col-sm-4 col-md-4 col-lg-4">\n\
+                                <div class="form-group">\n\
+                                    <label>Serie</label>\n\
+                                    <input id="inputDeshuesar' + key + '" type="text" class="form-control" style="width: 100%" placeholder="ILEGIBLE"/>\n\
+                                </div>\n\
+                            </div>';
+            });
+            $('#nuevaTabla').append(htmDeshueso);
         }
     }
 
