@@ -283,7 +283,7 @@ class Poliza extends General {
                                                                             AND tfo.Fecha >= ' . $fechaLimiteVueltas . '
                                                                             AND tst.FechaCreacion >= ' . $fechaLimiteVueltas . '
                                                                     ORDER BY tfo.Folio ASC');
-            if (empty($vueltasAsociados)) {
+            if (empty($vueltasAsociados) && $usuario['IdPerfil'] !== '39') {
                 $vueltasAsociados = $this->catalogo->catConsultaGeneral('SELECT 
                                                                             tfo.Id,
                                                                             tfo.IdServicio,
