@@ -40,7 +40,7 @@ $(function () {
                     cargaInformacionEquipo(infoEquipo);
                     agregarContenidoComentarios(respuesta.datos.infoBitacora.comentarios);
                     agregarContenidoRefacciones(respuesta.datos.infoBitacora.refacciones);
-                    agregarContenidoDeshuesar(respuesta.datos.infoBitacora.deshuesar);
+                    agregarContenidoDeshuesar(respuesta.datos.infoBitacora.deshuesar, respuesta.datos.infoBitacora.estatusDeshuesar);
                     $('.cambioVistas').removeClass('hidden');
                     $('#panelRehabilitacionEquiposTabla').addClass('hidden');
                 } else {
@@ -147,7 +147,7 @@ $(function () {
                                 </div>'
                 }
                 tablaRefaccion.agregarDatosFila([
-                    value.Id,
+                    value.IdInventario,
                     value.Bloqueado,
                     key,
                     value.Nombre,
@@ -177,6 +177,7 @@ $(function () {
         } else {
             $(`#addRefaccion-${datosFila[2]}`).prop("checked", true).change();
         }
+
         peticion.enviar('panelRehabilitacionEquiposInfoModelo', 'SeguimientoRehabilitacion/RefaccionRehabilitacion', sendReview, function (respuesta) {
             if (respuesta.response === 200) {
                 agregarContenidoRefacciones(respuesta.datos);
@@ -184,9 +185,10 @@ $(function () {
         });
     });
 
-    function agregarContenidoDeshuesar(deshuesar) {
+    function agregarContenidoDeshuesar(deshuesar, estatusDeshuesar) {
         $('#nuevaTabla').empty();
         let htmDeshueso = '';
+        let htmlSelect = '<option value="">Seleccionar</option>';
         if (deshuesar.length > 0) {
             tablaDeshuesar.limpiartabla();
             $.each(deshuesar, function (key, value) {
@@ -195,20 +197,23 @@ $(function () {
                     value.Nombre
                 ]);
             });
+
+            $.each(estatusDeshuesar, function (k, v) {
+                htmlSelect += '<option value="' + v.Id + '">' + v.Nombre + '</option>';
+            });
+
             $.each(deshuesar, function (key, value) {
                 htmDeshueso += '<div class="col-sm-4 col-md-4 col-lg-4">\n\
                                 <div class="form-group">\n\
                                     <label>Refaccion</label>\n\
-                                    <input id="cargaRefaccion' + key + '" type="text" class="form-control" value="'+value.Nombre+'" data-key="' + value.Id + '" style="width: 100%" disabled/>\n\
+                                    <input id="cargaRefaccion' + key + '" type="text" class="form-control" value="' + value.Nombre + '" data-key="' + value.Id + '" style="width: 100%" disabled/>\n\
                                 </div>\n\
                             </div>\n\
                             <div class="col-sm-4 col-md-4 col-lg-4">\n\
                                 <div class="form-group">\n\
                                     <label>Estatus</label>\n\
                                     <select id="selectDeshuesar' + key + '" class="form-control" style="width: 100%">\n\
-                                        <option value="">Seleccionar</option>\n\
-                                        <option value="17">Disponible</option>\n\
-                                        <option value="22">Dañado</option>\n\
+                                        ' + htmlSelect + '\n\
                                     </select>\n\
                                 </div>\n\
                             </div>\n\
