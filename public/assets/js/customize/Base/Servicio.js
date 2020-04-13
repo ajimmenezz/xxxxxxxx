@@ -1941,6 +1941,9 @@ Servicio.prototype.agregandoTablaAvanceServicio = function () {
         case '7':
             tipoFalla = 'Falta de Equipo';
             break;
+        case '12':
+            tipoFalla = 'Desgaste';
+            break;
         default:
     }
     var filas = [];
