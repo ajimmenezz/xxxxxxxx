@@ -22,7 +22,7 @@ class Collapse {
                                         </div>\n\
                                     </div>');
     }
-    
+
     multipleCollapse(datos = []) {
         let _this = this;
         let contador = 0;
@@ -36,30 +36,41 @@ class Collapse {
     iniciarCardMedia(informacion) {
         let html = '';
         let evidencias = null;
-        if(informacion.evidencias !== null){
+
+        if (informacion.evidencias !== null) {
             evidencias = informacion.evidencias.split(',');
-                $.each(evidencias, function (key, value) {
-                    if (value !== '') {
-                        html += '<div class="col-md-3 col-sm-3 col-xs-3">\n\
-                                                <div id="img" class="evidencia">\n\
-                                                    <img src ="..' + value + '" />\n\
-                                                </div>\n\
-                                            </div>';
+            $.each(evidencias, function (key, value) {
+
+                if (value !== '') {
+                    var ext = value.substring(value.lastIndexOf("."));
+
+                    if (ext !== '.png' && ext !== '.jpeg' && ext !== '.jpg' && ext !== '.gif') {
+                        value = '/assets/img/Iconos/no-thumbnail.jpg';
                     }
-                });
+
+                    html += '<div class="col-md-3 col-sm-3 col-xs-3">\n\
+                                <div id="img" class="evidencia">\n\
+                                    <a href="..' + value + '" target="_blank">\n\
+                                        <img src ="..' + value + '" />\n\
+                                    </a>\n\
+                                </div>\n\
+                            </div>';
+                }
+            });
         }
+
         this.objetoCollapse.append('<li class="media media-sm">\n\
                                         <div class="media-body">\n\
                                             <div class="row">\n\
                                                 <div class="col-md-9 col-sm-6 col-xs-12">\n\
-                                                    <h1 class="page-header">' + informacion.titulo + ' <a href="javascript:;" id="'+informacion.href+'" data-key="' + informacion.href + '" class="btn btn-sm btn-primary m-r-5 cardUtileria">'+informacion.accion+'</a></h1>\n\
+                                                    <h1 class="page-header">' + informacion.titulo + ' <a href="javascript:;" id="' + informacion.href + '" data-key="' + informacion.href + '" class="btn btn-sm btn-primary m-r-5 cardUtileria">' + informacion.accion + '</a></h1>\n\
                                                 </div>\n\
                                                 <div class="col-md-3 col-sm-6 col-xs-12 text-right cambioVistas hidden">\n\
-                                                    <label>'+informacion.subtitulo+'</label>\n\
+                                                    <label>' + informacion.subtitulo + '</label>\n\
                                                 </div>\n\
                                             </div>\n\
                                             <p>' + informacion.contenido + '</p>\n\
-                                            '+html+'\n\
+                                            ' + html + '\n\
                                         </div>\n\
                                     </li>');
     }

@@ -11,7 +11,7 @@ $(function () {
 
     let tablaRefaccion = new TablaBasica('data-tablaRefaccion');
     let tablaDeshuesar = new TablaBasica('data-tablaDeshuesar');
-    let evidenciasComentarios = new FileUpload_Basico('agregarEvidencia', {url: 'SeguimientoRehabilitacion/SetComentario', extensiones: ['jpg', 'jpeg', 'png']});
+    let evidenciasComentarios = new FileUpload_Basico('agregarEvidencia', {url: 'SeguimientoRehabilitacion/SetComentario', extensiones: []});
     evidenciasComentarios.iniciarFileUpload();
     let collapseComentarios = new Collapse('collapseComentarios');
     let idInventario = null;
