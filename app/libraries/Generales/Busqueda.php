@@ -510,7 +510,7 @@ class Busqueda extends General {
                     break;
                 case '27': case 27:
                     $datosServicio = $this->DBB->getServicioDiagnostico($servicio);
-                    if (count($datosServicio) > 0) {
+                    if (count($datosServicio) > 0 || empty($datosServicio)) {
                         $data = [
                             'datos' => $this->DBB->getGeneralesServicioGeneralCompleto($servicio)[0],
                             'datosCorrectivo' => $this->DBB->getGeneralesServicio20($servicio)[0],
