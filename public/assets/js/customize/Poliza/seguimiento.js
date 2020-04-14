@@ -7252,12 +7252,11 @@ $(function() {
     var tipoDiagnosticoAnterior = null;
     var estatus;
     var fallaReportada = $("#inputFallaReportadaDiagnostico").val();
-    if (diagnosticoEquipo !== null) {
-      if (diagnosticoEquipo.length > 0) {
+    if (diagnosticoEquipo !== null && diagnosticoEquipo.length > 0) {
         evidencias = diagnosticoEquipo[0].Evidencias;
         tipoDiagnosticoAnterior = diagnosticoEquipo[0].IdTipoDiagnostico;
-      }
     }
+    
     switch (tipoDiagnostico) {
       case "1":
         data = {
@@ -7330,67 +7329,34 @@ $(function() {
     data.fallaReportada = "";
 
     if ($(nombreEvidencias).val() !== "") {
-      file.enviarArchivos(
-        nombreEvidencias,
-        "Seguimiento/guardarDiagnosticoEquipo",
-        "#seccion-servicio-correctivo",
-        data,
-        function(respuesta) {
-          if (respuesta !== "faltaDatosGenerales") {
-            if (tipoDiagnostico === "5" || tipoDiagnostico === "1") {
-              var dataSD = {
-                servicio: servicio,
-                ticket: datosTablaPoliza[1],
-                servicioConcluir: true
-              };
-              evento.enviarEvento(
-                "Seguimiento/enviarSolucionCorrectivoSD",
-                dataSD,
-                "#seccion-servicio-correctivo",
-                function(respuesta) {
-                  if (respuesta.code === 200) {
-                    if (respuesta.message === "serviciosConcluidos") {
-                      modalCampoFirma(
-                        respuesta,
-                        datosTablaPoliza[1],
-                        servicio,
-                        divErrorMensaje,
-                        respuestaAnterior,
-                        true,
-                        "4"
-                      );
-                    } else {
-                      concluirServicio(servicio);
-                    }
-                  } else {
-                    servicios.mensajeModal(respuesta.message, "ERROR SD", true);
-                  }
+        file.enviarArchivos(nombreEvidencias,"Seguimiento/guardarDiagnosticoEquipo","#seccion-servicio-correctivo",data,function(respuesta) {
+            if (respuesta !== "faltaDatosGenerales") {
+                if (tipoDiagnostico === "5" || tipoDiagnostico === "1") {
+                    var dataSD = {
+                        servicio: servicio,
+                        ticket: datosTablaPoliza[1],
+                        servicioConcluir: true
+                    };
+                    evento.enviarEvento("Seguimiento/enviarSolucionCorrectivoSD",dataSD,"#seccion-servicio-correctivo",function(respuesta) {
+                        if (respuesta.code === 200) {
+                            if (respuesta.message === "serviciosConcluidos") {
+                                modalCampoFirma(respuesta,datosTablaPoliza[1],servicio,divErrorMensaje,respuestaAnterior,true,"4");
+                            } else {
+                                concluirServicio(servicio);
+                            }
+                        } else {
+                            servicios.mensajeModal(respuesta.message, "ERROR SD", true);
+                        }
+                    });
+                } else if (tipoDiagnostico === "2" || tipoDiagnostico === "3" || tipoDiagnostico === "4") {
+                    evento.mostrarMensaje(divErrorMensaje,true,"Datos Guardados Correctamente.",5000);
                 }
-              );
-            } else if (
-              tipoDiagnostico === "2" ||
-              tipoDiagnostico === "3" ||
-              tipoDiagnostico === "4"
-            ) {
-              evento.mostrarMensaje(
-                divErrorMensaje,
-                true,
-                "Datos Guardados Correctamente.",
-                5000
-              );
+                limpiarFormulariosDiagnostico(tipoDiagnostico);
+            } else {
+                file.limpiar(nombreEvidencias);
+                evento.mostrarMensaje(divErrorMensaje,false,"Falta llenar los datos de Información General.",5000);
             }
-            limpiarFormulariosDiagnostico(tipoDiagnostico);
-          } else {
-            file.limpiar(nombreEvidencias);
-            evento.mostrarMensaje(
-              divErrorMensaje,
-              false,
-              "Falta llenar los datos de Información General.",
-              5000
-            );
-          }
-        }
-      );
+        });
     } else if (diagnosticoEquipo !== null) {
       evento.enviarEvento(
         "Seguimiento/guardarDiagnosticoEquipo",
