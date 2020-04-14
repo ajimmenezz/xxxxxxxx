@@ -5609,59 +5609,35 @@ $(function() {
     });
     $("#btnGuardarSolicitudRefaccion").off("click");
     $("#btnGuardarSolicitudRefaccion").on("click", function(e) {
-      var data = { servicio: servicio };
-      var respuestaAnterior = respuesta;
-      evento.enviarEvento(
-        "Seguimiento/verificarDiagnostico",
-        data,
-        "#seccion-servicio-correctivo",
-        function(respuesta) {
-          if (respuesta) {
-            var datosTablaRefaccionesSolicitudes = $(
-              "#data-table-solicitud-refacciones"
-            )
-              .DataTable()
-              .rows()
-              .data();
-            var solicitud = $("input[name=radioSolicitar]:checked").val();
-            if (datosTablaRefaccionesSolicitudes.length > 0) {
-              if (solicitud !== undefined) {
-                var sucursal = $("#selectSucursalesCorrectivo").val();
-                guardarDatosTablaRefaccionesSolicitudes(
-                  datosTablaRefaccionesSolicitudes,
-                  servicio,
-                  datosTabla,
-                  sucursal,
-                  respuestaAnterior,
-                  solicitud
-                );
-              } else {
-                evento.mostrarMensaje(
-                  ".errorRefaccionSolicitud",
-                  false,
-                  "Para guardar las Refacciones debe seleccionar una opción.",
-                  5000
-                );
-              }
+        var data = { servicio: servicio };
+        var respuestaAnterior = respuesta;
+        evento.enviarEvento("Seguimiento/verificarDiagnostico",data,"#seccion-servicio-correctivo",function(respuesta) {
+            if (respuesta) {
+                var datosTablaRefaccionesSolicitudes = $("#data-table-solicitud-refacciones").DataTable().rows().data();
+                var solicitud = $("input[name=radioSolicitar]:checked").val();
+                if (datosTablaRefaccionesSolicitudes.length > 0) {
+                    if (solicitud !== undefined) {
+                        var sucursal = $("#selectSucursalesCorrectivo").val();
+                            guardarDatosTablaRefaccionesSolicitudes(
+                                datosTablaRefaccionesSolicitudes,
+                                servicio,
+                                datosTabla,
+                                sucursal,
+                                respuestaAnterior,
+                                solicitud
+                            );
+                    } else {
+                        evento.mostrarMensaje(".errorRefaccionSolicitud",false,"Para guardar las Refacciones debe seleccionar una opción.",5000);
+                    }
+                } else {
+                    evento.mostrarMensaje(".errorRefaccionSolicitud",false,"Para guardar las Refacciones debe haber agregado un registro en la tabla.",3000);
+                }
             } else {
-              evento.mostrarMensaje(
-                ".errorRefaccionSolicitud",
-                false,
-                "Para guardar las Refacciones debe haber agregado un registro en la tabla.",
-                3000
-              );
+                evento.mostrarMensaje(".errorRefaccionSolicitud",false,"Para guardar las Refacciones debe guardar los datos del diagnostico.",5000);
             }
-          } else {
-            evento.mostrarMensaje(
-              ".errorRefaccionSolicitud",
-              false,
-              "Para guardar las Refacciones debe guardar los datos del diagnostico.",
-              5000
-            );
-          }
-        }
-      );
+        });
     });
+    
     $("#data-table-servicios-solicitudes-refacciones tbody").on(
       "click",
       "tr",
@@ -7572,7 +7548,8 @@ $(function() {
     select.cambiarOpcion("#selectRefaccionSolucionReparacionConRefaccion", "");
     $("#inputCantidadRefaccionSolicitudReparacionConRefaccion").val("");
   };
-  var guardarDatosTablaRefaccionesSolicitudes = function() {
+
+var guardarDatosTablaRefaccionesSolicitudes = function() {
     var datosTablaRefaccionesSolicitudes = arguments[0];
     var servicio = arguments[1];
     var datosTablaPoliza = arguments[2];
@@ -7585,96 +7562,63 @@ $(function() {
     }
 
     if (tipoSolicitud === "almacen" || tipoSolicitud === "ti") {
-      evento.mostrarModal(
-        "Confirmar Solicitud de Refacción",
-        formularioAsignacionSolicitud()
-      );
-      select.crearSelect("#selectAtiendeSolcitud");
+        evento.mostrarModal("Confirmar Solicitud de Refacción",formularioAsignacionSolicitud());
+        select.crearSelect("#selectAtiendeSolcitud");
     } else {
-      var data = {
-        servicio: servicio,
-        tipoSolicitud: "refaccion",
-        equiposSolicitudes: datosTabla
-      };
-      evento.enviarEvento(
-        "Seguimiento/SolicitarMultimedia",
-        data,
-        "#seccion-servicio-correctivo",
-        function(respuesta) {
-          if (respuesta instanceof Array || respuesta instanceof Object) {
-            select.cambiarOpcion("#selectEquipoRespaldo", "");
-            $("#inputSerieRespaldo").val("");
-            $("#dejarEquipoRespaldo").attr("checked", false);
-            $("#noSeCuentaEquipoRespaldo").attr("checked", false);
-            tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
-            $("#dejarEquipoGarantia").addClass("hidden");
-            $("#entregaEnvioEquipo").addClass("hidden");
-            recargandoTablaSolicitudRefaccion(respuesta);
-            tabla.limpiarTabla("#data-table-solicitud-refacciones");
-            evento.mostrarMensaje(
-              ".errorRefaccionSolicitud",
-              true,
-              "Se ha reasignado con éxito el servicio a multimedia.",
-              3000
-            );
-          } else {
-            evento.mostrarMensaje(
-              ".errorRefaccionSolicitud",
-              false,
-              "Para asignar a Multimedia debe guardar el Folio.",
-              3000
-            );
-          }
-        }
-      );
+        var data = {
+            servicio: servicio,
+            tipoSolicitud: "refaccion",
+            equiposSolicitudes: datosTabla
+        };
+        evento.enviarEvento("Seguimiento/SolicitarMultimedia",data,"#seccion-servicio-correctivo",function(respuesta) {
+            if (respuesta instanceof Array || respuesta instanceof Object) {
+                select.cambiarOpcion("#selectEquipoRespaldo", "");
+                $("#inputSerieRespaldo").val("");
+                $("#dejarEquipoRespaldo").attr("checked", false);
+                $("#noSeCuentaEquipoRespaldo").attr("checked", false);
+                tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
+                $("#dejarEquipoGarantia").addClass("hidden");
+                $("#entregaEnvioEquipo").addClass("hidden");
+                recargandoTablaSolicitudRefaccion(respuesta);
+                tabla.limpiarTabla("#data-table-solicitud-refacciones");
+                evento.mostrarMensaje(".errorRefaccionSolicitud",true,"Se ha reasignado con éxito el servicio a multimedia.",3000);
+            } else {
+                evento.mostrarMensaje(".errorRefaccionSolicitud",false,"Para asignar a Multimedia debe guardar el Folio.",3000);
+            }
+        });
     }
 
     if (tipoSolicitud === "almacen") {
-      $.each(respuestaDatos.informacion.atiende, function(key, valor) {
-        $("#selectAtiendeSolcitud").append(
-          "<option value=" + valor.IdUsuario + ">" + valor.Nombre + "</option>"
-        );
-      });
-      select.cambiarOpcion("#selectAtiendeSolcitud", "12");
-      $("#selectAtiendeSolcitud").removeAttr("disabled");
+        $.each(respuestaDatos.informacion.atiende, function(key, valor) {
+            $("#selectAtiendeSolcitud").append("<option value=" + valor.IdUsuario + ">" + valor.Nombre + "</option>");
+        });
+        select.cambiarOpcion("#selectAtiendeSolcitud", "12");
+        $("#selectAtiendeSolcitud").removeAttr("disabled");
     } else if (tipoSolicitud === "ti") {
-      var data = { servicio: servicio };
-      evento.enviarEvento(
-        "Seguimiento/ConsultaCorrectivoTI",
-        data,
-        "#confirmarSolicitud",
-        function(respuesta) {
-          $.each(respuesta, function(key, valor) {
-            $("#selectAtiendeSolcitud").append(
-              "<option value=" +
-                valor.userId +
-                ">" +
-                valor.userName +
-                "</option>"
-            );
-          });
-          $("#selectAtiendeSolcitud").removeAttr("disabled");
-        }
-      );
+        var data = { servicio: servicio };
+        evento.enviarEvento("Seguimiento/ConsultaCorrectivoTI",data,"#confirmarSolicitud",function(respuesta) {
+            $.each(respuesta, function(key, valor) {
+                $("#selectAtiendeSolcitud").append("<option value=" +valor.userId +">" +valor.userName +"</option>");
+            });
+            $("#selectAtiendeSolcitud").removeAttr("disabled");
+        });
     }
 
     $("#btnModalConfirmar").off("click");
     $("#btnModalConfirmar").on("click", function() {
-      if ($("#selectAtiendeSolcitud").val() !== "") {
-        var atiende = $("#selectAtiendeSolcitud").val();
-        var nombreSucursal = $(
-          "#selectSucursalesCorrectivo option:selected"
-        ).text();
-        var data = {
-          servicio: servicio,
-          refaccionesSolicitudes: datosTabla,
-          ticket: datosTablaPoliza[1],
-          solicitud: datosTablaPoliza[2],
-          sucursal: sucursal,
-          atiende: atiende,
-          nombreSucursal: nombreSucursal,
-          tipoSolicitud: tipoSolicitud
-        };
+        if ($("#selectAtiendeSolcitud").val() !== "") {
+            var atiende = $("#selectAtiendeSolcitud").val();
+            var nombreSucursal = $("#selectSucursalesCorrectivo option:selected").text();
+            var data = {
+                servicio: servicio,
+                refaccionesSolicitudes: datosTabla,
+                ticket: datosTablaPoliza[1],
+                solicitud: datosTablaPoliza[2],
+                sucursal: sucursal,
+                atiende: atiende,
+                nombreSucursal: nombreSucursal,
+                tipoSolicitud: tipoSolicitud
+            };
         evento.enviarEvento(
           "Seguimiento/guardarRefaccionesSolicitud",
           data,
