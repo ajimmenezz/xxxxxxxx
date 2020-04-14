@@ -736,7 +736,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
 
         $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
         if (!empty($inventario)) {
-            $this->actualizar("t_inventario", ['Cantidad' => 0], ['Id' => $inventario[0]['Id']]);
+            $this->actualizar("t_inventario", ['IdEstatus' => 50], ['Id' => $inventario[0]['Id']]);
 
             foreach ($data as $key => $value) {
                 $this->insertar("t_inventario", [
