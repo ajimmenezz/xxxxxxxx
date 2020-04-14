@@ -480,6 +480,7 @@ $(function () {
                 _datos,
                 "#seccionAlmacenes",
                 function (respuesta) {
+
                     $("#divInventarioAlmacen")
                             .empty()
                             .append(respuesta.html);
@@ -503,7 +504,11 @@ $(function () {
                                 .row(this)
                                 .data();
 
-                        if (respuesta.arrayExtra.permisoEditarEstatus || respuesta.arrayExtra.permisoAdicionalEditarEstatus) {
+                        if (respuesta.arrayExtra.permisoLaboratorio) {
+                            if (datos[5] === 'DAÑADO') {
+                                formaularioCambiarEstatus(respuesta.arrayExtra.estatus, datos[0], _datos.datos[0]);
+                            }
+                        } else if (respuesta.arrayExtra.permisoEditarEstatus || respuesta.arrayExtra.permisoAdicionalEditarEstatus) {
                             formaularioCambiarEstatus(respuesta.arrayExtra.estatus, datos[0], _datos.datos[0]);
                         }
                     });

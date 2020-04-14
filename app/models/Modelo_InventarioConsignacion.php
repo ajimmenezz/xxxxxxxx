@@ -736,7 +736,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
 
         $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
         if (!empty($inventario)) {
-            $this->actualizar("t_inventario", ['Cantidad' => 0], ['Id' => $inventario[0]['Id']]);
+            $this->actualizar("t_inventario", ['IdEstatus' => 50], ['Id' => $inventario[0]['Id']]);
 
             foreach ($data as $key => $value) {
                 $this->insertar("t_inventario", [
@@ -1034,13 +1034,44 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                             FROM
                                                 cat_v3_modelos_equipo
                                             WHERE
-                                                Id = '" .  $datos['idEquipo'] . "') " . 
-                                        $datos['where']);
+                                                Id = '" . $datos['idEquipo'] . "') " .
+                $datos['where']);
         return $consulta;
     }
-    
-    public function actualizarInventario(array $datos, array $where){
+
+    public function actualizarInventario(array $datos, array $where) {
         $this->actualizar('t_inventario', $datos, $where);
+    }
+
+    public function movimientoInventario(array $datos) {
+        $inventario = $this->consulta("select * from t_inventario where Id = '" . $datos['idInventario'] . "'");
+        $fecha = $this->consulta("select now() as Fecha;");
+
+        if (!empty($inventario)) {
+            $this->insertar('t_movimientos_inventario', [
+                "IdTipoMovimiento" => $datos['tipoMovimiento'],
+                "IdAlmacen" => $inventario[0]['IdAlmacen'],
+                "IdTipoProducto" => $inventario[0]['IdTipoProducto'],
+                "IdProducto" => $inventario[0]['IdProducto'],
+                "IdEstatus" => $inventario[0]['IdEstatus'],
+                "IdUsuario" => $this->usuario['Id'],
+                "Cantidad" => $inventario[0]['Cantidad'],
+                "Serie" => $inventario[0]['Serie'],
+                "Fecha" => $fecha[0]['Fecha']
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->commitTransaccion();
+            $return_array['estatus'] = 200;
+        }
+        return $return_array;
+    }
+
+    public function setHistorioIncentarioEstatus(array $datos) {
+        $this->insertar('historico_inventario_estatus', $datos);
     }
 
 }

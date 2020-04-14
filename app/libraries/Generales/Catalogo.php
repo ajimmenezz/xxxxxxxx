@@ -1967,7 +1967,7 @@ class Catalogo extends General
                 return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus ' . $flag . ' order by Nombre');
                 break;
             case '4';
-                return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus WHERE Descripcion = "Inventario Virtual"');
+                return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus ' . $datos['where']);
                 break;
             case '5';
                 return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus where Id not in (11,13) order by Nombre');

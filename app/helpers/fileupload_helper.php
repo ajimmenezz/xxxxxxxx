@@ -29,7 +29,7 @@ if (!function_exists('setMultiplesArchivos')) {
             mkdir($carpeta, 0775, true);
         }
         $config['upload_path'] = $carpeta;
-        $config['allowed_types'] = 'jpg|bmp|jpeg|gif|png|doc|docx|xls|xlsx|pdf|xml|csv';
+        $config['allowed_types'] = 'jpg|bmp|jpeg|gif|png|doc|docx|xls|xlsx|pdf|xml|csv|mp4|Xvid|Divx|h264|Flv';
         $CI->load->library('upload');
         $CI->load->library('image_lib');
         $S3 = new S3Client([
