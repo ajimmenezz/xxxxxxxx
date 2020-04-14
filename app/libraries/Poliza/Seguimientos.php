@@ -1046,8 +1046,8 @@ class Seguimientos extends General {
                         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
                             'IdEstatus' => '2'
                                 ), array('Id' => $datos['servicio']));
-                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
-                        $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
+//                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
+//                        $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
 
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
@@ -1063,6 +1063,7 @@ class Seguimientos extends General {
                                 'Evidencias' => $datos['evidencias']
                                     ), array('Id' => $idCorrectivoDiagnostico)
                             );
+                            return $idCorrectivoDiagnostico;
                         }
                     } else {
                         return FALSE;
