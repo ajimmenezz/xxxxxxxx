@@ -967,7 +967,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                 $idSalida = $this->connectDBPrueba()->insert_id();
 
                 foreach ($data as $key => $value) {
-                    $this->insertar("t_inventario", [
+                    $this->actualizar("t_inventario", [
                         "IdAlmacen" => $value['IdAlmacen'],
                         "IdTipoProducto" => $value['IdTipoProducto'],
                         "IdProducto" => $value['IdProducto'],
@@ -975,7 +975,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                         "Cantidad" => $value['Cantidad'],
                         "Serie" => $value['Serie'],
                         "IdEquipoDeshuesado" => $inventario[0]['Id']
-                    ]);
+                            ], ['Id' => $value['IdInventarioRefaccion']]);
 
                     $this->insertar('t_movimientos_inventario', [
                         "IdMovimientoEnlazado" => $idSalida,

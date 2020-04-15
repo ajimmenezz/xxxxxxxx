@@ -136,6 +136,7 @@ class Inventario {
 
         foreach ($refacciones as $key => $value) {
             $datosInventario = $this->DBI->getInventarioId($value['IdInventarioRefaccion']);
+            $arrayRefacciones[$key]['IdInventarioRefaccion'] = $value['IdInventarioRefaccion'];
             $arrayRefacciones[$key]['IdAlmacen'] = $datosInventario[0]['IdAlmacen'];
             $arrayRefacciones[$key]['IdProducto'] = $datosInventario[0]['IdProducto'];
             $arrayRefacciones[$key]['IdTipoProducto'] = '2';
