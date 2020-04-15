@@ -420,17 +420,6 @@ class InformacionServicios extends General
             }
 
             $descripcion = "<br>"
-<<<<<<< HEAD
-                . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
-                . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
-                . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
-                . $datosFalla
-                . $observaciones
-                . $linkImagenesDiagnostico
-                . $informacionProblema
-                . $solucionDiv
-                . "<div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a></div>";
-=======
                     . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
                     . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
                     . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
@@ -440,7 +429,6 @@ class InformacionServicios extends General
                     . $informacionProblema
                     . $solucionDiv
                     . $documentoPdf;
->>>>>>> master
 
             return $descripcion;
         }
@@ -883,12 +871,7 @@ class InformacionServicios extends General
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
     }
 
-<<<<<<< HEAD
-    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE)
-    {
-=======
     public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE, bool $concluirSD = TRUE) {
->>>>>>> master
         $folio = $this->DBST->consultaFolio($servicio);
 
         if ($folio !== '0') {
