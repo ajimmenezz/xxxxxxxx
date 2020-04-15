@@ -133,11 +133,10 @@ class Inventario {
     public function setRevisionRehabilitacion(array $datos) {
         $arrayRefacciones = array();
         $refacciones = $this->DBI->getInventarioRehabilitacionRefaccion('WHERE IdInventarioEquipo = "' . $datos['id'] . '" AND Bloqueado = 1');
-        $datosAlmacen = $this->DBI->getDatosAlmacenVirtualUsuario($datos['idUsuario']);
 
         foreach ($refacciones as $key => $value) {
             $datosInventario = $this->DBI->getInventarioId($value['IdInventarioRefaccion']);
-            $arrayRefacciones[$key]['IdAlmacen'] = $datosAlmacen['Id'];
+            $arrayRefacciones[$key]['IdAlmacen'] = $datosInventario[0]['IdAlmacen'];
             $arrayRefacciones[$key]['IdProducto'] = $datosInventario[0]['IdProducto'];
             $arrayRefacciones[$key]['IdTipoProducto'] = '2';
             $arrayRefacciones[$key]['IdEstatus'] = '40';
