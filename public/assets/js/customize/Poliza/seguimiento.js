@@ -7593,14 +7593,14 @@ var guardarDatosTablaRefaccionesSolicitudes = function() {
             $("#selectAtiendeSolcitud").append("<option value=" + valor.IdUsuario + ">" + valor.Nombre + "</option>");
         });
         select.cambiarOpcion("#selectAtiendeSolcitud", "12");
-        $("#selectAtiendeSolcitud").removeAttr("disabled");
+//        $("#selectAtiendeSolcitud").removeAttr("disabled");
     } else if (tipoSolicitud === "ti") {
         var data = { servicio: servicio };
         evento.enviarEvento("Seguimiento/ConsultaCorrectivoTI",data,"#confirmarSolicitud",function(respuesta) {
             $.each(respuesta, function(key, valor) {
                 $("#selectAtiendeSolcitud").append("<option value=" +valor.userId +">" +valor.userName +"</option>");
             });
-            $("#selectAtiendeSolcitud").removeAttr("disabled");
+//            $("#selectAtiendeSolcitud").removeAttr("disabled");
         });
     }
 
@@ -7619,58 +7619,34 @@ var guardarDatosTablaRefaccionesSolicitudes = function() {
                 nombreSucursal: nombreSucursal,
                 tipoSolicitud: tipoSolicitud
             };
-        evento.enviarEvento(
-          "Seguimiento/guardarRefaccionesSolicitud",
-          data,
-          "#modal-dialogo",
-          function(respuesta) {
-            if (respuesta instanceof Array || respuesta instanceof Object) {
-              select.cambiarOpcion("#selectEquipoRespaldo", "");
-              $("#inputSerieRespaldo").val("");
-              $("#dejarEquipoRespaldo").attr("checked", false);
-              $("#noSeCuentaEquipoRespaldo").attr("checked", false);
-              tabla.limpiarTabla(
-                "#data-table-servicios-solicitudes-refacciones"
-              );
-              $("#dejarEquipoGarantia").addClass("hidden");
-              $("#entregaEnvioEquipo").addClass("hidden");
-              recargandoTablaSolicitudRefaccion(respuesta);
-              tabla.limpiarTabla("#data-table-solicitud-refacciones");
-              evento.mostrarMensaje(
-                ".errorRefaccionSolicitud",
-                true,
-                "Datos GuardadosCorrectamente.",
-                3000
-              );
-              confirmacionFirmaProblema(servicio, datosTabla[1]);
-            } else if (respuesta === "faltaFolio") {
-              evento.mostrarMensaje(
-                ".errorRefaccionSolicitud",
-                false,
-                "El servicio no tiene Folio.",
-                3000
-              );
-            } else {
-              evento.mostrarMensaje(
-                ".errorRefaccionSolicitud",
-                false,
-                "No se pudo guardar los datos por favor de contates al Área de Desarrollo.",
-                3000
-              );
-            }
-            evento.cerrarModal();
-          }
-        );
-      } else {
-        evento.mostrarMensaje(
-          ".errorAtiendeSolicitud",
-          false,
-          "Debe seleccionar para quien va la solicitud.",
-          3000
-        );
-      }
+            
+            evento.enviarEvento("Seguimiento/guardarRefaccionesSolicitud",data,"#modal-dialogo",function(respuesta) {
+                if (respuesta instanceof Array || respuesta instanceof Object) {
+                    select.cambiarOpcion("#selectEquipoRespaldo", "");
+                    $("#inputSerieRespaldo").val("");
+                    $("#dejarEquipoRespaldo").attr("checked", false);
+                    $("#noSeCuentaEquipoRespaldo").attr("checked", false);
+                    tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
+                    $("#dejarEquipoGarantia").addClass("hidden");
+                    $("#entregaEnvioEquipo").addClass("hidden");
+                    recargandoTablaSolicitudRefaccion(respuesta);
+                    tabla.limpiarTabla("#data-table-solicitud-refacciones");
+                    evento.mostrarMensaje(".errorRefaccionSolicitud",true,"Datos GuardadosCorrectamente.",3000);
+                    confirmacionFirmaProblema(servicio, datosTabla[1]);
+                } else if (respuesta === "faltaFolio") {
+                    evento.mostrarMensaje(".errorRefaccionSolicitud",false,"El servicio no tiene Folio.",3000);
+                } else if (respuesta === "ApiKey") {
+                    evento.mostrarMensaje(".errorRefaccionSolicitud",false,"Error de la ApiKey.",3000);
+                } else{
+                    evento.mostrarMensaje(".errorRefaccionSolicitud",false,"No se pudo guardar los datos por favor de contates al Área de Desarrollo.",3000);
+                }
+                evento.cerrarModal();
+            });
+        } else {
+            evento.mostrarMensaje(".errorAtiendeSolicitud",false,"Debe seleccionar para quien va la solicitud.",3000);
+        }
     });
-  };
+};
   var recargandoTablaSolicitudRefaccion = function(solicitudesRefaccion) {
     tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
     if (solicitudesRefaccion.length > 0) {
@@ -9049,7 +9025,7 @@ var guardarDatosTablaRefaccionesSolicitudes = function() {
                                             <div class="col-md-12">\n\
                                                 <div class="form-group">\n\
                                                     <label for="selectAtiendeSolcitud">Confirmar y Asignar a *</label>\n\
-                                                    <select id="selectAtiendeSolcitud" class="form-control" style="width: 100%" data-parsley-required="true" disabled>\n\
+                                                    <select id="selectAtiendeSolcitud" class="form-control" style="width: 100%" data-parsley-required="true">\n\
                                                        <option value="">Seleccionar</option>\n\
                                                     </select>\n\
                                                 </div>\n\

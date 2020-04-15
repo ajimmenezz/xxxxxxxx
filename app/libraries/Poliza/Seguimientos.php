@@ -1283,13 +1283,17 @@ class Seguimientos extends General {
                             }
 
                             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-                            $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
-                            //                            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
-                            $this->InformacionServicios->setHTMLService($datos);
-                            $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . ' </strong> le ha reasignado la solicitud para solicitar una Refacción.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
-                            $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
+                            if($key == null){
+                                return "ApiKey";
+                            }else{
+                                $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
 
-                            return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
+                                $this->InformacionServicios->setHTMLService($datos);
+                                $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . ' </strong> le ha reasignado la solicitud para solicitar una Refacción.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
+                                $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
+
+                                return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
+                            }
                         } else {
                             return 'faltaFolio';
                         }
@@ -2642,7 +2646,6 @@ class Seguimientos extends General {
 
                         $this->DBP->insertarCorrectivosSolicitudesProblemas($datos, $datosExtra);
                         $this->asignarMultimedia($linkPDF, $folio[0]['Folio'], $key);
-                        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                         $this->InformacionServicios->setHTMLService($datos);
 
                         if ($datos['tipoSolicitud'] === 'equipo') {
