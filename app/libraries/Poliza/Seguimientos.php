@@ -432,11 +432,16 @@ class Seguimientos extends General {
                                                                 ON cvmeq.Id = Marca
                                                             INNER JOIN cat_v3_sublineas_equipo cvse
                                                                 ON cvse.Id = Sublinea
-                                                            WHERE cvme.Id = "' . $datos['equipo'] . '"');
-        if ($idLinea[0]['Linea'] === '1') {
-            $lineas = '1,10';
+                                                            WHERE cvme.Id = "' . $datos['equipo'] . '"
+                                                            AND cvme.Flag = "1"');
+        if (!empty($idLinea)) {
+            if ($idLinea[0]['Linea'] === '1') {
+                $lineas = '1,10';
+            } else {
+                $lineas = $idLinea[0]['Linea'];
+            }
         } else {
-            $lineas = $idLinea[0]['Linea'];
+            $lineas = '""';
         }
 
         $consulta = $this->DBS->consultaGeneralSeguimiento('select 
@@ -1044,8 +1049,13 @@ class Seguimientos extends General {
                         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
                             'IdEstatus' => '2'
                                 ), array('Id' => $datos['servicio']));
+<<<<<<< HEAD
                         $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
                         $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
+=======
+//                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
+//                        $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
+>>>>>>> master
 
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
@@ -1061,6 +1071,7 @@ class Seguimientos extends General {
                                 'Evidencias' => $datos['evidencias']
                                     ), array('Id' => $idCorrectivoDiagnostico)
                             );
+                            return $idCorrectivoDiagnostico;
                         }
                     } else {
                         return FALSE;
@@ -1280,13 +1291,17 @@ class Seguimientos extends General {
                             }
 
                             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-                            $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
-                            //                            $this->ServiceDesk->cambiarEstatusServiceDesk($key, 'Problema', $verificarFolio[0]['Folio']);
-                            $this->InformacionServicios->setHTMLService($datos);
-                            $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . ' </strong> le ha reasignado la solicitud para solicitar una Refacción.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
-                            $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
+                            if($key == null){
+                                return "ApiKey";
+                            }else{
+                                $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
 
-                            return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
+                                $this->InformacionServicios->setHTMLService($datos);
+                                $textoTI = '<p>El técnico <strong>' . $usuario['Nombre'] . ' </strong> le ha reasignado la solicitud para solicitar una Refacción.<br>Número de Solicitud: <strong>' . $verificarFolio[0]['Folio'] . '</strong>.</p><br><a href="' . $linkPDF . '">Documento PDF</a><br><p>Favor de verificar en Service Desk</p>';
+                                $this->enviarCorreoConcluido(array($correoTI), 'Reasignación de Solicitud', $textoTI);
+
+                                return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
+                            }
                         } else {
                             return 'faltaFolio';
                         }
@@ -1485,6 +1500,7 @@ class Seguimientos extends General {
             'IdModelo' => $datos['equipo'],
             'Cantidad' => $datos['cantidad']
         );
+
         $dataCorrectivosProblemas = array(
             'IdServicio' => $datos['servicio'],
             'IdTipoProblema' => '3',
@@ -2003,8 +2019,9 @@ class Seguimientos extends General {
         $correoSupervisor = $this->consultaCorreoSupervisorXSucursal($datos['sucursal']);
         $detallesServicio = $this->linkDetallesServicio($datos['servicio']);
         $linkDetallesServicio = '<br>Ver Detalles del Servicio <a href="' . $detallesServicio . '" target="_blank">Aquí</a>';
+
         if ($permisoPDF) {
-            $PDF = '<br>Ver PDF <a href="' . $path . '" target="_blank">Aquí</a>';
+            $PDF = '<br>Ver PDF <a href="' . $path["link"] . '" target="_blank">Aquí</a>';
         } else {
             $PDF = '';
         }
@@ -2199,33 +2216,33 @@ class Seguimientos extends General {
     public function sobreEscribirServicioCenso(string $servicio, string $sucursal) {
         $verificarCensoExistente = $this->DBS->consultaGeneralSeguimiento('SELECT * FROM t_censos WHERE IdServicio = "' . $servicio . '"');
         if (empty($verificarCensoExistente)) {
-            $this->DBS->consultaQuery(
-                    'insert into t_censos
-                                    select 
-                                    null,
-                                    "' . $servicio . '", 
-                                    IdArea, 
-                                    IdModelo, 
-                                    Punto, 
-                                    Serie, 
-                                    Extra,
-                                    1,
-                                    0,
-				    17,
-				    IdSistemaOperativo,
-				    MAC,
-                                    NombreRed,
-                                    IdEstatusSoftwareRQ,
-				    Forced
-                                    from t_censos 
-                                    where IdServicio = (
-                                                    select IdServicio 
-                                                    from t_censos_generales tcg inner join t_servicios_ticket tst
-                                                    on tcg.IdServicio = tst.Id
-                                                    WHERE tcg.IdSucursal = "' . $sucursal . '"
-                                                    and tst.IdEstatus = 4
-                                                    order by IdServicio desc limit 1)'
-            );
+            // $this->DBS->consultaQuery(
+            //         'insert into t_censos
+            //                         select 
+            //                         null,
+            //                         "' . $servicio . '", 
+            //                         IdArea, 
+            //                         IdModelo, 
+            //                         Punto, 
+            //                         Serie, 
+            //                         Extra,
+            //                         1,
+            //                         0,
+			// 	    17,
+			// 	    IdSistemaOperativo,
+			// 	    MAC,
+            //                         NombreRed,
+            //                         IdEstatusSoftwareRQ,
+			// 	    Forced
+            //                         from t_censos 
+            //                         where IdServicio = (
+            //                                         select IdServicio 
+            //                                         from t_censos_generales tcg inner join t_servicios_ticket tst
+            //                                         on tcg.IdServicio = tst.Id
+            //                                         WHERE tcg.IdSucursal = "' . $sucursal . '"
+            //                                         and tst.IdEstatus = 4
+            //                                         order by IdServicio desc limit 1)'
+            // );
 
             $this->DBS->queryBolean("insert into t_censos_puntos
                                     select
@@ -2637,7 +2654,6 @@ class Seguimientos extends General {
 
                         $this->DBP->insertarCorrectivosSolicitudesProblemas($datos, $datosExtra);
                         $this->asignarMultimedia($linkPDF, $folio[0]['Folio'], $key);
-                        $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
                         $this->InformacionServicios->setHTMLService($datos);
 
                         if ($datos['tipoSolicitud'] === 'equipo') {

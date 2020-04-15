@@ -9,8 +9,7 @@ use Controladores\Controller_Datos_Usuario as General;
  *
  * @author Freddy
  */
-class Solicitud extends General
-{
+class Solicitud extends General {
 
     private $DBS;
     private $Notificacion;
@@ -24,10 +23,10 @@ class Solicitud extends General
     private $InformacionServicios;
     private $Excel;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->DBS = \Modelos\Modelo_Solicitud::factory();
+        $this->DBT = \Modelos\Modelo_ServicioTicket::factory();
         $this->Notificacion = \Librerias\Generales\Notificacion::factory();
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->Ticket = \Librerias\Generales\Ticket::factory();
@@ -47,8 +46,7 @@ class Solicitud extends General
      * @return array Regresa la lista de todos los departamentos
      */
 
-    public function getDepartamentos()
-    {
+    public function getDepartamentos() {
         return $this->Catalogo->catDepartamentos('3', array('Flag' => '1'));
     }
 
@@ -58,8 +56,7 @@ class Solicitud extends General
      * @return array Regresa la lista de solicitus que ha generado el usuario las cuales esten abiertas o rechazadas
      */
 
-    public function getSolicitudesGeneradas()
-    {
+    public function getSolicitudesGeneradas() {
         $usuario = $this->Usuario->getDatosUsuario();
         $usuarioId = ' AND ts.Solicita = "' . $usuario['Id'] . '"';
 
@@ -89,8 +86,7 @@ class Solicitud extends General
      * @return array Regresa las solicitudes que este asignado al departamento y tengan un estatus abierto
      */
 
-    public function getSolicitudesAsignadas()
-    {
+    public function getSolicitudesAsignadas() {
         $data = array();
         $usuario = $this->Usuario->getDatosUsuario();
         $data['SolicitudesSD'] = array();
@@ -127,8 +123,7 @@ class Solicitud extends General
      * @return array Regresa las solicitudes que tengan un estatus 'Sin autorizar' y sean de tipo Personal o Material.
      */
 
-    public function getSolicitudesAurtorizacion()
-    {
+    public function getSolicitudesAurtorizacion() {
         /*
          * En arreglo Permisos se define los permisos que van a tener acceso para las solicitudes  donde la key es el tipo de solicitud y el valor
          * el permiso asociado
@@ -179,8 +174,7 @@ class Solicitud extends General
      * @return string Regresa el numero de solicitud que se genero en caso de no se ejecute regresa un false.
      */
 
-    public function solicitudNueva(array $datos, string $sistemaExterno = null, string $folioSD = null)
-    {
+    public function solicitudNueva(array $datos, string $sistemaExterno = null, string $folioSD = null) {
         $archivos = null;
         $data = array();
         $CI = parent::getCI();
@@ -272,7 +266,7 @@ class Solicitud extends General
                 IdSucursal = "' . $sucursal . '",
                 FechaTentativa = "' . $fechaProgramada . '",
                 FechaLimite = "' . $fechaLimiteAtencion . '"'
-                . $folio;
+                    . $folio;
         }
 
         $this->eliminarSolicitudSinDatos();
@@ -386,8 +380,7 @@ class Solicitud extends General
         }
     }
 
-    private function eliminarSolicitudSinDatos()
-    {
+    private function eliminarSolicitudSinDatos() {
         $IdSolicitud = $this->DBS->consultaGral('SELECT MAX(Id) AS Id FROM t_solicitudes');
         $IdSolicitudInterna = $this->DBS->consultaGral('SELECT IdSolicitud FROM t_solicitudes_internas WHERE IdSolicitud = "' . $IdSolicitud[0]['Id'] . '"');
         if (empty($IdSolicitudInterna)) {
@@ -406,8 +399,7 @@ class Solicitud extends General
      * @return boolean regresa true si se inserto con exito o false de caso contrario
      */
 
-    private function setSolicitudInterna(string $IdSolicitud, string $descripcion, string $asunto, string $evidencias = null)
-    {
+    private function setSolicitudInterna(string $IdSolicitud, string $descripcion, string $asunto, string $evidencias = null) {
         if (!empty($evidencias)) {
             $consulta = $this->DBS->setDatosSolicitudInternas('t_solicitudes_internas', array('IdSolicitud' => $IdSolicitud, 'Descripcion' => $descripcion, 'Asunto' => $asunto, 'Evidencias' => $evidencias));
         } else {
@@ -428,8 +420,7 @@ class Solicitud extends General
      * @return boolean Regresa true si se elimino y false en caso contrario.
      */
 
-    public function eliminarEvidencia(array $evidencias)
-    {
+    public function eliminarEvidencia(array $evidencias) {
         $datosSolicitud = $this->DBS->getDatosSolicitud($evidencias['id']);
         $archivos = explode(',', $datosSolicitud['detalles'][0]['Evidencias']);
 
@@ -440,9 +431,7 @@ class Solicitud extends General
         }
         if (eliminarArchivo($evidencias['key'])) {
             $consulta = $this->DBS->actualizarSolicitud(
-                't_solicitudes_internas',
-                array('Evidencias' => implode(',', $archivos)),
-                array('IdSolicitud' => $evidencias['id'])
+                    't_solicitudes_internas', array('Evidencias' => implode(',', $archivos)), array('IdSolicitud' => $evidencias['id'])
             );
             if (!empty($consulta)) {
                 return TRUE;
@@ -460,8 +449,7 @@ class Solicitud extends General
      * @return array Regresa la información de la solicitud y con los datos que requiera
      */
 
-    public function getDatosSolicitud(array $datos)
-    {
+    public function getDatosSolicitud(array $datos) {
         $data = array();
         $usuario = $this->Usuario->getDatosUsuario();
         $datosSolicitud = $this->DBS->getDatosSolicitud($datos['solicitud']);
@@ -553,49 +541,49 @@ class Solicitud extends General
         $arrayServicios = $this->Servicio->getServiciosBySolicitud($datos['solicitud'], TRUE);
 
         $htmlSeguimiento = ''
-            . '<div class="col-md-12 col-xs-12" >'
-            . ' <div class="row">'
-            . '     <div class="col-md-12 col-xs-12">'
-            . '         <h3>Servicios relacionados</h3>'
-            . '         <div class="underline"></div>'
-            . '     </div>'
-            . ' </div>'
-            . ' <div class="table-responsive">'
-            . '         <table id="data-table-servicios-relacionados" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">'
-            . '             <thead>'
-            . '                 <tr>'
-            . '                     <th class="never">IDServicio</th>'
-            . '                     <th class="all">Ticket</th>'
-            . '                     <th class="all">Servicio</th>'
-            . '                     <th class="all">Fecha</th>'
-            . '                     <th class="all">Descripción</th>'
-            . '                     <th class="all">Estatus</th>'
-            . '                     <th class="all">Solicita</th>'
-            . '                     <th class="all">Atiende</th>'
-            . '                 </tr>'
-            . '             </thead>'
-            . '             <tbody>';
+                . '<div class="col-md-12 col-xs-12" >'
+                . ' <div class="row">'
+                . '     <div class="col-md-12 col-xs-12">'
+                . '         <h3>Servicios relacionados</h3>'
+                . '         <div class="underline"></div>'
+                . '     </div>'
+                . ' </div>'
+                . ' <div class="table-responsive">'
+                . '         <table id="data-table-servicios-relacionados" class="table table-hover table-striped table-bordered no-wrap " style="cursor:pointer" width="100%">'
+                . '             <thead>'
+                . '                 <tr>'
+                . '                     <th class="never">IDServicio</th>'
+                . '                     <th class="all">Ticket</th>'
+                . '                     <th class="all">Servicio</th>'
+                . '                     <th class="all">Fecha</th>'
+                . '                     <th class="all">Descripción</th>'
+                . '                     <th class="all">Estatus</th>'
+                . '                     <th class="all">Solicita</th>'
+                . '                     <th class="all">Atiende</th>'
+                . '                 </tr>'
+                . '             </thead>'
+                . '             <tbody>';
         if ($arrayServicios !== FALSE) {
             foreach ($arrayServicios as $key => $value) {
                 $htmlSeguimiento .= ''
-                    . '<tr>'
-                    . ' <td>' . $value['Id'] . '</td>'
-                    . ' <td>' . $value['Ticket'] . '</td>'
-                    . ' <td>' . $value['Servicio'] . '</td>'
-                    . ' <td>' . $value['FechaCreacion'] . '</td>'
-                    . ' <td>' . $value['Descripcion'] . '</td>'
-                    . ' <td>' . $value['NombreEstatus'] . '</td>'
-                    . ' <td>' . $value['Solicita'] . '</td>'
-                    . ' <td>' . $value['Atiende'] . '</td>'
-                    . '</tr>';
+                        . '<tr>'
+                        . ' <td>' . $value['Id'] . '</td>'
+                        . ' <td>' . $value['Ticket'] . '</td>'
+                        . ' <td>' . $value['Servicio'] . '</td>'
+                        . ' <td>' . $value['FechaCreacion'] . '</td>'
+                        . ' <td>' . $value['Descripcion'] . '</td>'
+                        . ' <td>' . $value['NombreEstatus'] . '</td>'
+                        . ' <td>' . $value['Solicita'] . '</td>'
+                        . ' <td>' . $value['Atiende'] . '</td>'
+                        . '</tr>';
             }
         }
 
         $htmlSeguimiento .= ''
-            . '             </tbody>'
-            . '         </table>'
-            . '     </div>'
-            . '</div>';
+                . '             </tbody>'
+                . '         </table>'
+                . '     </div>'
+                . '</div>';
 
         $data['htmlSeguimiento'] = $htmlSeguimiento;
 
@@ -611,8 +599,7 @@ class Solicitud extends General
      * 
      */
 
-    public function generarTicket(array $datos)
-    {
+    public function generarTicket(array $datos) {
         $foliosServicios = array();
         $ticket = null;
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
@@ -636,7 +623,7 @@ class Solicitud extends General
                     'Ticket' => $ticket,
                     'FechaRevision' => $fecha,
                     'Atiende' => $usuario['Id']
-                ), array('Id' => $datos['solicitud']));
+                        ), array('Id' => $datos['solicitud']));
             }
         } else {
             $ticket = $datos['ticket'];
@@ -649,34 +636,34 @@ class Solicitud extends General
                     'Ticket' => $ticket,
                     'FechaRevision' => $fecha,
                     'Atiende' => $usuario['Id']
-                ), array('Id' => $datos['solicitud']));
+                        ), array('Id' => $datos['solicitud']));
             }
         }
 
         if (!empty($consulta)) {
             $historico = $this->DBS->setHistoricoSolicitud(
-                array(
-                    'IdSolicitud' => $datos['solicitud'],
-                    'IdDepartamento' => $datosSolicitud['IdDepartamento'],
-                    'IdEstatus' => '2',
-                    'IdUsuarioModifica' => $usuario['Id'],
-                    'FechaModifica' => $fecha
-                )
+                    array(
+                        'IdSolicitud' => $datos['solicitud'],
+                        'IdDepartamento' => $datosSolicitud['IdDepartamento'],
+                        'IdEstatus' => '2',
+                        'IdUsuarioModifica' => $usuario['Id'],
+                        'FechaModifica' => $fecha
+                    )
             );
 
             if (!empty($historico)) {
                 foreach ($datos['servicios'] as $value) {
                     array_push($foliosServicios, $this->Servicio->setServicio(array(
-                        'Ticket' => $ticket,
-                        'IdSolicitud' => $datos['solicitud'],
-                        'IdTipoServicio' => $value['servicio'],
-                        'IdSucursal' => $value['sucursal'],
-                        'IdEstatus' => '1',
-                        'Solicita' => $usuario['Id'],
-                        'Atiende' => $value['atiende'],
-                        'FechaCreacion' => $fecha,
-                        'Descripcion' => $value['descripcion']
-                    ), $value['nombreServicio']));
+                                'Ticket' => $ticket,
+                                'IdSolicitud' => $datos['solicitud'],
+                                'IdTipoServicio' => $value['servicio'],
+                                'IdSucursal' => $value['sucursal'],
+                                'IdEstatus' => '1',
+                                'Solicita' => $usuario['Id'],
+                                'Atiende' => $value['atiende'],
+                                'FechaCreacion' => $fecha,
+                                'Descripcion' => $value['descripcion']
+                                    ), $value['nombreServicio']));
                 }
 
                 $detallesSolicitud = $this->linkDetallesSolicitud($datos['solicitud']);
@@ -690,7 +677,7 @@ class Solicitud extends General
                         'descripcion' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ya es atendida por ' . $usuario['Nombre'] . ' del ticket ' . $ticket,
                         'titulo' => 'Seguimiento de Solicitud',
                         'mensaje' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> del ticket ' . $ticket . ' ya esta siendo atendida por el usuario <b>' . $usuario['Nombre'] . '</b>.'
-                            . '             <br>' . $linkDetallesSolicitud . '<br><br>
+                        . '             <br>' . $linkDetallesSolicitud . '<br><br>
                                     Asunto: <p><b>' . $datosSolicitud['detalles'][0]['Asunto'] . '</b> </p><br>
                                     Descripción:<br> <p><b>' . $datosSolicitud['detalles'][0]['Descripcion'] . '</b> </p>', $solicitante
                     ));
@@ -715,8 +702,7 @@ class Solicitud extends General
      * 
      */
 
-    private function enviarNotificacion(array $datos, array $atiende = null)
-    {
+    private function enviarNotificacion(array $datos, array $atiende = null) {
         $usuario = $this->Usuario->getDatosUsuario();
         $data['departamento'] = $datos['Departamento'];
         $data['remitente'] = $datos['remitente'];
@@ -751,15 +737,14 @@ class Solicitud extends General
      * @return array Regresa un arreglo con la informacion de la operacion realizada.
      */
 
-    public function actualizarDatosSolicitud(array $datos)
-    {
+    public function actualizarDatosSolicitud(array $datos) {
         $data = array();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $datosSolicitud = $this->DBS->getDatosSolicitud($datos['solicitud']);
         $usuario = $this->Usuario->getDatosUsuario();
         $solicitante = $this->DBS->getDatosSolicitante($datosSolicitud['Solicita']);
         switch ($datosSolicitud['TipoSolicitud']) {
-                //Solicitud Personal Proyecto
+            //Solicitud Personal Proyecto
             case '1':
                 if ($datos['operacion'] === '1') {
                     //Actualiza información
@@ -772,7 +757,7 @@ class Solicitud extends General
                     $data['solicitudes'] = $this->noAutorizarSolicitud($datos, $usuario, $fecha, $datosSolicitud, $solicitante, '1');
                 }
                 break;
-                //Solicitud Material Proyecto
+            //Solicitud Material Proyecto
             case '2':
                 if ($datos['operacion'] === '1') {
                     //Actualiza información
@@ -785,7 +770,7 @@ class Solicitud extends General
                     $data['solicitudes'] = $this->noAutorizarSolicitud($datos, $usuario, $fecha, $datosSolicitud, $solicitante, '2');
                 }
                 break;
-                //Solicitud Nueva Interna
+            //Solicitud Nueva Interna
             case '3':
                 if ($datos['operacion'] === '1') {
                     //Actualiza información                    
@@ -825,14 +810,13 @@ class Solicitud extends General
      * @return boolean Regresa true si se realizo con exito la actualización de lo contrario un false.
      */
 
-    private function actualizarSolicitudPersonal(array $datos, array $usuario, array $solicitante)
-    {
+    private function actualizarSolicitudPersonal(array $datos, array $usuario, array $solicitante) {
         foreach ($datos['datos'] as $value) {
             if ($value['name'] === 'perfilPersonal') {
                 $actualizar = $this->DBS->actualizarSolicitud('t_personal_proyecto', array(
                     'DescripcionPerfil' => $value['valor'],
                     'IdUsuarioModifica' => $usuario['Id']
-                ), array('IdSolicitud' => $datos['solicitud']));
+                        ), array('IdSolicitud' => $datos['solicitud']));
 
                 if (!empty($actualizar)) {
                     $this->enviarNotificacion(array(
@@ -843,7 +827,7 @@ class Solicitud extends General
                         'titulo' => 'Solicitud Actualizada',
                         'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> a actualizado la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.<br>                        
                                 Favor de validar nueva informción de la solicitud.'
-                    ), $solicitante);
+                            ), $solicitante);
                     return TRUE;
                 } else {
                     return FALSE;
@@ -863,8 +847,7 @@ class Solicitud extends General
      * @return boolean Regresa true si se realizo con exito la actualización de lo contrario un false.
      */
 
-    private function actualizarSolicitudMaterial(array $datos, array $usuario, array $datosSolicitud, array $solicitante, string $fecha)
-    {
+    private function actualizarSolicitudMaterial(array $datos, array $usuario, array $datosSolicitud, array $solicitante, string $fecha) {
         $consulta = $this->DBS->eliminarMaterialSolicitud(array('IdSolicitud' => $datos['solicitud']));
         if ($consulta) {
             foreach ($datos['datos'] as $value) {
@@ -879,7 +862,7 @@ class Solicitud extends General
                                 'IdRecibe' => '0',
                                 'IdUsuarioModifica' => $usuario['Id'],
                                 'IdEstatus' => '9',
-                            ), array(
+                                    ), array(
                                 'IdVersion' => $datos['version'] + 1,
                                 'FechaModificacion' => $fecha,
                                 'IdSolicitud' => $datos['solicitud'],
@@ -901,7 +884,7 @@ class Solicitud extends General
                 'titulo' => 'Solicitud Actualizada',
                 'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> a actualizado la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.<br>                        
                         Favor de validar nueva informción de la solicitud.'
-            ), $solicitante);
+                    ), $solicitante);
             return TRUE;
         } else {
             return FALSE;
@@ -919,8 +902,7 @@ class Solicitud extends General
      * @return array Regresa la lista de las solicitudes generadas.
      */
 
-    private function actualizarSolicitudInterna(array $datos, array $evidencias, array $usuario, array $datosSolicitud, string $fecha)
-    {
+    private function actualizarSolicitudInterna(array $datos, array $evidencias, array $usuario, array $datosSolicitud, string $fecha) {
         $actualizacion = FALSE;
         $CI = parent::getCI();
         $carpeta = 'solicitudes/' . $datos['solicitud'] . '/';
@@ -940,17 +922,17 @@ class Solicitud extends General
                 'IdDepartamento' => $datos['departamento'],
                 'IdPrioridad' => $datos['prioridad'],
                 'FechaCreacion' => $fecha
-            ), array('Id' => $datos['solicitud']));
+                    ), array('Id' => $datos['solicitud']));
 
             if (!empty($consulta)) {
                 $consulta = $this->DBS->setHistoricoSolicitud(
-                    array(
-                        'IdSolicitud' => $datos['solicitud'],
-                        'IdDepartamento' => $datos['departamento'],
-                        'IdEstatus' => $datosSolicitud['IdEstatus'],
-                        'IdUsuarioModifica' => $usuario['Id'],
-                        'FechaModifica' => $fecha
-                    )
+                        array(
+                            'IdSolicitud' => $datos['solicitud'],
+                            'IdDepartamento' => $datos['departamento'],
+                            'IdEstatus' => $datosSolicitud['IdEstatus'],
+                            'IdUsuarioModifica' => $usuario['Id'],
+                            'FechaModifica' => $fecha
+                        )
                 );
                 if (!empty($consulta)) {
                     $actualizacion = TRUE;
@@ -974,13 +956,11 @@ class Solicitud extends General
             }
 
             $consulta = $this->DBS->actualizarSolicitud(
-                't_solicitudes_internas',
-                array(
-                    'Descripcion' => $datos['descripcion'],
-                    'Asunto' => $datos['asunto'],
-                    'Evidencias' => $archivos
-                ),
-                array('IdSolicitud' => $datos['solicitud'])
+                    't_solicitudes_internas', array(
+                'Descripcion' => $datos['descripcion'],
+                'Asunto' => $datos['asunto'],
+                'Evidencias' => $archivos
+                    ), array('IdSolicitud' => $datos['solicitud'])
             );
 
             if (!empty($consulta)) {
@@ -988,12 +968,10 @@ class Solicitud extends General
             }
         } else {
             $consulta = $this->DBS->actualizarSolicitud(
-                't_solicitudes_internas',
-                array(
-                    'Descripcion' => $datos['descripcion'],
-                    'Asunto' => $datos['asunto']
-                ),
-                array('IdSolicitud' => $datos['solicitud'])
+                    't_solicitudes_internas', array(
+                'Descripcion' => $datos['descripcion'],
+                'Asunto' => $datos['asunto']
+                    ), array('IdSolicitud' => $datos['solicitud'])
             );
 
             if (!empty($consulta)) {
@@ -1002,15 +980,13 @@ class Solicitud extends General
         }
 
         $consultaSolicitud = $this->DBS->actualizarSolicitud(
-            't_solicitudes',
-            array(
-                'Folio' => $datos['folio'],
-                'IdSucursal' => $datos['sucursal'],
-                'FechaCreacion' => $fecha,
-                'FechaTentativa' => $datos['fechaProgramada'],
-                'FechaLimite' => $datos['fechaLimiteAtencion']
-            ),
-            array('Id' => $datos['solicitud'])
+                't_solicitudes', array(
+            'Folio' => $datos['folio'],
+            'IdSucursal' => $datos['sucursal'],
+            'FechaCreacion' => $fecha,
+            'FechaTentativa' => $datos['fechaProgramada'],
+            'FechaLimite' => $datos['fechaLimiteAtencion']
+                ), array('Id' => $datos['solicitud'])
         );
 
         if (!empty($consultaSolicitud)) {
@@ -1060,8 +1036,7 @@ class Solicitud extends General
      * @return array Regresa la lista de las solicitudes que requieren autorización..
      */
 
-    private function autorizarSolicitud(array $datos, array $usuario, string $fecha, array $datosSolicitud, array $solicitante, string $tipo)
-    {
+    private function autorizarSolicitud(array $datos, array $usuario, string $fecha, array $datosSolicitud, array $solicitante, string $tipo) {
         if ($tipo === '1') {
             $departamento = '3';
         } else if ($tipo === '2') {
@@ -1073,7 +1048,7 @@ class Solicitud extends General
             'IdDepartamento' => $departamento,
             'FechaAutorizacion' => $fecha,
             'Autoriza' => $usuario['Id']
-        ), array('Id' => $datos['solicitud']));
+                ), array('Id' => $datos['solicitud']));
         if (!empty($consulta)) {
             $proyecto = $datosSolicitud['detalles'][0]['IdProyecto'];
             if ($tipo === '2') {
@@ -1089,7 +1064,7 @@ class Solicitud extends General
                             'IdUsuarioModifica' => $usuario['Id'],
                             'IdEstatus' => '7',
                             'FechaEstatus' => $fecha
-                        ), array(
+                                ), array(
                             'IdVersion' => $value['Version'] + 1,
                             'FechaModificacion' => $fecha,
                             'IdSolicitud' => $value['IdSolicitud'],
@@ -1127,7 +1102,7 @@ class Solicitud extends General
                 'titulo' => 'Solicitud Autorizada',
                 'mensaje' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> ya fue autorizada por <b>' . $usuario['Nombre'] . '</b>.<br>
                         Por lo que ya se notifico al área de correspondiente para su seguimiento.'
-            ), $solicitante);
+                    ), $solicitante);
             return $this->getSolicitudesAurtorizacion();
         }
     }
@@ -1144,13 +1119,12 @@ class Solicitud extends General
      * @return array Regresa la lista de las solicitudes que requieren autorización.
      */
 
-    private function noAutorizarSolicitud(array $datos, array $usuario, string $fecha, array $datosSolicitud, array $solicitante, string $tipo)
-    {
+    private function noAutorizarSolicitud(array $datos, array $usuario, string $fecha, array $datosSolicitud, array $solicitante, string $tipo) {
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
             'IdEstatus' => '8',
             'FechaAutorizacion' => $fecha,
             'Autoriza' => $usuario['Id']
-        ), array('Id' => $datos['solicitud']));
+                ), array('Id' => $datos['solicitud']));
         if (!empty($consulta)) {
             if ($tipo === '2') {
                 $material = $this->DBS->eliminarMaterialSolicitud(array('IdSolicitud' => $datos['solicitud']));
@@ -1165,7 +1139,7 @@ class Solicitud extends General
                         'IdUsuarioModifica' => $usuario['Id'],
                         'IdEstatus' => '8',
                         'FechaEstatus' => $fecha
-                    ), array(
+                            ), array(
                         'IdVersion' => $value['Version'] + 1,
                         'FechaModificacion' => $fecha,
                         'IdSolicitud' => $value['IdSolicitud'],
@@ -1205,7 +1179,7 @@ class Solicitud extends General
                         'mensaje' => 'La solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b> no fue autorizada por <b>' . $usuario['Nombre'] . '</b>.<br>
                         Por la siguiente causa: ' . $datos['descripcion'] . '<br>
                         Favor de validar la solicitud rechazada.'
-                    ), $solicitante);
+                            ), $solicitante);
                     return $this->getSolicitudesAurtorizacion();
                 }
             }
@@ -1223,20 +1197,19 @@ class Solicitud extends General
      * @return array Regresa la lista de las solicitudes asignadas.
      */
 
-    private function rechazarSolictud(array $datos, array $usuario, array $datosSolicitud, array $solicitante, string $fecha)
-    {
+    private function rechazarSolictud(array $datos, array $usuario, array $datosSolicitud, array $solicitante, string $fecha) {
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
             'IdEstatus' => '10'
-        ), array('Id' => $datos['solicitud']));
+                ), array('Id' => $datos['solicitud']));
         if (!empty($consulta)) {
             $historico = $this->DBS->setHistoricoSolicitud(
-                array(
-                    'IdSolicitud' => $datos['solicitud'],
-                    'IdDepartamento' => $datosSolicitud['IdDepartamento'],
-                    'IdEstatus' => '10',
-                    'IdUsuarioModifica' => $usuario['Id'],
-                    'FechaModifica' => $fecha
-                )
+                    array(
+                        'IdSolicitud' => $datos['solicitud'],
+                        'IdDepartamento' => $datosSolicitud['IdDepartamento'],
+                        'IdEstatus' => '10',
+                        'IdUsuarioModifica' => $usuario['Id'],
+                        'FechaModifica' => $fecha
+                    )
             );
 
             if (!empty($historico)) {
@@ -1259,7 +1232,7 @@ class Solicitud extends General
                         'mensaje' => 'El usuario <b>' . $usuario['Nombre'] . '</b> a rechazado la solicitud <b class="f-s-16">' . $datos['solicitud'] . '</b>.<br>
                         Por el siguiente motivo: <br><strong>' . $datos['descripcion'] . '</strong><br>
                         Favor de validar la solicitud y brindarle seguimiento.'
-                    ), $solicitante);
+                            ), $solicitante);
                     return $this->getSolicitudesAsignadas();
                 } else {
                     return FALSE;
@@ -1277,8 +1250,7 @@ class Solicitud extends General
      * 
      */
 
-    private function rechazarFolioSistemaSD(array $datos, array $usuario, array $datosSolicitud, string $fecha)
-    {
+    private function rechazarFolioSistemaSD(array $datos, array $usuario, array $datosSolicitud, string $fecha) {
         $resolucionVieja = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $datosSolicitud['Folio']);
         $datos['descripcion'] = $datos['descripcion'] . '<br><br>' . $resolucionVieja->operation->Details->RESOLUTION;
         $resultadoResolucion = $this->ServiceDesk->resolucionFolioSD($datosSolicitud['Folio'], $datos['tecnicoSD'], $usuario['SDKey'], $datos['descripcion']);
@@ -1287,16 +1259,16 @@ class Solicitud extends General
             if ($reasignacion->operation->result->status === 'Success') {
                 $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
                     'IdEstatus' => '10'
-                ), array('Id' => $datos['solicitud']));
+                        ), array('Id' => $datos['solicitud']));
                 if (!empty($consulta)) {
                     $historico = $this->DBS->setHistoricoSolicitud(
-                        array(
-                            'IdSolicitud' => $datos['solicitud'],
-                            'IdDepartamento' => $datosSolicitud['IdDepartamento'],
-                            'IdEstatus' => '10',
-                            'IdUsuarioModifica' => $usuario['Id'],
-                            'FechaModifica' => $fecha
-                        )
+                            array(
+                                'IdSolicitud' => $datos['solicitud'],
+                                'IdDepartamento' => $datosSolicitud['IdDepartamento'],
+                                'IdEstatus' => '10',
+                                'IdUsuarioModifica' => $usuario['Id'],
+                                'FechaModifica' => $fecha
+                            )
                     );
                     if (!empty($historico)) {
                         $notas = $this->DBS->setNotasSolicitud(array(
@@ -1327,21 +1299,20 @@ class Solicitud extends General
      * @return array Regresa la lista de las solicitudes asignadas.
      */
 
-    private function reasignarSolicitud(array $datos, array $usuario, array $datosSolicitud, string $fecha)
-    {
+    private function reasignarSolicitud(array $datos, array $usuario, array $datosSolicitud, string $fecha) {
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array(
             'IdDepartamento' => $datos['departamento']
-        ), array('Id' => $datos['solicitud']));
+                ), array('Id' => $datos['solicitud']));
 
         if (!empty($consulta)) {
             $historico = $this->DBS->setHistoricoSolicitud(
-                array(
-                    'IdSolicitud' => $datos['solicitud'],
-                    'IdDepartamento' => $datos['departamento'],
-                    'IdEstatus' => $datosSolicitud['IdEstatus'],
-                    'IdUsuarioModifica' => $usuario['Id'],
-                    'FechaModifica' => $fecha
-                )
+                    array(
+                        'IdSolicitud' => $datos['solicitud'],
+                        'IdDepartamento' => $datos['departamento'],
+                        'IdEstatus' => $datosSolicitud['IdEstatus'],
+                        'IdUsuarioModifica' => $usuario['Id'],
+                        'FechaModifica' => $fecha
+                    )
             );
             if (!empty($historico)) {
 
@@ -1391,19 +1362,18 @@ class Solicitud extends General
      * @return array Regresa la lista de las solicitudes generadas.
      */
 
-    private function cancelarSolicitudInterna(array $datos, array $datosSolicitud, array $usuario, string $fecha)
-    {
+    private function cancelarSolicitudInterna(array $datos, array $datosSolicitud, array $usuario, string $fecha) {
 
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('IdEstatus' => '6'), array('Id' => $datos['solicitud']));
         if (!empty($consulta)) {
             $historico = $this->DBS->setHistoricoSolicitud(
-                array(
-                    'IdSolicitud' => $datos['solicitud'],
-                    'IdDepartamento' => $datosSolicitud['IdDepartamento'],
-                    'IdEstatus' => '6',
-                    'IdUsuarioModifica' => $usuario['Id'],
-                    'FechaModifica' => $fecha
-                )
+                    array(
+                        'IdSolicitud' => $datos['solicitud'],
+                        'IdDepartamento' => $datosSolicitud['IdDepartamento'],
+                        'IdEstatus' => '6',
+                        'IdUsuarioModifica' => $usuario['Id'],
+                        'FechaModifica' => $fecha
+                    )
             );
             if (!empty($historico)) {
                 $notas = $this->DBS->setNotasSolicitud(array(
@@ -1440,8 +1410,7 @@ class Solicitud extends General
      * 
      */
 
-    private function setSolicitudesSD(string $SDKey, array $usuario)
-    {
+    private function setSolicitudesSD(string $SDKey, array $usuario) {
         $folios = array();
         $datosFolios = array();
         $solicitudesGeneradas = array();
@@ -1509,8 +1478,7 @@ class Solicitud extends General
      * 
      */
 
-    private function getTecnicosSistemaSD(array $usuario)
-    {
+    private function getTecnicosSistemaSD(array $usuario) {
         return $this->ServiceDesk->getTecnicosSD($usuario['SDKey']);
     }
 
@@ -1519,13 +1487,11 @@ class Solicitud extends General
      * 
      */
 
-    public function getFoliosServiceDesk()
-    {
+    public function getFoliosServiceDesk() {
         return $this->ServiceDesk->getFolios('A8D6001B-EB63-4996-A158-1B968E19AB84');
     }
 
-    public function getFormularioSolicitud(array $datos = [])
-    {
+    public function getFormularioSolicitud(array $datos = []) {
         $usuario = $this->Usuario->getDatosUsuario();
         $formulario = [];
 
@@ -1546,15 +1512,13 @@ class Solicitud extends General
         return $formulario;
     }
 
-    public function getFormularioRechazarSolicitud()
-    {
+    public function getFormularioRechazarSolicitud() {
         $formulario = [];
         $formulario['html'] = parent::getCI()->load->view('Generales/Modal/formularioRechazarSolicitud', [], TRUE);
         return $formulario;
     }
 
-    public function buscarAreaDepartamento($datos)
-    {
+    public function buscarAreaDepartamento($datos) {
         return $this->DBS->consultaGral('SELECT
                                             cvas.Id AS Area, 
                                             cvds.Id AS Departamento 
@@ -1566,14 +1530,12 @@ class Solicitud extends General
                                          WHERE cp.Id = "' . $datos['perfil'] . '"');
     }
 
-    public function getUsuario()
-    {
+    public function getUsuario() {
         $usuario = $this->Usuario->getDatosUsuario();
         return $usuario['Id'];
     }
 
-    public function guardarNotaSolicitud(array $datos)
-    {
+    public function guardarNotaSolicitud(array $datos) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $arrayNotasSolicitud = array();
         $usuario = $this->Usuario->getDatosUsuario();
@@ -1592,8 +1554,7 @@ class Solicitud extends General
         }
     }
 
-    public function editarFolio(array $datos)
-    {
+    public function editarFolio(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
         $consulta = $this->DBS->actualizarSolicitud('t_solicitudes', array('Folio' => $datos['folio']), array('Id' => $datos['solicitud']));
@@ -1616,8 +1577,7 @@ class Solicitud extends General
         }
     }
 
-    public function atencioSolicitudInterna(array $datos)
-    {
+    public function atencioSolicitudInterna(array $datos) {
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $datosSolicitud = $this->DBS->getDatosSolicitud($datos['solicitud']);
         $usuario = $this->Usuario->getDatosUsuario();
@@ -1630,7 +1590,7 @@ class Solicitud extends General
             'Ticket' => $ticket,
             'FechaRevision' => $fecha,
             'Atiende' => $usuario['Id']
-        ), array('Id' => $datos['solicitud']));
+                ), array('Id' => $datos['solicitud']));
 
         if (!empty($consulta)) {
             $this->DBS->setDatosSolicitudInternas('t_servicios_ticket', array(
@@ -1660,8 +1620,7 @@ class Solicitud extends General
         }
     }
 
-    public function linkDetallesSolicitud(string $solicitud)
-    {
+    public function linkDetallesSolicitud(string $solicitud) {
         $host = $_SERVER['SERVER_NAME'];
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
@@ -1674,8 +1633,7 @@ class Solicitud extends General
         return $detallesSolicitud;
     }
 
-    public function reasignarFolioSD(array $datos)
-    {
+    public function reasignarFolioSD(array $datos) {
         if ($datos['perfil'] == 54 || $datos['perfil'] == 78) {
             $this->ServicioConcluirFyC->Concluir_SinClasificar($datos);
         }
@@ -1691,8 +1649,7 @@ class Solicitud extends General
         }
     }
 
-    public function clientesActivos()
-    {
+    public function clientesActivos() {
         return $this->DBS->consultaGral('SELECT
                                             Id,
                                             Nombre
@@ -1700,99 +1657,101 @@ class Solicitud extends General
                                         WHERE Id IN(1,4,12,18,20)');
     }
 
-    public function sucursalesCliente(array $datos)
-    {
+    public function sucursalesCliente(array $datos) {
         return $this->DBS->consultaGral('SELECT * FROM cat_v3_sucursales WHERE IdCliente = "' . $datos['cliente'] . '" ORDER BY Nombre ASC');
     }
 
-    public function concluirSolicitudesAbiertas()
-    {
-        $direccionItem = archivosAdjuntosCorreo(array(
-            'correo' => 'abarcenas@siccob.com.mx',
-            'password' => 'Alberto-132',
-            'asunto' => 'Catalogo Item SD'
-        ));
-        $direccionSubcategoria = archivosAdjuntosCorreo(array(
-            'correo' => 'abarcenas@siccob.com.mx',
-            'password' => 'Alberto-132',
-            'asunto' => 'Catalogo Subcategorias SD'
-        ));
+    public function concluirSolicitudesAbiertas() {
+//        $direccionItem = archivosadjuntoscorreo(array(
+//            'correo' => 'abarcenas@siccob.com.mx',
+//            'password' => 'Alberto-132',
+//            'asunto' => 'Catalogo Item SD'
+//        ));
+//        $direccionSubcategoria = archivosadjuntoscorreo(array(
+//            'correo' => 'abarcenas@siccob.com.mx',
+//            'password' => 'Alberto-132',
+//            'asunto' => 'Catalogo Subcategorias SD'
+//        ));
+//
+//        $arrayExcelItem = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccionItem['message']));
+//        $arrayExcelSubcategoria = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccionSubcategoria['message']));
+//
+//        $arrayExcelItemNuevo = array();
+//        $arrayExcelSubcategoriaNuevo = array();
+//
+//
+//
+//        foreach ($arrayExcelItem as $key => $value) {
+//            $arrayExcelItemNuevo[$key]['IdItem'] = $value[1];
+//            $arrayExcelItemNuevo[$key]['IdSubcategoria'] = $value[2];
+//            $arrayExcelItemNuevo[$key]['Nombre'] = $value[3];
+//        }
+//
+//        $this->SegundoPlano->truncar('TRUNCATE cat_v3_sd_item');
+//
+//        foreach ($arrayExcelItemNuevo as $key => $value) {
+//            $this->DBS->setDatosSolicitudInternas('cat_v3_sd_item', $value);
+//        }
+//        foreach ($arrayExcelSubcategoria as $key => $value) {
+//            $arrayExcelSubcategoriaNuevo[$key]['IdSubcategoria'] = $value[1];
+//            $arrayExcelSubcategoriaNuevo[$key]['Nombre'] = $value[2];
+//        }
+//
+//        $this->SegundoPlano->truncar('TRUNCATE cat_v3_sd_subcategoria');
+//
+//        foreach ($arrayExcelSubcategoriaNuevo as $key => $value) {
+//            $this->DBS->setDatosSolicitudInternas('cat_v3_sd_subcategoria', $value);
+//        }
 
-        $arrayExcelItem = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccionItem['message']));
-        $arrayExcelSubcategoria = $this->Excel->dataImportExcel(array('direccion' => $_SERVER['DOCUMENT_ROOT'] . $direccionSubcategoria['message']));
+        $usuario = $this->Usuario->getDatosUsuario();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
 
-        $arrayExcelItemNuevo = array();
-        $arrayExcelSubcategoriaNuevo = array();
+        foreach ($solicitudes as $key => $value) {
+            try {
+                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
+                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
+                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
 
+                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
+                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
+                    } else {
+                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
+                    }
 
+                    $this->DBS->setNotasSolicitud(array(
+                        'IdSolicitud' => $value['Id'],
+                        'IdEstatus' => '4',
+                        'IdUsuario' => $usuario['Id'],
+                        'Nota' => $textoResolucion,
+                        'Fecha' => $fecha
+                    ));
 
-        foreach ($arrayExcelItem as $key => $value) {
-            $arrayExcelItemNuevo[$key]['IdItem'] = $value[1];
-            $arrayExcelItemNuevo[$key]['IdSubcategoria'] = $value[2];
-            $arrayExcelItemNuevo[$key]['Nombre'] = $value[3];
+                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
+
+                    $this->crearReporteSolicitudesConcluidas($textoReporte);
+
+                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Ticket' => $value['Ticket']));
+
+                    if (!empty($value['Ticket'])) {
+                        $servicios = $this->DBT->getServiciosSolicitud($value['Ticket']);
+                        
+                        if (!empty($servicios)) {
+                            foreach ($servicios as $key => $value) {
+                                if ($value['IdEstatus'] !== '4' && $value['IdEstatus'] !== '6') {
+                                    $this->DBT->actualizarServicio('t_servicios_ticket', array('IdEstatus' => '4'), array('Id' => $value['Id']));
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (\Exception $ex) {
+                
+            }
         }
-
-        $this->SegundoPlano->truncar('TRUNCATE cat_v3_sd_item');
-
-        foreach ($arrayExcelItemNuevo as $key => $value) {
-            $this->DBS->setDatosSolicitudInternas('cat_v3_sd_item', $value);
-        }
-
-
-
-
-        foreach ($arrayExcelSubcategoria as $key => $value) {
-            $arrayExcelSubcategoriaNuevo[$key]['IdSubcategoria'] = $value[1];
-            $arrayExcelSubcategoriaNuevo[$key]['Nombre'] = $value[2];
-        }
-
-        $this->SegundoPlano->truncar('TRUNCATE cat_v3_sd_subcategoria');
-
-        foreach ($arrayExcelSubcategoriaNuevo as $key => $value) {
-            $this->DBS->setDatosSolicitudInternas('cat_v3_sd_subcategoria', $value);
-        }
-
-
-
-
-        //        $usuario = $this->Usuario->getDatosUsuario();
-        //        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-        //        $solicitudes = $this->DBS->getFolioSolicitudesAbiertas();
-        //
-        //        foreach ($solicitudes as $key => $value) {
-        //            try {
-        //                $detallesSD = $this->ServiceDesk->getDetallesFolio($usuario['SDKey'], $value['Folio']);
-        //                if ($detallesSD->STATUS === 'Cerrado' || $detallesSD->STATUS === 'Completado') {
-        //                    $resolucion = $this->ServiceDesk->getResolucionFolio($usuario['SDKey'], $value['Folio']);
-        //
-        //                    if (!empty($resolucion->operation->Details->RESOLUTION)) {
-        //                        $textoResolucion = $resolucion->operation->Details->RESOLUTION;
-        //                    } else {
-        //                        $textoResolucion = 'Se concluye solicitud ya que esta concluido en SD';
-        //                    }
-        //
-        //                    $this->DBS->setNotasSolicitud(array(
-        //                        'IdSolicitud' => $value['Id'],
-        //                        'IdEstatus' => '4',
-        //                        'IdUsuario' => $usuario['Id'],
-        //                        'Nota' => $textoResolucion,
-        //                        'Fecha' => $fecha
-        //                    ));
-        //
-        //                    $textoReporte = 'Folio: ' . $value['Folio'] . ' Solicitud: ' . $value['Id'] . ' Fecha: ' . $fecha . ' Resolución: ' . $textoResolucion;
-        //
-        //                    $this->crearReporteSolicitudesConcluidas($textoReporte);
-        //
-        //                    $this->DBS->cambiarEstatusSolicitud(array('IdEstatus' => '4'), array('Id' => $value['Id']));
-        //                }
-        //            } catch (\Exception $ex) {
-        //                
-        //            }
-        //        }
     }
 
-    private function crearReporteSolicitudesConcluidas(string $contenido)
-    {
+    private function crearReporteSolicitudesConcluidas(string $contenido) {
         $carpeta = './storage/Archivos/ReportesTXT';
 
         if (!file_exists($carpeta)) {
@@ -1811,8 +1770,7 @@ class Solicitud extends General
         }
     }
 
-    public function getFolios()
-    {
+    public function getFolios() {
         ini_set('memory_limit', '4096M');
         set_time_limit('1800');
         $from = 0;
@@ -1841,7 +1799,7 @@ class Solicitud extends General
                         //'Item' => $value["item"]["name"],
                         'Group' => $value["group"]["name"],
                         'Priority' => $value["priority"]["name"],
-                        //'ResolvedTime' => $resolvedTime
+                            //'ResolvedTime' => $resolvedTime
                     ));
                 } else {
                     $this->DBS->insertar('temporal_sd', array(
@@ -1857,7 +1815,7 @@ class Solicitud extends General
                         //'Item' => $value["item"]["name"],
                         //'Group' => $value["group"]["name"],
                         'Priority' => $value["priority"]["name"],
-                        //'ResolvedTime' => $resolvedTime
+                            //'ResolvedTime' => $resolvedTime
                     ));
                 }
             }
@@ -1880,10 +1838,9 @@ class Solicitud extends General
         //        return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
-    public function updateRequestWithSDInfo()
-    {
+    public function updateRequestWithSDInfo() {
         $sdInfo = $this->DBS->consulta(
-            "select
+                "select
             Id        
             from t_solicitudes ts
             where ts.Folio between (select MIN(ID) from temporal_sd) and (select MAX(ID) from temporal_sd)"
@@ -1891,7 +1848,7 @@ class Solicitud extends General
 
         foreach ($sdInfo as $key => $value) {
             $this->DBS->queryBolean(
-                "update t_solicitudes ts 
+                    "update t_solicitudes ts 
                 inner join temporal_sd temp on ts.Folio = temp.ID
                 set ts.Technician = temp.Technician,
                 ts.CreatedBy = temp.CreatedBy,
@@ -1910,8 +1867,7 @@ class Solicitud extends General
         }
     }
 
-    public function getFoliosAnterior()
-    {
+    public function getFoliosAnterior() {
         $foliosAdist = array();
         $foliosSD = array();
         //        ini_set('memory_limit', '4096M');
@@ -1976,15 +1932,13 @@ class Solicitud extends General
         return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
-    public function getFoliosSemanal()
-    {
+    public function getFoliosSemanal() {
         $foliosAdist = $this->DBS->obtenerFoliosAdist();
         $titulos = $this->cabeceraExcelFolios();
         return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
     }
 
-    public function getFoliosAnual()
-    {
+    public function getFoliosAnual() {
         ini_set('memory_limit', '2048M');
         set_time_limit('1200');
         $foliosAdist = $this->DBS->obtenerFoliosAnualAdist();
@@ -2032,8 +1986,7 @@ class Solicitud extends General
         return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios_Anual.xlsx');
     }
 
-    private function cabeceraExcelFolios()
-    {
+    private function cabeceraExcelFolios() {
         $titulos = [
             'Mes',
             'Semana',
@@ -2074,8 +2027,7 @@ class Solicitud extends General
         return $titulos;
     }
 
-    public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo)
-    {
+    public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
         if (count($arrayTitulos) > 25) {
             $letra = 'AA';
         } else {
@@ -2115,8 +2067,7 @@ class Solicitud extends General
         return ['ruta' => 'https://' . $_SERVER['SERVER_NAME'] . '/storage/Archivos/Reportes/' . $nombreArchivo];
     }
 
-    public function rechazarSolicitudSD(array $datos)
-    {
+    public function rechazarSolicitudSD(array $datos) {
         $this->DBS->iniciaTransaccion();
 
         $usuario = $this->Usuario->getDatosUsuario();
@@ -2128,16 +2079,16 @@ class Solicitud extends General
 
         $this->DBS->actualizarSolicitud('t_solicitudes', array(
             'IdEstatus' => '10'
-        ), array('Id' => $datos['solicitud']));
+                ), array('Id' => $datos['solicitud']));
 
         $this->DBS->setHistoricoSolicitud(
-            array(
-                'IdSolicitud' => $datos['solicitud'],
-                'IdDepartamento' => $datosSolicitud['IdDepartamento'],
-                'IdEstatus' => '10',
-                'IdUsuarioModifica' => $usuario['Id'],
-                'FechaModifica' => $fecha
-            )
+                array(
+                    'IdSolicitud' => $datos['solicitud'],
+                    'IdDepartamento' => $datosSolicitud['IdDepartamento'],
+                    'IdEstatus' => '10',
+                    'IdUsuarioModifica' => $usuario['Id'],
+                    'FechaModifica' => $fecha
+                )
         );
 
         $this->DBS->setNotasSolicitud(array(
@@ -2161,4 +2112,5 @@ class Solicitud extends General
             return ['code' => 200];
         }
     }
+
 }

@@ -9,14 +9,12 @@ use Controladores\Controller_Base_General as General;
  *
  * @author AProgrammer
  */
-class Catalogo extends General
-{
+class Catalogo extends General {
 
     private $DBC;
     private $user;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->DBC = \Modelos\Modelo_Catalogo::factory();
         parent::getCI()->load->library('session');
@@ -34,10 +32,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catAreas(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catAreas(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos[0]);
                 $consulta = $this->DBC->setArticulo('cat_v3_areas_siccob', array('Nombre' => $datos[0], 'Descripcion' => $datos[1], 'Flag' => '1'), $validar);
@@ -47,21 +44,18 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_v3_areas_siccob',
-                    array(
-                        'Nombre' => $datos[1],
-                        'Descripcion' => $datos[2],
-                        'Flag' => $datos[3]
-                    ),
-                    array('Id' => $datos[0]),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos[1],
-                    $parametro
+                        'cat_v3_areas_siccob', array(
+                    'Nombre' => $datos[1],
+                    'Descripcion' => $datos[2],
+                    'Flag' => $datos[3]
+                        ), array('Id' => $datos[0]),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos[1], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catAreas('3');
@@ -69,7 +63,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3';
                 $flag = (is_null($datos['Flag'])) ? '' : ' AND Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_areas_siccob where Id not in (1,23)' . $flag);
@@ -88,10 +82,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catPerfiles(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catPerfiles(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos['nombre']);
                 if (!empty($datos['permisos'])) {
@@ -105,7 +98,7 @@ class Catalogo extends General
                         'Cantidad' => $datos['cantidad'],
                         'Nivel' => $datos['nivel'],
                         'Flag' => '1'
-                    ), $validar);
+                            ), $validar);
                 } else {
                     $consulta = $this->DBC->setArticulo('cat_perfiles', array(
                         'Nombre' => $datos['nombre'],
@@ -115,7 +108,7 @@ class Catalogo extends General
                         'Cantidad' => $datos['cantidad'],
                         'Nivel' => $datos['nivel'],
                         'Flag' => '1'
-                    ), $validar);
+                            ), $validar);
                 }
                 if (!empty($consulta)) {
                     return $this->catPerfiles('3');
@@ -123,45 +116,39 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
                 $parametro = 'Nombre';
                 if (!empty($datos['permisos'])) {
                     $consulta = $this->DBC->actualizarArticulo(
-                        'cat_perfiles',
-                        array(
-                            'Nombre' => $datos['nombre'],
-                            'IdDepartamento' => $datos['departamento'],
-                            'Permisos' => implode(',', $datos['permisos']),
-                            'Descripcion' => $datos['descripcion'],
-                            'Clave' => $datos['clave'],
-                            'Cantidad' => $datos['cantidad'],
-                            'Nivel' => $datos['nivel'],
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id']),
-                        //Variable para mandar datos de restriccion para que no se repita el nombre
-                        $datos['nombre'],
-                        $parametro
+                            'cat_perfiles', array(
+                        'Nombre' => $datos['nombre'],
+                        'IdDepartamento' => $datos['departamento'],
+                        'Permisos' => implode(',', $datos['permisos']),
+                        'Descripcion' => $datos['descripcion'],
+                        'Clave' => $datos['clave'],
+                        'Cantidad' => $datos['cantidad'],
+                        'Nivel' => $datos['nivel'],
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id']),
+                            //Variable para mandar datos de restriccion para que no se repita el nombre
+                            $datos['nombre'], $parametro
                     );
                 } else {
                     $consulta = $this->DBC->actualizarArticulo(
-                        'cat_perfiles',
-                        array(
-                            'Nombre' => $datos['nombre'],
-                            'IdDepartamento' => $datos['departamento'],
-                            'Permisos' => '',
-                            'Descripcion' => $datos['descripcion'],
-                            'Clave' => $datos['clave'],
-                            'Cantidad' => $datos['cantidad'],
-                            'Nivel' => $datos['nivel'],
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id']),
-                        //Variable para mandar datos de restriccion para que no se repita el nombre
-                        $datos['nombre'],
-                        $parametro
+                            'cat_perfiles', array(
+                        'Nombre' => $datos['nombre'],
+                        'IdDepartamento' => $datos['departamento'],
+                        'Permisos' => '',
+                        'Descripcion' => $datos['descripcion'],
+                        'Clave' => $datos['clave'],
+                        'Cantidad' => $datos['cantidad'],
+                        'Nivel' => $datos['nivel'],
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id']),
+                            //Variable para mandar datos de restriccion para que no se repita el nombre
+                            $datos['nombre'], $parametro
                     );
                 }
                 if (!empty($consulta)) {
@@ -171,7 +158,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 return $this->DBC->getJuntarTablas('SELECT u.Id, d.IdArea, u.IdDepartamento, p.Nombre AS Area, d.Nombre AS Departamento, u.Nombre, Cantidad, u.Clave, u.Permisos, u.Nivel, u.Descripcion, u.Flag FROM cat_perfiles u INNER JOIN cat_v3_departamentos_siccob d on u.IdDepartamento = d.Id JOIN cat_v3_areas_siccob p ON d.IdArea = p.Id where u.Id > 1');
                 break;
@@ -188,10 +175,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catPermisos(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catPermisos(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Permiso' => $datos[1]);
                 $consulta = $this->DBC->setArticulo('cat_v3_permisos', array('Nombre' => $datos[0], 'Permiso' => strtoupper($datos[1]), 'Descripcion' => $datos[2]), $validar);
@@ -201,20 +187,16 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
                 $parametro = 'Permiso';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_v3_permisos',
-                    array(
-                        'Nombre' => $datos[1],
-                        'Permiso' => strtoupper($datos[2]),
-                        'Descripcion' => $datos[3]
-                    ),
-                    array('Id' => $datos[0]),
-                    $datos[2],
-                    $parametro
+                        'cat_v3_permisos', array(
+                    'Nombre' => $datos[1],
+                    'Permiso' => strtoupper($datos[2]),
+                    'Descripcion' => $datos[3]
+                        ), array('Id' => $datos[0]), $datos[2], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catPermisos('3');
@@ -222,7 +204,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 return $this->DBC->getArticulos('cat_v3_permisos', $where);
                 break;
@@ -239,12 +221,11 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catUsuarios(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catUsuarios(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
             case '1':
                 break;
-                //actualiza los usuarios
+            //actualiza los usuarios
             case '2':
                 if (isset($datos['email'])) {
                     $existeEmail = $this->DBC->getJuntarTablas('SELECT Id FROM cat_v3_usuarios WHERE Email = "' . $datos['email'] . '" AND Id <> "' . $datos['id'] . '"');
@@ -257,15 +238,13 @@ class Catalogo extends General
                                 $permisos = '';
                             }
                             $consulta = $this->DBC->actualizarUnicoDato(
-                                'cat_v3_usuarios',
-                                array(
-                                    'IdPerfil' => $datos['perfil'],
-                                    'EmailCorporativo' => $datos['email'],
-                                    'PermisosAdicionales' => $permisos,
-                                    'Flag' => $datos['estatus'],
-                                    'SDKey' => $datos['SDKey']
-                                ),
-                                array('Id' => $datos['id'])
+                                    'cat_v3_usuarios', array(
+                                'IdPerfil' => $datos['perfil'],
+                                'EmailCorporativo' => $datos['email'],
+                                'PermisosAdicionales' => $permisos,
+                                'Flag' => $datos['estatus'],
+                                'SDKey' => $datos['SDKey']
+                                    ), array('Id' => $datos['id'])
                             );
                             if (!empty($consulta)) {
                                 $tabla = $this->catUsuarios('3');
@@ -281,11 +260,9 @@ class Catalogo extends General
                     }
                 } else {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_usuarios',
-                        array(
-                            'SDKey' => $datos['SDKey']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_usuarios', array(
+                        'SDKey' => $datos['SDKey']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         $tabla = $this->catUsuarios('3');
@@ -353,10 +330,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catDepartamentos(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catDepartamentos(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos['nombre']);
                 $consulta = $this->DBC->setArticulo('cat_v3_departamentos_siccob', array('Nombre' => $datos['nombre'], 'IdArea' => $datos['area'], 'Descripcion' => $datos['descripcion'], 'Flag' => '1'), $validar);
@@ -366,22 +342,19 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_v3_departamentos_siccob',
-                    array(
-                        'IdArea' => $datos['area'],
-                        'Nombre' => $datos['nombre'],
-                        'Descripcion' => $datos['descripcion'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_v3_departamentos_siccob', array(
+                    'IdArea' => $datos['area'],
+                    'Nombre' => $datos['nombre'],
+                    'Descripcion' => $datos['descripcion'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     $tabla = $this->catDepartamentos('3');
@@ -390,7 +363,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' AND u.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT u.Id, u.IdArea, p.Nombre AS Area, u.Nombre, u.Descripcion, u.Flag FROM cat_v3_departamentos_siccob u INNER JOIN cat_v3_areas_siccob p ON p.Id = u.IdArea where u.Id > 1' . $flag . ' order by u.Nombre');
@@ -408,19 +381,18 @@ class Catalogo extends General
      * 
      */
 
-    public function catServiciosDepartamento(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catServiciosDepartamento(string $operacion, array $datos = null, array $where = null) {
         $respuesta = array();
         switch ($operacion) {
-                //Insertar nuevo servicio de departamento
+            //Insertar nuevo servicio de departamento
             case '1':
 
                 break;
-                //Actaulizar servicio del departamento
+            //Actaulizar servicio del departamento
             case '2':
 
                 break;
-                //Consultar los servicios del departamento
+            //Consultar los servicios del departamento
             case '3':
                 $respuesta = $this->DBC->getJuntarTablas('call getServiciosDepartamento("' . $datos['departamento'] . '")');
                 $this->DBC->limpiarFuncion();
@@ -438,10 +410,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catClientes(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catClientes(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos['nombre']);
                 $consulta = $this->DBC->setArticulo('cat_v3_clientes', array(
@@ -459,39 +430,36 @@ class Catalogo extends General
                     'Email' => $datos['email'],
                     'Web' => $datos['pagina'],
                     'Representante' => $datos['representante'],
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catClientes('3');
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_v3_clientes',
-                    array(
-                        'Nombre' => strtoupper($datos['nombre']),
-                        'RazonSocial' => conversionPalabra($datos['razonSocial']),
-                        'Representante' => $datos['representante'],
-                        'IdPais' => $datos['pais'],
-                        'IdEstado' => $datos['estado'],
-                        'IdMunicipio' => $datos['municipio'],
-                        'IdColonia' => $datos['colonia'],
-                        'Calle' => $datos['calle'],
-                        'NoExt' => $datos['ext'],
-                        'NoInt' => $datos['int'],
-                        'Telefono1' => $datos['telefono1'],
-                        'Telefono2' => $datos['telefono2'],
-                        'Web' => $datos['pagina'],
-                        'Email' => $datos['email']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_v3_clientes', array(
+                    'Nombre' => strtoupper($datos['nombre']),
+                    'RazonSocial' => conversionPalabra($datos['razonSocial']),
+                    'Representante' => $datos['representante'],
+                    'IdPais' => $datos['pais'],
+                    'IdEstado' => $datos['estado'],
+                    'IdMunicipio' => $datos['municipio'],
+                    'IdColonia' => $datos['colonia'],
+                    'Calle' => $datos['calle'],
+                    'NoExt' => $datos['ext'],
+                    'NoInt' => $datos['int'],
+                    'Telefono1' => $datos['telefono1'],
+                    'Telefono2' => $datos['telefono2'],
+                    'Web' => $datos['pagina'],
+                    'Email' => $datos['email']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catClientes('3');
@@ -499,7 +467,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 return $this->DBC->getJuntarTablas('SELECT a.Id, a.Nombre, a.RazonSocial, a.Representante, a.Calle, a.NoInt, a.NoExt, a.Telefono1, a.Telefono2, a.Email, a.Web, b.Id AS IdPais, b.Nombre AS Pais, c.Id AS IdEstado, c.Nombre AS Estado, d.Id AS IdColonia, d.Nombre AS Municipio, e.Id AS IdColonia, e.Nombre AS Colonia, e.CP FROM cat_v3_clientes a INNER JOIN cat_v3_paises b ON b.Id = a.IdPais INNER JOIN cat_v3_estados c ON a.IdEstado = c.Id INNER JOIN cat_v3_municipios d ON a.IdMunicipio = d.Id INNER JOIN cat_v3_colonias e ON a.IdColonia = e.Id');
                 break;
@@ -517,16 +485,15 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catSucursales(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catSucursales(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_sucursales '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND IdCliente = "' . $datos['cliente'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_sucursales '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND IdCliente = "' . $datos['cliente'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_sucursales', array(
                         'Nombre' => strtoupper($datos['nombre']),
@@ -559,38 +526,36 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_sucursales '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '" AND IdCliente = "' . $datos['cliente'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_sucursales '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '" AND IdCliente = "' . $datos['cliente'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_sucursales',
-                        array(
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'NombreCinemex' => conversionPalabra($datos['cinemex']),
-                            'IdCliente' => $datos['cliente'],
-                            'IdRegionCliente' => $datos['region'],
-                            'IdPais' => $datos['pais'],
-                            'IdEstado' => $datos['estado'],
-                            'IdMunicipio' => $datos['municipio'],
-                            'IdColonia' => $datos['colonia'],
-                            'Calle' => $datos['calle'],
-                            'NoExt' => $datos['ext'],
-                            'NoInt' => $datos['int'],
-                            'Telefono1' => $datos['telefono1'],
-                            'Telefono2' => $datos['telefono2'],
-                            'IdResponsable' => $datos['responsable'],
-                            'Flag' => $datos['estatus'],
-                            'IdUnidadNegocio' => $datos['unidadNegocio'],
-                            'Alias' => $datos["alias"],
-                            'CentroCostos' => $datos["centroCostos"],
-                            'Dominio' => $datos["dominio"]
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_sucursales', array(
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'NombreCinemex' => conversionPalabra($datos['cinemex']),
+                        'IdCliente' => $datos['cliente'],
+                        'IdRegionCliente' => $datos['region'],
+                        'IdPais' => $datos['pais'],
+                        'IdEstado' => $datos['estado'],
+                        'IdMunicipio' => $datos['municipio'],
+                        'IdColonia' => $datos['colonia'],
+                        'Calle' => $datos['calle'],
+                        'NoExt' => $datos['ext'],
+                        'NoInt' => $datos['int'],
+                        'Telefono1' => $datos['telefono1'],
+                        'Telefono2' => $datos['telefono2'],
+                        'IdResponsable' => $datos['responsable'],
+                        'Flag' => $datos['estatus'],
+                        'IdUnidadNegocio' => $datos['unidadNegocio'],
+                        'Alias' => $datos["alias"],
+                        'CentroCostos' => $datos["centroCostos"],
+                        'Dominio' => $datos["dominio"]
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catSucursales('3');
@@ -601,7 +566,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' AND a.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT 
@@ -641,10 +606,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con  la consulta.
      */
 
-    public function catLocalidades(string $operacion, array $where = null)
-    {
+    public function catLocalidades(string $operacion, array $where = null) {
         switch ($operacion) {
-                //Muestra los datos de la tabla Paises
+            //Muestra los datos de la tabla Paises
             case '1':
                 $consulta = $this->DBC->getArticulos('cat_v3_paises', $where);
                 if (!empty($consulta)) {
@@ -653,7 +617,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Muestra los datos de la tabla Estados
+            //Muestra los datos de la tabla Estados
             case '2':
                 $consulta = $this->DBC->getArticulos('cat_v3_estados', $where);
                 if (!empty($consulta)) {
@@ -662,7 +626,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Muestra los datos de la tabla Municipios
+            //Muestra los datos de la tabla Municipios
             case '3':
                 $consulta = $this->DBC->getArticulos('cat_v3_municipios', $where);
                 if (!empty($consulta)) {
@@ -671,7 +635,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Muestra los datos de la tabla Colonias
+            //Muestra los datos de la tabla Colonias
             case '4';
                 $consulta = $this->DBC->getArticulos('cat_v3_colonias', $where);
                 if (!empty($consulta)) {
@@ -680,7 +644,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //trae IdColonia, IdMunicipio, IdEstado y IdPais 
+            //trae IdColonia, IdMunicipio, IdEstado y IdPais 
             case '5':
                 $consulta = $this->DBC->getJuntarTablas('SELECT a.CP, a.Id AS IdColonia, b.Id AS IdMunicipio, c.Id AS IdEstado, d.Id AS IdPais FROM cat_v3_colonias a INNER JOIN cat_v3_municipios b ON b.Id = a.IdMunicipio INNER JOIN cat_v3_estados c ON b.IdEstado = c.Id INNER JOIN cat_v3_paises d ON c.IdPais = d.Id WHERE a.CP = ' . $where[0]);
                 if (!empty($consulta)) {
@@ -703,10 +667,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catRegionesLogistica(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catRegionesLogistica(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos['nombre']);
                 $sucursales = implode(',', $datos['sucursales']);
@@ -717,22 +680,19 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_v3_regiones_logisticas',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Descripcion' => $datos['descripcion'],
-                        'Sucursales' => implode(',', $datos['sucursales']),
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_v3_regiones_logisticas', array(
+                    'Nombre' => $datos['nombre'],
+                    'Descripcion' => $datos['descripcion'],
+                    'Sucursales' => implode(',', $datos['sucursales']),
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     $tabla = $this->catRegionesLogistica('3');
@@ -741,11 +701,11 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 return $this->DBC->getJuntarTablas("select cvrl.Id, cvrl.Nombre, cvrl.Descripcion, (select replace(GROUP_CONCAT(Nombre),',','<br>') from cat_v3_sucursales cvs where Id regexp (replace(cvrl.Sucursales,',','|'))) as Sucursales, cvrl.Flag from cat_v3_regiones_logisticas cvrl");
                 break;
-                //Obtiene datos para mandar al modal Actualizar Perfil 
+            //Obtiene datos para mandar al modal Actualizar Perfil 
             case '4':
                 $data = array();
                 $data['sucursales'] = $this->catSucursales('3', array('Flag' => '1'));
@@ -762,18 +722,17 @@ class Catalogo extends General
      * 
      */
 
-    public function catLineaMaterial(string $operacion, array $where = null)
-    {
+    public function catLineaMaterial(string $operacion, array $where = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
 
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
 
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $consulta = $this->DBC->getArticulos('cat_v3_lineas_equipo', array('Flag' => '1'));
                 if (!empty($consulta)) {
@@ -790,18 +749,17 @@ class Catalogo extends General
      * 
      */
 
-    public function catMaterial(string $operacion, array $where = null)
-    {
+    public function catMaterial(string $operacion, array $where = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
 
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
 
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $consulta = $this->DBC->getJuntarTablas('
                     select
@@ -836,18 +794,17 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catArchivosFormatos(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catArchivosFormatos(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
 
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
 
                 break;
-                //Muestra los datos de la tabla Municipios
+            //Muestra los datos de la tabla Municipios
             case '3':
                 $consulta = $this->DBC->getArticulos('cat_v3_archivos_formatos', $where);
                 if (!empty($consulta)) {
@@ -870,16 +827,15 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catTiposCampo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catTiposCampo(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 break;
-                //Muestra los datos de la tabla Municipios
+            //Muestra los datos de la tabla Municipios
             case '3':
                 $consulta = $this->DBC->getArticulos('cat_v3_tipos_campo');
                 if (!empty($consulta)) {
@@ -900,8 +856,7 @@ class Catalogo extends General
      * @return array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catConsultaGeneral(string $datos)
-    {
+    public function catConsultaGeneral(string $datos) {
         $consulta = $this->DBC->getJuntarTablas($datos);
         if (isset($consulta)) {
             return $consulta;
@@ -919,8 +874,7 @@ class Catalogo extends General
      * @return array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catActualizarUnicoDato(string $tabla, array $datos, array $where)
-    {
+    public function catActualizarUnicoDato(string $tabla, array $datos, array $where) {
         $consulta = $this->DBC->actualizarUnicoDato($tabla, $datos, $where);
         if (!empty($consulta)) {
             return $consulta;
@@ -939,8 +893,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catTiposProyecto(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catTiposProyecto(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -968,8 +921,7 @@ class Catalogo extends General
      * @return array regresa Id y Nombre del lider activo.
      */
 
-    public function catLideres(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catLideres(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -1005,8 +957,7 @@ class Catalogo extends General
      * @return array regresa Id y Nombre del lider activo.
      */
 
-    public function catTareasProyectos(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catTareasProyectos(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -1036,8 +987,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catCapacitacionesVideo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catCapacitacionesVideo(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -1069,8 +1019,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catTiposTrafico(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catTiposTrafico(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -1079,7 +1028,7 @@ class Catalogo extends General
             case '2':
                 //Actualiza registro 
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $consulta = $this->DBC->getArticulos('cat_v3_tipos_trafico');
                 if (!empty($consulta)) {
@@ -1103,8 +1052,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catPrioridades(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catPrioridades(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -1113,7 +1061,7 @@ class Catalogo extends General
             case '2':
                 //Actualiza registro 
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $consulta = $this->DBC->getArticulos('cat_v3_prioridades');
                 if (!empty($consulta)) {
@@ -1137,8 +1085,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catTiposOrigenDestino(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catTiposOrigenDestino(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -1147,7 +1094,7 @@ class Catalogo extends General
             case '2':
                 //Actualiza registro 
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $consulta = $this->DBC->getArticulos('cat_v3_tipos_origen_destino');
                 if (!empty($consulta)) {
@@ -1170,10 +1117,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catProveedores(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catProveedores(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos['nombre']);
                 $consulta = $this->DBC->setArticulo('cat_v3_proveedores', array(
@@ -1189,37 +1135,34 @@ class Catalogo extends General
                     'telefono1' => $datos['telefono1'],
                     'telefono2' => $datos['telefono2'],
                     'Flag' => '1',
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catProveedores('3');
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_v3_proveedores',
-                    array(
-                        'Nombre' => strtoupper($datos['nombre']),
-                        'RazonSocial' => conversionPalabra($datos['razon']),
-                        'IdPais' => $datos['pais'],
-                        'IdEstado' => $datos['estado'],
-                        'IdMunicipio' => $datos['municipio'],
-                        'IdColonia' => $datos['colonia'],
-                        'Calle' => $datos['calle'],
-                        'NoExt' => $datos['ext'],
-                        'NoInt' => $datos['int'],
-                        'Telefono1' => $datos['telefono1'],
-                        'Telefono2' => $datos['telefono2'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_v3_proveedores', array(
+                    'Nombre' => strtoupper($datos['nombre']),
+                    'RazonSocial' => conversionPalabra($datos['razon']),
+                    'IdPais' => $datos['pais'],
+                    'IdEstado' => $datos['estado'],
+                    'IdMunicipio' => $datos['municipio'],
+                    'IdColonia' => $datos['colonia'],
+                    'Calle' => $datos['calle'],
+                    'NoExt' => $datos['ext'],
+                    'NoInt' => $datos['int'],
+                    'Telefono1' => $datos['telefono1'],
+                    'Telefono2' => $datos['telefono2'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catProveedores('3');
@@ -1227,7 +1170,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cvp.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT 
@@ -1272,10 +1215,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catAlmacenesVirtuales(string $operacion, array $datos = null, array $where = null, $infoUsuario = array())
-    {
+    public function catAlmacenesVirtuales(string $operacion, array $datos = null, array $where = null, $infoUsuario = array()) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos[0], 'IdResponsable' => $datos[1], 'IdTipoAlmacen' => 4);
                 $consulta = $this->DBC->setArticulo('cat_v3_almacenes_virtuales', array('Nombre' => $datos[0], 'IdResponsable' => $datos[1], 'IdTipoAlmacen' => 4, 'Flag' => '1'), $validar);
@@ -1285,21 +1227,18 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que almacen no se repita
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_v3_almacenes_virtuales',
-                    array(
-                        'Nombre' => strtoupper($datos[1]),
-                        'Responsable' => $datos[2],
-                        'Flag' => $datos[3]
-                    ),
-                    array('Id' => $datos[0]),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos[1],
-                    $parametro
+                        'cat_v3_almacenes_virtuales', array(
+                    'Nombre' => strtoupper($datos[1]),
+                    'Responsable' => $datos[2],
+                    'Flag' => $datos[3]
+                        ), array('Id' => $datos[0]),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos[1], $parametro
                 );
                 if (!empty($consulta)) {
                     return $consulta;
@@ -1307,7 +1246,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3';
                 return $this->DBC->getAlmacenesVirtuales(null, null, $infoUsuario);
                 break;
@@ -1325,10 +1264,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catLineasEquipo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catLineasEquipo(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos[0]);
                 $consulta = $this->DBC->setArticulo('cat_v3_lineas_equipo', array('Nombre' => $datos[0], 'Descripcion' => $datos[1], 'Flag' => '1'), $validar);
@@ -1338,21 +1276,18 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_v3_lineas_equipo',
-                    array(
-                        'Nombre' => strtoupper($datos[1]),
-                        'Descripcion' => $datos[2],
-                        'Flag' => $datos[3]
-                    ),
-                    array('Id' => $datos[0]),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos[1],
-                    $parametro
+                        'cat_v3_lineas_equipo', array(
+                    'Nombre' => strtoupper($datos[1]),
+                    'Descripcion' => $datos[2],
+                    'Flag' => $datos[3]
+                        ), array('Id' => $datos[0]),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos[1], $parametro
                 );
                 if (!empty($consulta)) {
                     return $consulta;
@@ -1360,7 +1295,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3';
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_lineas_equipo' . $flag);
@@ -1379,10 +1314,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catSublineasEquipo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catSublineasEquipo(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 //Retorna la cantidad de sublíneas que existen en la base 
                 //de datos con el mismo nombre y pertencen a la misma línea.
@@ -1408,7 +1342,7 @@ class Catalogo extends General
                         'Nombre' => strtoupper($datos['nombre']),
                         'Descripcion' => $datos['descripcion'],
                         'Flag' => $datos['estatus']
-                    ), array('Id' => $datos['id']));
+                            ), array('Id' => $datos['id']));
                     if (!empty($consulta)) {
                         return $this->catSublineasEquipo('3');
                     } else {
@@ -1416,7 +1350,7 @@ class Catalogo extends General
                     }
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cvse.Flag = ' . $datos['Flag'];
                 $query = "
@@ -1460,10 +1394,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catMarcasEquipo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catMarcasEquipo(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 //Retorna la cantidad de sublíneas que existen en la base 
                 //de datos con el mismo nombre y pertencen a la misma línea.
@@ -1497,7 +1430,7 @@ class Catalogo extends General
                         'Sublinea' => $datos['sublinea'],
                         'Nombre' => strtoupper($datos['nombre']),
                         'Flag' => $datos['estatus']
-                    ), array('Id' => $datos['id']));
+                            ), array('Id' => $datos['id']));
                     if (!empty($consulta)) {
                         return $this->catMarcasEquipo('3');
                     } else {
@@ -1505,7 +1438,7 @@ class Catalogo extends General
                     }
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cvse.Flag = ' . $datos['Flag'];
                 $query = "
@@ -1540,13 +1473,23 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catModelosEquipo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catModelosEquipo(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 //Retorna la cantidad de sublíneas que existen en la base 
                 //de datos con el mismo nombre y pertencen a la misma línea.
+                $archivos = "";
+
+                if (!empty($_FILES)) {
+                    $CI = parent::getCI();
+                    $carpeta = 'Modelos/Modelo-' . $datos['nombre'] . '/';
+                    $archivos = setMultiplesArchivos($CI, 'archivosModelo', $carpeta);
+                    if ($archivos) {
+                        $archivos = implode(',', $archivos);
+                    }
+                }
+
                 $arrayCampos = [
                     ['campo' => 'Marca', 'signo' => '=', 'valor' => $datos['marca']],
                     ['campo' => 'Nombre', 'signo' => '=', 'valor' => $datos['nombre']]
@@ -1555,7 +1498,13 @@ class Catalogo extends General
                 if ($existe !== '') {
                     return FALSE;
                 } else {
-                    $consulta = $this->DBC->setArticulo('cat_v3_modelos_equipo', array('Marca' => $datos['marca'], 'Nombre' => strtoupper($datos['nombre']), 'NoParte' => strtoupper($datos['parte']), 'Flag' => '1'));
+                    $consulta = $this->DBC->setArticulo('cat_v3_modelos_equipo', array(
+                        'Marca' => $datos['marca'],
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'NoParte' => strtoupper($datos['parte']),
+                        'Flag' => '1',
+                        'Descripcion' => $datos['descripcion'],
+                        'Archivos' => $archivos));
                     if (!empty($consulta)) {
                         return $this->catModelosEquipo('3');
                     } else {
@@ -1564,6 +1513,30 @@ class Catalogo extends General
                 }
                 break;
             case '2':
+                $modelo = $this->catModelosEquipo('5', $datos);
+                $archivos = "";
+                $evidencias = "";
+
+                if (!empty($_FILES)) {
+                    $CI = parent::getCI();
+                    $carpeta = 'Modelos/Modelo-' . $datos['nombre'] . '/';
+                    $archivos = setMultiplesArchivos($CI, 'archivosEditarModelo', $carpeta);
+                    if ($archivos) {
+                        $archivos = implode(',', $archivos);
+                        if (!empty($modelo[0]['Archivos'])) {
+                            $evidencias = $modelo[0]['Archivos'] . ',' . $archivos;
+                        } else {
+                            $evidencias = $archivos;
+                        }
+                    } else {
+                        $evidencias = $archivos;
+                    }
+                } else {
+                    if (!empty($modelo[0]['Archivos'])) {
+                        $evidencias = $modelo[0]['Archivos'];
+                    }
+                }
+
                 $arrayCampos = [
                     ['campo' => 'Marca', 'signo' => '=', 'valor' => $datos['marca']],
                     ['campo' => 'Nombre', 'signo' => '=', 'valor' => $datos['nombre']],
@@ -1577,8 +1550,10 @@ class Catalogo extends General
                         'Marca' => $datos['marca'],
                         'Nombre' => strtoupper($datos['nombre']),
                         'NoParte' => strtoupper($datos['parte']),
-                        'Flag' => $datos['estatus']
-                    ), array('Id' => $datos['id']));
+                        'Flag' => $datos['estatus'],
+                        'Descripcion' => $datos['descripcion'],
+                        'Archivos' => $evidencias
+                            ), array('Id' => $datos['id']));
                     if (!empty($consulta)) {
                         $query = 'select * from v_equipos where Id = "' . $datos['id'] . '"';
                         return $this->catModelosEquipo('3');
@@ -1587,7 +1562,7 @@ class Catalogo extends General
                     }
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cvmoe.Flag = ' . $datos['Flag'];
                 $query = "
@@ -1602,7 +1577,9 @@ class Catalogo extends General
                 cvse.Nombre as Sublinea,
                 cvle.Nombre as Linea,                
                 cvmoe.Flag,
-                if(cvmoe.Flag = 0,'Inactivo','Activo') as Activacion
+                if(cvmoe.Flag = 0,'Inactivo','Activo') as Activacion,
+                cvmoe.Descripcion,
+                cvmoe.Archivos
                 from cat_v3_lineas_equipo cvle inner join cat_v3_sublineas_equipo cvse
                 on cvle.Id = cvse.Linea
                 inner join cat_v3_marcas_equipo cvme
@@ -1614,6 +1591,25 @@ class Catalogo extends General
                 break;
             case '4':
                 $consulta = $this->DBC->consulta("select * from v_equipos order by Equipo;");
+                return $consulta;
+                break;
+            case '5':
+                $query = 'select * from cat_v3_modelos_equipo where Id = "' . $datos['id'] . '"';
+                $consulta = $this->DBC->consulta($query);
+                return $consulta;
+                break;
+            case '6':
+                $query = 'select 
+                                Archivos
+                            from cat_v3_modelos_equipo 
+                            where Id = "' . $datos['id'] . '"
+                            and Archivos like "%' . $datos['key'] . '%"
+                            ORDER BY Id DESC LIMIT 1';
+                $consulta = $this->DBC->consulta($query);
+                return $consulta;
+                break;
+            case '7':
+                $consulta = $this->DBC->actualizarUnicoDato('cat_v3_modelos_equipo', $datos, array('Id' => $where['id']));
                 return $consulta;
                 break;
             default:
@@ -1630,10 +1626,9 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catComponentesEquipo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catComponentesEquipo(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 //Retorna la cantidad de sublíneas que existen en la base 
                 //de datos con el mismo nombre y pertencen a la misma línea.
@@ -1664,10 +1659,10 @@ class Catalogo extends General
                         $datosComponente = $this->DBC->getJuntarTablas($query);
                         if (!empty($datosComponente)) {
                             $query = ""
-                                . "INSERT INTO Empresa03.dbo.INVE03 "
-                                . "(CVE_ART, DESCR, LIN_PROD, CON_SERIE, UNI_MED, UNI_EMP, TIEM_SURT, STOCK_MIN, STOCK_MAX, TIP_COSTEO, NUM_MON, COMP_X_REC, PEND_SURT, EXIST, COSTO_PROM, ULT_COSTO, CVE_OBS, TIPO_ELE, UNI_ALT, FAC_CONV, APART, CON_LOTE, CON_PEDIMENTO, PESO, VOLUMEN, CVE_ESQIMPU, VTAS_ANL_C, VTAS_ANL_M, COMP_ANL_C, COMP_ANL_M, BLK_CST_EXT, STATUS)"
-                                . "values "
-                                . "('IC" . $datosComponente[0]['Id'] . "-P" . $datosComponente[0]['NoParte'] . "','" . $datosComponente[0]['Nombre'] . " DE " . $datosComponente[0]['Linea'] . " " . $datosComponente[0]['Modelo'] . " ','ADSTC', 'N', 'pz', '1', '0', '0', '0', 'P','1','0','0','0','0','0','0','P','pz','1','0','N','N','0','0','1','0','0','0','0','N','A');";
+                                    . "INSERT INTO Empresa03.dbo.INVE03 "
+                                    . "(CVE_ART, DESCR, LIN_PROD, CON_SERIE, UNI_MED, UNI_EMP, TIEM_SURT, STOCK_MIN, STOCK_MAX, TIP_COSTEO, NUM_MON, COMP_X_REC, PEND_SURT, EXIST, COSTO_PROM, ULT_COSTO, CVE_OBS, TIPO_ELE, UNI_ALT, FAC_CONV, APART, CON_LOTE, CON_PEDIMENTO, PESO, VOLUMEN, CVE_ESQIMPU, VTAS_ANL_C, VTAS_ANL_M, COMP_ANL_C, COMP_ANL_M, BLK_CST_EXT, STATUS)"
+                                    . "values "
+                                    . "('IC" . $datosComponente[0]['Id'] . "-P" . $datosComponente[0]['NoParte'] . "','" . $datosComponente[0]['Nombre'] . " DE " . $datosComponente[0]['Linea'] . " " . $datosComponente[0]['Modelo'] . " ','ADSTC', 'N', 'pz', '1', '0', '0', '0', 'P','1','0','0','0','0','0','0','P','pz','1','0','N','N','0','0','1','0','0','0','0','N','A');";
                             \Librerias\Modelos\Base::connectDBSAE()->query($query);
                             $consultaSAE = \Librerias\Modelos\Base::connectDBSAE()->affected_rows();
                         }
@@ -1692,7 +1687,7 @@ class Catalogo extends General
                         'Nombre' => strtoupper($datos['nombre']),
                         'NoParte' => strtoupper($datos['parte']),
                         'Flag' => $datos['estatus']
-                    ), array('Id' => $datos['id']));
+                            ), array('Id' => $datos['id']));
                     if (!empty($consulta)) {
                         $query = "select
                         (select Nombre from cat_v3_lineas_equipo where Id = 
@@ -1711,12 +1706,12 @@ class Catalogo extends General
                         $datosComponente = $this->DBC->getJuntarTablas($query);
                         if (!empty($datosComponente)) {
                             $query = ""
-                                . "UPDATE Empresa03.dbo.INVE03 "
-                                . "SET CVE_ART = 'IC" . $datosComponente[0]['Id'] . "-P" . $datosComponente[0]['NoParte'] . "', "
-                                . "DESCR = '" . $datosComponente[0]['Nombre'] . " DE " . $datosComponente[0]['Linea'] . " " . $datosComponente[0]['Modelo'] . "', "
-                                . "STATUS = '" . (($datos['estatus'] == 1) ? 'A' : 'B') . "' "
-                                . "WHERE CVE_ART like 'IC" . $datos['id'] . "-%' "
-                                . "AND LIN_PROD = 'ADSTC'";
+                                    . "UPDATE Empresa03.dbo.INVE03 "
+                                    . "SET CVE_ART = 'IC" . $datosComponente[0]['Id'] . "-P" . $datosComponente[0]['NoParte'] . "', "
+                                    . "DESCR = '" . $datosComponente[0]['Nombre'] . " DE " . $datosComponente[0]['Linea'] . " " . $datosComponente[0]['Modelo'] . "', "
+                                    . "STATUS = '" . (($datos['estatus'] == 1) ? 'A' : 'B') . "' "
+                                    . "WHERE CVE_ART like 'IC" . $datos['id'] . "-%' "
+                                    . "AND LIN_PROD = 'ADSTC'";
                             \Librerias\Modelos\Base::connectDBSAE()->query($query);
                             $consultaSAE = \Librerias\Modelos\Base::connectDBSAE()->affected_rows();
                         }
@@ -1726,7 +1721,7 @@ class Catalogo extends General
                     }
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $query = "
                 select 
@@ -1753,8 +1748,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catVistaEquipo(string $operacion)
-    {
+    public function catVistaEquipo(string $operacion) {
         switch ($operacion) {
             case '1':
                 //Inserta nuevo registro 
@@ -1779,8 +1773,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catTiposEnvio(string $operacion)
-    {
+    public function catTiposEnvio(string $operacion) {
         switch ($operacion) {
             case '1':
                 //Inserta nuevo registro 
@@ -1805,8 +1798,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catTiposConsolidados(string $operacion)
-    {
+    public function catTiposConsolidados(string $operacion) {
         switch ($operacion) {
             case '1':
                 //Inserta nuevo registro 
@@ -1831,8 +1823,7 @@ class Catalogo extends General
      * 
      */
 
-    public function catTiposPaqueteria(string $operacion)
-    {
+    public function catTiposPaqueteria(string $operacion) {
         switch ($operacion) {
             case '1':
                 //Inserta nuevo registro 
@@ -1861,14 +1852,13 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catEquiposSAE(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catEquiposSAE(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3';
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_equipos_sae' . $flag);
@@ -1887,16 +1877,15 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catAreasAtencion(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catAreasAtencion(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_areas_atencion '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND IdCliente = "' . $datos['cliente'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_areas_atencion '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND IdCliente = "' . $datos['cliente'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_areas_atencion', array(
                         'Nombre' => $datos['nombre'],
@@ -1914,24 +1903,22 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_areas_atencion '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '" AND IdCliente = "' . $datos['cliente'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_areas_atencion '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '" AND IdCliente = "' . $datos['cliente'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_areas_atencion',
-                        array(
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'IdCliente' => $datos['cliente'],
-                            'Descripcion' => $datos['descripcion'],
-                            'ClaveCorta' => $datos['clave'],
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_areas_atencion', array(
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'IdCliente' => $datos['cliente'],
+                        'Descripcion' => $datos['descripcion'],
+                        'ClaveCorta' => $datos['clave'],
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catAreasAtencion('3');
@@ -1942,7 +1929,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT *, cliente(IdCliente) AS Cliente FROM cat_v3_areas_atencion' . $flag);
@@ -1954,17 +1941,19 @@ class Catalogo extends General
 
     /* Metodo para manejar eventos del catálogo de Estatus */
 
-    public function catStatus(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catStatus(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3';
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus ' . $flag . ' order by Nombre');
+                break;
+            case '4';
+                return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus ' . $datos['where']);
                 break;
             case '5';
                 return $this->DBC->getJuntarTablas('select Id, Nombre from cat_v3_estatus where Id not in (11,13) order by Nombre');
@@ -1976,14 +1965,13 @@ class Catalogo extends General
 
     /* Metodo para manejar eventos del catálogo de Estatus */
 
-    public function catTiposServicio(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catTiposServicio(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3';
                 return $this->DBC->getJuntarTablas("select s.Id, concat(s.Nombre,' (',if(d.Nombre is not null, d.Nombre,''),')') as Nombre from cat_v3_servicios_departamento s LEFT JOIN cat_v3_departamentos_siccob d on s.IdDepartamento = d.Id order by s.Nombre;");
                 break;
@@ -2000,16 +1988,15 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catRegionesCliente(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catRegionesCliente(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_regiones_cliente '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND IdCliente = "' . $datos['cliente'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_regiones_cliente '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND IdCliente = "' . $datos['cliente'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_regiones_cliente', array(
                         'IdCliente' => $datos['cliente'],
@@ -2028,25 +2015,23 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_regiones_cliente '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '" AND IdCliente = "' . $datos['cliente'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_regiones_cliente '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '" AND IdCliente = "' . $datos['cliente'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_regiones_cliente',
-                        array(
-                            'IdCliente' => $datos['cliente'],
-                            'IdResponsableInterno' => $datos['responsableInterno'],
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'ResponsableCliente' => $datos['responsableCliente'],
-                            'Email' => $datos['emailResposableCliente'],
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_regiones_cliente', array(
+                        'IdCliente' => $datos['cliente'],
+                        'IdResponsableInterno' => $datos['responsableInterno'],
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'ResponsableCliente' => $datos['responsableCliente'],
+                        'Email' => $datos['emailResposableCliente'],
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catRegionesCliente('3');
@@ -2057,7 +2042,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT
@@ -2080,15 +2065,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catClasificacionFallas(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catClasificacionFallas(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_clasificaciones_falla '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_clasificaciones_falla '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_clasificaciones_falla', array(
                         'Nombre' => strtoupper($datos['nombre']),
@@ -2104,22 +2088,20 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_clasificaciones_falla '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_clasificaciones_falla '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_clasificaciones_falla',
-                        array(
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Descripcion' => $datos['descripcion'],
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_clasificaciones_falla', array(
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Descripcion' => $datos['descripcion'],
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catClasificacionFallas('3');
@@ -2130,7 +2112,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_clasificaciones_falla' . $flag);
@@ -2149,15 +2131,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catTiposFallas(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catTiposFallas(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_tipos_falla '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" AND IdClasificacion = "' . $datos['clasificacion'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_tipos_falla '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" AND IdClasificacion = "' . $datos['clasificacion'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_tipos_falla', array(
                         'IdClasificacion' => $datos['clasificacion'],
@@ -2174,23 +2155,21 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_tipos_falla '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . ' "AND IdClasificacion = "' . $datos['clasificacion'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_tipos_falla '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . ' "AND IdClasificacion = "' . $datos['clasificacion'] . '"');
                 if (empty($verificarExistente) || $datos['estatus'] == 0) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_tipos_falla',
-                        array(
-                            'IdClasificacion' => $datos['clasificacion'],
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Descripcion' => $datos['descripcion'],
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_tipos_falla', array(
+                        'IdClasificacion' => $datos['clasificacion'],
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Descripcion' => $datos['descripcion'],
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catTiposFallas('3');
@@ -2201,7 +2180,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' AND cvtf.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT
@@ -2223,15 +2202,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catFallasEquipo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catFallasEquipo(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_fallas_equipo '
-                    . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" AND IdTipoFalla = "' . $datos['tipoFalla'] . '" AND IdModeloEquipo = "' . $datos['equipo'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_fallas_equipo '
+                        . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" AND IdTipoFalla = "' . $datos['tipoFalla'] . '" AND IdModeloEquipo = "' . $datos['equipo'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_fallas_equipo', array(
                         'IdTipoFalla' => $datos['tipoFalla'],
@@ -2248,25 +2226,23 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_fallas_equipo '
-                    . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . ' " '
-                    . 'AND IdTipoFalla = "' . $datos['tipoFalla'] . '" '
-                    . 'AND IdModeloEquipo = "' . $datos['equipo'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_fallas_equipo '
+                        . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . ' " '
+                        . 'AND IdTipoFalla = "' . $datos['tipoFalla'] . '" '
+                        . 'AND IdModeloEquipo = "' . $datos['equipo'] . '"');
                 if (empty($verificarExistente) || $datos['estatus'] == 0) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_fallas_equipo',
-                        array(
-                            'IdTipoFalla' => $datos['tipoFalla'],
-                            'IdModeloEquipo' => $datos['equipo'],
-                            'Nombre' => strtoupper($datos['falla']),
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_fallas_equipo', array(
+                        'IdTipoFalla' => $datos['tipoFalla'],
+                        'IdModeloEquipo' => $datos['equipo'],
+                        'Nombre' => strtoupper($datos['falla']),
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catFallasEquipo('3');
@@ -2277,7 +2253,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cvfe.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT 
@@ -2302,15 +2278,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catFallasRefaccion(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catFallasRefaccion(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_fallas_refaccion '
-                    . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" AND IdTipoFalla = "' . $datos['tipoFalla'] . '" AND IdRefaccion = "' . $datos['refaccion'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_fallas_refaccion '
+                        . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" AND IdTipoFalla = "' . $datos['tipoFalla'] . '" AND IdRefaccion = "' . $datos['refaccion'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_fallas_refaccion', array(
                         'IdTipoFalla' => $datos['tipoFalla'],
@@ -2327,23 +2302,21 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_fallas_refaccion '
-                    . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . ' " AND IdTipoFalla = "' . $datos['tipoFalla'] . '" AND IdRefaccion = "' . $datos['refaccion'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_fallas_refaccion '
+                        . 'WHERE Nombre = "' . strtoupper($datos['falla']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . ' " AND IdTipoFalla = "' . $datos['tipoFalla'] . '" AND IdRefaccion = "' . $datos['refaccion'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_fallas_refaccion',
-                        array(
-                            'IdTipoFalla' => $datos['tipoFalla'],
-                            'IdRefaccion' => $datos['refaccion'],
-                            'Nombre' => strtoupper($datos['falla']),
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_fallas_refaccion', array(
+                        'IdTipoFalla' => $datos['tipoFalla'],
+                        'IdRefaccion' => $datos['refaccion'],
+                        'Nombre' => strtoupper($datos['falla']),
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catFallasRefaccion('3');
@@ -2354,7 +2327,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cvfe.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT 
@@ -2382,15 +2355,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catSolucionesEquipo(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catSolucionesEquipo(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_soluciones_equipo '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" AND IdModelo = "' . $datos['equipo'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_soluciones_equipo '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" AND IdModelo = "' . $datos['equipo'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_soluciones_equipo', array(
                         'IdModelo' => $datos['equipo'],
@@ -2407,23 +2379,21 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_soluciones_equipo '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . ' " AND Nombre = "' . $datos['nombre'] . '" AND IdModelo = "' . $datos['equipo'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_soluciones_equipo '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . ' " AND Nombre = "' . $datos['nombre'] . '" AND IdModelo = "' . $datos['equipo'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_soluciones_equipo',
-                        array(
-                            'IdModelo' => $datos['equipo'],
-                            'Nombre' => $datos['nombre'],
-                            'Descripcion' => $datos['descripcion'],
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_soluciones_equipo', array(
+                        'IdModelo' => $datos['equipo'],
+                        'Nombre' => $datos['nombre'],
+                        'Descripcion' => $datos['descripcion'],
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catSolucionesEquipo('3');
@@ -2434,7 +2404,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cvse.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT 
@@ -2456,15 +2426,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catUnidadeNegocio(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catUnidadeNegocio(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_unidades_negocio' . $flag);
@@ -2483,15 +2452,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catCinemexValidadores(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catCinemexValidadores(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($where['Flag'])) ? '' : ' WHERE Flag = ' . $where['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_cinemex_validadores' . $flag);
@@ -2510,15 +2478,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catX4DTiposSistema(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DTiposSistema(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_tipos_sistema '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_tipos_sistema '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_x4d_tipos_sistema', array(
                         'Nombre' => strtoupper($datos['nombre']),
@@ -2533,21 +2500,19 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_tipos_sistema '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_tipos_sistema '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_x4d_tipos_sistema',
-                        array(
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_x4d_tipos_sistema', array(
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catX4DTiposSistema('3');
@@ -2558,7 +2523,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_x4d_tipos_sistema' . $flag);
@@ -2577,15 +2542,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catX4DEquipos(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DEquipos(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_equipos '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_equipos '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_x4d_equipos', array(
                         'Nombre' => strtoupper($datos['nombre']),
@@ -2600,21 +2564,19 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_equipos '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_equipos '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_x4d_equipos',
-                        array(
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_x4d_equipos', array(
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catX4DEquipos('3');
@@ -2625,7 +2587,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_x4d_equipos' . $flag);
@@ -2644,15 +2606,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catX4DMarcas(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DMarcas(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_marcas '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" ');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_marcas '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" ');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_x4d_marcas', array(
                         'Nombre' => strtoupper($datos['nombre']),
@@ -2667,21 +2628,19 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_marcas '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '" ');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_marcas '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '" ');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_x4d_marcas',
-                        array(
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_x4d_marcas', array(
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catX4DMarcas('3');
@@ -2692,7 +2651,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_x4d_marcas cvxm' . $flag);
@@ -2711,17 +2670,16 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catX4DModelos(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DModelos(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_elementos '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND IdEquipo = "' . $datos['equipo'] . '" '
-                    . 'AND IdMarca = "' . $datos['marca'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_elementos '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND IdEquipo = "' . $datos['equipo'] . '" '
+                        . 'AND IdMarca = "' . $datos['marca'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_x4d_elementos', array(
                         'IdEquipo' => $datos['equipo'],
@@ -2739,26 +2697,24 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_elementos '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . ' " '
-                    . 'AND IdEquipo = "' . $datos['equipo'] . '" '
-                    . 'AND IdMarca = "' . $datos['marca'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_elementos '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . ' " '
+                        . 'AND IdEquipo = "' . $datos['equipo'] . '" '
+                        . 'AND IdMarca = "' . $datos['marca'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_x4d_elementos',
-                        array(
-                            'IdEquipo' => $datos['equipo'],
-                            'IdMarca' => $datos['marca'],
-                            'ClaveSAE' => $datos['cvesae'],
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_x4d_elementos', array(
+                        'IdEquipo' => $datos['equipo'],
+                        'IdMarca' => $datos['marca'],
+                        'ClaveSAE' => $datos['cvesae'],
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catX4DModelos('3');
@@ -2769,7 +2725,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cxele.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('select 
@@ -2799,17 +2755,16 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catX4DComponentes(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DComponentes(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_subelementos '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND IdElemento = "' . $datos['modelo'] . '" '
-                    . 'AND IdMarca = "' . $datos['marca'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_subelementos '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND IdElemento = "' . $datos['modelo'] . '" '
+                        . 'AND IdMarca = "' . $datos['marca'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_x4d_subelementos', array(
                         'IdElemento' => $datos['modelo'],
@@ -2827,26 +2782,24 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_subelementos '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . ' " '
-                    . 'AND IdMarca = "' . $datos['marca'] . '" '
-                    . 'AND IdElemento = "' . $datos['modelo'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_subelementos '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . ' " '
+                        . 'AND IdMarca = "' . $datos['marca'] . '" '
+                        . 'AND IdElemento = "' . $datos['modelo'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_x4d_subelementos',
-                        array(
-                            'IdElemento' => $datos['modelo'],
-                            'IdMarca' => $datos['marca'],
-                            'ClaveSAE' => $datos['cvesae'],
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_x4d_subelementos', array(
+                        'IdElemento' => $datos['modelo'],
+                        'IdMarca' => $datos['marca'],
+                        'ClaveSAE' => $datos['cvesae'],
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catX4DComponentes('3');
@@ -2857,7 +2810,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE cxs.Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas("SELECT
@@ -2886,15 +2839,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function catX4DUbicaciones(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DUbicaciones(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_ubicaciones '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_ubicaciones '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_x4d_ubicaciones', array(
                         'Nombre' => strtoupper($datos['nombre']),
@@ -2909,21 +2861,19 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_x4d_ubicaciones '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_x4d_ubicaciones '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_x4d_ubicaciones',
-                        array(
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_x4d_ubicaciones', array(
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->catX4DUbicaciones('3');
@@ -2934,7 +2884,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_x4d_ubicaciones' . $flag);
@@ -2953,15 +2903,14 @@ class Catalogo extends General
      * @return boolean o array devuelve una array con los valores de la consulta en caso de error un false.
      */
 
-    public function traerinfobd(string $operacion, array $datos = null, array $where = null)
-    {
+    public function traerinfobd(string $operacion, array $datos = null, array $where = null) {
         switch ($operacion) {
-                //Inserta en la tabla
+            //Inserta en la tabla
             case '1':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_cinemex_validadores '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_cinemex_validadores '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->setArticulo('cat_v3_cinemex_validadores', array(
                         'Nombre' => strtoupper($datos['nombre']),
@@ -2977,22 +2926,20 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Actualiza en la tabla
+            //Actualiza en la tabla
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_cinemex_validadores '
-                    . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
-                    . 'AND Id <> "' . $datos['id'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_cinemex_validadores '
+                        . 'WHERE Nombre = "' . strtoupper($datos['nombre']) . '" '
+                        . 'AND Id <> "' . $datos['id'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_cinemex_validadores',
-                        array(
-                            'Nombre' => strtoupper($datos['nombre']),
-                            'Correo' => $datos['correo'],
-                            'Flag' => $datos['estatus']
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_cinemex_validadores', array(
+                        'Nombre' => strtoupper($datos['nombre']),
+                        'Correo' => $datos['correo'],
+                        'Flag' => $datos['estatus']
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return $this->traerinfobd('3');
@@ -3003,7 +2950,7 @@ class Catalogo extends General
                     return 'Repetido';
                 }
                 break;
-                //Obtiene Informacion 
+            //Obtiene Informacion 
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_cinemex_validadores' . $flag);
@@ -3015,8 +2962,7 @@ class Catalogo extends General
 
     //arbol de datos 
 
-    public function catX4DActividadesMantenimiento(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DActividadesMantenimiento(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -3026,7 +2972,7 @@ class Catalogo extends General
                     'IdSistema' => $datos['sistema'],
                     'IdPadre' => $datos['padre'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $consulta['ultimoId'];
                 } else {
@@ -3036,19 +2982,17 @@ class Catalogo extends General
 
             case '2':
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_actividades_mantto_salas4d '
-                    . 'WHERE Nombre = "' . strtoupper($datos['actividad']) . '" '
-                    . 'AND IdSistema = "' . $datos['sistema'] . '" '
-                    . 'AND IdPadre = "' . $datos['padre'] . '" '
-                    . 'AND Id <> "' . $datos['id'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_actividades_mantto_salas4d '
+                        . 'WHERE Nombre = "' . strtoupper($datos['actividad']) . '" '
+                        . 'AND IdSistema = "' . $datos['sistema'] . '" '
+                        . 'AND IdPadre = "' . $datos['padre'] . '" '
+                        . 'AND Id <> "' . $datos['id'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_actividades_mantto_salas4d',
-                        array(
-                            'Nombre' => strtoupper($datos['actividad'])
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_actividades_mantto_salas4d', array(
+                        'Nombre' => strtoupper($datos['actividad'])
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return true;
@@ -3071,8 +3015,7 @@ class Catalogo extends General
         return $informacion;
     }
 
-    public function catX4DTiposSistemas(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DTiposSistemas(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -3081,19 +3024,17 @@ class Catalogo extends General
             case '2':
                 //actualizar
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_actividades_mantto_salas4d '
-                    . 'WHERE Nombre = "' . strtoupper($datos['actividad']) . '" '
-                    . 'AND IdSistema = "' . $datos['sistema'] . '" '
-                    . 'AND IdPadre = "' . $datos['padre'] . '" '
-                    . 'AND Id <> "' . $datos['id'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_actividades_mantto_salas4d '
+                        . 'WHERE Nombre = "' . strtoupper($datos['actividad']) . '" '
+                        . 'AND IdSistema = "' . $datos['sistema'] . '" '
+                        . 'AND IdPadre = "' . $datos['padre'] . '" '
+                        . 'AND Id <> "' . $datos['id'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_actividades_mantto_salas4d',
-                        array(
-                            'Nombre' => strtoupper($datos['actividad'])
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_actividades_mantto_salas4d', array(
+                        'Nombre' => strtoupper($datos['actividad'])
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return true;
@@ -3120,8 +3061,7 @@ class Catalogo extends General
 
     //arbol de datos 
 
-    public function catX4DActividadesSeguimiento(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DActividadesSeguimiento(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
 
@@ -3132,7 +3072,7 @@ class Catalogo extends General
                     'IdSistema' => $datos['sistema'],
                     'IdPadre' => $datos['padre'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
 
 
                 if (!empty($consulta)) {
@@ -3145,19 +3085,17 @@ class Catalogo extends General
             case '2':
                 //actualizar
                 $verificarExistente = $this->DBC->getJuntarTablas('SELECT '
-                    . 'Id '
-                    . 'FROM cat_v3_actividades_mantto_salas4d '
-                    . 'WHERE Nombre = "' . strtoupper($datos['actividad']) . '" '
-                    . 'AND IdSistema = "' . $datos['sistema'] . '" '
-                    . 'AND IdPadre = "' . $datos['padre'] . '" '
-                    . 'AND Id <> "' . $datos['id'] . '"');
+                        . 'Id '
+                        . 'FROM cat_v3_actividades_mantto_salas4d '
+                        . 'WHERE Nombre = "' . strtoupper($datos['actividad']) . '" '
+                        . 'AND IdSistema = "' . $datos['sistema'] . '" '
+                        . 'AND IdPadre = "' . $datos['padre'] . '" '
+                        . 'AND Id <> "' . $datos['id'] . '"');
                 if (empty($verificarExistente)) {
                     $consulta = $this->DBC->actualizarUnicoDato(
-                        'cat_v3_actividades_mantto_salas4d',
-                        array(
-                            'Nombre' => strtoupper($datos['actividad'])
-                        ),
-                        array('Id' => $datos['id'])
+                            'cat_v3_actividades_mantto_salas4d', array(
+                        'Nombre' => strtoupper($datos['actividad'])
+                            ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {
                         return true;
@@ -3180,8 +3118,7 @@ class Catalogo extends General
         return $informacion;
     }
 
-    public function catX4DTiposSistemaSegumiento(string $operacion, array $datos = null, array $where = null)
-    {
+    public function catX4DTiposSistemaSegumiento(string $operacion, array $datos = null, array $where = null) {
         $informacion = array();
         switch ($operacion) {
             case '1':
@@ -3208,35 +3145,31 @@ class Catalogo extends General
      * 
      */
 
-    public function catRhEdoCivil(string $operacion, array $datos = null)
-    {
+    public function catRhEdoCivil(string $operacion, array $datos = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 $validar = array('Nombre' => $datos['estadoCivil']);
                 $consulta = $this->DBC->setArticulo('cat_rh_edo_civil', array(
                     'Nombre' => $datos['estadoCivil'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catRhEdoCivil('3', array('Flag' => '1'));
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_rh_edo_civil',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_rh_edo_civil', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catRhEdoCivil('3');
@@ -3244,7 +3177,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
@@ -3264,35 +3197,31 @@ class Catalogo extends General
      * 
      */
 
-    public function catRhSexo(string $operacion, array $datos = null)
-    {
+    public function catRhSexo(string $operacion, array $datos = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 $validar = array('Nombre' => $datos['sexo']);
                 $consulta = $this->DBC->setArticulo('cat_rh_sexo', array(
                     'Nombre' => $datos['sexo'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catRhSexo('3', array('Flag' => '1'));
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_rh_sexo',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_rh_sexo', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catRhSexo('3');
@@ -3300,7 +3229,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
@@ -3320,35 +3249,31 @@ class Catalogo extends General
      * 
      */
 
-    public function catRhNivelEstudio(string $operacion, array $datos = null)
-    {
+    public function catRhNivelEstudio(string $operacion, array $datos = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 $validar = array('Nombre' => $datos['nivelEstudio']);
                 $consulta = $this->DBC->setArticulo('cat_rh_nvl_estudio', array(
                     'Nombre' => $datos['nivelEstudio'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catRhNivelEstudio('3', array('Flag' => '1'));
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_rh_nvl_estudio',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_rh_nvl_estudio', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catRhNivelEstudio('3');
@@ -3356,7 +3281,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
@@ -3376,35 +3301,31 @@ class Catalogo extends General
      * 
      */
 
-    public function catRhDocumentosEstudio(string $operacion, array $datos = null)
-    {
+    public function catRhDocumentosEstudio(string $operacion, array $datos = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 $validar = array('Nombre' => $datos['documentoRecibido']);
                 $consulta = $this->DBC->setArticulo('cat_rh_docs_estudio', array(
                     'Nombre' => $datos['documentoRecibido'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catRhDocumentosEstudio('3');
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_rh_docs_estudio',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_rh_docs_estudio', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catRhDocumentosEstudio('3');
@@ -3412,7 +3333,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
@@ -3432,35 +3353,31 @@ class Catalogo extends General
      * 
      */
 
-    public function catRhHabilidadesIdioma(string $operacion, array $datos = null)
-    {
+    public function catRhHabilidadesIdioma(string $operacion, array $datos = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 $validar = array('Nombre' => $datos['idioma']);
                 $consulta = $this->DBC->setArticulo('cat_rh_habilidades_idioma', array(
                     'Nombre' => $datos['idioma'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catRhHabilidadesIdioma('3', array('Flag' => '1'));
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_rh_habilidades_idioma',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_rh_habilidades_idioma', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catRhHabilidadesIdioma('3');
@@ -3468,7 +3385,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
@@ -3488,35 +3405,31 @@ class Catalogo extends General
      * 
      */
 
-    public function catRhHabilidadesSoftware(string $operacion, array $datos = null)
-    {
+    public function catRhHabilidadesSoftware(string $operacion, array $datos = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 $validar = array('Nombre' => $datos['software']);
                 $consulta = $this->DBC->setArticulo('cat_rh_habilidades_software', array(
                     'Nombre' => $datos['software'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catRhHabilidadesSoftware('3', array('Flag' => '1'));
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_rh_habilidades_software',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_rh_habilidades_software', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catRhHabilidadesSoftware('3');
@@ -3524,7 +3437,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
@@ -3544,35 +3457,31 @@ class Catalogo extends General
      * 
      */
 
-    public function catRhNivelHabilidad(string $operacion, array $datos = null)
-    {
+    public function catRhNivelHabilidad(string $operacion, array $datos = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 $validar = array('Nombre' => $datos['nivelHabilidad']);
                 $consulta = $this->DBC->setArticulo('cat_rh_nvl_habilidad', array(
                     'Nombre' => $datos['nivelHabilidad'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catRhNivelHabilidad('3', array('Flag' => '1'));
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_rh_nvl_habilidad',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_rh_nvl_habilidad', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catRhNivelHabilidad('3');
@@ -3580,7 +3489,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
@@ -3600,35 +3509,31 @@ class Catalogo extends General
      * 
      */
 
-    public function catRhHabilidadesSistema(string $operacion, array $datos = null)
-    {
+    public function catRhHabilidadesSistema(string $operacion, array $datos = null) {
         switch ($operacion) {
-                //Inserta
+            //Inserta
             case '1':
                 $validar = array('Nombre' => $datos['sistema']);
                 $consulta = $this->DBC->setArticulo('cat_rh_habilidades_sistema', array(
                     'Nombre' => $datos['sistema'],
                     'Flag' => '1'
-                ), $validar);
+                        ), $validar);
                 if (!empty($consulta)) {
                     return $this->catRhHabilidadesSistema('3', array('Flag' => '1'));
                 } else {
                     return FALSE;
                 }
                 break;
-                //Actualiza
+            //Actualiza
             case '2':
                 $parametro = 'Nombre';
                 $consulta = $this->DBC->actualizarArticulo(
-                    'cat_rh_habilidades_sistema',
-                    array(
-                        'Nombre' => $datos['nombre'],
-                        'Flag' => $datos['estatus']
-                    ),
-                    array('Id' => $datos['id']),
-                    //Variable para mandar datos de restriccion para que no se repita el nombre
-                    $datos['nombre'],
-                    $parametro
+                        'cat_rh_habilidades_sistema', array(
+                    'Nombre' => $datos['nombre'],
+                    'Flag' => $datos['estatus']
+                        ), array('Id' => $datos['id']),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos['nombre'], $parametro
                 );
                 if (!empty($consulta)) {
                     return $this->catRhHabilidadesSistema('3');
@@ -3636,7 +3541,7 @@ class Catalogo extends General
                     return FALSE;
                 }
                 break;
-                //Obtiene informacion
+            //Obtiene informacion
             case '3':
                 $flag = (is_null($datos['Flag'])) ? '' : ' WHERE Flag = ' . $datos['Flag'];
                 $consulta = $this->DBC->getJuntarTablas('SELECT
@@ -3651,4 +3556,5 @@ class Catalogo extends General
                 break;
         }
     }
+
 }

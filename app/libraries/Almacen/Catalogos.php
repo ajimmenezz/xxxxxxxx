@@ -106,8 +106,13 @@ class Catalogos extends General {
         $lineas = $this->catalogo->catLineasEquipo('3', array('Flag' => '1'));
         $sublineas = $this->catalogo->catSublineasEquipo('3', array('Flag' => '1'));
         $marcas = $this->catalogo->catMarcasEquipo('3', array('Flag' => '1'));
+        $modelo = $this->catalogo->catModelosEquipo('5', array('id' => $datos['idmod']));
+        $datos['descripcion'] = $modelo[0]['Descripcion'];
+        $archivos = $archivos = explode(',', $modelo[0]['Archivos']);
+        $datos['archivos'] = $archivos;
         $sublineasReturn = array();
         $marcasReturn = array();
+
         foreach ($sublineas as $key => $value) {
             if ($value['Flag'] > 0) {
                 array_push($sublineasReturn, array(
@@ -131,7 +136,7 @@ class Catalogos extends General {
         $data = ['datos' => $datos, 'lineas' => $lineas, 'sublineas' => $sublineas, 'marcas' => $marcas];
 
         return array('formulario' => parent::getCI()->load->view('Almacen/Modal/FormularioEditarModelo', $data, TRUE),
-            'sublineas' => $sublineasReturn, 'marcas' => $marcasReturn);
+            'sublineas' => $sublineasReturn, 'marcas' => $marcasReturn, 'datos' => $datos);
     }
 
     public function mostrarFormularioComponente() {
@@ -166,6 +171,13 @@ class Catalogos extends General {
         $almacen = $this->DB->getDatosAlmacenVirtual($datos['datos'][0]);
 
         if (in_array($almacen['IdTipoAlmacen'], [1, 4])) {
+            $where = $this->whereEstatusAlmacenVirtual();
+            $arrayExtra = array(
+                'permisoEditarEstatus' => (in_array('338', $this->usuario['Permisos'])) ? true : false,
+                'permisoAdicionalEditarEstatus' => (in_array('338', $this->usuario['PermisosAdicionales'])) ? true : false,
+                'permisoLaboratorio' => ('38' === $this->usuario['IdPerfil']) ? true : false,
+                'estatus' => $this->catalogo->catStatus('4', array('where' => $where)));
+
             $data = [
                 'tiposMovimientos' => $this->DB->getTiposMovimientosInventario(),
                 'tiposProductos' => $this->DB->getTiposProductosInvenario(),
@@ -177,7 +189,7 @@ class Catalogos extends General {
                 'inventarioInicial' => (in_array('214', $this->usuario['Permisos'])) ? true : false,
                 'alta' => $this->DB->getNewAltaInicial()
             ];
-            return array('html' => parent::getCI()->load->view('Almacen/Modal/InventarioAlmacen', $data, TRUE), 'tipoAlmacen' => $almacen['IdTipoAlmacen']);
+            return array('html' => parent::getCI()->load->view('Almacen/Modal/InventarioAlmacen', $data, TRUE), 'tipoAlmacen' => $almacen['IdTipoAlmacen'], 'arrayExtra' => $arrayExtra);
         } else if ($almacen['IdTipoAlmacen'] == 2) {
             $data = [
                 'datos' => $datos['datos'],
@@ -194,6 +206,24 @@ class Catalogos extends General {
         } else {
             return array('html' => "<p>Ocurrió un error. Intente de nuevo.</p>", 'tipoAlmacen' => $almacen['IdTipoAlmacen']);
         }
+    }
+
+    public function whereEstatusAlmacenVirtual() {
+        switch ($this->usuario['IdPerfil']) {
+            case '38':
+                $where = ('WHERE Id = 25');
+                break;
+            case '51':
+            case '61':
+            case '62':
+            case '70':
+                $where = ('WHERE Id IN(25,50)');
+                break;
+            default :
+                $where = ('WHERE Descripcion = "Inventario Virtual"');
+        }
+
+        return $where;
     }
 
     public function mostrarFormularioProductoPoliza() {
@@ -713,6 +743,61 @@ class Catalogos extends General {
     public function mostrarHistorialEquipo(array $datos) {
         $movimientos = $this->DB->getMovimientosByAlmacen(0, ['serie' => $datos['id']]);
         return $movimientos;
+    }
+
+    public function cambiarEstatus(array $datos) {
+        try {
+            $this->DB->iniciaTransaccion();
+
+            $return_array = ['code' => 400];
+            $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+            $datosInventario = $this->DB->getInventarioId($datos['idInventario']);
+
+            $this->DB->editarEstatusAlmacen($datos);
+            $this->DB->movimientoInventario(array('idInventario' => $datos['idInventario'], 'tipoMovimiento' => 10));
+
+            $this->DB->setHistorioIncentarioEstatus(array(
+                'IdInventario' => $datos['idInventario'],
+                'IdUsuario' => $this->usuario['Id'],
+                'IdEstatusAnterior' => $datosInventario[0]['IdEstatus'],
+                'IdEstatusNuevo' => $datos['idEstatus'],
+                'FechaModifica' => $fecha));
+
+            $invetarioPoliza = $this->DB->getInventarioPoliza($datos['idAlmacenVirtual']);
+
+            if ($this->DB->estatusTransaccion() === FALSE) {
+                $this->DB->roolbackTransaccion();
+            } else {
+                $this->DB->commitTransaccion();
+                $return_array = ['code' => 200, 'message' => 'Correcto', 'datos' => $invetarioPoliza];
+            }
+
+            return $return_array;
+        } catch (Exception $ex) {
+            return ['code' => 400, 'message' => $ex];
+        }
+    }
+
+    public function eliminarEvidenciaCatalogoModelo(array $datos) {
+        $modelo = $this->catalogo->catModelosEquipo('6', $datos);
+        $evidencias = explode(',', $modelo[0]['Archivos']);
+
+        foreach ($evidencias as $key => $value) {
+            if ($datos['key'] === $value) {
+                unset($evidencias[$key]);
+            }
+        }
+        
+        if (eliminarArchivo($datos['key'])) {
+            $evidencias = implode(',', $evidencias);
+            $consulta = $this->catalogo->catModelosEquipo('7', array('Archivos' => $evidencias), array('id' => $datos['id']));
+            
+            if (!empty($consulta)) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
     }
 
 }

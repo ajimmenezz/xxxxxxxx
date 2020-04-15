@@ -47,4 +47,53 @@ class Pruebas extends General
         }
         echo '</tbody></table>';
     }
+
+    public function updateBranchesGeocode()
+    {
+        $branches = $this->db->branches();
+        $resultGeocode = [];
+        $link = 'https://maps.googleapis.com/maps/api/geocode/json?';
+        $apiKey = 'AIzaSyADBNovHdLJ5GEK6szq7cBmCcH9MV2zOEU';
+
+        foreach ($branches as $k => $v) {
+
+            $googleData = json_decode(file_get_contents($link . 'address=' . urlencode($v['Direccion']) . '&key=' . $apiKey), true);
+
+            $this->db->updateBranchGeoloc($v['Id'],$googleData['results'][0]['geometry']['location']['lat'],$googleData['results'][0]['geometry']['location']['lng']);
+
+            array_push($resultGeocode, [
+                'Id' => $v['Id'],
+                'Sucursal' => $v['Nombre'],
+                'Direccion' => $v['Direccion'],
+                'Lat' => $googleData['results'][0]['geometry']['location']['lat'],
+                'Lng' => $googleData['results'][0]['geometry']['location']['lng']
+            ]);
+        }
+
+        return $resultGeocode;
+    }
+
+    public function updateUsersGeocode(){
+        $users = $this->db->users();
+        $resultGeocode = [];
+        $link = 'https://maps.googleapis.com/maps/api/geocode/json?';
+        $apiKey = 'AIzaSyADBNovHdLJ5GEK6szq7cBmCcH9MV2zOEU';
+
+        foreach ($users as $k => $v) {
+
+            $googleData = json_decode(file_get_contents($link . 'address=' . urlencode($v['Domicilio']) . '&key=' . $apiKey), true);
+
+            $this->db->updateUserGeocode($v['Id'],$googleData['results'][0]['geometry']['location']['lat'],$googleData['results'][0]['geometry']['location']['lng']);
+
+            array_push($resultGeocode, [
+                'Id' => $v['Id'],
+                'Usuario' => $v['Usuario'],
+                'Domicilio' => $v['Domicilio'],
+                'Lat' => $googleData['results'][0]['geometry']['location']['lat'],
+                'Lng' => $googleData['results'][0]['geometry']['location']['lng']
+            ]);
+        }
+
+        return $resultGeocode;
+    }
 }

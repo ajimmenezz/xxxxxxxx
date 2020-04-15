@@ -188,6 +188,7 @@ $route['Documentacion/Documentacion/(:any)'] = 'Documentacion/Controller_Documen
 /* Routers para el manejo de Laboratorio */
 $route['Laboratorio/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Laboratorio/Seguimiento/(:any)'] = 'Laboratorio/Controller_Seguimiento/manejarEvento/$1';
+$route['Laboratorio/SeguimientoRehabilitacion/(:any)'] = 'Laboratorio/Controller_Rehabilitacion/manejarEvento/$1';
 
 /* Routers para el manejo de SalasX4D */
 $route['Salas4D/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
@@ -300,6 +301,8 @@ $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 
 $route['Reportes/Lexmark/(:any)'] = 'Reportes/Controller_PrinterLexmark/manejarEvento/$1';
 $route['Reportes/SD/(:any)'] = 'Reportes/Controller_Servicedesk/manejarEvento/$1';
+
+$route['P/(:any)'] = 'Pruebas/Controller_Pruebas/manejarEvento/$1';
 
 $route['Error/(:any)'] = 'Controller_Error/$1';
 
