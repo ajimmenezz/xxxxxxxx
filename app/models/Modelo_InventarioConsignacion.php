@@ -951,12 +951,13 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
             $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
 
             if (!empty($inventario)) {
+                $this->actualizar("t_inventario", ['IdEstatus' => 17], ['Id' => $registroInventario]);
                 $this->insertar('t_movimientos_inventario', [
                     "IdTipoMovimiento" => 8,
                     "IdAlmacen" => $inventario[0]['IdAlmacen'],
                     "IdTipoProducto" => $inventario[0]['IdTipoProducto'],
                     "IdProducto" => $inventario[0]['IdProducto'],
-                    "IdEstatus" => $inventario[0]['IdEstatus'],
+                    "IdEstatus" => 17,
                     "IdUsuario" => $this->usuario['Id'],
                     "Cantidad" => $inventario[0]['Cantidad'],
                     "Serie" => $inventario[0]['Serie'],
