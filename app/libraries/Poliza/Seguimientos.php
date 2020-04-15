@@ -1049,13 +1049,8 @@ class Seguimientos extends General {
                         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
                             'IdEstatus' => '2'
                                 ), array('Id' => $datos['servicio']));
-<<<<<<< HEAD
-                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
-                        $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
-=======
 //                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
 //                        $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
->>>>>>> master
 
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
