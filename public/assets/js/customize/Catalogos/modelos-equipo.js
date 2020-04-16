@@ -4,6 +4,7 @@ $(function () {
     var websocket = new Socket();
     var select = new Select();
     var tabla = new Tabla();
+    var file = new Upload();
 
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();
@@ -30,6 +31,10 @@ $(function () {
             $('#listaModelos').addClass('hidden');
             select.crearSelect('select');
 
+            file.crearUpload(
+                    "#archivosModelo",
+                    "Catalogo/NuevoModelo");
+
             $("#selectLineaEquipo").on("change", function () {
                 select.setOpcionesSelect('#selectSublineaEquipo', respuesta.sublineas, $(this).val(), 'IdLinea');
             });
@@ -46,33 +51,24 @@ $(function () {
                     sublinea: $("#selectSublineaEquipo").val(),
                     marca: $("#selectMarcaEquipo").val(),
                     nombre: $('#inputNombreModelo').val(),
-                    parte: $('#inputParteModelo').val()
+                    parte: $('#inputParteModelo').val(),
+                    descripcion: $('#inputDescripcionModelo').val()
                 };
                 if (evento.validarFormulario('#formNuevoModelo')) {
-                    evento.enviarEvento('Catalogo/NuevoModelo', data, '#seccionModelo', function (response) {
-                        if (response instanceof Array) {
-                            tabla.limpiarTabla('#data-table-modelos');
-                            var columns = [
-                                {data: 'IdLinea'},
-                                {data: 'IdSub'},
-                                {data: 'IdMar'},
-                                {data: 'IdMod'},
-                                {data: 'Modelo'},
-                                {data: 'Parte'},
-                                {data: 'Marca'},
-                                {data: 'Sublinea'},
-                                {data: 'Linea'},
-                                {data: 'Activacion'}
-                            ];
-                            tabla.generaTablaPersonal('#data-table-modelos', response, columns);
-                            evento.limpiarFormulario('#formNuevoModelo');
-                            $('#formularioModelo').addClass('hidden');
-                            $('#listaModelos').removeClass('hidden');
-                            evento.mostrarMensaje('.errorListaModelos', true, 'Datos insertados correctamente', 3000);
-                        } else {
-                            evento.mostrarMensaje('.errorModelo', false, 'Ya existe la marca y no puede ser duplicada.', 3000);
-                        }
-                    });
+                    if ($('#archivosModelo').val() === "") {
+                        evento.enviarEvento('Catalogo/NuevoModelo', data, '#seccionModelos', function (response) {
+                            respuestaAgregarModelo(response);
+                        });
+                    } else {
+                        file.enviarArchivos(
+                                "#archivosModelo",
+                                "Catalogo/NuevoModelo",
+                                "#seccionModelos",
+                                data,
+                                function (response) {
+                                    respuestaAgregarModelo(response);
+                                });
+                    }
                 }
             });
             $('#btnCancelar').on('click', function () {
@@ -89,17 +85,26 @@ $(function () {
             var datos = {idlinea: fila.IdLinea, idsub: fila.IdSub, idmar: fila.IdMar, idmod: fila.IdMod, modelo: fila.Modelo, parte: fila.Parte, marca: fila.Marca, flag: fila.Activacion}
         } else {
             var datos = {idlinea: fila[0], idsub: fila[1], idmar: fila[2], idmod: fila[3], modelo: fila[4], parte: fila[5], flag: fila[9]}
-        }        
+        }
+
         evento.enviarEvento('Catalogo/MostrarFormularioEditarModelo', datos, '#seccionSublineas', function (respuesta) {
             $("#formularioModelo").empty().append(respuesta.formulario).removeClass('hidden');
             $("#listaModelos").addClass('hidden');
             select.crearSelect('select');
+            file.crearUpload(
+                    "#archivosEditarModelo",
+                    "Catalogo/ActualizarModelo",
+                    null,
+                    null,
+                    respuesta.datos.archivos,
+                    "Catalogo/EliminarEvidenciaModelo",
+                    datos.idmod);
 
             $("#selectEditarLineaEquipo").on("change", function () {
                 select.setOpcionesSelect('#selectEditarSublineaEquipo', respuesta.sublineas, $(this).val(), 'IdLinea');
-                select.cambiarOpcion('#selectEditarSublineaEquipo','');
+                select.cambiarOpcion('#selectEditarSublineaEquipo', '');
             });
-            
+
             $("#selectEditarSublineaEquipo").on("change", function () {
                 select.setOpcionesSelect('#selectEditarMarcaEquipo', respuesta.marcas, $(this).val(), 'IdSub');
             });
@@ -122,38 +127,80 @@ $(function () {
                     marca: $("#selectEditarMarcaEquipo").val(),
                     nombre: $('#inputEditarNombreModelo').val(),
                     parte: $('#inputEditarParteModelo').val(),
-                    estatus: $("#selectEditarEstatus").val()
-                };                
+                    estatus: $("#selectEditarEstatus").val(),
+                    descripcion: $('#inputEditarDescripcionModelo').val()
+                };
 
                 if (evento.validarFormulario('#formEditarModelo')) {
-                    //Envia el evento AJAX para la actualización de la información.
-                    evento.enviarEvento('Catalogo/ActualizarModelo', data, '#seccionModelos', function (response) {
-                        if (response instanceof Array) {
-                            tabla.limpiarTabla('#data-table-modelos');
-                            var columns = [
-                                {data: 'IdLinea'},
-                                {data: 'IdSub'},
-                                {data: 'IdMar'},
-                                {data: 'IdMod'},
-                                {data: 'Modelo'},
-                                {data: 'Parte'},
-                                {data: 'Marca'},
-                                {data: 'Sublinea'},
-                                {data: 'Linea'},
-                                {data: 'Activacion'}
-                            ];
-                            tabla.generaTablaPersonal('#data-table-modelos', response, columns);
-                            $("#formularioModelo").empty().addClass('hidden');
-                            $("#listaModelos").removeClass('hidden');
-                            evento.mostrarMensaje('.errorEditarModelo', true, 'Datos actualizacos correctamente', 3000);
-                        } else {
-                            evento.mostrarMensaje('.errorEditarModelo', false, 'Ya existe el modelo y no puede ser duplicado.', 3000);
-                        }
-                    });
+                    if ($('#archivosEditarModelo').val() === "") {
+
+                        //Envia el evento AJAX para la actualización de la información.
+                        evento.enviarEvento('Catalogo/ActualizarModelo', data, '#seccionModelos', function (response) {
+                            respuestaEditarModelo(response);
+                        });
+                    } else {
+                        file.enviarArchivos(
+                                "#archivosEditarModelo",
+                                "Catalogo/ActualizarModelo",
+                                "#seccionModelos",
+                                data,
+                                function (response) {
+                                    respuestaEditarModelo(response);
+                                });
+                    }
                 }
             });
         });
     });
+
+    var respuestaAgregarModelo = function (response) {
+        if (response instanceof Array) {
+            tabla.limpiarTabla('#data-table-modelos');
+            var columns = [
+                {data: 'IdLinea'},
+                {data: 'IdSub'},
+                {data: 'IdMar'},
+                {data: 'IdMod'},
+                {data: 'Modelo'},
+                {data: 'Parte'},
+                {data: 'Marca'},
+                {data: 'Sublinea'},
+                {data: 'Linea'},
+                {data: 'Activacion'}
+            ];
+            tabla.generaTablaPersonal('#data-table-modelos', response, columns);
+            evento.limpiarFormulario('#formNuevoModelo');
+            $('#formularioModelo').addClass('hidden');
+            $('#listaModelos').removeClass('hidden');
+            evento.mostrarMensaje('.errorListaModelos', true, 'Datos insertados correctamente', 3000);
+        } else {
+            evento.mostrarMensaje('.errorModelo', false, 'Ya existe la marca y no puede ser duplicada.', 3000);
+        }
+    }
+
+    var respuestaEditarModelo = function (response) {
+        if (response instanceof Array) {
+            tabla.limpiarTabla('#data-table-modelos');
+            var columns = [
+                {data: 'IdLinea'},
+                {data: 'IdSub'},
+                {data: 'IdMar'},
+                {data: 'IdMod'},
+                {data: 'Modelo'},
+                {data: 'Parte'},
+                {data: 'Marca'},
+                {data: 'Sublinea'},
+                {data: 'Linea'},
+                {data: 'Activacion'}
+            ];
+            tabla.generaTablaPersonal('#data-table-modelos', response, columns);
+            $("#formularioModelo").empty().addClass('hidden');
+            $("#listaModelos").removeClass('hidden');
+            evento.mostrarMensaje('.errorListaModelos', true, 'Datos actualizacos correctamente', 3000);
+        } else {
+            evento.mostrarMensaje('.errorEditarModelo', false, 'Ya existe el modelo y no puede ser duplicado.', 3000);
+        }
+    }
 });
 
 

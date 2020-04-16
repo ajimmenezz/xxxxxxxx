@@ -177,6 +177,9 @@ class Controller_Catalogos extends Base {
             case 'CambiarEstatus':
                 $resultado = $this->catalogosAlmacen->cambiarEstatus($this->input->post());
                 break;
+            case 'EliminarEvidenciaModelo':
+                $resultado = $this->catalogosAlmacen->eliminarEvidenciaCatalogoModelo($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
