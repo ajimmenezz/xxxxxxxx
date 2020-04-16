@@ -140,7 +140,7 @@ class Inventario {
             $arrayRefacciones[$key]['IdProducto'] = $datosInventario[0]['IdProducto'];
             $arrayRefacciones[$key]['IdTipoProducto'] = '2';
             $arrayRefacciones[$key]['IdEstatus'] = '40';
-            $arrayRefacciones[$key]['Cantidad'] = '1';
+            $arrayRefacciones[$key]['Cantidad'] = '0';
             $arrayRefacciones[$key]['Serie'] = $datosInventario[0]['Serie'];
         }
 
