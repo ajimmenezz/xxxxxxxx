@@ -102,6 +102,11 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         $consulta = $this->consulta("select * from cat_v3_estatus where Descripcion = 'Inventario Virtual' order by Nombre");
         return $consulta;
     }
+    
+    public function getEstatusProductoWhere(string $where) {
+        $consulta = $this->consulta("select * from cat_v3_estatus " . $where . " order by Nombre");
+        return $consulta;
+    }
 
     public function getComponentesPoliza($modelo) {
         $consulta = $this->consulta("select * from cat_v3_componentes_equipo where IdModelo = '" . $modelo . "' and Flag = 1 order by Nombre;");
@@ -951,7 +956,6 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
             $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
 
             if (!empty($inventario)) {
-                $this->actualizar("t_inventario", ['IdEstatus' => 17, 'Bloqueado' => 0], ['Id' => $registroInventario]);
                 $this->insertar('t_movimientos_inventario', [
                     "IdTipoMovimiento" => 8,
                     "IdAlmacen" => $inventario[0]['IdAlmacen'],
@@ -1029,6 +1033,8 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                             LEFT JOIN
                                         t_inventario_rehabilitacion_refaccion AS tirr ON  tirr.IdInventarioRefaccion = ti.Id
                                     WHERE
+                                        ti.IdEstatus = 17
+                                        AND
                                         ti.IdTipoProducto = 2
                                             AND cvm.Sublinea = (SELECT 
                                                 SUBLINEABYMODELO(Id)

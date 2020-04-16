@@ -100,7 +100,7 @@ class Inventario {
                 'Bloqueado' => $datos['bloqueado']
                     ), array('IdInventarioEquipo' => $datos['id'], 'IdInventarioRefaccion' => $datos['idRefaccion']));
         }
-        
+
         $this->DBI->actualizarInventario(array('Bloqueado' => 1), array('Id' => $datos['id']));
 
         if ($this->DBI->estatusTransaccion() === FALSE) {
@@ -119,12 +119,14 @@ class Inventario {
         $datosAlmacen = $this->DBI->getDatosAlmacenVirtualUsuario($datos['idUsuario']);
 
         foreach ($datos['infoDeshueso'] as $key => $value) {
-            $arrayRefacciones[$key]['IdAlmacen'] = $datosAlmacen['Id'];
-            $arrayRefacciones[$key]['IdProducto'] = $value[0];
-            $arrayRefacciones[$key]['IdTipoProducto'] = '2';
-            $arrayRefacciones[$key]['IdEstatus'] = $value[2];
-            $arrayRefacciones[$key]['Cantidad'] = '1';
-            $arrayRefacciones[$key]['Serie'] = $value[3];
+            if ($value[2] === '17') {
+                $arrayRefacciones[$key]['IdAlmacen'] = $datosAlmacen['Id'];
+                $arrayRefacciones[$key]['IdProducto'] = $value[0];
+                $arrayRefacciones[$key]['IdTipoProducto'] = '2';
+                $arrayRefacciones[$key]['IdEstatus'] = $value[2];
+                $arrayRefacciones[$key]['Cantidad'] = '1';
+                $arrayRefacciones[$key]['Serie'] = $value[3];
+            }
         }
 
         $this->DBI->guardarRefaccionesDeshueso($arrayRefacciones, $datos['id']);
@@ -145,7 +147,13 @@ class Inventario {
             $arrayRefacciones[$key]['Serie'] = $datosInventario[0]['Serie'];
         }
 
-        $this->DBI->setRevisionRehabilitacion($arrayRefacciones, $datos['id']);
+        $resultado = $this->DBI->setRevisionRehabilitacion($arrayRefacciones, $datos['id']);
+
+        if ($resultado['estatus'] === 200) {
+            $this->DBI->actualizarInventario(['IdEstatus' => 17, 'Cantidad' => '1', 'Bloqueado' => 0], ['Id' => $datos['id']]);
+        } else {
+            throw new \Exception(['response' => 400, 'message' => 'Error en la base de datos.']);
+        }
     }
 
     public function getNotaInventarioWhere(string $where) {
@@ -153,14 +161,14 @@ class Inventario {
     }
 
     public function getEstatusProductoConsignacion() {
-        return $this->DBI->getEstatusProductoConsignacion();
+        return $this->DBI->getEstatusProductoWhere("where Id IN(17,50)");
     }
 
     public function actualizarEvidencaNotaInventario(array $datos) {
         $this->DBI->actualizarNotasInventario(array('Archivos' => $datos['archivo']), array('Id' => $datos['id']));
     }
-    
-    public function getInventarioRefaccionesUsuario(array $datos){
+
+    public function getInventarioRefaccionesUsuario(array $datos) {
         return $this->DBI->getInventarioRefaccionesUsuario($datos);
     }
 
