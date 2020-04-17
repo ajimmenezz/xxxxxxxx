@@ -119,14 +119,12 @@ class Inventario {
         $datosAlmacen = $this->DBI->getDatosAlmacenVirtualUsuario($datos['idUsuario']);
 
         foreach ($datos['infoDeshueso'] as $key => $value) {
-            if ($value[2] === '17') {
                 $arrayRefacciones[$key]['IdAlmacen'] = $datosAlmacen['Id'];
                 $arrayRefacciones[$key]['IdProducto'] = $value[0];
                 $arrayRefacciones[$key]['IdTipoProducto'] = '2';
                 $arrayRefacciones[$key]['IdEstatus'] = $value[2];
                 $arrayRefacciones[$key]['Cantidad'] = '1';
                 $arrayRefacciones[$key]['Serie'] = $value[3];
-            }
         }
 
         $this->DBI->guardarRefaccionesDeshueso($arrayRefacciones, $datos['id']);

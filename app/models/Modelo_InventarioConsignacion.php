@@ -102,7 +102,7 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         $consulta = $this->consulta("select * from cat_v3_estatus where Descripcion = 'Inventario Virtual' order by Nombre");
         return $consulta;
     }
-    
+
     public function getEstatusProductoWhere(string $where) {
         $consulta = $this->consulta("select * from cat_v3_estatus " . $where . " order by Nombre");
         return $consulta;
@@ -744,15 +744,16 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
             $this->actualizar("t_inventario", ['IdEstatus' => 50], ['Id' => $inventario[0]['Id']]);
 
             foreach ($data as $key => $value) {
-                $this->insertar("t_inventario", [
-                    "IdAlmacen" => $value['IdAlmacen'],
-                    "IdTipoProducto" => $value['IdTipoProducto'],
-                    "IdProducto" => $value['IdProducto'],
-                    "IdEstatus" => $value['IdEstatus'],
-                    "Cantidad" => $value['Cantidad'],
-                    "Serie" => $value['Serie'],
-                    "IdEquipoDeshuesado" => $inventario[0]['Id']
-                ]);
+                if ($value['IdEstatus'] === '17') {
+                    $this->insertar("t_inventario", [
+                        "IdAlmacen" => $value['IdAlmacen'],
+                        "IdTipoProducto" => $value['IdTipoProducto'],
+                        "IdProducto" => $value['IdProducto'],
+                        "IdEstatus" => $value['IdEstatus'],
+                        "Cantidad" => $value['Cantidad'],
+                        "Serie" => $value['Serie']
+                    ]);
+                }
 
                 $this->insertar('t_movimientos_inventario', [
                     "IdTipoMovimiento" => 7,
