@@ -1030,8 +1030,6 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                             INNER JOIN
                                         cat_v3_marcas_equipo cvm ON cvm.Id = cvme.Marca
                                             LEFT JOIN
-                                        cat_v3_almacenes_virtuales cvav ON cvav.Id = ti.IdAlmacen
-                                            LEFT JOIN
                                         t_inventario_rehabilitacion_refaccion AS tirr ON  tirr.IdInventarioRefaccion = ti.Id
                                     WHERE
                                         ti.IdEstatus = 17

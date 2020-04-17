@@ -42,7 +42,7 @@ class Rehabilitacion extends General {
         $usuario = $this->Usuario->getDatosUsuario();
         $idsRehabilitacion = $this->inventario->getIdsRehabilitacion($datos['id']);
         
-        $where = " AND cvav.IdReferenciaAlmacen IN (SELECT 
+        $where = " AND ti.IdAlmacen IN (SELECT 
                                                 Id
                                             FROM
                                                 cat_v3_almacenes_virtuales

@@ -170,21 +170,28 @@
             <div class="tab-pane fade" id="infoDeshuesar">
                 <div class="panel-body">
                     <!--Empieza encabezado del panel-->
-                    <div class="col-md-12">
-                        <h4>Componentes y estatus</h4>
-                        <div class="underline m-b-15 m-t-15"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Componentes y estatus</h4>
+                            <div class="underline m-b-15 m-t-15"></div>
+                        </div>
                     </div>
                     <!--Finaliza encabezado del panel-->
-                    <div class="col-md-12 hidden">                       
-                        <div  id="tablaDeshuesar" class="table-responsive">
-                            <table id="data-tablaDeshuesar" class="table table-bordered" style="cursor:pointer; background: white" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th class="never">IdRefaccion</th>
-                                        <th class="all">Refacción</th>
-                                    </tr>
-                                </thead>
-                            </table>
+                    <div id="seleccionTotal" class="row">
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 hidden">                       
+                            <div  id="tablaDeshuesar" class="table-responsive">
+                                <table id="data-tablaDeshuesar" class="table table-bordered" style="cursor:pointer; background: white" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="never">IdRefaccion</th>
+                                            <th class="all">Refacción</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                     </div>
                     <!--Empieza comentario deshuesar-->
