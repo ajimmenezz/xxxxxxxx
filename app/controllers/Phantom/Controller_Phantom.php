@@ -81,6 +81,7 @@ class Controller_Phantom extends Base {
                     }
                     break;
                 case '20': case 20:
+                case '27': case 27:
                     if (is_null($datosExtra)) {
                         $titulo = 'Resumen de Servicio - Correctivo';
                         $contenido = $this->Servicio->getDetallesCorrectivo($servicio);

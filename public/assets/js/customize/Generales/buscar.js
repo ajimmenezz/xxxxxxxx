@@ -270,7 +270,14 @@ $(function () {
         evento.enviarEvento('Buscar/Detalles', {datos: datos}, '#seccion-detalles', function (respuesta) {
             var servicio = datos[1];
             var ticket = datos[2];
-
+            var tipoServicio = datos[15];
+            
+            if(tipoServicio == "Censo"){
+                $("#btnDownloadTemplateCenso").removeClass("hidden");
+            }else{
+                $("#btnDownloadTemplateCenso").addClass("hidden");
+            }
+            
             $("#panel-detalles-solicitud").empty().append(respuesta.solicitud);
             $("#panel-detalles-servicio").empty().append(respuesta.servicio);
             $("#panel-historial-servicio").empty().append(respuesta.historial);
@@ -278,6 +285,16 @@ $(function () {
             $("#btnExportarPdf").attr("data-id-servicio", datos[1]);
             $("#btnRechazarServicioConcluido").attr("data-id-servicio", datos[1]);
             $("#btnSubirInfoSD").attr("data-id-servicio", datos[1]);
+            
+            $('#btnDownloadTemplateCenso').off("click");
+            $('#btnDownloadTemplateCenso').on('click', function () {
+                var data = {
+                    servicio: servicio
+                }
+                evento.enviarEvento('Buscar/ExportarCenso', data, '#seccion-detalles', function (respuesta) {
+                    window.open(respuesta.ruta, '_blank');
+                });
+            });
 
             $("#btnSubirInfoSD").off("click");
             $("#btnSubirInfoSD").on("click", function () {

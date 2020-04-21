@@ -4,16 +4,19 @@ namespace Modelos;
 
 use Librerias\Modelos\Base as Modelo_Base;
 
-class Modelo_FondoFijo extends Modelo_Base {
+class Modelo_FondoFijo extends Modelo_Base
+{
 
     private $usuario;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->usuario = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
-    public function getTiposCuenta(int $tipo = null) {
+    public function getTiposCuenta(int $tipo = null)
+    {
         $condicion = (!is_null($tipo)) ? " where Id = '" . $tipo . "'" : '';
         $consulta = $this->consulta("select  
                                     Id,
@@ -26,7 +29,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function agregarTipoCuenta(string $tipo) {
+    public function agregarTipoCuenta(string $tipo)
+    {
         $insert = $this->insertar("cat_v3_fondofijo_tipos_cuenta", ['Nombre' => mb_strtoupper($tipo)]);
         if (!is_null($insert)) {
             return [
@@ -40,7 +44,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function editarTipoCuenta(array $datos) {
+    public function editarTipoCuenta(array $datos)
+    {
         $edit = $this->actualizar("cat_v3_fondofijo_tipos_cuenta", ['Nombre' => mb_strtoupper($datos['tipo']), 'Flag' => $datos['estatus']], ['Id' => $datos['id']]);
         if (!is_null($edit)) {
             return [
@@ -54,7 +59,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function getUsuarios() {
+    public function getUsuarios()
+    {
         $consulta = $this->consulta("select 
                                     cu.Id,
                                     nombreUsuario(cu.Id) as Nombre,
@@ -66,7 +72,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getMontosUsuario(int $id) {
+    public function getMontosUsuario(int $id)
+    {
         $consulta = $this->consulta("select 
                                     Id,
                                     IdTipoCuenta,
@@ -78,7 +85,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function guardarMontos(array $datos) {
+    public function guardarMontos(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $montos = json_decode($datos['montos'], true);
@@ -93,7 +101,7 @@ class Modelo_FondoFijo extends Modelo_Base {
                     'IdUsuarioAsigna' => $this->usuario['Id'],
                     'Monto' => $value['monto'],
                     'FechaAsignacion' => $this->getFecha()
-                        ], ['Id' => $monto[0]['Id']]);
+                ], ['Id' => $monto[0]['Id']]);
             } else {
                 $this->insertar("cat_v3_fondofijo_montos_x_usuario_cuenta", [
                     'IdUsuario' => $datos['id'],
@@ -117,17 +125,20 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function getTiposComprobante() {
+    public function getTiposComprobante()
+    {
         $consulta = $this->consulta("select * from cat_v3_tipos_comprobante where Flag = 1");
         return $consulta;
     }
 
-    public function getSucursales() {
+    public function getSucursales()
+    {
         $consulta = $this->consulta("select Id, sucursalCliente(Id) as Nombre from cat_v3_sucursales where Flag = 1 order by Nombre");
         return $consulta;
     }
 
-    public function getConceptos(int $id = null) {
+    public function getConceptos(int $id = null)
+    {
         $condicion = '';
         if (!is_null($id)) {
             $condicion = "where conc.Id = '" . $id . "'";
@@ -150,7 +161,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getAlternativasByConcepto(int $id) {
+    public function getAlternativasByConcepto(int $id)
+    {
         $consulta = $this->consulta("select 
                                     alt.Id,
                                     alt.IdUsuario,
@@ -166,7 +178,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function guardarConcepto(array $datos) {
+    public function guardarConcepto(array $datos)
+    {
         $this->iniciaTransaccion();
 
         if ($datos['id'] == 0) {
@@ -187,7 +200,7 @@ class Modelo_FondoFijo extends Modelo_Base {
                 'Extraordinario' => $datos['extraordinario'],
                 'TiposComprobante' => implode(",", $datos['comprobantes']),
                 'TiposCuenta' => implode(",", $datos['tiposCuenta'])
-                    ], ['Id' => $datos['id']]);
+            ], ['Id' => $datos['id']]);
 
             $id = $datos['id'];
 
@@ -219,7 +232,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function habInhabConcepto(array $datos, int $flag) {
+    public function habInhabConcepto(array $datos, int $flag)
+    {
         $this->iniciaTransaccion();
 
         $this->actualizar("cat_v3_comprobacion_conceptos", ['Flag' => $flag], ['Id' => $datos['id']]);
@@ -236,7 +250,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function getUsuariosConFondoFijo() {
+    public function getUsuariosConFondoFijo()
+    {
         $consulta = $this->consulta("select 
                                     cu.Id,
                                     nombreUsuario(cu.Id) as Nombre,
@@ -249,7 +264,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getTiposCuentaXUsuario(int $id) {
+    public function getTiposCuentaXUsuario(int $id)
+    {
         $consulta = $this->consulta("select 
                                     Id,
                                     Nombre
@@ -264,7 +280,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getMaximoMontoAutorizado(int $idUsuario, int $idTipoCuenta) {
+    public function getMaximoMontoAutorizado(int $idUsuario, int $idTipoCuenta)
+    {
         $consulta = $this->consulta("
         select 
         Monto 
@@ -274,7 +291,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta[0]['Monto'];
     }
 
-    public function getSaldo(int $idUsuario, int $idTipoCuenta) {
+    public function getSaldo(int $idUsuario, int $idTipoCuenta)
+    {
         $consulta = $this->consulta("
         select 
         Saldo 
@@ -288,11 +306,12 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function registrarDeposito(array $datos) {
+    public function registrarDeposito(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $saldoPrevio = $this->getSaldo($datos['id'], $datos['tipoCuenta']);
-        $saldoNuevo = (double) $saldoPrevio + (double) $datos['depositar'];
+        $saldoNuevo = (float) $saldoPrevio + (float) $datos['depositar'];
 
         $this->insertar("t_fondofijo_movimientos", [
             "FechaRegistro" => $this->getFecha(),
@@ -325,7 +344,7 @@ class Modelo_FondoFijo extends Modelo_Base {
                 "Saldo" => str_replace(",", "", number_format($saldoNuevo, 2)),
                 "Fecha" => $this->getFecha(),
                 "IdUltimoMovimiento" => $idMovimiento
-                    ], ['Id' => $idSaldo[0]['Id']]);
+            ], ['Id' => $idSaldo[0]['Id']]);
         } else {
             $this->insertar("t_fondofijo_saldos", [
                 "IdUsuario" => $datos['id'],
@@ -358,7 +377,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function getDepositos(int $idUsuario, int $idTipoCuenta = null) {
+    public function getDepositos(int $idUsuario, int $idTipoCuenta = null)
+    {
 
         $condicion = '';
         if (!is_null($idTipoCuenta)) {
@@ -380,7 +400,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getSaldosCuentasXUsuario(int $id) {
+    public function getSaldosCuentasXUsuario(int $id)
+    {
         $consulta = $this->consulta("select
         cat.Id as IdTipoCuenta,
         cat.Nombre as TipoCuenta,
@@ -396,7 +417,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getMovimientos(int $idUsuario, int $idTipoCuenta) {
+    public function getMovimientos(int $idUsuario, int $idTipoCuenta)
+    {
 
         $consulta = $this->consulta("select
         tfm.Id,
@@ -428,7 +450,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getComprobaciones(int $idUsuario) {
+    public function getComprobaciones(int $idUsuario)
+    {
         $consulta = $this->consulta("select 
         tfm.Id,
         (select Nombre from cat_v3_fondofijo_tipos_cuenta where Id = tfm.IdTipoCuenta) as TipoCuenta,
@@ -444,7 +467,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getConceptosXTipoCuenta(int $tipo) {
+    public function getConceptosXTipoCuenta(int $tipo)
+    {
         $consulta = $this->consulta("
         select 
         Id,
@@ -456,7 +480,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getTicketsByUsuario(int $id) {
+    public function getTicketsByUsuario(int $id)
+    {
         $consulta = $this->consulta("select 
                                     Ticket 
                                     from (
@@ -478,17 +503,18 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function cargaMontoMaximoConcepto(array $datos) {
+    public function cargaMontoMaximoConcepto(array $datos)
+    {
         $datos['destino'] = (!isset($datos['destino']) || in_array($datos['destino'], ['', 'o'])) ? '99999999999' : $datos['destino'];
 
         $comb = '';
         $query = "select "
-                . "Monto "
-                . "from cat_v3_comprobacion_conceptos_alternativas "
-                . "where IdUsuario = '" . $datos['usuario'] . "' "
-                . "and IdSucursal = '" . $datos['destino'] . "' "
-                . "and IdConcepto = '" . $datos['concepto'] . "' "
-                . "and Flag = 1";
+            . "Monto "
+            . "from cat_v3_comprobacion_conceptos_alternativas "
+            . "where IdUsuario = '" . $datos['usuario'] . "' "
+            . "and IdSucursal = '" . $datos['destino'] . "' "
+            . "and IdConcepto = '" . $datos['concepto'] . "' "
+            . "and Flag = 1";
         $consulta = $this->consulta($query);
 
         if (!empty($consulta)) {
@@ -496,34 +522,34 @@ class Modelo_FondoFijo extends Modelo_Base {
             $comb = 'CST';
         } else {
             $query = "select "
-                    . "Monto "
-                    . "from cat_v3_comprobacion_conceptos_alternativas "
-                    . "where IdUsuario = 0 "
-                    . "and IdSucursal = '" . $datos['destino'] . "' "
-                    . "and IdConcepto = '" . $datos['concepto'] . "' "
-                    . "and Flag = 1";
+                . "Monto "
+                . "from cat_v3_comprobacion_conceptos_alternativas "
+                . "where IdUsuario = 0 "
+                . "and IdSucursal = '" . $datos['destino'] . "' "
+                . "and IdConcepto = '" . $datos['concepto'] . "' "
+                . "and Flag = 1";
             $consulta = $this->consulta($query);
             if (!empty($consulta)) {
                 $monto = $consulta[0]['Monto'];
                 $comb = 'CS';
             } else {
                 $query = "select "
-                        . "Monto "
-                        . "from cat_v3_comprobacion_conceptos_alternativas "
-                        . "where IdUsuario = '" . $datos['usuario'] . "' "
-                        . "and IdSucursal = 0 "
-                        . "and IdConcepto = '" . $datos['concepto'] . "' "
-                        . "and Flag = 1";
+                    . "Monto "
+                    . "from cat_v3_comprobacion_conceptos_alternativas "
+                    . "where IdUsuario = '" . $datos['usuario'] . "' "
+                    . "and IdSucursal = 0 "
+                    . "and IdConcepto = '" . $datos['concepto'] . "' "
+                    . "and Flag = 1";
                 $consulta = $this->consulta($query);
                 if (!empty($consulta)) {
                     $monto = $consulta[0]['Monto'];
                     $comb = 'CT';
                 } else {
                     $query = "select "
-                            . "Monto "
-                            . "from cat_v3_comprobacion_conceptos "
-                            . "where Id = '" . $datos['concepto'] . "' "
-                            . "and Flag = 1";
+                        . "Monto "
+                        . "from cat_v3_comprobacion_conceptos "
+                        . "where Id = '" . $datos['concepto'] . "' "
+                        . "and Flag = 1";
                     $consulta = $this->consulta($query);
                     $monto = $consulta[0]['Monto'];
                     $comb = 'C';
@@ -534,7 +560,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return ['monto' => $monto];
     }
 
-    public function cargaServiciosTicket(array $datos) {
+    public function cargaServiciosTicket(array $datos)
+    {
         $consulta = $this->consulta("select 
                                     Id,
                                     tipoServicio(tst.IdTipoServicio) as Tipo,
@@ -545,16 +572,17 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function registrarComprobante(array $datos) {
+    public function registrarComprobante(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $revisarUUID = $this->consulta(""
-                . "select * "
-                . "from t_fondofijo_movimientos "
-                . "where UUID = '" . $datos['cfdi']['uuid'] . "' "
-                . "and UUID <> '' "
-                . "and UUID is not null "
-                . "and IdEstatus in (7,8)");
+            . "select * "
+            . "from t_fondofijo_movimientos "
+            . "where UUID = '" . $datos['cfdi']['uuid'] . "' "
+            . "and UUID <> '' "
+            . "and UUID is not null "
+            . "and IdEstatus in (7,8)");
 
         if (!empty($revisarUUID)) {
             $this->roolbackTransaccion();
@@ -566,7 +594,7 @@ class Modelo_FondoFijo extends Modelo_Base {
 
         $saldoPrevio = $this->getSaldo($this->usuario['Id'], $datos['tipoCuenta']);
         if ($datos['enPresupuesto'] == 1) {
-            $saldoNuevo = (double) $saldoPrevio + (double) $datos['monto'];
+            $saldoNuevo = (float) $saldoPrevio + (float) $datos['monto'];
         } else {
             $saldoNuevo = $saldoPrevio;
         }
@@ -618,7 +646,7 @@ class Modelo_FondoFijo extends Modelo_Base {
                 "Saldo" => str_replace(",", "", number_format($saldoNuevo, 2)),
                 "Fecha" => $this->getFecha(),
                 "IdUltimoMovimiento" => $idMovimiento
-                    ], ['Id' => $idSaldo[0]['Id']]);
+            ], ['Id' => $idSaldo[0]['Id']]);
         } else {
             $this->insertar("t_fondofijo_saldos", [
                 "IdUsuario" => $this->usuario['Id'],
@@ -641,7 +669,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function getDetallesFondoFijoXId(int $id) {
+    public function getDetallesFondoFijoXId(int $id)
+    {
         $consulta = $this->consulta("select 
                                     tcff.Id,
                                     tcff.Fecharegistro,
@@ -687,7 +716,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function cancelarMovimiento(array $datos) {
+    public function cancelarMovimiento(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
@@ -695,12 +725,12 @@ class Modelo_FondoFijo extends Modelo_Base {
             "IdEstatus" => 6,
             "IdUsuarioAutoriza" => $this->usuario['Id'],
             "FechaAutorizacion" => $this->getFecha()
-                ], ["Id" => $datos['id']]);
+        ], ["Id" => $datos['id']]);
 
         if ($generales['IdEstatus'] == 7) {
 
             $saldoPrevio = $this->getSaldo($generales['IdUsuarioFondoFijo'], $generales['IdTipoCuenta']);
-            $saldoNuevo = (double) $saldoPrevio + abs((double) $generales['Monto']);
+            $saldoNuevo = (float) $saldoPrevio + abs((float) $generales['Monto']);
 
             $this->insertar("t_fondofijo_movimientos", [
                 "FechaRegistro" => $this->getFecha(),
@@ -736,7 +766,7 @@ class Modelo_FondoFijo extends Modelo_Base {
                 "Saldo" => str_replace(",", "", number_format($saldoNuevo, 2)),
                 "Fecha" => $this->getFecha(),
                 "IdUltimoMovimiento" => $idMovimiento
-                    ], ['Id' => $idSaldo[0]['Id']]);
+            ], ['Id' => $idSaldo[0]['Id']]);
         }
 
         if ($this->estatusTransaccion() === FALSE) {
@@ -753,7 +783,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function getEmpleadosByIdJefe(int $id) {
+    public function getEmpleadosByIdJefe(int $id)
+    {
         $arrayUsuarios = [$id];
         $arrayUsuariosTemp = $arrayUsuarios;
 
@@ -774,9 +805,15 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $arrayUsuarios;
     }
 
-    public function pendientesXAutorizar(int $id) {
+    public function pendientesXAutorizar(int $id)
+    {
         $empleados = $this->getEmpleadosByIdJefe($id);
         $ids = implode(",", $empleados);
+
+        $condicion = " and tfm.IdUsuarioFondoFijo <> '" . $this->usuario['Id'] . "' ";
+        if (in_array($this->usuario['Id'], [2, 43, 73])) {
+            $condicion = "";
+        }
 
         $consulta = $this->consulta("
             select
@@ -789,13 +826,15 @@ class Modelo_FondoFijo extends Modelo_Base {
         tfm.Monto 
         from 
         t_fondofijo_movimientos tfm
-        where tfm.IdUsuarioFondoFijo in (" . $ids . ")
+        where tfm.IdUsuarioFondoFijo in (" . $ids . ")                
+        " . $condicion . "
         and tfm.IdEstatus = 8
         order by Id asc");
         return $consulta;
     }
 
-    public function rechazarMovimiento(array $datos) {
+    public function rechazarMovimiento(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
@@ -804,7 +843,7 @@ class Modelo_FondoFijo extends Modelo_Base {
             "IdUsuarioAutoriza" => $this->usuario['Id'],
             "FechaAutorizacion" => $this->getFecha(),
             "ObservacionesRechazo" => trim($datos['observaciones'])
-                ], ["Id" => $datos['id']]);
+        ], ["Id" => $datos['id']]);
 
 
         if ($this->estatusTransaccion() === FALSE) {
@@ -822,12 +861,13 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function autorizarMovimiento(array $datos) {
+    public function autorizarMovimiento(array $datos)
+    {
         $this->iniciaTransaccion();
 
         $generales = $this->getDetallesFondoFijoXId($datos['id'])[0];
         $saldoPrevio = $this->getSaldo($generales['IdUsuarioFondoFijo'], $generales['IdTipoCuenta']);
-        $saldoNuevo = (double) $saldoPrevio + (double) $generales['Monto'];
+        $saldoNuevo = (float) $saldoPrevio + (float) $generales['Monto'];
 
         $this->actualizar("t_fondofijo_movimientos", [
             "IdEstatus" => 7,
@@ -835,7 +875,7 @@ class Modelo_FondoFijo extends Modelo_Base {
             "IdUsuarioAutoriza" => $this->usuario['Id'],
             "SaldoPrevio" => $saldoPrevio,
             "SaldoNuevo" => $saldoNuevo,
-                ], ["Id" => $datos['id']]);
+        ], ["Id" => $datos['id']]);
 
         $idSaldo = $this->consulta("
             select 
@@ -848,7 +888,7 @@ class Modelo_FondoFijo extends Modelo_Base {
             "Saldo" => str_replace(",", "", number_format($saldoNuevo, 2)),
             "Fecha" => $this->getFecha(),
             "IdUltimoMovimiento" => $datos['id']
-                ], ['Id' => $idSaldo[0]['Id']]);
+        ], ['Id' => $idSaldo[0]['Id']]);
 
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
@@ -865,7 +905,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         }
     }
 
-    public function getTiposSaldo() {
+    public function getTiposSaldo()
+    {
         $query = "
             SELECT 
                 * 
@@ -878,7 +919,8 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getTecnico(String $idSupervisor) {
+    public function getTecnico(String $idSupervisor)
+    {
         $tipoSaldo = $this->getTiposSaldo();
         $longitudTipos = count($tipoSaldo);
 
@@ -919,12 +961,14 @@ class Modelo_FondoFijo extends Modelo_Base {
         return array("datosTecnico" => $resultado, "TiposSaldo" => $tipoSaldo);
     }
 
-    public function getMovimientosTecnico($consulta) {
+    public function getMovimientosTecnico($consulta)
+    {
         $resp = $this->consulta($consulta);
         return $resp;
     }
 
-    public function getMovimientosXTecnico(int $idUsuario) {
+    public function getMovimientosXTecnico(int $idUsuario)
+    {
         $consulta = $this->consulta("
         select
         tfm.Id,
@@ -962,10 +1006,11 @@ class Modelo_FondoFijo extends Modelo_Base {
         return $consulta;
     }
 
-    public function getSaldosTecnicosGerente(String $idGerente) {
+    public function getSaldosTecnicosGerente(String $idGerente)
+    {
         $tipoSaldo = $this->getTiposSaldo();
         $longitudTipos = count($tipoSaldo);
-        
+
         $query = "select Id from cat_v3_usuarios WHERE IdJefe = " . $idGerente . " and Flag = 1";
 
         $resultado = $this->consulta($query);
@@ -976,7 +1021,6 @@ class Modelo_FondoFijo extends Modelo_Base {
                 continue;
             }
             $listaPersonal .= ',' . $value['Id'];
-
         }
 
         $query = "
@@ -1010,9 +1054,8 @@ class Modelo_FondoFijo extends Modelo_Base {
                 cat_v3_fondofijo_tipos_cuenta cat ON tfs.IdTipoCuenta = cat.id
             WHERE
                 cu.IdJefe in(" . $listaPersonal . ") GROUP BY cu.Id";
-        
+
         $resultado = $this->consulta($query);
         return array("datosTecnico" => $resultado, "TiposSaldo" => $tipoSaldo);
     }
-
 }

@@ -273,9 +273,8 @@ $(function () {
 
     fecha.rangoFechas('#desdeProblemasFaltantesMantenimiento', '#hastaProblemasFaltantesMantenimiento');
     
-    
     $('#reporteAnual').on('click', function () {
-        evento.enviarEvento('/Poliza/Tester/solicitudAnual', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
+        evento.enviarEvento('/Generales/Reportes/solicitudAnual', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
             if (respuesta) {
                 window.open(respuesta.ruta, '_blank');
             }
@@ -283,7 +282,7 @@ $(function () {
     });
     
     $('#reporteSemanal').on('click', function () {
-        evento.enviarEvento('/Poliza/Tester/solicitudSemanal', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
+        evento.enviarEvento('/Generales/Reportes/solicitudSemanal', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
             if (respuesta) {
                 window.open(respuesta.ruta, '_blank');
             }
@@ -292,6 +291,14 @@ $(function () {
     
     $('#compararFolios').on('click', function () {
         evento.enviarEvento('/Poliza/Tester/solicitarFolios', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
+            if (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+            }
+        });
+    });
+    
+    $('#equiposRefacciones').on('click', function () {
+        evento.enviarEvento('/Generales/Reportes/EquiposRefaccionesCorrectivo', {}, '#seccion-reportes-problemas-faltantes', function (respuesta) {
             if (respuesta) {
                 window.open(respuesta.ruta, '_blank');
             }

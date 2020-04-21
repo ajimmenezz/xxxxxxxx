@@ -134,6 +134,7 @@ class Utileria {
         let elemento = $(`#${objeto}`);        
         elemento.empty().append(contenido);
     }
+    ;
 }
 
 

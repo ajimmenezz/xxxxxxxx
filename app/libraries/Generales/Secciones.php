@@ -54,6 +54,7 @@ class Secciones extends General
     private $gestorProyectos;
     private $gestorDashboard;
     private $inventarios;
+    private $rehabilitacion;
 
     public function __construct()
     {
@@ -105,6 +106,7 @@ class Secciones extends General
         $this->prime = \Librerias\Prime\Inventario::factory();
         $this->seccionCE = new \Librerias\V2\PaquetesTicket\GestorServicios();
         $this->inventarios = \Librerias\Poliza\Inventario::factory();
+        $this->rehabilitacion = \Librerias\Laboratorio\Rehabilitacion::factory();
 
         $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
@@ -342,7 +344,8 @@ class Secciones extends General
                 $datos['Servicios'] = $this->Servicios->getServiciosAsignados('16');
                 break;
             case 'Almacen/Almacenes':
-                $datos['ListaAlmacenes'] = $this->Catalogo->catAlmacenesVirtuales('3');
+                $datos['ListaAlmacenes'] = $this->Catalogo->catAlmacenesVirtuales('3', null, null, $usuario);
+                $datos['userInfo'] = $usuario;
                 break;
             case 'Almacen/Lineas':
                 $datos['ListaLineas'] = $this->Catalogo->catLineasEquipo('3');
@@ -598,6 +601,9 @@ class Secciones extends General
                 break;
             case 'Poliza/Inventarios':
                 $datos['data'] = $this->inventarios->getInventoryFiltersData();
+                break;
+            case 'Laboratorio/SeguimientoRehabilitacion':
+                $datos['equipos'] = $this->rehabilitacion->getAlmacenUsuario();
                 break;
             default:
                 break;

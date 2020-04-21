@@ -75,6 +75,10 @@ class Modelo_Busqueda extends Modelo_Base {
                         . "on tst.Id = tsg.IdServicio "
                         . "where tst.Id = '" . $servicio . "';");
     }
+    
+    public function getServicioDiagnostico(string $servicio) {
+        return $this->consulta("select * from t_correctivos_diagnostico where IdServicio = '" . $servicio . "'");
+    }
 
     public function getGeneralesServicioGeneralCompleto(string $servicio) {
         return $this->consulta("select tst.Id, 
@@ -498,6 +502,23 @@ class Modelo_Busqueda extends Modelo_Base {
             $data = FALSE;
         }
         return $data;
+    }
+    
+    public function getinfoEqiposCenso(string $servicio) {
+        return $this->consulta("select 
+                                    sucursalByServicio(IdServicio) as Sucursal,
+                                    areaAtencion(IdArea) as Area, 
+                                    if(Punto = 0,'',Punto) as Punto, 
+                                    linea(lineaByModelo(IdModelo))  as Linea,
+                                    sublinea(sublineaByModelo(IdModelo)) as SubLinea,
+                                    marca(marcaByModelo(IdModelo)) as Marca,
+                                        cvmoe.Nombre as Modelo,
+                                    Serie,
+                                    Extra as Terminal 
+                                from t_censos tc
+                                JOIN cat_v3_modelos_equipo cvmoe ON cvmoe.Id = tc.IdModelo
+                                where IdServicio = '" . $servicio . "' 
+                                order by Area, Punto");
     }
 
 }

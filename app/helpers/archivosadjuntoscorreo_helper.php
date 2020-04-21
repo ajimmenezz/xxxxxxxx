@@ -1,9 +1,9 @@
 <?php
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-if (!function_exists('archivosAdjuntosCorreo')) {
+if (!function_exists('archivosadjuntosCorreo')) {
 
-    function archivosAdjuntosCorreo(array $datos) {
+    function archivosadjuntosCorreo(array $datos) {
         try {
             if (!function_exists('imap_open')) {
                 throw new \Exception("IMAP no está configurado.");

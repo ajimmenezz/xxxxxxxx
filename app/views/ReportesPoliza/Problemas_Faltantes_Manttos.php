@@ -18,6 +18,7 @@
                                         <li><a id="reporteAnual" href="javascript:;">Reporte Anual</a></li>
                                         <li><a id="reporteSemanal" href="javascript:;">Reporte Semanal</a></li>
                                         <li><a id="compararFolios" href="javascript:;">Comparativa Adist/SD</a></li>
+                                        <li><a id="equiposRefacciones" href="javascript:;">Equipos y Refacciones</a></li>
                                 </ul>
                         </div>';
                     }

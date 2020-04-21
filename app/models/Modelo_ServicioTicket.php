@@ -1067,6 +1067,16 @@ class Modelo_ServicioTicket extends Modelo_Base {
             return FALSE;
         }
     }
+    
+    public function getServiciosSolicitud(string $ticket) {
+        $consulta = $this->consulta('SELECT * FROM t_servicios_ticket WHERE Ticket = "' . $ticket . '"');
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return FALSE;
+        }
+    }
 
     public function getInstalaciones(string $idServicio) {
         $consulta = $this->consulta("SELECT tie.*,

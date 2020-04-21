@@ -84,6 +84,22 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Descripción</label>
+                <input type="text" class="form-control" id="inputEditarDescripcionModelo" value="<?php echo $datos['descripcion'] ?>" style="width: 100%" data-parsley-required="true"/>                            
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Agregar Imagenes</label>
+                <input id="archivosEditarModelo" name="archivosEditarModelo[]" type="file" multiple />
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12 col-xs-12 text-center">
             <div class="form-group">
                 <div class="form-inline">

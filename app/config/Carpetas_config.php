@@ -117,7 +117,8 @@ $config['Secciones'] = array(
     ),
     'Laboratorio' => array(
         'Dashboard-Loboratorio' => 'Dashboard',
-        'Seguimiento-Laboratorio' => 'Seguimiento'
+        'Seguimiento-Laboratorio' => 'Seguimiento',
+        'Seguimiento-Rehabilitacion' => 'SeguimientoRehabilitacion'
     ),
     'Contabilidad' => array(
         'Dashboard-Contabilidad' => 'Dashboard',

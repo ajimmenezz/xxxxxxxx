@@ -508,6 +508,28 @@ class Busqueda extends General {
                     ];
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_11", $data, TRUE);
                     break;
+                case '27': case 27:
+                    $datosServicio = $this->DBB->getServicioDiagnostico($servicio);
+                    if (count($datosServicio) > 0 || empty($datosServicio)) {
+                        $data = [
+                            'datos' => $this->DBB->getGeneralesServicioGeneralCompleto($servicio)[0],
+                            'datosCorrectivo' => $this->DBB->getGeneralesServicio20($servicio)[0],
+                            'diagnosticoEquipo' => $this->DBB->getDiagnosticoEquipo20($servicio),
+                            'tipoProblema' => $this->DBB->getTipoProblema20($servicio)[0]['IdTipoProblema'],
+                            'problemasServicio' => $this->DBB->getProblemaServicio20($servicio),
+                            'verificarEnvioEntrega' => $this->DBB->getVerificarEnvioEntrega20($servicio),
+                            'envioEntrega' => $this->DBB->consultaEntregaEnvio($servicio),
+                            'correctivoSoluciones' => $this->DBB->getCorrectivosSoluciones($servicio),
+                        ];
+                        if (!empty($data['diagnosticoEquipo'])) {
+                            $bitacoraObservaciones = $this->InformacionServicios->getHistorialReporteEnFalso($servicio);
+                            $data['diagnosticoEquipo'][0]['BitacoraObservaciones'] = $bitacoraObservaciones;
+                        }
+                        return parent::getCI()->load->view("Generales/Modal/detallesServicio_20", $data, TRUE);
+                    } else {
+                        return parent::getCI()->load->view("Generales/Modal/detallesServicio", ['datos' => $datosServicio[0]], TRUE);
+                    }
+                    break;
                 case '20': case 20:
                     $data = [
                         /* Datos generales del servicio */
@@ -766,6 +788,52 @@ class Busqueda extends General {
             'listaServicios' => $listaServicios
         ];
         return parent::getCI()->load->view("Generales/Modal/tablaServicios", $data, TRUE);
+    }
+    
+    public function exportarCenso(array $datos = null){
+        $listaCenso = $this->DBB->getinfoEqiposCenso($datos['servicio']);
+        
+        $host = $_SERVER['SERVER_NAME'];
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $liga = 'http://siccob.solutions';
+        } else {
+            $liga = 'http://' . $host;
+        }
+        
+        if($listaCenso){
+            $this->Excel->createSheet('Censo', 0);
+            $this->Excel->setActiveSheet(0);
+            $arrayTitulos = [
+                'Sucursal',
+                'Área de Atención',
+                'Punto',
+                'Línea de Equipo',
+                'Sublínea de Equipo',
+                'Marca',
+                'Modelo',
+                'Serie',
+                'Terminal'];
+            $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+            $arrayWidth = [30, 15, 8, 20, 20, 20, 30, 30, 20];
+            $this->Excel->setColumnsWidth('A', $arrayWidth);
+            $arrayAlign = ['justify', 'center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
+
+            $this->Excel->setTableContent('A', 1, $listaCenso, true, $arrayAlign);
+            
+            $nombreArchivo = 'Censo-'.$listaCenso[0]['Sucursal'] .'_'. $datos['servicio'] . '.xlsx';
+            $nombreArchivo = trim($nombreArchivo);
+            $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
+
+            $path = "../public/storage/Archivos/Reportes/";
+            if (!is_dir($path)) {
+                mkdir($path, 775, true);
+            }
+            $this->Excel->saveFile($ruta);
+
+            return ['ruta' => $liga . '/storage/Archivos/Reportes/' . $nombreArchivo];
+        } else {
+            return false;
+        }
     }
 
 }

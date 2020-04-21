@@ -103,8 +103,13 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
+    public function getEstatusProductoWhere(string $where) {
+        $consulta = $this->consulta("select * from cat_v3_estatus " . $where . " order by Nombre");
+        return $consulta;
+    }
+
     public function getComponentesPoliza($modelo) {
-        $consulta = $this->consulta("select * from cat_v3_componentes_equipo where IdModelo = '" . $modelo . "' order by Nombre;");
+        $consulta = $this->consulta("select * from cat_v3_componentes_equipo where IdModelo = '" . $modelo . "' and Flag = 1 order by Nombre;");
         return $consulta;
     }
 
@@ -726,6 +731,52 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $return_array;
     }
 
+    public function guardarRefaccionesDeshueso($data, $registroInventario) {
+        $this->iniciaTransaccion();
+        $return_array = [
+            'estatus' => 500
+        ];
+
+        $fecha = $this->consulta("select now() as Fecha;");
+
+        $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
+        if (!empty($inventario)) {
+            $this->actualizar("t_inventario", ['IdEstatus' => 50], ['Id' => $inventario[0]['Id']]);
+
+            foreach ($data as $key => $value) {
+                if ($value['IdEstatus'] === '17') {
+                    $this->insertar("t_inventario", [
+                        "IdAlmacen" => $value['IdAlmacen'],
+                        "IdTipoProducto" => $value['IdTipoProducto'],
+                        "IdProducto" => $value['IdProducto'],
+                        "IdEstatus" => $value['IdEstatus'],
+                        "Cantidad" => $value['Cantidad'],
+                        "Serie" => $value['Serie']
+                    ]);
+                }
+
+                $this->insertar('t_movimientos_inventario', [
+                    "IdTipoMovimiento" => 7,
+                    "IdAlmacen" => $value['IdAlmacen'],
+                    "IdTipoProducto" => $value['IdTipoProducto'],
+                    "IdProducto" => $value['IdProducto'],
+                    "IdEstatus" => $value['IdEstatus'],
+                    "IdUsuario" => $this->usuario['Id'],
+                    "Cantidad" => $value['Cantidad'],
+                    "Serie" => $value['Serie'],
+                    "Fecha" => $fecha[0]['Fecha']
+                ]);
+            }
+        }
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->commitTransaccion();
+            $return_array['estatus'] = 200;
+        }
+        return $return_array;
+    }
+
     public function buscaSerieDuplicada(array $datos) {
         $consulta = $this->consulta(""
                 . "select Serie "
@@ -777,6 +828,256 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                     and (Bloqueado = 0 || Id in (" . $idsBloqueados . "))
                                     and IdEstatus = 17;");
         return $consulta;
+    }
+
+    public function editarEstatusAlmacen(array $datos) {
+        $respuesta = $this->actualizar("t_inventario", ['IdEstatus' => $datos['idEstatus']], ['Id' => $datos['idInventario']]);
+    }
+
+    public function getInventarioUsuario(string $usuario) {
+        $consulta = $this->consulta("SELECT 
+                                        inve.Id,
+                                        modelo(inve.IdProducto) AS Producto,
+                                        inve.Serie,
+                                        estatus(inve.IdEstatus) AS Estatus,
+                                            CONCAT(ticketByServicio((SELECT 
+                                                            IdServicio
+                                                        FROM
+                                                            t_movimientos_inventario
+                                                        WHERE
+                                                            IdProducto = inve.IdProducto
+                                                                AND IdAlmacen = inve.IdAlmacen
+                                                                AND Serie = inve.Serie
+                                                                AND IdTipoMovimiento = 5
+                                                        LIMIT 1)),
+                                            '/',
+                                            folioByServicio((SELECT 
+                                                            IdServicio
+                                                        FROM
+                                                            t_movimientos_inventario
+                                                        WHERE
+                                                            IdProducto = inve.IdProducto
+                                                                AND IdAlmacen = inve.IdAlmacen
+                                                                AND Serie = inve.Serie
+                                                                AND IdTipoMovimiento = 5
+                                                        LIMIT 1))) TicketFolio
+                                    FROM
+                                        t_inventario inve
+                                    WHERE
+                                        inve.IdAlmacen IN (SELECT 
+                                                Id
+                                            FROM
+                                                cat_v3_almacenes_virtuales
+                                            WHERE
+                                                (IdTipoAlmacen = 1
+                                                    AND IdReferenciaAlmacen = '" . $usuario . "')
+                                                    OR (IdTipoAlmacen = 4 AND IdResponsable = '" . $usuario . "'))
+                                            AND inve.IdtipoProducto = 1
+                                            AND inve.Cantidad > 0
+                                            AND inve.IdEstatus IN (22 , 25)");
+        return $consulta;
+    }
+
+    public function getInventarioId(string $idInventario) {
+        $consulta = $this->consulta("SELECT 
+                                        modelo(inve.IdProducto) AS Producto,
+                                        inve.*,
+                                        estatus(inve.IdEstatus) AS Estatus,
+                                        CONCAT(ticketByServicio((SELECT 
+                                                            IdServicio
+                                                        FROM
+                                                            t_movimientos_inventario
+                                                        WHERE
+                                                            IdProducto = inve.IdProducto
+                                                                AND IdAlmacen = inve.IdAlmacen
+                                                                AND Serie = inve.Serie
+                                                                AND IdTipoMovimiento = 5
+                                                        LIMIT 1)),
+                                            '/',
+                                            folioByServicio((SELECT 
+                                                            IdServicio
+                                                        FROM
+                                                            t_movimientos_inventario
+                                                        WHERE
+                                                            IdProducto = inve.IdProducto
+                                                                AND IdAlmacen = inve.IdAlmacen
+                                                                AND Serie = inve.Serie
+                                                                AND IdTipoMovimiento = 5
+                                                        LIMIT 1))) TicketFolio
+                                    FROM
+                                        t_inventario inve
+                                    WHERE
+                                        Id = '" . $idInventario . "'");
+        return $consulta;
+    }
+
+    public function getNotasInventarioId(string $where) {
+        $consulta = $this->consulta("SELECT 
+                                        *,
+                                        nombreUsuario(IdUsuario) AS Usuario
+                                    FROM
+                                        t_notas_inventario " . $where);
+        return $consulta;
+    }
+
+    public function actualizarNotasInventario(array $datos, array $where) {
+        $this->actualizar('t_notas_inventario', $datos, $where);
+    }
+
+    public function setNotaInventario(array $datos) {
+        $this->insertar('t_notas_inventario', $datos);
+    }
+
+    public function getInventarioRehabilitacionRefaccion(string $where) {
+        $consulta = $this->consulta("SELECT * FROM t_inventario_rehabilitacion_refaccion " . $where);
+        return $consulta;
+    }
+
+    public function setInventarioRehabilitacionRefaccion(array $datos) {
+        $this->insertar('t_inventario_rehabilitacion_refaccion', $datos);
+    }
+
+    public function actualizarInventarioRehabilitacionRefaccion(array $datos, array $where) {
+        $this->actualizar('t_inventario_rehabilitacion_refaccion', $datos, $where);
+    }
+
+    public function getDatosAlmacenVirtualUsuario(string $idUsuario) {
+        $consulta = $this->consulta("select * from cat_v3_almacenes_virtuales where IdReferenciaAlmacen = '" . $idUsuario . "'");
+        return $consulta[0];
+    }
+
+    public function setRevisionRehabilitacion($data, $registroInventario) {
+        $this->iniciaTransaccion();
+        $return_array = [
+            'estatus' => 500
+        ];
+
+        if (!empty($data)) {
+            $fecha = $this->consulta("select now() as Fecha;");
+            $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
+
+            if (!empty($inventario)) {
+                $this->insertar('t_movimientos_inventario', [
+                    "IdTipoMovimiento" => 8,
+                    "IdAlmacen" => $inventario[0]['IdAlmacen'],
+                    "IdTipoProducto" => $inventario[0]['IdTipoProducto'],
+                    "IdProducto" => $inventario[0]['IdProducto'],
+                    "IdEstatus" => 17,
+                    "IdUsuario" => $this->usuario['Id'],
+                    "Cantidad" => $inventario[0]['Cantidad'],
+                    "Serie" => $inventario[0]['Serie'],
+                    "Fecha" => $fecha[0]['Fecha']
+                ]);
+
+                $idSalida = $this->connectDBPrueba()->insert_id();
+
+                foreach ($data as $key => $value) {
+                    $this->actualizar("t_inventario", [
+                        "IdAlmacen" => $value['IdAlmacen'],
+                        "IdTipoProducto" => $value['IdTipoProducto'],
+                        "IdProducto" => $value['IdProducto'],
+                        "IdEstatus" => $value['IdEstatus'],
+                        "Cantidad" => $value['Cantidad'],
+                        "Serie" => $value['Serie'],
+                        "IdEquipoDeshuesado" => $inventario[0]['Id']
+                            ], ['Id' => $value['IdInventarioRefaccion']]);
+
+                    $this->insertar('t_movimientos_inventario', [
+                        "IdMovimientoEnlazado" => $idSalida,
+                        "IdTipoMovimiento" => 9,
+                        "IdAlmacen" => $value['IdAlmacen'],
+                        "IdTipoProducto" => $value['IdTipoProducto'],
+                        "IdProducto" => $value['IdProducto'],
+                        "IdEstatus" => $value['IdEstatus'],
+                        "IdUsuario" => $this->usuario['Id'],
+                        "Cantidad" => $value['Cantidad'],
+                        "Serie" => $value['Serie'],
+                        "Fecha" => $fecha[0]['Fecha']
+                    ]);
+                }
+            }
+        }
+
+        $this->editarEstatusAlmacen(array('idEstatus' => '17', 'idInventario' => $registroInventario));
+        $this->actualizar("t_inventario", ['Cantidad' => 0], ['Id' => $registroInventario]);
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->commitTransaccion();
+            $return_array['estatus'] = 200;
+        }
+        return $return_array;
+    }
+
+    public function getInventarioRefaccionesUsuario(array $datos) {
+        $consulta = $this->consulta("SELECT 
+                                        ti.Id AS IdInventario,
+                                        ti.IdProducto AS IdRefaccion,
+                                        cvce.Nombre,
+                                        ti.Serie,
+                                        CASE tirr.Bloqueado
+                                            WHEN 0 THEN 0
+                                            WHEN 1 THEN 1
+                                            ELSE 0
+                                        END AS Bloqueado
+                                    FROM
+                                        t_inventario ti
+                                            LEFT JOIN
+                                        cat_v3_componentes_equipo cvce ON cvce.Id = ti.IdProducto
+                                            INNER JOIN
+                                        cat_v3_modelos_equipo cvme ON cvme.Id = cvce.IdModelo
+                                            INNER JOIN
+                                        cat_v3_marcas_equipo cvm ON cvm.Id = cvme.Marca
+                                            LEFT JOIN
+                                        t_inventario_rehabilitacion_refaccion AS tirr ON  tirr.IdInventarioRefaccion = ti.Id
+                                    WHERE
+                                        ti.IdEstatus = 17
+                                        AND
+                                        ti.IdTipoProducto = 2
+                                            AND cvm.Sublinea = (SELECT 
+                                                SUBLINEABYMODELO(Id)
+                                            FROM
+                                                cat_v3_modelos_equipo
+                                            WHERE
+                                                Id = '" . $datos['idEquipo'] . "') " .
+                $datos['where']);
+        return $consulta;
+    }
+
+    public function actualizarInventario(array $datos, array $where) {
+        $this->actualizar('t_inventario', $datos, $where);
+    }
+
+    public function movimientoInventario(array $datos) {
+        $inventario = $this->consulta("select * from t_inventario where Id = '" . $datos['idInventario'] . "'");
+        $fecha = $this->consulta("select now() as Fecha;");
+
+        if (!empty($inventario)) {
+            $this->insertar('t_movimientos_inventario', [
+                "IdTipoMovimiento" => $datos['tipoMovimiento'],
+                "IdAlmacen" => $inventario[0]['IdAlmacen'],
+                "IdTipoProducto" => $inventario[0]['IdTipoProducto'],
+                "IdProducto" => $inventario[0]['IdProducto'],
+                "IdEstatus" => $inventario[0]['IdEstatus'],
+                "IdUsuario" => $this->usuario['Id'],
+                "Cantidad" => $inventario[0]['Cantidad'],
+                "Serie" => $inventario[0]['Serie'],
+                "Fecha" => $fecha[0]['Fecha']
+            ]);
+        }
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+        } else {
+            $this->commitTransaccion();
+            $return_array['estatus'] = 200;
+        }
+        return $return_array;
+    }
+
+    public function setHistorioIncentarioEstatus(array $datos) {
+        $this->insertar('historico_inventario_estatus', $datos);
     }
 
 }

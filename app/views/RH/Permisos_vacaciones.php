@@ -124,9 +124,7 @@
                             <label><strong>EN SITUACIONES DE FUERZA MAYOR</strong>, el empleado que <strong>ACUDA A SU CLÍNICA, SIN CITA MÉDICA</strong>, deberá de notificar y entregar la
                             <strong>CONSTANCIA DE ASISTENCIA MÉDICA Y/O INCAPACIDAD IMSS AL DÍA SIGUIENTE</strong> de la atención recibida a Recursos Humanos o
                             Contabilidad.</label><br><br>
-                            <label>Los empleados únicamente podrán <strong>JUSTIFICAR SUS FALTAS</strong> mediante la presentación de la <strong>INCAPACIDAD EMITIDA POR EL IMSS</strong>.</label><br><br>
-                            <label>El personal que por motivo de <strong>TRABAJO EXTERNO</strong> a las oficinas o lugar de trabajo, deberá <strong>NOTIFICAR VÍA CORREO ELECTRÓNICO</strong> a su jefe
-                            inmediato, Recursos Humanos y Contabilidad con antelación de <strong>24 HORAS HÁBILES</strong>.</label>
+                            <label>Los empleados únicamente podrán <strong>JUSTIFICAR SUS FALTAS</strong> mediante la presentación de la <strong>INCAPACIDAD EMITIDA POR EL IMSS</strong>.</label><br>
                             <div class="underline m-b-15 m-t-15"></div>
                         </div>
                         <div class="col-md-12" style="display: none">
@@ -197,8 +195,7 @@
                         </div>
                         <div class="col-md-9">
                             <div id="archivoCitaIncapacidad" class="form-group" style="display: none">
-                                <label>Archivo Cita o Incapacidad</label><br>
-                                <label style="color: red">Todos los archivos que se requiera adjuntar deben ser escaneados a color y en formato PDF</label>
+                                <label>Archivo Cita o Incapacidad</label><br><br>
                                 <input id="inputEvidenciaIncapacidad" name="evidenciasIncapacidad[]" type="file" multiple>
                             </div>
                         </div>

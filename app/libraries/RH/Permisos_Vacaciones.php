@@ -4,6 +4,7 @@ namespace Librerias\RH;
 
 use Controladores\Controller_Base_General as General;
 use Librerias\RH\PDFI as PDFI;
+use Librerias\V2\PaquetesGenerales\Utilerias\Archivo as Archivo;
 
 class Permisos_Vacaciones extends General {
 
@@ -118,7 +119,7 @@ class Permisos_Vacaciones extends General {
         }, E_WARNING);
         
         $this->guardarImagen($datosPermisos);
-
+                
         $nombreArchivo = explode("\\", $datosPermisos['evidenciaIncapacidad']);
         $divideNombreArchivo = preg_split("/[\s-]+/", $nombreArchivo[2]);
         $concatenaNombre = "";
@@ -132,11 +133,17 @@ class Permisos_Vacaciones extends General {
         }
 
         try {
-            $paginasArchivo = $this->pdf->setSourceFile('../public/storage/Archivos/Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . $nuevoNombreArchivo);
-            for ($i = 1; $i <= $paginasArchivo; $i++) {
+            if (in_array(pathinfo($nuevoNombreArchivo, PATHINFO_EXTENSION), ['JPG', 'JPEG', 'PNG', 'GIF', 'jpg', 'jpeg', 'png', 'gif'])) {
+                $image = '../public/storage/Archivos/Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . $nuevoNombreArchivo;
                 $this->pdf->AddPage();
-                $tplIdx = $this->pdf->importPage($i);
-                $this->pdf->useTemplate($tplIdx, 10, 0, 190);
+                $this->pdf->Image($image, 10, 10, 80, 100, pathinfo($image, PATHINFO_EXTENSION), $image);
+            } else {
+                $paginasArchivo = $this->pdf->setSourceFile('../public/storage/Archivos/Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/' . $nuevoNombreArchivo);
+                for ($i = 1; $i <= $paginasArchivo; $i++) {
+                    $this->pdf->AddPage();
+                    $tplIdx = $this->pdf->importPage($i);
+                    $this->pdf->useTemplate($tplIdx, 10, 0, 190);
+                }
             }
         } catch (\spl_object_hash $ex) {
             $this->pdf->AddPage();
@@ -155,6 +162,7 @@ class Permisos_Vacaciones extends General {
             $CI = parent::getCI();
             $carpeta = 'Permisos_Ausencia/Ausencia_' . $datosPermisos['idUsuario'] . '/evidenciasMedicas/';
             $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciasIncapacidad', $carpeta));
+            return $archivos;
         } else {
             return 'otraImagen';
         }
