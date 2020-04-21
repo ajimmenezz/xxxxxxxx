@@ -59,18 +59,22 @@ $(function () {
                 });
             });
         } else {
-            domHtml.enviar('panelSeguimientoPoliza', 'Seguimiento/Servicio/Seguimiento', datos, datosServidor => {
-                if (bug.validar(datosServidor)) {
-                    datosServicio = datosServidor;
-                    mostrarFormulario(datos);
-                }
-            });
+            if (url === 'Seguimiento/Servicio/Atender') {
+                domHtml.enviar('panelSeguimientoPoliza', 'Seguimiento/Servicio/Seguimiento', datos, datosServidor => {
+                    if (bug.validar(datosServidor)) {
+                        datosServicio = datosServidor;
+                        mostrarFormulario(datos);
+                    }
+                });
+            } else {
+                datosServicio = datos;
+                seguimientoOld(evento, datosServicio, datosFila);
+            }
         }
     });
 
     function mostrarFormulario(datos) {
         if (servicio) {
-            console.log(datosServicio);
             servicio.setDatos(datosServicio);
             domHtml.ocultarElemento('listaPoliza');
             domHtml.mostrarElemento('panelDetallesTicket');
