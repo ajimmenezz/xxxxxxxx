@@ -105,6 +105,7 @@ class Informacion {
                         _this.mostrarOcultarBotones(true);
                         _this.habilitarDeshabilitarSelect(false);
                         callback(respuesta);
+                        _this.eventosTipoServicio(_this.datos);
                         _this.mensajeConfirmacionModal('Se actualizo correctamente la sucursal.');
                     }
                 });
@@ -272,6 +273,19 @@ class Informacion {
             this.peticion.ocultarElemento('btnEditarInformacionGeneral');
             this.peticion.mostrarElemento('btnValidarServicio');
             this.peticion.mostrarElemento('btnExportarPDF');
+        }
+    }
+
+    eventosTipoServicio(datos) {
+        let tipo = datos.servicio.tipoServicio;
+
+
+        switch (tipo) {
+            case 'Instalaciones':
+                if (datos.servicio.sucursal === null) {
+                    $('#selectOperacionInstalaciones').attr('disabled', 'disabled');
+                }
+                break;
         }
     }
 }

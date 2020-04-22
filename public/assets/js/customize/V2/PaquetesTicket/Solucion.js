@@ -48,12 +48,16 @@ class Solucion {
         if (this.datos.datosServicio.instalaciones !== undefined) {
             this.agregarDatosTabla(this.datos.datosServicio.instalaciones);
         }
+
+        if (datos.servicio.sucursal === null) {
+            $('#selectOperacionInstalaciones').attr('disabled', 'disabled');
+        }
+
         this.desabilitarFormulario();
     }
 
     listener(callback) {
         let _this = this;
-
         let selectModelo = _this.formulario.obtenerElemento('selectModeloInstalaciones');
         let selectAreaAtencion = _this.formulario.obtenerElemento('selectAreaAtencionInstalaciones');
         let selectPunto = _this.formulario.obtenerElemento('selectPuntoInstalaciones');
