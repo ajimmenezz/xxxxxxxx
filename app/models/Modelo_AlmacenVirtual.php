@@ -67,7 +67,8 @@ class Modelo_AlmacenVirtual extends Modelo {
                                                         AND IdResponsable = '". $usuario . "'))
                                                 AND inve.Cantidad > 0
                                                 AND inve.IdEstatus = 17
-                                                AND inve.IdtipoProducto = 1");
+                                                AND inve.IdtipoProducto = 1
+                                                AND inve.Bloqueado = 0");
         return $consulta;
     }
 

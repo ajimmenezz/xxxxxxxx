@@ -96,5 +96,9 @@ class AlmacenVirtual {
 
         return $datos;
     }
+    
+    public function bloquearInventario(string $idInvetario){
+        $this->DBAlmacenVirtual->actualizarInventario(array('Bloqueado' => 1), array('Id' => $idInvetario));
+    }
 
 }

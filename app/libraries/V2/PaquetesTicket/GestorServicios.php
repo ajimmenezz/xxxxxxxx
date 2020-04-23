@@ -98,6 +98,7 @@ Class GestorServicios {
     }
 
     public function setEquipo(array $datos) {
+
         if ($_FILES) {
             $carpeta = 'Servicios/Servicio-' . $datos['id'] . '/ServicioInstalaciones/';
             Archivo::saveArchivos($carpeta);
@@ -106,8 +107,15 @@ Class GestorServicios {
             $datos['archivos'] = NULL;
         }
         $this->DBServicios->empezarTransaccion();
+
+        if ($datos['idOperacion'] === '1') {
+            $this->almacenUsuario = new AlmacenUsuario();
+            $this->almacenUsuario->bloquearInventario($datos['idModelo']);
+        }
+
         $this->DBServicios->setInstalaciones($datos);
         $this->DBServicios->finalizarTransaccion();
+
     }
 
     public function deleteEquipo(array $datos) {

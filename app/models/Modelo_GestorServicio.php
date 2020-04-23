@@ -99,11 +99,29 @@ Class Modelo_GestorServicio extends Base {
     public function getInstalaciones(string $idServicio) {
         $consulta = array();
         try {
-            $consulta = $this->consulta("SELECT tie.*,
-                                        (SELECT Nombre FROM cat_v3_tipos_operaciones_poliza WHERE Id = tie.IdOperacion) AS Operacion,
-                                        areaAtencion(tie.IdArea)  AS Area,
-                                        modelo(tie.IdModelo)  AS Modelo
-                                         FROM t_instalaciones_equipos_poliza tie
+            $consulta = $this->consulta("SELECT 
+                                        tie.*,
+                                        (SELECT 
+                                                Nombre
+                                            FROM
+                                                cat_v3_tipos_operaciones_poliza
+                                            WHERE
+                                                Id = tie.IdOperacion) AS Operacion,
+                                        AREAATENCION(tie.IdArea) AS Area,
+                                        CASE tie.IdOperacion
+                                            WHEN
+                                                1
+                                            THEN
+                                                (SELECT 
+                                                        MODELO(IdProducto)
+                                                    FROM
+                                                        t_inventario
+                                                    WHERE
+                                                        Id = tie.IdModelo)
+                                            ELSE MODELO(tie.IdModelo)
+                                        END AS Modelo
+                                    FROM
+                                        t_instalaciones_equipos_poliza tie
                                          WHERE IdServicio = '" . $idServicio . "'");
         } catch (\Exception $ex) {
             var_dump($ex->getMessage());

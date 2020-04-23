@@ -42,7 +42,7 @@
                         <input id="inputSerieInstalaciones" class="form-control" placeholder="Serie" data-parsley-required="true" disabled/>
                     </div>                               
                 </div>
-                <div id="divIlegible" class="col-md-2 m-t-30 hidden"> 
+<!--                <div id="divIlegible" class="col-md-2 m-t-30 hidden"> 
                     <div class="form-group">
                         <div class="checkbox">
                             <label>
@@ -51,7 +51,7 @@
                             </label>
                         </div>
                     </div>                            
-                </div>
+                </div>-->
             </div>
             <div id="divAdjuntos" class="row hidden">
                 <div class="col-md-12">

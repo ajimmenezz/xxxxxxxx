@@ -95,12 +95,9 @@ class Solucion {
                     {id: '10', text: 10}
                 ];
                 selectPunto.cargaDatosEnSelect(dataPuntos);
-                $(`#divIlegible`).removeClass('hidden');
-                inputSerie.habilitarElemento();
                 selectPunto.habilitarElemento();
             } else {
                 selectAreaAtencion.cargaDatosEnSelect(_this.datos.datosServicio.areasSucursal);
-                $(`#divIlegible`).addClass('hidden');
                 inputSerie.bloquearElemento();
                 selectPunto.bloquearElemento();
             }
@@ -117,7 +114,10 @@ class Solucion {
             if (selectPunto.obtenerValor() !== '') {
                 selectModelo.habilitarElemento();
                 if (_this.selectOperacion.obtenerValor() === '1') {
-                    selectModelo.cargaDatosEnSelect(_this.datos.datosServicio.equipos);
+                    $("#selectModeloInstalaciones").empty().append('<option data-serie="" value="">Seleccionar</option>');
+                    $.each(_this.datos.datosServicio.equipos, function (key, valor) {
+                        $("#selectModeloInstalaciones").append(`<option data-serie="${valor.serie}" value="${valor.id}">${valor.text}</option>`);
+                    });
                 } else if (_this.selectOperacion.obtenerValor() === '2') {
                     let sucursal = _this.datos.servicio.sucursal;
                     let area = selectAreaAtencion.obtenerValor();
@@ -137,28 +137,12 @@ class Solucion {
         });
 
         selectModelo.evento('change', function () {
-            if (_this.selectOperacion.obtenerValor() === '2') {
-                let serie = $("#selectModeloInstalaciones option:selected").attr("data-serie");
-                inputSerie.definirValor(serie);
-            }
-        });
-
-        $('#inputIlegibleInstalciones').change(function () {
-            if (!$(this).is(':checked')) {
-                $(`#divAdjuntos`).addClass('hidden');
-            } else {
-                $(`#divAdjuntos`).removeClass('hidden');
-            }
+            let serie = $("#selectModeloInstalaciones option:selected").attr("data-serie");
+            inputSerie.definirValor(serie);
         });
 
         $('#btnAgregarEquipoInstalacion').off("click");
         $('#btnAgregarEquipoInstalacion').on("click", function () {
-            if ($('#inputIlegibleInstalciones').is(':checked')) {
-                file.setAtributos({'data-parsley-required': 'true'});
-            } else {
-                file.setAtributos({'data-parsley-required': 'false'});
-            }
-
             try {
                 _this.formulario.validarFormulario();
                 let data = {
@@ -205,6 +189,7 @@ class Solucion {
     }
 
     respuestaDatosServicio(respuesta) {
+        console.log(respuesta);
         this.datos.datosServicio = respuesta.datosServicio;
         this.tabla.limpiartabla();
         this.agregarDatosTabla(respuesta.datosServicio.instalaciones);
