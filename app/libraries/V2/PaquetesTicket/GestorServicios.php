@@ -56,7 +56,9 @@ Class GestorServicios {
             case 'Instalaciones':
                 $informacion['operaciones'] = $this->getOperacionesPoliza();
                 $this->equipo = new Equipo();
-                $informacion['equipos'] = $this->equipo->getEquipo();
+                $this->almacenUsuario = new AlmacenUsuario();
+                $this->almacenUsuario->getInventarioUsuario();
+                $informacion['equipos'] = $this->almacenUsuario->getInventarioUsuario();
                 if (!empty($datos['datosServicio']['sucursal'])) {
                     $this->sucursal = new Sucursal($datos['datosServicio']['sucursal']);
                     $informacion['areasAtencionSucursal'] = $this->sucursal->getAreas();

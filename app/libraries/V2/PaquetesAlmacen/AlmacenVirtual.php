@@ -81,4 +81,20 @@ class AlmacenVirtual {
         }
         return $informacion;
     }
+
+    public function getInventarioUsuario() {
+        $datos = array();
+        $consulta = $this->DBAlmacenVirtual->getInventarioUsuario($this->idUsuario);
+
+        foreach ($consulta as $value) {
+            array_push($datos, array(
+                'id' => $value['Id'],
+                'text' => $value['Producto'],
+                'serie' => $value['Serie']
+            ));
+        }
+
+        return $datos;
+    }
+
 }

@@ -49,4 +49,26 @@ class Modelo_AlmacenVirtual extends Modelo {
                                     where cvse.Id = 28 and cvme.Flag = 1;');
         return $consulta;
     }
+
+    public function getInventarioUsuario(string $usuario) {
+        $consulta = $this->consulta("SELECT 
+                                            inve.Id, MODELO(inve.IdProducto) AS Producto, inve.Serie
+                                        FROM
+                                            t_inventario inve
+                                        WHERE
+                                            inve.IdAlmacen IN (SELECT 
+                                                    Id
+                                                FROM
+                                                    cat_v3_almacenes_virtuales
+                                                WHERE
+                                                    (IdTipoAlmacen = 1
+                                                        AND IdReferenciaAlmacen = '". $usuario . "')
+                                                        OR (IdTipoAlmacen = 4
+                                                        AND IdResponsable = '". $usuario . "'))
+                                                AND inve.Cantidad > 0
+                                                AND inve.IdEstatus = 17
+                                                AND inve.IdtipoProducto = 1");
+        return $consulta;
+    }
+
 }
