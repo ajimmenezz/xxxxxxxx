@@ -28,7 +28,7 @@ class Equipo {
 
     public function getEquipoCensadosAreaPunto(array $datos) {
         $datosEquipo = array();
-        $consulta = $this->DBEquipo->getEquipoCensadosAreaPunto($datos);
+        $consulta = $this->DBEquipo->getEquipoCensadosAreaPuntoInstalaciones($datos);
 
         foreach ($consulta as $value) {
             array_push($datosEquipo, array(

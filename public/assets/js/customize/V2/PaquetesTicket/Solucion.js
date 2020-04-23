@@ -104,8 +104,9 @@ class Solucion {
         });
 
         selectAreaAtencion.evento('change', function () {
+            selectPunto.limpiarElemento();
             selectPunto.habilitarElemento();
-            if (_this.selectOperacion.obtenerValor() === '2') {
+            if (_this.selectOperacion.obtenerValor() !== '1') {
                 selectAreaAtencion.cargarElementosASelect('selectPuntoInstalaciones', _this.datos.datosServicio.areasPuntosSucursal, 'idArea');
             }
         });
@@ -118,11 +119,11 @@ class Solucion {
                     $.each(_this.datos.datosServicio.equipos, function (key, valor) {
                         $("#selectModeloInstalaciones").append(`<option data-serie="${valor.serie}" value="${valor.id}">${valor.text}</option>`);
                     });
-                } else if (_this.selectOperacion.obtenerValor() === '2') {
+                } else {
                     let sucursal = _this.datos.servicio.sucursal;
                     let area = selectAreaAtencion.obtenerValor();
                     let punto = selectPunto.obtenerValor();
-                    let data = {sucursal: sucursal, area: area, punto: punto};
+                    let data = {sucursal: sucursal, area: area, punto: punto, servicio: _this.datos.servicio.servicio};
                     _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/equipoCensadosAreaEquipo', data, function (respuesta) {
                         $("#selectModeloInstalaciones").empty().append('<option data-serie="" value="">Seleccionar</option>');
                         if (respuesta !== false) {
@@ -189,7 +190,6 @@ class Solucion {
     }
 
     respuestaDatosServicio(respuesta) {
-        console.log(respuesta);
         this.datos.datosServicio = respuesta.datosServicio;
         this.tabla.limpiartabla();
         this.agregarDatosTabla(respuesta.datosServicio.instalaciones);
