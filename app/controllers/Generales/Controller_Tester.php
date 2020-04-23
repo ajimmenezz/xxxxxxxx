@@ -31,13 +31,13 @@ class Controller_Tester extends Base {
             case 'informacionSD':
                 try {
                     $datos = $this->input->post();
-//                    $resultado = $this->SD->getDetallesFolio($datos['key'], $datos['folio']);
+                    $resultado = $this->SD->getDetallesFolio($datos['key'], $datos['folio']);
 //                $resultado = $this->SD->getFoliosTecnico($datos['key']);                                
 //                $resultado = $this->SD->getResolucionFolio($datos['key'], $datos['folio']);                                
 //                $resultado = $this->SD->getTecnicosSD($datos['key']);                                
 //                    $resultado = $this->SD->setResolucionServiceDesk($datos['key'], $datos['folio'], 'prueba');
-                    $resultado = $this->SD->getFolios($datos['key']);
-//                    $resultado = $this->SD->setNoteServiceDesk($datos['key'], $datos['folio'], 'prueba');
+//                    $resultado = $this->SD->getFolios($datos['key']);
+//                    $resultado = $this->SD->setNoteServiceDesk($datos['key'], $datos['folio'], 'nota prueba');
 //                    $resultado = $this->SD->setWorkLogServiceDesk($datos['key'], $datos['folio'], 'prueba');
 //                    $resultado = $this->SD->cambiarEstatusServiceDesk($datos['key'], 'Problema', $datos['folio']);
 //                    $resultado = $this->SD->consultarDepartamentoTI($datos['key']);
@@ -59,12 +59,6 @@ class Controller_Tester extends Base {
                 break;
             case 'solicitarFoliosAnterior':
                 $resultado = $this->Solicitud->getFoliosAnterior();
-                break;
-            case 'solicitudSemanal':
-                $resultado = $this->Solicitud->getFoliosSemanal();
-                break;
-            case 'solicitudAnual':
-                $resultado = $this->Solicitud->getFoliosAnual();
                 break;
             case 'solicitarValidacion':
                 $resultado = $this->Tester->actualizarValidadoresSD();

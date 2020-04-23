@@ -163,11 +163,13 @@ class InformacionServicios extends General
                 $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
             } else {
                 if (!empty($servicios)) {
-                    foreach ($servicios as $key => $value) {
-                        if ($value['IdEstatus'] === '3') {
-                            //                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
-                        } else {
-                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
+                    if ($datos['concluirSD']) {
+                        foreach ($servicios as $key => $value) {
+                            if ($value['IdEstatus'] === '3') {
+//                            $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'Problema', $datos['Folio']);
+                            } else {
+                                $resultadoSD = $this->ServiceDesk->cambiarEstatusServiceDesk($datos['Key'], 'En Atención', $datos['Folio']);
+                            }
                         }
                     }
                     $htmlServicio = $this->vistaHTMLServicio($datosServicios[0]);
@@ -410,16 +412,23 @@ class InformacionServicios extends General
                 $observaciones = "<div>Observaciones: " . $informacionDiagnostico[0]['Observaciones'] . "</div>";
             }
 
+
+            if (!empty($informacionCorrectivo)) {
+                $documentoPdf = '';
+            } else {
+                $documentoPdf = "<div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a></div>";
+            }
+
             $descripcion = "<br>"
-                . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
-                . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
-                . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
-                . $datosFalla
-                . $observaciones
-                . $linkImagenesDiagnostico
-                . $informacionProblema
-                . $solucionDiv
-                . "<div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a></div>";
+                    . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
+                    . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
+                    . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
+                    . $datosFalla
+                    . $observaciones
+                    . $linkImagenesDiagnostico
+                    . $informacionProblema
+                    . $solucionDiv
+                    . $documentoPdf;
 
             return $descripcion;
         }
@@ -524,14 +533,25 @@ class InformacionServicios extends General
             }
         }
 
-        $archivosAvanceProblema = explode(',', $datos['Archivos']);
+        $datosDescripcion = $this->DBS->consultaGeneralSeguimiento('SELECT
+                                                                                Ticket
+                                                                            FROM t_servicios_ticket tst
+                                                                            WHERE tst.Id = "' . $datos['IdServicio'] . '"');
 
-        foreach ($archivosAvanceProblema as $v) {
-            if ($v != '') {
-                $contAvanceProblema++;
-                $linkImagenes .= "<a href='http://" . $host . $v . "' target='_blank'>Archivo" . $contAvanceProblema . "</a> &nbsp ";
-            }
+        $datosTicket = array(
+            'servicio' => $datos['IdServicio'],
+            'ticket' => $datosDescripcion[0]['Ticket']
+        );
+
+        $path = $this->definirPDF($datosTicket);
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'https://siccob.solutions/' . $path;
+        } else {
+            $path = 'http://' . $host . '/' . $path;
         }
+
+        $linkPDF = "<div><a href='" . $path . "' target='_blank'>DOCUMENTO PDF</a></div>";
 
         if ($datos['IdTipo'] === '1') {
             $tipo = 'Avance';
@@ -539,7 +559,7 @@ class InformacionServicios extends General
             $tipo = 'Problema';
         }
 
-        $datosAvancesProblemas .= "<div>" . $datos['Descripcion'] . "</div>" . $tabla . "<div>" . $linkImagenes . "</div><br>";
+        $datosAvancesProblemas .= "<div>" . $datos['Descripcion'] . "</div>" . $tabla . "<div>" . $linkPDF . "</div><br>";
 
         return array('datosAvancesProblemas' => $datosAvancesProblemas, 'tipo' => $tipo);
     }
@@ -851,8 +871,7 @@ class InformacionServicios extends General
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
     }
 
-    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE)
-    {
+    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE, bool $concluirSD = TRUE) {
         $folio = $this->DBST->consultaFolio($servicio);
 
         if ($folio !== '0') {
@@ -866,6 +885,8 @@ class InformacionServicios extends General
                     'Key' => $key
                 );
                 $servicios = $this->verificarTodosServiciosFolio($datos);
+
+                $datos['concluirSD'] = $concluirSD;
 
                 $this->cambiarEstatusResolucionSD($datos, $servicios);
             }
@@ -1045,7 +1066,13 @@ class InformacionServicios extends General
             $servicioConcluir = FALSE;
         }
 
-        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir);
+        if (isset($datos['concluirSD']) && $datos['concluirSD'] === 'true') {
+            $concluirSD = TRUE;
+        } else {
+            $concluirSD = FALSE;
+        }
+
+        $this->guardarDatosServiceDesk($datos['servicio'], $servicioConcluir, $concluirSD);
 
         return ['code' => 200, 'message' => 'correcto'];
     }
@@ -1503,7 +1530,7 @@ class InformacionServicios extends General
         } else {
             $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', str_replace(' ', '_', 'Ticket_' . $generales['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . $generales['TipoServicio'] . $nombreExtra));
         }
-        
+
         $this->setHeaderPDF("Resumen de Incidente Service Desk", $generales['SD']);
 
         $this->setCoordinates(10);
@@ -2149,6 +2176,10 @@ class InformacionServicios extends General
         }
 
         $this->setAvancesProblemasPDF($id, $datos);
+        $this->obtenerEquipoMaterialServicio($id);
+
+        $this->setCoordinates(10);
+        
         $problema = $this->getProblemaCorrectivoForPDF($id);
         $this->setProblemaCorrectivoPDF($problema, $datos);
 
@@ -2957,7 +2988,7 @@ class InformacionServicios extends General
 
         $this->setCoordinates(10);
         $this->setStyleHeader();
-        $this->setHeaderValue("Equipo y Material Utilizado");
+        $this->setHeaderValue("Equipos y Refacciones");
 
         $this->setStyleTitle();
         $this->setCellValue(30, 5, "Tipo", 'C', true);

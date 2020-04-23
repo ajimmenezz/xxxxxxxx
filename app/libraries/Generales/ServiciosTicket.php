@@ -159,7 +159,7 @@ class ServiciosTicket extends General
             }
 
             $query = '
-            select 
+            SELECT * FROM(select 
                 tst.Id,
                 tst.Ticket,
                 tipoServicio(tst.IdTipoServicio) as Servicio,
@@ -181,7 +181,9 @@ class ServiciosTicket extends General
             ' . $whereFolio . '
             and (concat(",",csd.IdDepartamentos,",") like "%,' . $departamento . ',%" or tst.IdTipoServicio = 9) 
             group by tst.Id desc '
-                . $queryUnion;
+                . $queryUnion . 
+            ') AS tabla GROUP BY Id DESC';     
+            
             return $this->DBST->getServicios($query);
         }
     }

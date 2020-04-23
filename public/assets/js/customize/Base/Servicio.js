@@ -429,14 +429,14 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 var data = {servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
 //                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
 //                    if (respuesta === true) {
-                _this.validarTecnicoPoliza();
+                        _this.validarTecnicoPoliza();
 
-                var html = '';
+                        var html = '';
 
-                $('#btnModalConfirmar').addClass('hidden');
-                $('#btnModalConfirmar').off('click');
-                _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
-                _this.validarCamposFirma(ticket, servicio, true, true, '5', data);
+                        $('#btnModalConfirmar').addClass('hidden');
+                        $('#btnModalConfirmar').off('click');
+                        _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
+                        _this.validarCamposFirma(ticket, servicio, true, true, '5', data);
 //                    } else {
 //                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
 //                    }
@@ -1940,6 +1940,9 @@ Servicio.prototype.agregandoTablaAvanceServicio = function () {
             break;
         case '7':
             tipoFalla = 'Falta de Equipo';
+            break;
+        case '12':
+            tipoFalla = 'Desgaste';
             break;
         default:
     }
