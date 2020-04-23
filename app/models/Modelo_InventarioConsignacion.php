@@ -829,6 +829,11 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
+    public function getAlmacenesVirtualesPorUsuario(string $idUsuario) {
+        $consulta = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdReferenciaAlmacen = '" . $idUsuario . "' AND IdTipoAlmacen = '1'");
+        return $consulta;
+    }
+
     public function editarEstatusAlmacen(array $datos) {
         $respuesta = $this->actualizar("t_inventario", ['IdEstatus' => $datos['idEstatus']], ['Id' => $datos['idInventario']]);
     }
@@ -1078,10 +1083,6 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
     public function setHistorioIncentarioEstatus(array $datos) {
         $this->insertar('historico_inventario_estatus', $datos);
     }
-    
-    public function getAlmacenesVirtualesPorUsuario(string $idUsuario) {
-        $consulta = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales WHERE IdReferenciaAlmacen = '" . $idUsuario . "' AND IdTipoAlmacen = '1'");
-        return $consulta;
-    }
+
 
 }
