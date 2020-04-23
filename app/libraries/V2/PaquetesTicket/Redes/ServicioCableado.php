@@ -185,9 +185,9 @@ class ServicioCableado implements Servicio {
             $datos['archivos'] .= ',' . $consulta[0]['Archivos'];
         }
 
-        $consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
+        $existenDatos = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
 
-        if (empty($consulta)) {
+        if (empty($existenDatos)) {
             $this->DBServiciosGeneralRedes->setServicio($this->id, $datos);
         } else {
             $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);

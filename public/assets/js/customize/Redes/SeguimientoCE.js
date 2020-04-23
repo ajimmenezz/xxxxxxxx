@@ -55,6 +55,7 @@ $(function () {
         ],
         webStorage: false
     });
+    let existenFirmas = null;
 
     let datoServicioTabla = {
         id: null,
@@ -252,8 +253,22 @@ $(function () {
 
     function cargarContenidoProblemas(infoProblemas) {
         let problema = '';
+        let evidencias = '';
+        let icono = '';
         $.each(infoProblemas, function (key, value) {
-            problema += '<div class="problema col-md-12 row">\n\
+            evidencias = '';
+            icono = '';
+            $.each(value.archivos, function (llave, valor) {
+                if (llave === 0) {
+                    icono = '<i class="fa fa-file-photo-o "></i>';
+                } else {
+                    icono = '';
+                }
+                evidencias += '<div class="col-md-1 col-sm-2 col-xs-1">\n\
+                                <a href="' + valor + '" data-lightbox="problema' + key + '">' + icono + '</a>\n\
+                            </div>';
+            });
+            problema += '<div class="problema' + key + ' col-md-12 row">\n\
                             <div class="col-md-6 col-sm-12">\n\
                                 Usuario: <label class="semi-bold">' + value.usuario + '</label>\n\
                             </div>\n\
@@ -263,9 +278,7 @@ $(function () {
                             <div class="col-md-11 col-sm-11 col-xs-10">\n\
                                 <textarea class="form-control" rows="2" disabled>' + value.descripcion + '</textarea>\n\
                             </div>\n\
-                            <div class="col-md-1 col-sm-2 col-xs-1">\n\
-                                <a href="' + value.archivos[0] + '" data-lightbox="problema"><i class="fa fa-file-photo-o "></i></a>\n\
-                            </div>\n\
+                            ' + evidencias + '\n\
                         </div><br><br><br><br><br><br>';
         });
         $('#observacionesProblemas').append(problema);
@@ -406,6 +419,7 @@ $(function () {
                     if (!validarError(respuesta, 'modalMaterialNodo')) {
                         return;
                     }
+                    console.log(respuesta);
                     limpiarElementosModalMaterial();
                     tablaNodos.limpiartabla();
                     listaTotalNodos = respuesta.solucion.nodos;
@@ -423,6 +437,7 @@ $(function () {
                     if (!validarError(respuesta, 'modalMaterialNodo')) {
                         return;
                     }
+                    console.log(respuesta);
                     limpiarElementosModalMaterial();
                     tablaNodos.limpiartabla();
                     listaTotalNodos = respuesta.solucion.nodos;
@@ -693,7 +708,7 @@ $(function () {
             if (validacion === "EN VALIDACIÓN") {
                 $('.bloqueoConclusionBtn').addClass('hidden');
                 tablaAgregarMateriales.evento(function () {
-                    console.log(validacion)
+                    console.log(validacion);
                 });
             }
         }
@@ -751,13 +766,17 @@ $(function () {
             } else {
                 $('#btnConcluir').removeClass('hidden');
             }
+        } else {
+            $('#btnConcluir').addClass('hidden');
         }
         if (firmas !== null) {
+            existenFirmas = true;
             $('#firmasExistentes').removeClass('hidden');
             let firma = firmas.split(',');
             $('#firmaExistenteCliente').append('<img src ="' + firma[0] + '" />');
             $('#firmaExistenteTecnico').append('<img src ="' + firma[1] + '" />');
         } else {
+            existenFirmas = false;
             $('#firmasExistentes').addClass('hidden');
     }
     }
@@ -946,6 +965,7 @@ $(function () {
                 cargarContenidoProblemas(respuesta.problemas);
                 $('#textareaDescProblema').val('');
                 evidenciaProblema.limpiarElemento();
+                $('#modalDefinirProblema').modal('hide');
             });
         }
     });
@@ -1000,23 +1020,27 @@ $(function () {
 
     $('#btnConcluir').on('click', function () {
         let faltaEvidencia = true;
-        if (listaTotalNodos.length > 0) {
-            $.each(listaTotalNodos, function (key, value) {
-                if (value.Archivos == "") {
-                    faltaEvidencia += 1;
-                    modal.mostrarModal('AVISO', '<h4>El Nodo <b>' + value.Nombre + '</b> no tiene evidencia</h4>');
-                    $('#btnAceptar').addClass('hidden');
-                    faltaEvidencia = false;
-                }
-            });
-            if (faltaEvidencia === true) {
-                $('#contentFirmasConclucion').removeClass('hidden');
-                $('#contentServiciosRedes').addClass('hidden');
-            }
+        if (existenFirmas) {
+            console.log("termino");
         } else {
-            if (archivosEstablecidos !== null) {
-                $('#contentFirmasConclucion').removeClass('hidden');
-                $('#contentServiciosRedes').addClass('hidden');
+            if (listaTotalNodos.length > 0) {
+                $.each(listaTotalNodos, function (key, value) {
+                    if (value.Archivos == "") {
+                        faltaEvidencia += 1;
+                        modal.mostrarModal('AVISO', '<h4>El Nodo <b>' + value.Nombre + '</b> no tiene evidencia</h4>');
+                        $('#btnAceptar').addClass('hidden');
+                        faltaEvidencia = false;
+                    }
+                });
+                if (faltaEvidencia === true) {
+                    $('#contentFirmasConclucion').removeClass('hidden');
+                    $('#contentServiciosRedes').addClass('hidden');
+                }
+            } else {
+                if (archivosEstablecidos !== null) {
+                    $('#contentFirmasConclucion').removeClass('hidden');
+                    $('#contentServiciosRedes').addClass('hidden');
+                }
             }
         }
     });

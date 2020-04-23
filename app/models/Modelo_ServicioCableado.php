@@ -82,7 +82,8 @@ class Modelo_ServicioCableado extends Modelo_Base {
                             2,
                             now(),
                             "' . $datos['descripcion'] . '",
-                            "' . $datos['archivos'] . '"                            
+                            "' . $datos['archivos'] . '",
+                            1
                         )');
     }
 
@@ -105,7 +106,11 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                 ' . $idServicio . ',
                                 "' . $datos['observaciones'] . '",
                                 "' . $datos['archivos'] . '",
-                                now()    
+                                now(),
+                                null,
+                                null,
+                                null,
+                                null    
                              )');
     }
 
