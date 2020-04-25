@@ -1529,7 +1529,7 @@ class InformacionServicios extends General {
             $this->setCellValue(0, 5, $generales['FechaConclusion'], 'L', true);
         }
 
-        if ($datos['folio'] != '' || $datos['folio'] != null) {
+        if ($datos['folio'] != '' && $datos['folio'] != null && $datos['folio'] !== '0') {
             $this->informacionSD($datos['folio']);
         }
 

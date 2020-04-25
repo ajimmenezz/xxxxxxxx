@@ -10,6 +10,8 @@ use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenVirtual;
 use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 use Librerias\V2\PaquetesEquipo\Equipo as Equipo;
+use Librerias\V2\PaquetesSucursales\SucursalAdist as Sucursal;
+use Librerias\V2\PaquetesSucursales\Censo as Censo;
 
 class Controller_ServicioTicket extends CI_Controller {
 
@@ -253,7 +255,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);
             $this->setResolucionServiceDesk($datosServicio);
-            $this->concluirServicioRedes($datosServicio);
+            $this->concluirServicio($datosServicio);
 
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
@@ -311,9 +313,12 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
             $idSolicitud = $this->servicio->getDatos();
             $solicitud = new Solicitud($idSolicitud['solicitud']);
-            $this->servicio->setEstatus('4');
-            $solicitud->verificarServiciosParaConcluirSolicitudTicket();
-            $this->servicio->enviarServicioConcluido($datosServicio);
+
+//            $this->servicio->setEstatus('4');
+//            $solicitud->verificarServiciosParaConcluirSolicitudTicket();
+//            $this->servicio->enviarServicioConcluido($datosServicio);
+//            $this->servicio->concluirServicio($datosRespuesta);
+            $this->concluirServicio($datosServicio);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -429,14 +434,46 @@ class Controller_ServicioTicket extends CI_Controller {
         }
     }
 
-    private function concluirServicioRedes(array $datos) {
-        switch ($datos['id']) {
+    private function concluirServicio(array $datos) {
+        switch ($datos['tipo']) {
             case 'Cableado':
-                $this->almacenVirtual->updateAlmacen($datosServicio);
+                $this->almacenVirtual->updateAlmacen($datos);
+                break;
+            case 'Instalaciones':
+                $this->concluirServicioInstalacion($datos);
                 break;
             default:
                 break;
         }
+    }
+
+    private function concluirServicioInstalacion(array $datos) {
+        $datosServicio = $this->servicio->getDatos();
+        $sucursal = new Sucursal($datosServicio['sucursal']);
+//        $datos['ultimoServicioCenso'] = $sucursal->getServicioUltimoCensoSucursal();
+//        $datos['sucursal'] = $datosServicio['sucursal'];
+        $datosRespuesta = $this->gestorServicios->getInstalaciones($datos);
+
+        foreach ($datosRespuesta as $key => $value) {
+            if ($value['IdOperacion'] === '1') {
+                $censo = new Censo($sucursal);
+                $ultimoServicioCenso = $sucursal->getServicioUltimoCensoSucursal();
+                $datosInventario = $this->almacenVirtual->consultaInventario($value['IdModelo']);
+                $censo->setCensoIdServicio(array(
+                    'servicio' => $ultimoServicioCenso[0]['IdServicio'],
+                    'idModelo' => $datosInventario[0]['IdProducto'],
+                    'idArea' => $value['IdArea'],
+                    'punto' => $value['Punto'],
+                    'serie' => $value['Serie']
+                ));
+            } else {
+                var_dump('otro');
+            }
+        }
+        var_dump('correcto');
+
+
+//        $this->servicio->concluirServicio(array('datosConclusion' => $datos, 'datosInstalacion' => $datosRespuesta));
     }
 
 }

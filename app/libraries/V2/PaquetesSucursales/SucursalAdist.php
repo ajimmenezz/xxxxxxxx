@@ -87,5 +87,9 @@ class SucursalAdist implements Sucursal {
     public function getId() {
         return $this->id;
     }
+    
+    public function getServicioUltimoCensoSucursal(){
+        return $this->DBSucursal->getServicioUltimoCensoSucursal($this->id);
+    }
 
 }

@@ -33,4 +33,14 @@ class Modelo_Censo extends Base {
         return $consulta;
     }
 
+    public function setCensoIdServicio(array $datos) {
+        $this->insertar('INSERT INTO t_censos (IdServicio,IdArea,IdModelo,Punto,Serie,Extra)VALUES(
+                        "' . $datos['IdServicio'] . '",
+                        "' . $datos['IdArea'] . '",
+                        "' . $datos['IdModelo'] . '",
+                        "' . $datos['Punto'] . '",
+                        "' . $datos['Serie'] . '",
+                        "' . $datos['Extra'] . '")');
+    }
+
 }

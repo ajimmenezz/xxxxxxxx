@@ -201,12 +201,6 @@ class Solucion {
 
         if (datos.length > 0) {
             $.each(datos, function (key, valor) {
-                let evidencias = 'Sin Evidencias';
-
-                if (valor.Archivos !== null) {
-                    evidencias = _this.tabla.campoEvidencias(valor.Archivos, valor.Id);
-                }
-
                 _this.tabla.agregarDatosFila([
                     valor.Id,
                     valor.IdModelo,
@@ -217,7 +211,6 @@ class Solucion {
                     valor.Punto,
                     valor.IdOperacion,
                     valor.Operacion,
-                    evidencias,
                     _this.tabla.botonEliminar(valor.Id)
                 ]);
             });
@@ -234,8 +227,11 @@ class Solucion {
 
     desabilitarFormulario() {
         if (this.datos.servicio.estatusServicio === '5') {
+            $('.divAcciones').addClass('hidden');
+            
             this.peticion.ocultarElemento('seccion-formulario');
-            $('.seccion-botones-acciones').addClass('hidden');
+            
+            $('td .seccion-botones-acciones').addClass('hidden');
         }
     }
 

@@ -245,4 +245,16 @@ class ServicioInstalaciones implements Servicio {
         return $consulta[0]['firmas'];
     }
 
+    public function concluirServicio(array $datos) {
+        foreach ($datos['datosInstalacion'] as $key => $value) {
+            if ($value['IdOperacion'] === '1') {
+//                var_dump($datos['datosConclusion']['sucursal']);
+//                $censo = new Censo($datos['datosConclusion']['sucursal']);
+                var_dump($censo);
+            } else {
+                var_dump('otro');
+            }
+        }
+    }
+
 }

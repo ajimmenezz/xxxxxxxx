@@ -6,7 +6,7 @@ use Librerias\V2\PaquetesSucursales\interfaces\Sucursal as Sucursal;
 use Modelos\Modelo_Censo as Modelo;
 
 class Censo {
-    
+
     private $idSucursal;
     private $DBCenso;
 
@@ -14,23 +14,33 @@ class Censo {
         $this->idSucursal = $sucursal->getId();
         $this->DBCenso = new Modelo();
     }
-    
-    public function getRegistrosComponente(int $componente){
+
+    public function getRegistrosComponente(int $componente) {
         $datos = array();
         $consulta = $this->DBCenso->getCensoComponente($componente);
-        
+
         foreach ($consulta as $value) {
             array_push($datos, array(
                 'id' => $value['IdModelo'],
                 'text' => $value['Equipo'],
                 'Modelo' => $value['Modelo'],
                 'Parte' => $value['Parte'],
-                'IdMarca' => $value['IdMarca'],                 
-                'Marca' => $value['Marca'],                 
-                'Flag' => $value['Flag']                 
+                'IdMarca' => $value['IdMarca'],
+                'Marca' => $value['Marca'],
+                'Flag' => $value['Flag']
             ));
         }
-        return $datos;       
+        return $datos;
+    }
+
+    public function setCensoIdServicio(array $datos) {
+        $this->DBCenso->setCensoIdServicio(array(
+            'IdServicio' => $datos['servicio'],
+            'IdArea' => $datos['idArea'],
+            'IdModelo' => $datos['idModelo'],
+            'Serie' => $datos['serie'],
+            'Punto' => $datos['punto'],
+            'Extra' => 'SN'));
     }
 
 }
