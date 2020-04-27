@@ -26,6 +26,7 @@
         <ul class="nav nav-pills">
             <li class="active"><a href="#difConteos" data-toggle="tab">Diferencias (Conteos)</a></li>
             <li><a href="#difSeries" data-toggle="tab">Diferencias (Series)</a></li>
+            <li><a href="#cambiosSeries" data-toggle="tab">Cambios Serie</a></li>
             <li><a href="#difFaltantes" data-toggle="tab">Faltantes</a></li>
             <li><a href="#difSobrantes" data-toggle="tab">Sobrantes</a></li>
         </ul>
@@ -258,6 +259,52 @@
                                             <td>' . $v['Marca'] . '</td>
                                             <td>' . $v['Modelo'] . '</td>
                                             <td>' . $v['Serie'] . '</td>
+                                        </tr>
+                                        ';
+                                    }
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="cambiosSeries">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Equipos que posiblemente cambiaron de tener Serie a ser ILEGIBLE</h4>
+                        <div class="underline"></div>
+                    </div>
+                </div>
+                <div class="row m-t-15">
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Área</th>
+                                    <th>Punto</th>
+                                    <th>Línea</th>
+                                    <th>Sublínea</th>
+                                    <th>Marca</th>
+                                    <th>Modelo</th>
+                                    <th>Serie Anterior</th>
+                                    <th>Serie Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if (isset($cambiosSerie) && count($cambiosSerie) > 0) {
+                                    foreach ($cambiosSerie as $k => $v) {
+                                        echo '
+                                        <tr>
+                                            <td>' . $v['Area'] . '</td>
+                                            <td>' . $v['Punto'] . '</td>
+                                            <td>' . $v['Linea'] . '</td>
+                                            <td>' . $v['Sublinea'] . '</td>
+                                            <td>' . $v['Marca'] . '</td>
+                                            <td>' . $v['Modelo'] . '</td>
+                                            <td>' . $v['Serie'] . '</td>
+                                            <td>ILEGIBLE</td>
                                         </tr>
                                         ';
                                     }

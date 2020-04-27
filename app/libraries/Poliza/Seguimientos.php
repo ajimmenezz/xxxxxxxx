@@ -6243,10 +6243,12 @@ class Seguimientos extends General
         return ['html' => parent::getCI()->load->view('Poliza/Modal/DiferenciaCensos', $dataDiff, TRUE)];
     }
 
-    private function getDataForCensoCompare($servicio){
+    private function getDataForCensoCompare($servicio)
+    {
         $actual = $this->DBCensos->getCensoForCompare($servicio);
         $ultimo = $this->DBCensos->getLastCensoForCompare($servicio);
         $generales = $this->DBCensos->getGeneralesForCompare($servicio);
+        $diferenciaSeries = $this->getPossibleSeriesChange($this->getCensoDiferenciasSeries($actual, $ultimo), $this->getCensoDiferenciasSeries($ultimo, $actual));
         return [
             'conteo' => count($actual) - count($ultimo),
             'actual' => $actual,
@@ -6256,10 +6258,37 @@ class Seguimientos extends General
             'diferenciaLineas' => $this->getCensoDiferenciasLineas($actual, $ultimo),
             'diferenciaSublineas' => $this->getCensoDiferenciasSubineas($actual, $ultimo),
             'diferenciaModelos' => $this->getCensoDiferenciasModelos($actual, $ultimo),
-            'diferenciasActual' => $this->getCensoDiferenciasSeries($actual, $ultimo),
-            'diferenciasUltimo' => $this->getCensoDiferenciasSeries($ultimo, $actual),
+            'cambiosSerie' => $diferenciaSeries['cambiosSerie'],
+            'diferenciasActual' => $diferenciaSeries['diferenciasActual'],
+            'diferenciasUltimo' => $diferenciaSeries['diferenciasUltimo'],
+            'diferenciasActual2' => $this->getCensoDiferenciasSeries($actual, $ultimo),
+            'diferenciasUltimo2' => $this->getCensoDiferenciasSeries($ultimo, $actual),
             'diferenciasKit' => $this->getCensoDiferenciasKit($actual)
         ];
+    }
+
+    private function getPossibleSeriesChange($actual, $ultimo)
+    {
+        $cambiosSerie = [];
+        foreach ($ultimo as $ku => $vu) {
+            foreach ($actual as $ka => $va) {
+                if (
+                    $vu['IdArea'] == $va['IdArea'] &&
+                    $vu['Punto'] == $va['Punto'] &&
+                    $vu['IdLinea'] == $va['IdLinea'] &&
+                    $vu['IdSublinea'] == $va['IdSublinea'] &&
+                    $vu['IdMarca'] == $va['IdMarca'] &&
+                    $vu['IdModelo'] == $va['IdModelo'] &&
+                    $vu['Serie'] != 'ILEGIBLE' && $va['Serie'] == 'ILEGIBLE'
+                ) {
+                    array_push($cambiosSerie, $vu);
+                    unset($ultimo[$ku]);
+                    unset($actual[$ka]);
+                }
+            }
+        }
+
+        return ['cambiosSerie' => $cambiosSerie, 'diferenciasActual' => $actual, 'diferenciasUltimo' => $ultimo];
     }
 
     private function getCensoDiferenciasKit($inventario)
