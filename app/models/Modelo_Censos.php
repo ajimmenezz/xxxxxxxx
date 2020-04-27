@@ -238,7 +238,7 @@ class Modelo_Censos extends Modelo_Base
                 if ($value['existe'] == 1) {
                     $this->actualizar("t_censos", [
                         'IdModelo' => $value['modelo'],
-                        'Serie' => $value['serie'],
+                        'Serie' => str_replace(" ", "", strtoupper($value['serie'])),
                         'Existe' => $value['existe'],
                         'Danado' => $value['danado']
                     ], ['Id' => $value['id']]);
@@ -255,7 +255,7 @@ class Modelo_Censos extends Modelo_Base
                     'IdArea' => $datos['area'],
                     'Punto' => $datos['punto'],
                     'IdModelo' => $value['modelo'],
-                    'Serie' => $value['serie'],
+                    'Serie' => str_replace(" ", "", strtoupper($value['serie'])),
                     'Existe' => 1,
                     'Danado' => $value['danado']
                 ]);
