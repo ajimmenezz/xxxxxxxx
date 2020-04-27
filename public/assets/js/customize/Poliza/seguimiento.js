@@ -1670,6 +1670,9 @@ $(function() {
         case "#EquiposPunto":
           cargaEquiposPuntoCenso(respuesta.servicio);
           break;
+        case "#DiferenciasCenso":
+          cargaDiferenciasCenso(respuesta.servicio);
+          break;
       }
     });
     $("#divNotasServicio").slimScroll({ height: "400px" });
@@ -1806,6 +1809,21 @@ $(function() {
     if ($("#EquiposPunto").hasClass("active")) {
       cargaEquiposPuntoCenso(servicio);
     }
+    
+    if ($("#DiferenciasCenso").hasClass("active")) {
+      cargaDiferenciasCenso(servicio);
+    }
+  }
+
+  function cargaDiferenciasCenso(){
+    evento.enviarEvento(
+      "Seguimiento/CargaDiferenciasCenso",
+      {servicio:arguments[0]},
+      "#seccion-servicio-censo",
+      function(respuesta) {
+        $("#contentDiferenciasCensos").empty().append(respuesta.html);
+      }
+    );
   }
 
   function cargaEquiposPuntoCenso() {
@@ -2636,10 +2654,13 @@ $(function() {
       $("[href=#AreaPuntos]")
         .parent("li")
         .removeClass("hidden");
-      $("[href=#EquiposPunto]")
-        .parent("li")
-        .removeClass("hidden");
-    } else {
+        $("[href=#EquiposPunto]")
+          .parent("li")
+          .removeClass("hidden");
+        $("[href=#DiferenciasCenso]")
+          .parent("li")
+          .removeClass("hidden");
+      } else {
       if (respuesta.datosServicio.IdSucursal !== null) {
         select.cambiarOpcion(
           "#selectSucursales",
@@ -2674,6 +2695,9 @@ $(function() {
             .parent("li")
             .removeClass("hidden");
           $("[href=#EquiposPunto]")
+            .parent("li")
+            .removeClass("hidden");
+          $("[href=#DiferenciasCenso]")
             .parent("li")
             .removeClass("hidden");
         }
