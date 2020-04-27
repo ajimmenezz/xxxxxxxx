@@ -51,6 +51,7 @@ class Modelo_ServicioTicketV2 extends Modelo_Base {
                                             serviciosTicket.FechaInicio,
                                             serviciosTicket.Ticket,
                                             nombreUsuario(serviciosTicket.Atiende) as Atiende,
+                                            serviciosTicket.Atiende AS IdAtiende,
                                             serviciosTicket.IdSolicitud,
                                             serviciosTicket.Descripcion,
                                             serviciosTicket.IdSucursal,

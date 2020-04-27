@@ -314,11 +314,10 @@ class Controller_ServicioTicket extends CI_Controller {
             $idSolicitud = $this->servicio->getDatos();
             $solicitud = new Solicitud($idSolicitud['solicitud']);
 
-//            $this->servicio->setEstatus('4');
-//            $solicitud->verificarServiciosParaConcluirSolicitudTicket();
-//            $this->servicio->enviarServicioConcluido($datosServicio);
-//            $this->servicio->concluirServicio($datosRespuesta);
-            $this->concluirServicio($datosServicio);
+            $this->servicio->setEstatus('4');
+            $solicitud->verificarServiciosParaConcluirSolicitudTicket();
+            $this->servicio->enviarServicioConcluido($datosServicio);
+            $this->procesoConcluirServicio($datosServicio);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -439,6 +438,13 @@ class Controller_ServicioTicket extends CI_Controller {
             case 'Cableado':
                 $this->almacenVirtual->updateAlmacen($datos);
                 break;
+            default:
+                break;
+        }
+    }
+
+    private function procesoConcluirServicio(array $datos) {
+        switch ($datos['tipo']) {
             case 'Instalaciones':
                 $this->concluirServicioInstalacion($datos);
                 break;
@@ -449,31 +455,15 @@ class Controller_ServicioTicket extends CI_Controller {
 
     private function concluirServicioInstalacion(array $datos) {
         $datosServicio = $this->servicio->getDatos();
-        $sucursal = new Sucursal($datosServicio['sucursal']);
-//        $datos['ultimoServicioCenso'] = $sucursal->getServicioUltimoCensoSucursal();
-//        $datos['sucursal'] = $datosServicio['sucursal'];
         $datosRespuesta = $this->gestorServicios->getInstalaciones($datos);
 
         foreach ($datosRespuesta as $key => $value) {
             if ($value['IdOperacion'] === '1') {
-                $censo = new Censo($sucursal);
-                $ultimoServicioCenso = $sucursal->getServicioUltimoCensoSucursal();
-                $datosInventario = $this->almacenVirtual->consultaInventario($value['IdModelo']);
-                $censo->setCensoIdServicio(array(
-                    'servicio' => $ultimoServicioCenso[0]['IdServicio'],
-                    'idModelo' => $datosInventario[0]['IdProducto'],
-                    'idArea' => $value['IdArea'],
-                    'punto' => $value['Punto'],
-                    'serie' => $value['Serie']
-                ));
+                $this->servicio->setInstalacion(array('datosServicio' => $datosServicio, 'value' => $value));
             } else {
-                var_dump('otro');
+                $this->servicio->setRetiroEquipo(array('datosServicio' => $datosServicio, 'value' => $value));
             }
         }
-        var_dump('correcto');
-
-
-//        $this->servicio->concluirServicio(array('datosConclusion' => $datos, 'datosInstalacion' => $datosRespuesta));
     }
 
 }

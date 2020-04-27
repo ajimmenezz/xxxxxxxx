@@ -43,4 +43,14 @@ class Modelo_Censo extends Base {
                         "' . $datos['Extra'] . '")');
     }
 
+    public function deleteCenso(array $datos) {
+        $this->query('DELETE FROM t_censos
+                        WHERE 
+                        IdServicio = ' . $datos['idServicio'] . '
+                        AND IdArea = ' . $datos['idArea'] . '
+                        AND IdModelo = ' . $datos['idModelo'] . '
+                        AND Punto = ' . $datos['punto'] . '
+                        AND Serie = "' . $datos['serie'] . '"');
+    }
+
 }

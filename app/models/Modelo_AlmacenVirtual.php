@@ -62,14 +62,28 @@ class Modelo_AlmacenVirtual extends Modelo {
                                                     cat_v3_almacenes_virtuales
                                                 WHERE
                                                     (IdTipoAlmacen = 1
-                                                        AND IdReferenciaAlmacen = '". $usuario . "')
+                                                        AND IdReferenciaAlmacen = '" . $usuario . "')
                                                         OR (IdTipoAlmacen = 4
-                                                        AND IdResponsable = '". $usuario . "'))
+                                                        AND IdResponsable = '" . $usuario . "'))
                                                 AND inve.Cantidad > 0
                                                 AND inve.IdEstatus = 17
                                                 AND inve.IdtipoProducto = 1
                                                 AND inve.Bloqueado = 0");
         return $consulta;
+    }
+
+    public function getCatalogoAlmacenesVirtuales(string $where = '') {
+        $consulta = $this->consulta("SELECT * FROM cat_v3_almacenes_virtuales " . $where);
+        return $consulta;
+    }
+
+    public function consultaInventarioWhere(string $where) {
+        $consulta = $this->consulta("SELECT * FROM t_inventario " . $where);
+        return $consulta;
+    }
+    
+    public function insertarInventario(array $datos){
+        $this->insertarArray('t_inventario', $datos);
     }
 
 }

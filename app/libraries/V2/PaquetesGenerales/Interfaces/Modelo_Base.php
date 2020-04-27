@@ -108,4 +108,12 @@ class Modelo_Base {
         return null;
     }
 
+    public function ultimoId() {
+        return self::$DB[$this->nombreBD]->insert_id();
+    }
+
+    public function fechaActualBD() {
+        return $this->consulta("select now() as Fecha;");
+    }
+
 }

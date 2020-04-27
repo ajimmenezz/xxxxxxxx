@@ -5,6 +5,9 @@ namespace Librerias\V2\PaquetesTicket\Poliza;
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicket;
+use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenVirtual;
+use Librerias\V2\PaquetesSucursales\SucursalAdist as Sucursal;
+use Librerias\V2\PaquetesSucursales\Censo as Censo;
 use Librerias\Generales\Correo as Correo;
 
 class ServicioInstalaciones implements Servicio {
@@ -16,6 +19,7 @@ class ServicioInstalaciones implements Servicio {
     private $fechaCreacion;
     private $ticket;
     private $atiende;
+    private $idAtiende;
     private $idSolicitud;
     private $descripcion;
     private $solicita;
@@ -45,6 +49,7 @@ class ServicioInstalaciones implements Servicio {
         $this->fechaSolicitud = $consulta[0]['FechaSolicitud'];
         $this->ticket = $consulta[0]['Ticket'];
         $this->atiende = $consulta[0]['Atiende'];
+        $this->idAtiende = $consulta[0]['IdAtiende'];
         $this->idSolicitud = $consulta[0]['IdSolicitud'];
         $this->descripcion = $consulta[0]['Descripcion'];
         $this->solicita = $consulta[0]['Solicita'];
@@ -79,6 +84,7 @@ class ServicioInstalaciones implements Servicio {
             "fechaInicio" => $this->fechaInicio,
             "ticket" => $this->ticket,
             "atiende" => $this->atiende,
+            "idAtiende" => $this->idAtiende,
             "solicitud" => $this->idSolicitud,
             "servicio" => $this->idServicio,
             "descripcion" => $this->descripcion,
@@ -245,16 +251,86 @@ class ServicioInstalaciones implements Servicio {
         return $consulta[0]['firmas'];
     }
 
-    public function concluirServicio(array $datos) {
-        foreach ($datos['datosInstalacion'] as $key => $value) {
-            if ($value['IdOperacion'] === '1') {
-//                var_dump($datos['datosConclusion']['sucursal']);
-//                $censo = new Censo($datos['datosConclusion']['sucursal']);
-                var_dump($censo);
-            } else {
-                var_dump('otro');
-            }
+    public function setInstalacion(array $datos) {
+        $this->DBServicioTicket->empezarTransaccion();
+        $almacenVirtual = new AlmacenVirtual();
+        $sucursal = new Sucursal($datos['datosServicio']['sucursal']);
+        $censo = new Censo($sucursal);
+        $ultimoServicioCenso = $sucursal->getServicioUltimoCensoSucursal();
+        $datosInventario = $almacenVirtual->consultaInventario($datos['value']['IdModelo']);
+
+        $censo->setCensoIdServicio(array(
+            'servicio' => $ultimoServicioCenso[0]['IdServicio'],
+            'idModelo' => $datosInventario[0]['IdProducto'],
+            'idArea' => $datos['value']['IdArea'],
+            'punto' => $datos['value']['Punto'],
+            'serie' => $datos['value']['Serie']
+        ));
+
+        $idCatAlmacenVirtual = $almacenVirtual->getCatalogoAlmacenesVirtuales("WHERE IdReferenciaAlmacen = '" . $datos['datosServicio']['sucursal'] . "' AND IdTipoAlmacen = 2");
+        $datosMovimientos = $this->setDatosMovimientos(array('IdAlmacen' => $idCatAlmacenVirtual[0]['Id'], 'datosInventario' => $datosInventario));
+
+        $almacenVirtual->setMovimientoInventarioEntradaSalida(array(
+            'idInventario' => $datos['value']['IdModelo'],
+            'primerIdMovimiento' => 4,
+            'segundoIdMovimiento' => 5,
+            'datosMovimientos' => array($datosMovimientos)));
+        $this->DBServicioTicket->finalizarTransaccion();
+    }
+
+    public function setRetiroEquipo(array $datos) {
+        $this->DBServicioTicket->empezarTransaccion();
+        $almacenVirtual = new AlmacenVirtual();
+        $sucursal = new Sucursal($datos['datosServicio']['sucursal']);
+        $censo = new Censo($sucursal);
+        $ultimoServicioCenso = $sucursal->getServicioUltimoCensoSucursal();
+        $idCatAlmacenVirtual = $almacenVirtual->getCatalogoAlmacenesVirtuales("WHERE IdReferenciaAlmacen = '" . $datos['datosServicio']['sucursal'] . "' AND IdTipoAlmacen = 2");
+        $datosInventario = $almacenVirtual->consultaInventarioWhere("WHERE IdProducto = " . $datos['value']['IdModelo'] . " AND IdAlmacen = " . $idCatAlmacenVirtual[0]['Id']);
+
+        if (empty($datosInventario)) {
+            $idInventario = $almacenVirtual->insertarInventario(array(
+                'IdAlmacen' => $idCatAlmacenVirtual[0]['Id'],
+                'IdTipoProducto' => '1',
+                'IdProducto' => $datos['value']['IdModelo'],
+                'IdEstatus' => '17',
+                'Cantidad' => 1,
+                'Serie' => $datos['value']['Serie']
+            ));
+            $datosInventario = $almacenVirtual->consultaInventarioWhere("WHERE Id = " . $idInventario);
+        } else {
+            $idInventario = $datosInventario[0]['Id'];
         }
+
+        $censo->deleteCenso(array(
+            'idServicio' => $ultimoServicioCenso[0]['IdServicio'],
+            'idModelo' => $datos['value']['IdModelo'],
+            'idArea' => $datos['value']['IdArea'],
+            'punto' => $datos['value']['Punto'],
+            'serie' => $datos['value']['Serie']
+        ));
+
+        $datosInventarioUsuario = $almacenVirtual->getCatalogoAlmacenesVirtuales("WHERE IdReferenciaAlmacen = " . $datos['datosServicio']['idAtiende'] . " AND IdTipoAlmacen = 1");
+        $datosMovimientos = $this->setDatosMovimientos(array('IdAlmacen' => $datosInventarioUsuario[0]['Id'], 'datosInventario' => $datosInventario));
+
+        $almacenVirtual->setMovimientoInventarioEntradaSalida(array(
+            'idInventario' => $idInventario,
+            'primerIdMovimiento' => 4,
+            'segundoIdMovimiento' => 5,
+            'datosMovimientos' => array($datosMovimientos)));
+        $this->DBServicioTicket->finalizarTransaccion();
+    }
+
+    public function setDatosMovimientos(array $datos) {
+        $datosMovimientos = array(
+            'IdAlmacen' => (int) $datos['IdAlmacen'],
+            'IdTipoProducto' => $datos['datosInventario'][0]['IdTipoProducto'],
+            'IdProducto' => $datos['datosInventario'][0]['IdProducto'],
+            'IdEstatus' => $datos['datosInventario'][0]['IdEstatus'],
+            'Cantidad' => $datos['datosInventario'][0]['Cantidad'],
+            'Serie' => $datos['datosInventario'][0]['Serie']
+        );
+
+        return $datosMovimientos;
     }
 
 }

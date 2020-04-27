@@ -42,5 +42,9 @@ class Censo {
             'Punto' => $datos['punto'],
             'Extra' => 'SN'));
     }
+    
+    public function deleteCenso(array $datos){
+        $this->DBCenso->deleteCenso($datos);
+    }
 
 }
