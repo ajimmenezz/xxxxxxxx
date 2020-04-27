@@ -196,6 +196,9 @@
                                 <a id="cancelarFolio"><i data-toggle="tooltip" data-placement="top" data-title="Cancelar" class="fa fa-2x fa-times text-danger"></i>Cerrar</a>
                                 <a id="eliminarFolio" class="hidden bloqueoConclusionBtn"><i data-toggle="tooltip" data-placement="top" data-title="Eliminar" class="fa fa-2x fa-trash-o text-danger"></i>Eliminar</a>
                             </div>
+                            <div class="col-md-12">
+                                <div id="errorFolio"></div>
+                            </div>
                             <br><br><br>
                         </div>
                         <!--Finaliza panel y eventos de folio-->
@@ -719,11 +722,10 @@
                 </form>
             </div>
             <div class="col-md-12 text-center">
-                <a id="btnResumen" class="btn btn-sm btn-info hidden"><i class="fa fa-info-circle"></i> Resumen</a>
-                <a id="btnContinuar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
-                <a id="btnTerminar" class="btn btn-sm btn-success hidden"><i class="fa fa-sign-in"></i> Concluir</a>
                 <a id="btnRegresarServicio" class="btn btn-sm btn-danger"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
                 <a id="btnRegresarServicio2" class="btn btn-sm btn-danger hidden"><i class="fa fa-rotate-180 fa-sign-in"></i> Regresar</a>
+                <a id="btnContinuar" class="btn btn-sm btn-success"><i class="fa fa-sign-in"></i> Continuar</a>
+                <a id="btnTerminar" class="btn btn-sm btn-success hidden"><i class="fa fa-sign-in"></i> Concluir</a>
             </div>
             <!--Finaliza contenido de elementos-->
         </div>

@@ -55,7 +55,6 @@ $(function () {
         ],
         webStorage: false
     });
-    let existenFirmas = null;
 
     let datoServicioTabla = {
         id: null,
@@ -158,7 +157,7 @@ $(function () {
         materialTecnico = infoServicio.datosServicio.materialUsuario;
         listaTotalMaterialUsado = infoServicio.solucion.totalMaterial;
         iniciarObjetos();
-        if (infoServicio.servicio.Folio != 0 && infoServicio.servicio.Folio != null) {
+        if (infoServicio.servicio.Folio !== 0 && infoServicio.servicio.Folio !== null) {
             mostrarElementosAgregarFolio();
             mostrarInformacionFolio(infoServicio.folio);
             arreglarNotas(infoServicio.notasFolio);
@@ -213,12 +212,14 @@ $(function () {
     }
 
     function mostrarInformacionFolio(infoFolio) {
-        if (infoFolio.Error === "") {
+        console.log(infoFolio);
+        if (infoFolio.operacion !== false) {
             $('#infoFolio').removeClass('hidden');
             $('#editarFolio').removeClass('hidden');
             $('#eliminarFolio').removeClass('hidden');
             $('#guardarFolio').addClass('hidden');
             $('#cancelarFolio').addClass('hidden');
+            $('#errorFolio').empty();
             $('#addFolio').val(infoFolio.WORKORDERID).prop("disabled", true);
             $("#creadoPorFolio").text(infoFolio.CREATEDBY);
             $("#fechaCreacionFolio").text(fecha.formatoFecha(infoFolio.CREATEDTIME));
@@ -228,11 +229,12 @@ $(function () {
             $("#estatusFolio").text(infoFolio.STATUS);
             $("#asuntoFolio").text(infoFolio.SHORTDESCRIPTION);
         } else {
-            $('#agregarFolio').empty();
-            $('#agregarFolio').append('<div class="col-md-12"><br>\n\
+            $('#infoFolio').addClass('hidden');
+            $('#errorFolio').empty();
+            $('#errorFolio').append('<div class="col-md-12"><br>\n\
                                             <form id="errorFolio">\n\
                                                 <div class="form-group">\n\
-                                                   <label class="col-md-10">La clave del técnico en la solicitud no es válida. Imposible de autenticar.</label>\n\
+                                                   <label class="col-md-10 semi-bold">' + infoFolio.Error + '</label>\n\
                                                 </div>\n\
                                             </form><br><br><br>\n\
                                         </div>');
@@ -419,7 +421,6 @@ $(function () {
                     if (!validarError(respuesta, 'modalMaterialNodo')) {
                         return;
                     }
-                    console.log(respuesta);
                     limpiarElementosModalMaterial();
                     tablaNodos.limpiartabla();
                     listaTotalNodos = respuesta.solucion.nodos;
@@ -437,7 +438,6 @@ $(function () {
                     if (!validarError(respuesta, 'modalMaterialNodo')) {
                         return;
                     }
-                    console.log(respuesta);
                     limpiarElementosModalMaterial();
                     tablaNodos.limpiartabla();
                     listaTotalNodos = respuesta.solucion.nodos;
@@ -445,7 +445,7 @@ $(function () {
                     materialTecnico = respuesta.datosServicio.materialUsuario;
                     cargarContenidoModalMaterial(respuesta.datosServicio);
                     cargarContenidoTablaNodos();
-                    ocultarElementosDefault(respuesta.solucion);
+                    ocultarElementosDefault(respuesta.solucion, respuesta.firmas);
                     $('#modalMaterialNodo').modal('toggle');
                 });
             }
@@ -770,13 +770,13 @@ $(function () {
             $('#btnConcluir').addClass('hidden');
         }
         if (firmas !== null) {
-            existenFirmas = true;
+            $('#firmaExistenteCliente').empty();
+            $('#firmaExistenteTecnico').empty();
             $('#firmasExistentes').removeClass('hidden');
             let firma = firmas.split(',');
             $('#firmaExistenteCliente').append('<img src ="' + firma[0] + '" />');
             $('#firmaExistenteTecnico').append('<img src ="' + firma[1] + '" />');
         } else {
-            existenFirmas = false;
             $('#firmasExistentes').addClass('hidden');
     }
     }
@@ -820,7 +820,6 @@ $(function () {
     $('#cancelarFolio').on('click', function () {
         if (datoServicioTabla.folio !== '' && datoServicioTabla.folio !== '0') {
             $('#addFolio').prop('disabled', true);
-            $('#infoFolio').removeClass('hidden');
             $('#editarFolio').removeClass('hidden');
             $('#eliminarFolio').removeClass('hidden');
             $('#guardarFolio').addClass('hidden');
@@ -1020,27 +1019,24 @@ $(function () {
 
     $('#btnConcluir').on('click', function () {
         let faltaEvidencia = true;
-        if (existenFirmas) {
-            console.log("termino");
+
+        if (listaTotalNodos.length > 0) {
+            $.each(listaTotalNodos, function (key, value) {
+                if (value.Archivos == "") {
+                    faltaEvidencia += 1;
+                    modal.mostrarModal('AVISO', '<h4>El Nodo <b>' + value.Nombre + '</b> no tiene evidencia</h4>');
+                    $('#btnAceptar').addClass('hidden');
+                    faltaEvidencia = false;
+                }
+            });
+            if (faltaEvidencia === true) {
+                $('#contentFirmasConclucion').removeClass('hidden');
+                $('#contentServiciosRedes').addClass('hidden');
+            }
         } else {
-            if (listaTotalNodos.length > 0) {
-                $.each(listaTotalNodos, function (key, value) {
-                    if (value.Archivos == "") {
-                        faltaEvidencia += 1;
-                        modal.mostrarModal('AVISO', '<h4>El Nodo <b>' + value.Nombre + '</b> no tiene evidencia</h4>');
-                        $('#btnAceptar').addClass('hidden');
-                        faltaEvidencia = false;
-                    }
-                });
-                if (faltaEvidencia === true) {
-                    $('#contentFirmasConclucion').removeClass('hidden');
-                    $('#contentServiciosRedes').addClass('hidden');
-                }
-            } else {
-                if (archivosEstablecidos !== null) {
-                    $('#contentFirmasConclucion').removeClass('hidden');
-                    $('#contentServiciosRedes').addClass('hidden');
-                }
+            if (archivosEstablecidos !== null) {
+                $('#contentFirmasConclucion').removeClass('hidden');
+                $('#contentServiciosRedes').addClass('hidden');
             }
         }
     });
@@ -1050,7 +1046,6 @@ $(function () {
             if (!validarError(respuesta)) {
                 return;
             }
-
             modal.mostrarModal("Exito", '<h4>Servicio validado correctamente</h4>');
             $('#btnAceptar').addClass('hidden');
             modal.btnAceptar('btnCerrar', function () {

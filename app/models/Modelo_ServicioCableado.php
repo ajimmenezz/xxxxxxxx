@@ -172,7 +172,11 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                                 WHERE tst.Id =' . $datosServicio['id']); 
  
         $datos['evidencias'] = $this->consulta('SELECT Archivos FROM t_redes_nodos WHERE IdServicio =' . $datosServicio['id']); 
+        
+        $datos['evidenciasGenerales'] = $this->consulta('SELECT Archivos FROM t_servicios_generales WHERE IdServicio =' . $datosServicio['id']); 
  
+        $datos['totalMaterial'] = $this->ejecutaFuncion('call getTotalRedesServiceMaterial(' . $datosServicio['id'] . ')');
+        
         $datos['infoFirmas'] = $this->consulta('SELECT  
                                                     tst.Firma,  
                                                     tst.NombreFirma,  

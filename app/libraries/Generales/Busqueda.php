@@ -802,24 +802,20 @@ class Busqueda extends General {
         
         if($listaCenso){
             $this->Excel->createSheet('Censo', 0);
+            $this->Excel->createSheet('Diferencias(Conteos)', 1);
+            $this->Excel->createSheet('Diferencias(Series)', 2);
+            $this->Excel->createSheet('Cambios Serie', 3);
+            $this->Excel->createSheet('Faltantes', 4);
+            $this->Excel->createSheet('Sobrantes', 5);
             $this->Excel->setActiveSheet(0);
-            $arrayTitulos = [
-                'Sucursal',
-                'Área de Atención',
-                'Punto',
-                'Línea de Equipo',
-                'Sublínea de Equipo',
-                'Marca',
-                'Modelo',
-                'Serie',
-                'Terminal'];
-            $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
-            $arrayWidth = [30, 15, 8, 20, 20, 20, 30, 30, 20];
-            $this->Excel->setColumnsWidth('A', $arrayWidth);
-            $arrayAlign = ['justify', 'center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
-
-            $this->Excel->setTableContent('A', 1, $listaCenso, true, $arrayAlign);
             
+            $this->contenidoCenso($listaCenso);
+            $this->diferenciasConteos();
+            $this->diferenciasSeries();
+            $this->cambiosSeries();
+            $this->faltantes();
+            $this->sobrantes();
+                        
             $nombreArchivo = 'Censo-'.$listaCenso[0]['Sucursal'] .'_'. $datos['servicio'] . '.xlsx';
             $nombreArchivo = trim($nombreArchivo);
             $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
@@ -835,5 +831,43 @@ class Busqueda extends General {
             return false;
         }
     }
+    
+    public function contenidoCenso($listaCenso) {
+        $arrayTitulos = [
+                'Sucursal',
+                'Área de Atención',
+                'Punto',
+                'Línea de Equipo',
+                'Sublínea de Equipo',
+                'Marca',
+                'Modelo',
+                'Serie',
+                'Terminal'];
+            $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+            $arrayWidth = [30, 15, 8, 20, 20, 20, 30, 30, 20];
+            $this->Excel->setColumnsWidth('A', $arrayWidth);
+            $arrayAlign = ['justify', 'center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
 
+            $this->Excel->setTableContent('A', 1, $listaCenso, true, $arrayAlign);
+    }
+    
+    public function diferenciasConteos() {
+        
+    }
+    
+    public function diferenciasSeries() {
+        
+    }
+    
+    public function cambiosSeries() {
+        
+    }
+    
+    public function faltantes() {
+        
+    }
+    
+    public function sobrantes() {
+        
+    }
 }

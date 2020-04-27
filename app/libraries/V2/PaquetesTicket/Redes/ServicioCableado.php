@@ -229,14 +229,24 @@ class ServicioCableado implements Servicio {
 
     public function getPDF(array $datos) {
         $informacionServicio = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
+        if ($this->folioSolicitud == null) {
+            $this->folioSolicitud = '';
+        }
         $pdf = new PDF($this->folioSolicitud);
         $pdf->AddPage();
-        $pdf->tituloTabla('#1 Información General');
+        $pdf->tituloTabla('Información General');
         $pdf->tabla(array(), $informacionServicio['infoGeneral']);
         $pdf->tituloTabla('Solución del Servicio');
         $pdf->tabla(array(), $informacionServicio['infoNodos']);
-        $evidencias = explode(',', $informacionServicio['evidencias'][0]['Archivos']);
-        $pdf->tablaImagenes($evidencias);
+        if (!empty($informacionServicio['evidencias'])) {
+            $evidencias = explode(',', $informacionServicio['evidencias'][0]['Archivos']);
+            $pdf->tablaImagenes($evidencias);
+            $pdf->tituloTabla('Material');
+            $pdf->tabla(array('Tipo', 'Producto', 'Cantidad'), $informacionServicio['totalMaterial']);
+        } else{
+            $evidencias = explode(',', $informacionServicio['evidenciasGenerales'][0]['Archivos']);
+            $pdf->tablaImagenes($evidencias);
+        }
         $pdf->tituloTabla('Firmas del Servicio');
         $pdf->firma($informacionServicio['infoFirmas'][0]);
         $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');

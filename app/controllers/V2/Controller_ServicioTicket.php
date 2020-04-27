@@ -81,7 +81,7 @@ class Controller_ServicioTicket extends CI_Controller {
                 $this->datos['notasFolio'] = ServiceDesk::getNotas($this->servicio->getFolio());
             }
         } catch (Exception $ex) {
-            $this->datos['folio'] = array('Error' => $ex->getMessage());
+            $this->datos['folio'] = array('Error' => $ex->getMessage(), 'operacion' => FALSE);
             $this->datos['notasFolio'] = array('Error' => $ex->getMessage());
         }
     }
@@ -124,6 +124,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio->runAccion($evento, $datosServicio);
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
+            $this->datos['firmas'] = $this->servicio->getFirmas($datosServicio['id']);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -207,9 +208,11 @@ class Controller_ServicioTicket extends CI_Controller {
             Archivo::saveArchivos64($carpeta, $firmas);
             $datosServicio['archivos'] = Archivo::getArray();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);
+            $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);           
             $this->setResolucionServiceDesk($datosServicio);
-            $this->almacenVirtual->updateAlmacen($datosServicio);
+            if(isset($datosServicio['nodos'])){
+                $this->almacenVirtual->updateAlmacen($datosServicio);
+            }
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (\Exception $ex) {
