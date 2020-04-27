@@ -2670,7 +2670,7 @@ $(function() {
     }
   };
   var colocarBotonGuardarCambiosCenso = function(datosServicio) {
-    if (datosServicio.Firma !== null) {
+    if (datosServicio.Firma !== null && datosServicio.Firma !== '') {
       $("#divBotonesServicioCenso").addClass("hidden");
       $("#divGuardarCambiosServicioCenso").removeClass("hidden");
     }
