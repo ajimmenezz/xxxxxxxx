@@ -238,7 +238,7 @@ class Modelo_Censos extends Modelo_Base
                 if ($value['existe'] == 1) {
                     $this->actualizar("t_censos", [
                         'IdModelo' => $value['modelo'],
-                        'Serie' => $value['serie'],
+                        'Serie' => str_replace(" ", "", strtoupper($value['serie'])),
                         'Existe' => $value['existe'],
                         'Danado' => $value['danado']
                     ], ['Id' => $value['id']]);
@@ -255,7 +255,7 @@ class Modelo_Censos extends Modelo_Base
                     'IdArea' => $datos['area'],
                     'Punto' => $datos['punto'],
                     'IdModelo' => $value['modelo'],
-                    'Serie' => $value['serie'],
+                    'Serie' => str_replace(" ", "", strtoupper($value['serie'])),
                     'Existe' => 1,
                     'Danado' => $value['danado']
                 ]);
@@ -624,7 +624,7 @@ class Modelo_Censos extends Modelo_Base
         from t_servicios_ticket tst
         where IdTipoServicio = 11
         and IdEstatus = 4
-        and IdSucursal = 17
+        and IdSucursal = '" . $sucursal . "'
         order by Id desc limit 1");
         if (!empty($consulta)) {
             return $consulta;
@@ -834,5 +834,72 @@ class Modelo_Censos extends Modelo_Base
             $this->commitTransaccion();
             return ['code' => 200];
         }
+    }
+
+    public function getCensoForCompare($idServicio)
+    {
+        return $this->consulta("
+        select 
+        IdArea,
+        Punto,
+        lineaByModelo(IdModelo) as IdLinea,
+        sublineaByModelo(IdModelo) as IdSublinea,
+        cme.Marca as IdMarca,
+        IdModelo,
+        areaAtencion(IdArea) as Area,
+        linea(lineaByModelo(IdModelo)) as Linea,
+        sublinea(sublineaByModelo(IdModelo)) as Sublinea,
+        marca(cme.Marca) as Marca,
+        cme.Nombre as Modelo,
+        tc.Serie
+        from t_censos tc
+        inner join cat_v3_modelos_equipo cme on tc.IdModelo = cme.Id
+        where tc.IdServicio = '" . $idServicio . "'
+        and tc.Existe = 1
+        and tc.IdEstatus in (0,17)
+        and tc.Forced in (0,1)");
+    }
+
+    public function getLastCensoForCompare($idServicio)
+    {
+        $lastInventoryService = $this->consulta(
+            "select 
+            MAX(Id) as IdServicio
+            from t_servicios_ticket tst
+            where tst.IdTipoServicio = 11
+            and tst.IdEstatus = 4
+            and tst.IdSucursal = (select IdSucursal from t_servicios_ticket where Id = '" . $idServicio . "')"
+        );
+        if (!empty($lastInventoryService)) {
+            return $this->getCensoForCompare($lastInventoryService[0]['IdServicio']);
+        } else {
+            return [];
+        }
+    }
+
+    public function getGeneralesForCompare($idServicio)
+    {
+        $this->queryBolean("SET lc_time_names = 'es_ES'");
+        return $this->consulta("
+            select 
+            DATE_FORMAT(tst.FechaCreacion,'%M %d, %Y') as Fecha,
+            sucursal(tst.IdSucursal) as Sucursal,
+            (select DATE_FORMAT(FechaCreacion,'%M %d, %Y') from t_servicios_ticket where IdSucursal = tst.IdSucursal and IdTipoServicio = 11 and IdEstatus = 4 and Id < tst.Id order by Id desc limit 1) as FechaUltimo
+            from t_servicios_ticket tst
+            where tst.Id = '" . $idServicio . "'")[0];
+    }
+
+    public function getKitSublineasXArea(){
+        return $this->consulta("
+            select 
+            csa.Id,
+            csa.IdArea,
+            csa.IdSublinea,
+            csa.Cantidad,
+            areaAtencion(csa.IdArea) as Area,
+            linea((select Linea from cat_v3_sublineas_equipo where Id = csa.IdSublinea)) as Linea,
+            sublinea(csa.IdSublinea) as Sublinea
+            from cat_v3_sublineas_x_area csa
+            where Flag = 1");
     }
 }
