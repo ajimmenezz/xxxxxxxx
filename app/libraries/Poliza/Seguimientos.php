@@ -6243,7 +6243,7 @@ class Seguimientos extends General
         return ['html' => parent::getCI()->load->view('Poliza/Modal/DiferenciaCensos', $dataDiff, TRUE)];
     }
 
-    private function getDataForCensoCompare($servicio)
+    public function getDataForCensoCompare($servicio)
     {
         $actual = $this->DBCensos->getCensoForCompare($servicio);
         $ultimo = $this->DBCensos->getLastCensoForCompare($servicio);
