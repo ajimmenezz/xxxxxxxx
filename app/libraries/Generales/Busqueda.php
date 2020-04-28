@@ -824,7 +824,7 @@ class Busqueda extends General {
 
             return ['ruta' => $liga . '/storage/Archivos/Reportes/' . $nombreArchivo];
         } else {
-            return false;
+            return ['ruta' => 500, 'mensaje' => 'No hay Registros en el censo'];
         }
     }
     
@@ -924,10 +924,29 @@ class Busqueda extends General {
             }
         }
         
-        $this->Excel->setTableContent('A', 6, $listaAreas, true, $arrayAlign);
-        $this->Excel->setTableContent('D', 6, $listaLineas, true, $arrayAlign);
-        $this->Excel->setTableContent('G', 6, $listaLineas, true, $arrayAlign);
-        $this->Excel->setTableContent('J', 6, $listaModelos, true, $arrayAlign);
+//        var_dump('<pre>');
+//        var_dump($listaAreas);
+//        var_dump('</pre>');
+        if(count($listaAreas) > 0){
+            $this->Excel->setTableContent('A', 6, $listaAreas, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A7', 'B7', 'No existen registros', ['center']);
+        }
+        if(count($listaLineas) > 0){
+            $this->Excel->setTableContent('D', 6, $listaLineas, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('D7', 'E7', 'No existen registros', ['center']);
+        }
+        if(count($listaSubLineas) > 0){
+            $this->Excel->setTableContent('G', 6, $listaSubLineas, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('G7', 'H7', 'No existen registros', ['center']);
+        }
+        if(count($listaModelos) > 0){
+            $this->Excel->setTableContent('J', 6, $listaModelos, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('J7', 'K7', 'No existen registros', ['center']);
+        }
     }
     
     public function diferenciasSeries($diferenciasActual, $diferenciasUltimo, $fechas) {
@@ -970,8 +989,16 @@ class Busqueda extends General {
             $listaDiferenciasUltimo[$k]['Modelo'] = $v['Modelo'];
             $listaDiferenciasUltimo[$k]['SerieAnt'] = $v['Serie'];
         }
-        $this->Excel->setTableContent('A', 2, $listaDiferenciasActual, true, $arrayAlign);
-        $this->Excel->setTableContent('I', 2, $listaDiferenciasUltimo, true, $arrayAlign);
+        if(count($listaDiferenciasActual) > 0){
+            $this->Excel->setTableContent('A', 2, $listaDiferenciasActual, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A3', 'G3', 'No existen registros', ['center']);
+        }
+        if(count($listaDiferenciasUltimo) > 0){
+            $this->Excel->setTableContent('I', 2, $listaDiferenciasUltimo, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('I3', 'O3', 'No existen registros', ['center']);
+        }
     }
     
     public function cambiosSeries($cambiosSerie) {
@@ -988,22 +1015,27 @@ class Busqueda extends General {
                 'Modelo',
                 'Serie Anterior',
                 'Serie Actual'];
-            $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
-            $arrayWidth = [15, 8, 20, 20, 20, 30, 30, 30];
-            $this->Excel->setColumnsWidth('A', $arrayWidth);
-            $arrayAlign = ['center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
-            
-            foreach ($cambiosSerie as $k => $v) {
-                $listaCambiosSerie[$k]['Area'] = $v['Area'];
-                $listaCambiosSerie[$k]['Punto'] = $v['Punto'];
-                $listaCambiosSerie[$k]['Linea'] = $v['Linea'];
-                $listaCambiosSerie[$k]['Sublinea'] = $v['Sublinea'];
-                $listaCambiosSerie[$k]['Marca'] = $v['Marca'];
-                $listaCambiosSerie[$k]['Modelo'] = $v['Modelo'];
-                $listaCambiosSerie[$k]['SerieAnt'] = $v['Serie'];
-                $listaCambiosSerie[$k]['SerieAct'] = 'ILEGIBLE';
-            }
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        $arrayWidth = [15, 8, 20, 20, 20, 30, 30, 30];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $arrayAlign = ['center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
+
+        foreach ($cambiosSerie as $k => $v) {
+            $listaCambiosSerie[$k]['Area'] = $v['Area'];
+            $listaCambiosSerie[$k]['Punto'] = $v['Punto'];
+            $listaCambiosSerie[$k]['Linea'] = $v['Linea'];
+            $listaCambiosSerie[$k]['Sublinea'] = $v['Sublinea'];
+            $listaCambiosSerie[$k]['Marca'] = $v['Marca'];
+            $listaCambiosSerie[$k]['Modelo'] = $v['Modelo'];
+            $listaCambiosSerie[$k]['SerieAnt'] = $v['Serie'];
+            $listaCambiosSerie[$k]['SerieAct'] = 'ILEGIBLE';
+        }
+
+        if(count($listaCambiosSerie) > 0){
             $this->Excel->setTableContent('A', 2, $listaCambiosSerie, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A3', 'H3', 'No existen registros', ['center']);
+        }
     }
     
     public function faltantes($diferenciasKitFaltantes) {
@@ -1035,7 +1067,12 @@ class Busqueda extends General {
                 }
             }
         }
-        $this->Excel->setTableContent('A', 2, $listaFaltantes, true, $arrayAlign);
+        
+        if(count($listaFaltantes) > 0){
+            $this->Excel->setTableContent('A', 2, $listaFaltantes, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A3', 'E3', 'No existen registros', ['center']);
+        }        
     }
     
     public function sobrantes($diferenciasKitSobrantes) {
@@ -1077,6 +1114,11 @@ class Busqueda extends General {
                 $i++;
             }
         }
-        $this->Excel->setTableContent('A', 2, $lista, true, $arrayAlign);
+        
+        if(count($lista) > 0){
+            $this->Excel->setTableContent('A', 2, $lista, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A3', 'G3', 'No existen registros', ['center']);
+        }
     }
 }

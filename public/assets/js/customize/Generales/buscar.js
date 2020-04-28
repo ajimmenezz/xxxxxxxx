@@ -292,7 +292,13 @@ $(function () {
                     servicio: servicio
                 }
                 evento.enviarEvento('Buscar/ExportarCenso', data, '#seccion-detalles', function (respuesta) {
-                    window.open(respuesta.ruta, '_blank');
+                    if(respuesta.ruta !== 500){
+                        window.open(respuesta.ruta, '_blank');
+                    } else {
+                        evento.mostrarModal("Aviso", '<h3 class="text-center">'+respuesta.mensaje+'</h3>');
+                        $('#btnModalConfirmar').addClass('hidden');
+                        $('#btnModalAbortar').empty().append('Cerrar');
+                    }
                 });
             });
 
