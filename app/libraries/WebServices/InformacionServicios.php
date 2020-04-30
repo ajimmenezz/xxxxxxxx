@@ -2454,7 +2454,7 @@ class InformacionServicios extends General {
             $this->setStyleMinisubtitle();
             $this->setCellValue(55, 5, $value['Area'], 'L');
             $this->setCoordinates(65, $this->y - 5);
-            $this->setCellValue(15, 5, $value['Punto'], 'L');
+            $this->setCellValue(15, 5, $value['Punto'], 'C');
             $this->setCoordinates(80, $this->y - 5);
             $this->setCellValue(80, 5, $value['Equipo'], 'L');
             $this->setCoordinates(160, $this->y - 5);
@@ -2559,12 +2559,9 @@ class InformacionServicios extends General {
     }
 
     private function setResumenDiferencias(array $datos, array $datosExtra) {
-        if (($this->y + 21) > 270) {
-            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-            $this->setCoordinates(10);
-        } else {
-            $this->setCoordinates(10, $this->y + 5);
-        }
+        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+        $this->setCoordinates(10);
+
 
         $this->setStyleHeader();
         $this->setHeaderValue($datosExtra['Sucursal']);
@@ -2579,15 +2576,17 @@ class InformacionServicios extends General {
         $this->setCoordinates(136, $this->y - 5);
         $this->setCellValue(64, 5, 'Diferencia de Equipos', 'C', true);
 
-        if($datos['conteo'] > 0){
+        if ($datos['conteo'] > 0) {
             $signo = '+';
-        }else{
+        } elseif ($datos['conteo'] === 0) {
+            $signo = '';
+        } else {
             $signo = '-';
         }
-        
+
         $this->setCoordinates(10);
         $this->setStyleSubtitle();
-        $this->setCellValue(63, 5, count($datos['ultimo']), 'c');
+        $this->setCellValue(63, 5, count($datos['ultimo']), 'C');
         $this->setCoordinates(73, $this->y - 5);
         $this->setCellValue(63, 5, count($datos['actual']), 'C');
         $this->setCoordinates(136, $this->y - 5);
@@ -2602,17 +2601,32 @@ class InformacionServicios extends General {
             $this->setCoordinates(10, $this->y + 5);
         }
 
-        $this->setHeadersDiferenciaPuntosArea();
+        $contador = FALSE;
 
         foreach ($datosExtra as $key => $value) {
-            $this->setCoordinates(10);
-            $this->setStyleSubtitle();
-            $this->setCellValue(100, 5, $key, 'L');
-            $this->setCoordinates(110, $this->y - 5);
-            $this->setCellValue(90, 5, $value, 'C');
-            if (($this->y + 5) > 270) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-                $this->setHeadersDiferenciaPuntosArea();
+            if ($value !== 0) {
+                $contador = TRUE;
+            }
+        }
+
+        if (!$contador) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de diferencia de Puntos x Área");
+        } else {
+            $this->setHeadersDiferenciaPuntosArea();
+
+            foreach ($datosExtra as $key => $value) {
+                if ($value !== 0) {
+                    $this->setCoordinates(10);
+                    $this->setStyleSubtitle();
+                    $this->setCellValue(100, 5, $key, 'L');
+                    $this->setCoordinates(110, $this->y - 5);
+                    $this->setCellValue(90, 5, $value, 'C');
+                    if (($this->y + 5) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                        $this->setHeadersDiferenciaPuntosArea();
+                    }
+                }
             }
         }
     }
@@ -2649,17 +2663,32 @@ class InformacionServicios extends General {
             $this->setCoordinates(10, $this->y + 5);
         }
 
-        $this->setHeadersDiferenciaLineas();
+        $contador = FALSE;
 
         foreach ($datosExtra as $key => $value) {
-            $this->setCoordinates(10);
-            $this->setStyleSubtitle();
-            $this->setCellValue(100, 5, $key, 'L');
-            $this->setCoordinates(110, $this->y - 5);
-            $this->setCellValue(90, 5, $value, 'C');
-            if (($this->y + 5) > 270) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-                $this->setHeadersDiferenciaLineas();
+            if ($value !== 0) {
+                $contador = TRUE;
+            }
+        }
+
+        if (!$contador) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de diferencia de Líneas");
+        } else {
+            $this->setHeadersDiferenciaLineas();
+
+            foreach ($datosExtra as $key => $value) {
+                if ($value !== 0) {
+                    $this->setCoordinates(10);
+                    $this->setStyleSubtitle();
+                    $this->setCellValue(100, 5, $key, 'L');
+                    $this->setCoordinates(110, $this->y - 5);
+                    $this->setCellValue(90, 5, $value, 'C');
+                    if (($this->y + 5) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                        $this->setHeadersDiferenciaLineas();
+                    }
+                }
             }
         }
     }
@@ -2684,17 +2713,32 @@ class InformacionServicios extends General {
             $this->setCoordinates(10, $this->y + 5);
         }
 
-        $this->setHeadersDiferenciaSublineas();
+        $contador = FALSE;
 
         foreach ($datosExtra as $key => $value) {
-            $this->setCoordinates(10);
-            $this->setStyleSubtitle();
-            $this->setCellValue(100, 5, $key, 'L');
-            $this->setCoordinates(110, $this->y - 5);
-            $this->setCellValue(90, 5, $value, 'C');
-            if (($this->y + 5) > 270) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-                $this->setHeadersDiferenciaSublineas();
+            if ($value !== 0) {
+                $contador = TRUE;
+            }
+        }
+
+        if (!$contador) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de diferencia de Sublíneas");
+        } else {
+            $this->setHeadersDiferenciaSublineas();
+
+            foreach ($datosExtra as $key => $value) {
+                if ($value !== 0) {
+                    $this->setCoordinates(10);
+                    $this->setStyleSubtitle();
+                    $this->setCellValue(100, 5, $key, 'L');
+                    $this->setCoordinates(110, $this->y - 5);
+                    $this->setCellValue(90, 5, $value, 'C');
+                    if (($this->y + 5) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                        $this->setHeadersDiferenciaSublineas();
+                    }
+                }
             }
         }
     }
@@ -2723,7 +2767,7 @@ class InformacionServicios extends General {
         $this->setCellValue(28, 5, 'Marca', 'C', true);
         $this->setStyleTitle();
         $this->setCoordinates(134, $this->y - 5);
-        $this->setCellValue(38, 5, 'Modelo', 'C', true);
+        $this->setCellValue(28, 5, 'Modelo', 'C', true);
         $this->setStyleTitle();
         $this->setCoordinates(162, $this->y - 5);
         $this->setCellValue(38, 5, 'Serie', 'C', true);
@@ -2737,9 +2781,13 @@ class InformacionServicios extends General {
             $this->setCoordinates(10, $this->y + 5);
         }
 
-        $this->setHeadersEquiposNoExistenCenso($datos['FechaUltimo']);
-
-        $this->datosEquipoNoExisteCenso($datos, $datosExtra);
+        if (empty($datosExtra)) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de Equipos que no existen en el censo de " . $datos['FechaUltimo']);
+        } else {
+            $this->setHeadersEquiposNoExistenCenso($datos['FechaUltimo']);
+            $this->datosEquipoNoExisteCenso($datos, $datosExtra);
+        }
     }
 
     private function setEquiposNoExistenCensoActual(array $datos, array $datosExtra) {
@@ -2750,9 +2798,13 @@ class InformacionServicios extends General {
             $this->setCoordinates(10, $this->y + 5);
         }
 
-        $this->setHeadersEquiposNoExistenCenso($datos['Fecha']);
-
-        $this->datosEquipoNoExisteCenso($datos, $datosExtra);
+        if (empty($datosExtra)) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de Equipos que no existen en el censo de " . $datos['Fecha']);
+        } else {
+            $this->setHeadersEquiposNoExistenCenso($datos['Fecha']);
+            $this->datosEquipoNoExisteCenso($datos, $datosExtra);
+        }
     }
 
     private function datosEquipoNoExisteCenso(array $datos, array $datosExtra) {
@@ -2799,17 +2851,33 @@ class InformacionServicios extends General {
             $this->setCoordinates(10, $this->y + 5);
         }
 
-        $this->setHeadersDiferenciaModelos();
+
+        $contador = FALSE;
 
         foreach ($datosExtra as $key => $value) {
-            $this->setCoordinates(10);
-            $this->setStyleSubtitle();
-            $this->setCellValue(100, 5, $key, 'L');
-            $this->setCoordinates(110, $this->y - 5);
-            $this->setCellValue(90, 5, $value, 'C');
-            if (($this->y + 5) > 270) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-                $this->setHeadersDiferenciaModelos();
+            if ($value !== 0) {
+                $contador = TRUE;
+            }
+        }
+
+        if (!$contador) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de diferencia de Modelos");
+        } else {
+            $this->setHeadersDiferenciaModelos();
+
+            foreach ($datosExtra as $key => $value) {
+                if ($value !== 0) {
+                    $this->setCoordinates(10);
+                    $this->setStyleSubtitle();
+                    $this->setCellValue(100, 5, $key, 'L');
+                    $this->setCoordinates(110, $this->y - 5);
+                    $this->setCellValue(90, 5, $value, 'C');
+                    if (($this->y + 5) > 270) {
+                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                        $this->setHeadersDiferenciaModelos();
+                    }
+                }
             }
         }
     }
@@ -2852,29 +2920,34 @@ class InformacionServicios extends General {
             $this->setCoordinates(10, $this->y + 5);
         }
 
-        $this->setHeadersCambiosSerie();
+        if (empty($datosExtra)) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de Equipos que posiblemente cambiaron de tener Serie a ser ILEGIBLE");
+        } else {
+            $this->setHeadersCambiosSerie();
 
-        foreach ($datosExtra as $key => $value) {
-            $this->setCoordinates(10);
-            $this->setStyleMinisubtitle();
-            $this->setCellValue(25, 5, $value['Area'], 'L');
-            $this->setCoordinates(35, $this->y - 5);
-            $this->setCellValue(10, 5, $value['Punto'], 'C');
-            $this->setCoordinates(45, $this->y - 5);
-            $this->setCellValue(25, 5, $value['Linea'], 'L');
-            $this->setCoordinates(70, $this->y - 5);
-            $this->setCellValue(25, 5, $value['Sublinea'], 'L');
-            $this->setCoordinates(95, $this->y - 5);
-            $this->setCellValue(25, 5, $value['Marca'], 'L');
-            $this->setCoordinates(120, $this->y - 5);
-            $this->setCellValue(25, 5, $value['Modelo'], 'L');
-            $this->setCoordinates(145, $this->y - 5);
-            $this->setCellValue(33, 5, $value['Serie'], 'L');
-            $this->setCoordinates(178, $this->y - 5);
-            $this->setCellValue(22, 5, 'ILEGIBLE', 'L');
-            if (($this->y + 5) > 270) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-                $this->setHeadersCambiosSerie();
+            foreach ($datosExtra as $key => $value) {
+                $this->setCoordinates(10);
+                $this->setStyleMinisubtitle();
+                $this->setCellValue(25, 5, $value['Area'], 'L');
+                $this->setCoordinates(35, $this->y - 5);
+                $this->setCellValue(10, 5, $value['Punto'], 'C');
+                $this->setCoordinates(45, $this->y - 5);
+                $this->setCellValue(25, 5, $value['Linea'], 'L');
+                $this->setCoordinates(70, $this->y - 5);
+                $this->setCellValue(25, 5, $value['Sublinea'], 'L');
+                $this->setCoordinates(95, $this->y - 5);
+                $this->setCellValue(25, 5, $value['Marca'], 'L');
+                $this->setCoordinates(120, $this->y - 5);
+                $this->setCellValue(25, 5, $value['Modelo'], 'L');
+                $this->setCoordinates(145, $this->y - 5);
+                $this->setCellValue(33, 5, $value['Serie'], 'L');
+                $this->setCoordinates(178, $this->y - 5);
+                $this->setCellValue(22, 5, 'ILEGIBLE', 'L');
+                if (($this->y + 5) > 270) {
+                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    $this->setHeadersCambiosSerie();
+                }
             }
         }
     }
@@ -2901,32 +2974,33 @@ class InformacionServicios extends General {
     }
 
     private function setFaltantes(array $datos, array $datosExtra) {
-        if (($this->y + 21) > 270) {
-            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-            $this->setCoordinates(10);
+        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+        $this->setCoordinates(10);
+
+        if (empty($datosExtra)) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de Equipos que faltan basado en el Kit Estandar de Área");
         } else {
-            $this->setCoordinates(10, $this->y + 5);
-        }
+            $this->setHeadersFaltantes();
 
-        $this->setHeadersFaltantes();
-
-        foreach ($datosExtra as $kArea => $vArea) {
-            foreach ($vArea as $kPunto => $vPunto) {
-                foreach ($vPunto as $k => $v) {
-                    $this->setCoordinates(10);
-                    $this->setStyleMinisubtitle();
-                    $this->setCellValue(55, 5, $v['Area'], 'L');
-                    $this->setCoordinates(65, $this->y - 5);
-                    $this->setCellValue(10, 5, str_replace("P", "", $kPunto), 'C');
-                    $this->setCoordinates(75, $this->y - 5);
-                    $this->setCellValue(55, 5, $v['Linea'], 'L');
-                    $this->setCoordinates(130, $this->y - 5);
-                    $this->setCellValue(55, 5, $v['Sublinea'], 'L');
-                    $this->setCoordinates(185, $this->y - 5);
-                    $this->setCellValue(15, 5, $v['Cantidad'], 'C');
-                    if (($this->y + 5) > 270) {
-                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-                        $this->setHeadersFaltantes();
+            foreach ($datosExtra as $kArea => $vArea) {
+                foreach ($vArea as $kPunto => $vPunto) {
+                    foreach ($vPunto as $k => $v) {
+                        $this->setCoordinates(10);
+                        $this->setStyleMinisubtitle();
+                        $this->setCellValue(55, 5, $v['Area'], 'L');
+                        $this->setCoordinates(65, $this->y - 5);
+                        $this->setCellValue(10, 5, str_replace("P", "", $kPunto), 'C');
+                        $this->setCoordinates(75, $this->y - 5);
+                        $this->setCellValue(55, 5, $v['Linea'], 'L');
+                        $this->setCoordinates(130, $this->y - 5);
+                        $this->setCellValue(55, 5, $v['Sublinea'], 'L');
+                        $this->setCoordinates(185, $this->y - 5);
+                        $this->setCellValue(15, 5, $v['Cantidad'], 'C');
+                        if (($this->y + 5) > 270) {
+                            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                            $this->setHeadersFaltantes();
+                        }
                     }
                 }
             }
@@ -2940,36 +3014,37 @@ class InformacionServicios extends General {
     }
 
     private function setSobrantes(array $datos, array $datosExtra) {
-        if (($this->y + 21) > 270) {
-            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-            $this->setCoordinates(10);
+        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+        $this->setCoordinates(10);
+
+        if (empty($datosExtra)) {
+            $this->setStyleHeader();
+            $this->setHeaderValue("No existen registros de Equipos que sobran basado en el Kit Estandar de Área");
         } else {
-            $this->setCoordinates(10, $this->y + 5);
-        }
+            $this->setHeadersSobrantes();
 
-        $this->setHeadersSobrantes();
-
-        foreach ($datosExtra as $kArea => $vArea) {
-            foreach ($vArea as $kPunto => $vPunto) {
-                foreach ($vPunto as $k => $v) {
-                    $this->setCoordinates(10);
-                    $this->setStyleMinisubtitle();
-                    $this->setCellValue(30, 5, $v['Area'], 'L');
-                    $this->setCoordinates(40, $this->y - 5);
-                    $this->setCellValue(10, 5, $v['Punto'], 'C');
-                    $this->setCoordinates(50, $this->y - 5);
-                    $this->setCellValue(28, 5, $v['Linea'], 'L');
-                    $this->setCoordinates(78, $this->y - 5);
-                    $this->setCellValue(28, 5, $v['Sublinea'], 'L');
-                    $this->setCoordinates(106, $this->y - 5);
-                    $this->setCellValue(28, 5, $v['Marca'], 'L');
-                    $this->setCoordinates(134, $this->y - 5);
-                    $this->setCellValue(28, 5, $v['Modelo'], 'L');
-                    $this->setCoordinates(162, $this->y - 5);
-                    $this->setCellValue(38, 5, $v['Serie'], 'L');
-                    if (($this->y + 5) > 270) {
-                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-                        $this->setHeadersSobrantes();
+            foreach ($datosExtra as $kArea => $vArea) {
+                foreach ($vArea as $kPunto => $vPunto) {
+                    foreach ($vPunto as $k => $v) {
+                        $this->setCoordinates(10);
+                        $this->setStyleMinisubtitle();
+                        $this->setCellValue(30, 5, $v['Area'], 'L');
+                        $this->setCoordinates(40, $this->y - 5);
+                        $this->setCellValue(10, 5, $v['Punto'], 'C');
+                        $this->setCoordinates(50, $this->y - 5);
+                        $this->setCellValue(28, 5, $v['Linea'], 'L');
+                        $this->setCoordinates(78, $this->y - 5);
+                        $this->setCellValue(28, 5, $v['Sublinea'], 'L');
+                        $this->setCoordinates(106, $this->y - 5);
+                        $this->setCellValue(28, 5, $v['Marca'], 'L');
+                        $this->setCoordinates(134, $this->y - 5);
+                        $this->setCellValue(28, 5, $v['Modelo'], 'L');
+                        $this->setCoordinates(162, $this->y - 5);
+                        $this->setCellValue(38, 5, $v['Serie'], 'L');
+                        if (($this->y + 5) > 270) {
+                            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                            $this->setHeadersSobrantes();
+                        }
                     }
                 }
             }
