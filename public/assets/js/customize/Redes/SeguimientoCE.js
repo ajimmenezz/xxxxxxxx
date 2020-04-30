@@ -212,7 +212,6 @@ $(function () {
     }
 
     function mostrarInformacionFolio(infoFolio) {
-        console.log(infoFolio);
         if (infoFolio.operacion !== false) {
             $('#infoFolio').removeClass('hidden');
             $('#editarFolio').removeClass('hidden');

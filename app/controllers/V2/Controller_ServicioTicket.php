@@ -208,9 +208,9 @@ class Controller_ServicioTicket extends CI_Controller {
             Archivo::saveArchivos64($carpeta, $firmas);
             $datosServicio['archivos'] = Archivo::getArray();
             $this->servicio = $this->factory->getServicio($datosServicio['tipo'], $datosServicio['id']);
-            $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);           
+            $datosServicio['mensaje'] = $this->servicio->setConcluir($datosServicio);
             $this->setResolucionServiceDesk($datosServicio);
-            if(isset($datosServicio['nodos'])){
+            if (isset($datosServicio['nodos'])) {
                 $this->almacenVirtual->updateAlmacen($datosServicio);
             }
             $this->datos['operacion'] = TRUE;

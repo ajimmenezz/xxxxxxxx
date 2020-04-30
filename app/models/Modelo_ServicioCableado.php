@@ -147,7 +147,7 @@ class Modelo_ServicioCableado extends Modelo_Base {
         return $this->consulta('select concat(Firma,",", FirmaTecnico) as firmas from t_servicios_ticket where Id=' . $idServicio);
     }
 
-    public function getDatosSolucionPDF(array $datosServicio) { 
+    public function getDatosSolucionPDF(array $datosServicio) {
         $datos['infoGeneral'] = $this->consulta('SELECT  
                                     nombreUsuario(tst.Solicita) AS Cliente,  
                                     cs.Nombre AS Sucursal,  
@@ -158,8 +158,8 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                 INNER JOIN cat_v3_sucursales AS cs ON tst.IdSucursal = cs.Id 
                                 INNER JOIN cat_v3_servicios_departamento AS csd ON tst.IdTipoServicio = csd.Id 
                                 INNER JOIN cat_v3_estatus AS ce ON tst.IdEstatus = ce.Id 
-                                WHERE tst.Id =' . $datosServicio['id']); 
- 
+                                WHERE tst.Id =' . $datosServicio['id']);
+
         $datos['infoNodos'] = $this->consulta('SELECT  
                                                     caa.Nombre AS Area,  
                                                     trn.Nombre AS Nodo,  
@@ -169,22 +169,22 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                                 INNER JOIN t_redes_nodos AS trn ON tst.Id = trn.IdServicio 
                                                 INNER JOIN cat_v3_areas_atencion AS caa ON trn.IdArea = caa.Id 
                                                 INNER JOIN cat_v3_modelos_equipo AS cme ON trn.IdSwitch = cme.Id 
-                                                WHERE tst.Id =' . $datosServicio['id']); 
- 
-        $datos['evidencias'] = $this->consulta('SELECT Archivos FROM t_redes_nodos WHERE IdServicio =' . $datosServicio['id']); 
-        
-        $datos['evidenciasGenerales'] = $this->consulta('SELECT Archivos FROM t_servicios_generales WHERE IdServicio =' . $datosServicio['id']); 
- 
+                                                WHERE tst.Id =' . $datosServicio['id']);
+
+        $datos['evidencias'] = $this->consulta('SELECT Archivos FROM t_redes_nodos WHERE IdServicio =' . $datosServicio['id']);
+
+        $datos['evidenciasGenerales'] = $this->consulta('SELECT Archivos FROM t_servicios_generales WHERE IdServicio =' . $datosServicio['id']);
+
         $datos['totalMaterial'] = $this->ejecutaFuncion('call getTotalRedesServiceMaterial(' . $datosServicio['id'] . ')');
-        
+
         $datos['infoFirmas'] = $this->consulta('SELECT  
                                                     tst.Firma,  
                                                     tst.NombreFirma,  
                                                     tst.FirmaTecnico,  
                                                     nombreUsuario(tst.Atiende) AS Atiende 
                                                 FROM t_servicios_ticket AS tst 
-                                                WHERE tst.Id =' . $datosServicio['id']); 
-        return $datos; 
+                                                WHERE tst.Id =' . $datosServicio['id']);
+        return $datos;
     }
 
 }

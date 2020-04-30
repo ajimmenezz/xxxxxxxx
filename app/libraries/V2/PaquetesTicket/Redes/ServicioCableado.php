@@ -243,7 +243,7 @@ class ServicioCableado implements Servicio {
             $pdf->tablaImagenes($evidencias);
             $pdf->tituloTabla('Material');
             $pdf->tabla(array('Tipo', 'Producto', 'Cantidad'), $informacionServicio['totalMaterial']);
-        } else{
+        } else {
             $evidencias = explode(',', $informacionServicio['evidenciasGenerales'][0]['Archivos']);
             $pdf->tablaImagenes($evidencias);
         }
