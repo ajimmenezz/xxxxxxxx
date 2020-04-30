@@ -68,7 +68,10 @@ $(function () {
                 });
             } else {
                 datosServicio = datos;
-                seguimientoOld(evento, datosServicio, datosFila);
+                if (datos.operacion === '2' || datos.operacion === '3' || datos.operacion === '12' || datos.operacion === '10') {
+                    datosServicio.operacion = '2';
+                    seguimientoOld(evento, datosServicio, datosFila);
+                }
             }
         }
     });
@@ -120,8 +123,8 @@ $(function () {
         });
 
         servicios.initBotonReasignarServicio(
-                servicio,
                 datosServicio.servicio.servicio,
+                datosServicio.servicio.ticket,
                 "#panel-ticket"
                 );
         //evento para crear nueva solicitud
@@ -130,7 +133,8 @@ $(function () {
                 "#panel-ticket"
                 );
 
-        servicios.subirInformacionSD(servicio, "#panel-ticket");
+        servicios.subirInformacionSD(datosServicio.servicio.servicio, "#panel-ticket");
+        servicios.botonAgregarVuelta({servicio: datosServicio.servicio.servicio},"#panel-ticket");
     }
 
 });

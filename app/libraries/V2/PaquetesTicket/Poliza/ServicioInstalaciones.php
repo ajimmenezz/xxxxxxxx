@@ -207,6 +207,7 @@ class ServicioInstalaciones implements Servicio {
     }
 
     public function setConcluir(array $datos) {
+        $host = $_SERVER['SERVER_NAME'];
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $this->DBServicioTicket->empezarTransaccion();
         $this->DBServicioTicket->actualizarServicio(array(
@@ -217,15 +218,24 @@ class ServicioInstalaciones implements Servicio {
             'FechaFirma' => $fecha
                 ), array('Id' => $this->id));
         $this->DBServicioTicket->finalizarTransaccion();
+        $archivoPDF = $this->getPDF();
+
+        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+            $path = 'https://siccob.solutions/' . $archivoPDF;
+        } else {
+            $path = 'http://' . $host . '/' . $archivoPDF;
+        }
+
         $archivo = '<p>******* Termino de servicio de instalaciones ********</p>
                     <p><strong>Descripción:</strong> Se concluye el servicio de instalación</p>';
+        $archivo .= '<br>Ver Servicio PDF <a href="' . $path . '" target="_blank">Aquí</a>';
         return $archivo;
     }
 
     public function enviarServicioConcluido(array $datos) {
         $correo = new Correo();
         $host = $_SERVER['SERVER_NAME'];
-        $archivoPDF = $this->getPDF($datos);
+        $archivoPDF = $this->getPDF();
 
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $path = 'https://siccob.solutions/' . $archivoPDF;
@@ -241,7 +251,7 @@ class ServicioInstalaciones implements Servicio {
         $correo->enviarCorreo('notificaciones@siccob.solutions', array($this->correoAtiende), $titulo, $mensajeFirma);
     }
 
-    public function getPDF(array $datos) {
+    public function getPDF() {
         $archivo = $this->InformacionServicios->definirPDF(array('servicio' => $this->id));
         return $archivo;
     }

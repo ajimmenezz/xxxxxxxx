@@ -1919,13 +1919,13 @@ class InformacionServicios extends General {
 
     private function setFirmasGerenteTecnico(array $datos) {
         $firmas = $this->getFirmasServicio($datos['servicio']);
-        if ((!is_null($diagnostico['Firma']) && $diagnostico['Firma'] != '')) {
+        if ((!is_null($firmas['Firma']) && $firmas['Firma'] != '')) {
             if (file_exists('.' . $diagnostico['Firma'])) {
                 if (($this->y + 62) > 270) {
                     $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
                 }
 
-                if (!is_null($diagnostico['Firma']) && $diagnostico['Firma'] != '') {
+                if (!is_null($firmas['Firma']) && $firmas['Firma'] != '') {
                     if (file_exists('.' . $diagnostico['Firma'])) {
                         $this->pdf->Image('.' . $diagnostico['Firma'], 12, $this->y + 12, 80, 35, pathinfo($diagnostico['Firma'], PATHINFO_EXTENSION));
                         $gerente = utf8_decode($diagnostico['Gerente']);
@@ -1970,6 +1970,18 @@ class InformacionServicios extends General {
         } else {
             $this->setFirmaGerente($firmas, $datos);
         }
+    }
+
+    private function getFirmasServicio(int $servicio) {
+        $consulta = $this->DBS->consulta("
+        select 
+        Firma,
+        NombreFirma as Gerente,
+        FechaFirma,
+        nombreUsuario(tst.IdTecnicoFirma) as Tecnico,
+        FirmaTecnico
+        from t_servicios_ticket tst where Ticket = (SELECT Ticket FROM t_servicios_ticket WHERE Id = '" . $servicio . "' limit 1) limit 1");
+        return $consulta[0];
     }
 
     private function setFirmaGerente(array $firmas, array $datos) {
@@ -2190,7 +2202,7 @@ class InformacionServicios extends General {
         $this->obtenerEquipoMaterialServicio($id);
 
         $this->setCoordinates(10);
-        
+
         $problema = $this->getProblemaCorrectivoForPDF($id);
         $this->setProblemaCorrectivoPDF($problema, $datos);
 

@@ -59,6 +59,7 @@ Class GestorServicios {
                 $this->almacenUsuario = new AlmacenUsuario();
                 $this->almacenUsuario->getInventarioUsuario();
                 $informacion['equipos'] = $this->almacenUsuario->getInventarioUsuario();
+
                 if (!empty($datos['datosServicio']['sucursal'])) {
                     $this->sucursal = new Sucursal($datos['datosServicio']['sucursal']);
                     $informacion['areasAtencionSucursal'] = $this->sucursal->getAreas();
@@ -122,9 +123,10 @@ Class GestorServicios {
         $this->DBServicios->deleteInstalacion($datos['idInstalacion']);
         $this->DBServicios->finalizarTransaccion();
     }
-    
-    public function getInstalaciones(array $datos){
-        return $this->DBServicios->getInstalaciones($datos['id']);;
+
+    public function getInstalaciones(array $datos) {
+        return $this->DBServicios->getInstalaciones($datos['id']);
+        ;
     }
 
 }

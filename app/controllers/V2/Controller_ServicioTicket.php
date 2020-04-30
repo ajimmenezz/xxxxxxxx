@@ -51,6 +51,8 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->setEstatusServiceDesk();
             $this->getHtml($datosServicio['tipo'], $this->datos);
             $this->datos['operacion'] = TRUE;
+            $this->datos['botonAgregarVuelta'] = $this->htmlBotonVuelta();
+
             echo json_encode($this->datos);
         } catch (Exception $exc) {
             $this->datos['operacion'] = FALSE;
@@ -73,12 +75,24 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->getInformacionFolio($this->servicio->getFolio());
             $this->getHtml($datosServicio['tipo'], $this->datos);
             $this->datos['operacion'] = TRUE;
+            $this->datos['botonAgregarVuelta'] = $this->htmlBotonVuelta();
+
             echo json_encode($this->datos);
         } catch (Exception $exc) {
             $this->datos['operacion'] = FALSE;
             $this->datos['ERROR'] = $exc->getMessage();
             echo json_encode($this->datos);
         }
+    }
+
+    private function htmlBotonVuelta() {
+        $boton = FALSE;
+
+        if (Usuario::getIdPerfil() === '83' || Usuario::getIdDepartamento() === '19') {
+            $boton = TRUE;
+        }
+
+        return $boton;
     }
 
     private function getInformacionFolio(string $folio = NULL) {

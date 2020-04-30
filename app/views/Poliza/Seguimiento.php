@@ -129,13 +129,14 @@
                     Acciones <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
+                    <li id="btnAgregarVuelta" class="hidden"><a href="#"><i class="fa fa-plus"></i> Agregar Vuelta</a></li>
                     <li id="btnCancelarServicioSeguimiento"><a href="#"><i class="fa fa-times"></i> Cancelar Servicio</a></li>
+                    <li id="btnExportarPDF" class="hidden"><a href="#"><i class="fa fa-check"></i> Exportar PDF</a></li>
                     <li id="btnNuevoServicioSeguimiento"><a href="#"><i class="fa fa-plus"></i> Nuevo Servicio</a></li>
                     <li id="btnReasignarServicio"><a href="#"><i class="fa fa-mail-reply-all"></i> Reasignar Servicio</a></li>
                     <li id="btnNuevaSolicitud"><a href="#"><i class="fa fa-puzzle-piece"></i> Solicitar Apoyo</a></li>
                     <li id="btnSubirInformacionSD"><a href="#"><i class="fa fa-cloud-upload"></i> Subir Información SD</a></li>
                     <li id="btnValidarServicio" class="hidden"><a href="#"><i class="fa fa-check"></i> Validar Servicio</a></li>
-                    <li id="btnExportarPDF" class="hidden"><a href="#"><i class="fa fa-check"></i> Exportar PDF</a></li>
                 </ul>
             </div>
             <label id="btnRegresar" class="btn btn-success">

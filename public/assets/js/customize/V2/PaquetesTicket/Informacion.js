@@ -22,6 +22,7 @@ class Informacion {
             'selectCliente',
             'selectSucursal'
         ];
+
         $.each(selects, function (index, value) {
             _this.selects[value] = new SelectBasico(value);
         });
@@ -82,6 +83,10 @@ class Informacion {
     listener(callback) {
         let _this = this;
         let evento = new Base();
+
+        if (_this.datos.botonAgregarVuelta) {
+            $('#btnAgregarVuelta').removeClass('hidden');
+        }
 
         _this.selects["selectCliente"].evento('change', function () {
             _this.selects["selectCliente"].cargarElementosASelect('selectSucursal', _this.datos.sucursales, 'cliente');
@@ -146,18 +151,22 @@ class Informacion {
         $('#btnGuardar').on('click', function () {
             let nuevoFolio = _this.inputs['folio'].obtenerValor();
             let data = {folio: nuevoFolio, id: _this.datos.servicio.servicio, tipo: _this.datos.servicio.tipoServicio};
-            _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
-                if (_this.bug.validar(respuesta)) {
-                    _this.datos.servicio.folio = nuevoFolio;
-                    _this.datos.folio = respuesta.folio;
-                    _this.datos.notasFolio = respuesta.notasFolio;
-                    _this.datos.resolucionFolio = respuesta.resolucionFolio;
-                    _this.datos.html.folio = respuesta.html.folio;
-                    _this.inputs['folio'].bloquearElemento();
-                    _this.mostrarOcultarBotonesFolio(false);
-                    _this.mensajeConfirmacionModal(`Se actualizo el folio correctamente.`);
-                }
-            });
+            if (nuevoFolio !== '0') {
+                _this.peticion.enviar('panel-ticket', 'Seguimiento/Servicio/Folio/editar', data, function (respuesta) {
+                    if (_this.bug.validar(respuesta)) {
+                        _this.datos.servicio.folio = nuevoFolio;
+                        _this.datos.folio = respuesta.folio;
+                        _this.datos.notasFolio = respuesta.notasFolio;
+                        _this.datos.resolucionFolio = respuesta.resolucionFolio;
+                        _this.datos.html.folio = respuesta.html.folio;
+                        _this.inputs['folio'].bloquearElemento();
+                        _this.mostrarOcultarBotonesFolio(false);
+                        _this.mensajeConfirmacionModal(`Se actualizo el folio correctamente.`);
+                    }
+                });
+            } else {
+                _this.mensajeConfirmacionModal(`Falta colocar un folio valido.`);
+            }
         });
 
         $('#btnVerFolio').on('click', function () {
@@ -284,6 +293,8 @@ class Informacion {
             case 'Instalaciones':
                 if (datos.servicio.sucursal === null) {
                     $('#selectOperacionInstalaciones').attr('disabled', 'disabled');
+                } else {
+                    $('#selectOperacionInstalaciones').removeAttr('disabled');
                 }
                 break;
         }
