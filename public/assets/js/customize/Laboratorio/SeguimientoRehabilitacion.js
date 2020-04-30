@@ -270,7 +270,7 @@ $(function () {
                 sendComment.operacion = 'agregar';
             }
             if ($('#agregarEvidencia').val() !== '') {
-                evidenciasComentarios.enviarPeticionServidor('#modalAgregarComentario', sendComment, function (respuesta) {
+                evidenciasComentarios.enviarPeticionServidor('modalAgregarComentario', sendComment, function (respuesta) {
                     if (respuesta.response === 200) {
                         limpiarCamposComentarios();
                         agregarContenidoComentarios(respuesta.datos);

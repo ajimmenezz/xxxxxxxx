@@ -1,6 +1,6 @@
 class Utileria {
 
-    constructor() {                
+    constructor() {
     }
 
     //Evento de petición
@@ -41,7 +41,7 @@ class Utileria {
                 } else {
                     throw 'Sin atrapar el Error: ' + jqXHR.responseText;
                 }
-            } catch (exception) {                
+            } catch (exception) {
                 callback(undefined);
             }
         });
@@ -129,10 +129,42 @@ class Utileria {
             elemento.addClass('hidden');
     }
     }
-    
-    insertarContenido(objeto = null, contenido = ''){
-        let elemento = $(`#${objeto}`);        
+
+    insertarContenido(objeto = null, contenido = '') {
+        let elemento = $(`#${objeto}`);
         elemento.empty().append(contenido);
+    }
+    ;
+            mostrarMensaje(objeto, tipo, mensaje, duración) {
+        switch (tipo) {
+            case false:
+                var error = '<div class="alert alert-danger fade in m-b-15" id="mensajeError">\n\
+                                <strong>Error: </strong>\n\
+                               ' + mensaje + '\n\
+                            </div>';
+                $(objeto).empty().append(error);
+                setTimeout(function () {
+                    $('#mensajeError').fadeOut('slow', function () {
+                        $(this).remove();
+                    });
+                }, duración);
+                break;
+
+            case true:
+                var exito = '<div class="alert alert-success fade in m-b-15" id="mensajeExito">\n\
+                                <strong>Éxito: </strong>\n\
+                               ' + mensaje + '\n\
+                            </div>';
+                $(objeto).empty().append(exito);
+                setTimeout(function () {
+                    $('#mensajeExito').fadeOut('slow', function () {
+                        $(this).remove();
+                    });
+                }, duración);
+                break;
+            default:
+                break;
+        }
     }
     ;
 }
