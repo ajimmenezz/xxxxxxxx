@@ -1,4 +1,4 @@
-class SelectMultiple extends Select {
+class SelectMultiple extends ISelect {
 
     iniciarSelect() {
         this.objetoSelect.select2({

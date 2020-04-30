@@ -1,4 +1,4 @@
-class TablaBasica extends Tabla {
+class TablaBasica extends ITabla {
 
     iniciarTabla() {        
         let tabla = $(`#${this.tabla}`).DataTable({

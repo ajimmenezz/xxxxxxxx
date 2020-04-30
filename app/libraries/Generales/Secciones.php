@@ -588,6 +588,9 @@ class Secciones extends General
             case 'Redes/SeguimientoCE':
                 $datos['infoServicios'] = $this->seccionCE->getServicios();
                 break;
+            case 'Redes/CatalogoSwitch':
+                $datos['infoSwitch'] = $this->seccionCE->getCatalogoSwitch();
+                break;
 
             case 'FondoFijo/SaldosTecnico':
                 $datos['SaldoTecnico'] = $this->fondoFijo->getTecnicos();

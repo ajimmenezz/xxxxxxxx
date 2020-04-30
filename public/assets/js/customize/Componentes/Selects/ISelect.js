@@ -1,4 +1,4 @@
-class Select {
+class ISelect {
 
     constructor(nombreSelect) {
         this.select = nombreSelect;
@@ -60,7 +60,7 @@ class Select {
 
         $.each(contenido, function (key, valor) {
             if (seleccion === valor[comparacion]) {
-                datos[contador] = {id: valor.Id, text: valor.Nombre};
+                datos[contador] = {id: valor.id, text: valor.text};
                 contador++;
             }
         });
@@ -74,6 +74,10 @@ class Select {
 
     obtenerDatosSeleccionado() {
         return this.objetoSelect.select2('data');
+    }
+    
+    obtenerTexto(){
+        return $(this.objetoSelect + ' option:selected').html()
     }
 
 }

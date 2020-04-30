@@ -1,11 +1,10 @@
-class Upload {
+class IUpload {
 
     constructor(nombreFileUpload, configuracion = {}) {
         this.fileUpload = nombreFileUpload;
-        this.configuracion = configuracion;
+        this.configuracion = configuracion;        
         this.datosExtra = {};
-        //this.iniciarFileUpload();
-        //this.pagina = pagina;
+        this.pagina = new Utileria();
     }
 
     iniciarPlugin() {
@@ -24,6 +23,7 @@ class Upload {
             allowedFileExtensions: ['jpg', 'bmp', 'jpeg', 'gif', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
             overwriteInitial: false,
             initialPreviewAsData: true,
+            showAjaxErrorDetails: false,
             initialPreview: [],
             previewSettings: {
                 image: {width: '160px', height: '164px'},
@@ -76,18 +76,20 @@ class Upload {
         let _this = this;
         _this.definiendoDatosExtra(datos);
 
-        if (_this.validarArchivos()) {
+//        if (_this.validarArchivos()) {
             $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
-//                _this.pagina.empezarPantallaCargando(panel);
+                _this.pagina.empezarPantallaCargando(panel);
             }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
-//                _this.pagina.errorServidor(data.response);
-//                _this.pagina.quitarPantallaCargando(panel);
+                _this.pagina.quitarPantallaCargando(panel);
                 if (callback !== null) {
                     callback(data.response);
                 }
+            }).on('filebatchuploaderror ', (event, data, msg) => {
+                _this.pagina.quitarPantallaCargando(panel);
             });
+
             $(`#${this.fileUpload}`).fileinput('upload');
-    }
+//    }
 
     }
 
@@ -117,6 +119,13 @@ class Upload {
 
     habilitarElemento() {
         $(`#${this.fileUpload}`).fileinput('enable');
+    }
+
+    setAtributos(valores = {}){
+        let _this = this;           
+        $.each(valores, function (key, value) {
+            $(`#${_this.fileUpload}`).attr(key, value);
+        });
     }
 
 }

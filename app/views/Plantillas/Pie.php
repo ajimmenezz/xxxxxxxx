@@ -60,6 +60,23 @@
         </div>
     </div>
 </div>
+
+<div id="modal-box" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <a id="btnModalBoxAbortar" href="javascript:;" class="btn btn-sm btn-white" data-dismiss="modal">Cancelar</a>
+                <a id="btnModalBoxConfirmar" href="javascript:;" class="btn btn-sm btn-primary">Aceptar</a>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Finaliza alerta de modal -->
 </body>
 </html>

@@ -73,9 +73,9 @@ $config['Generales'] = array(
             'Base/Base',
             'Base/Socket',
             'Componentes/HerramientasWeb/Utileria',
-            'Componentes/Selects/Select',
+            'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
-            'Componentes/Tablas/Tabla',
+            'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
             'Componentes/Graficas/GraficaGoogle',
             'V2/PaquetesDashboard/dashboard_generico',
@@ -206,9 +206,9 @@ $config['Generales'] = array(
             'Base/Base',
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/HerramientasWeb/Alertas',
-            'Componentes/Selects/Select',
+            'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
-            'Componentes/Tablas/Tabla',
+            'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
             'Componentes/Graficas/GraficaGoogle',
             'Generales/dashboard_gapsi',
@@ -858,7 +858,42 @@ $config['Poliza'] = array(
             'DrawingBoard/css/drawingboard.min',
             'jquery-tag-it/css/jquery.tagit'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/fileUpload', 'Base/Servicio', 'Base/Tabla', 'Base/Botones', 'Base/Nota', 'Poliza/seguimiento'),
+        'js' => array(
+            'Base/Base', 
+            'Base/Socket', 
+            'Base/Select', 
+            'Base/fileUpload', 
+            'Base/Servicio', 
+            'Base/Tabla', 
+            'Base/Botones', 
+            'Base/Nota', 
+            'Componentes/Inputs/Input',
+            'Componentes/Selects/ISelect',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Selects/SelectMultiple',
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Alertas',
+            'Componentes/Fecha',
+            'Componentes/Modal/ModalBase',
+            'Componentes/Modal/Modal',
+            'Componentes/Modal/ModalBox',
+            'Componentes/Modal/ModalServicio',
+            'Componentes/HerramientasWeb/Bug',            
+            'Componentes/Tablas/ITabla',
+            'Componentes/Tablas/TablaBasica',
+            'Componentes/Tablas/TablaBotones',
+            'Componentes/FileUpload/IUpload',
+            'Componentes/FileUpload/FileUpload_Basico',
+            'Componentes/Formulario',
+            'V2/PaquetesTicket/Factorys/factoryServicios',
+            'V2/PaquetesTicket/IServicio',
+            'V2/PaquetesTicket/ServicioInstalaciones',
+            'V2/PaquetesTicket/Informacion',
+            'V2/PaquetesTicket/Solucion',
+            'V2/PaquetesTicket/Bitacora',
+            'V2/PaquetesTicket/Firma',
+            'Poliza/seguimiento',
+            'V2/PaquetesTicket/Controlller_Ticket'),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
             'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
@@ -1515,7 +1550,7 @@ $config['RH'] = array(
         ),
         'js' => array(
             'Base/Base',
-            'Componentes/Selects/Select',
+            'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
             'RH/CalendarioPermisos',
             'Componentes/HerramientasWeb/Calendario',
@@ -1597,9 +1632,9 @@ $config['RH'] = array(
             'Base/Base',
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/HerramientasWeb/Modal',
-            'Componentes/Tablas/Tabla',
+            'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
-            'Componentes/Selects/Select',
+            'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
             'RH/catalogo_permisos'
         ),
@@ -1628,7 +1663,7 @@ $config['RH'] = array(
         ),
         'js' => array(
             'Base/Base',
-            'Componentes/Selects/Select',
+            'Componentes/Selects/ISelect', 
             'Componentes/Selects/SelectBasico',
             'Base/fileUpload',
             'Base/Fecha',
@@ -2102,11 +2137,11 @@ $config['Redes'] = array(
             'Componentes/HerramientasWeb/Modal',
             'Componentes/HerramientasWeb/Collapse',
             'Componentes/HerramientasWeb/Fecha',
-            'Componentes/Selects/Select',
+            'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
-            'Componentes/Tablas/Tabla',
+            'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
-            'Componentes/FileUpload/Upload',
+            'Componentes/FileUpload/IUpload',
             'Componentes/FileUpload/FileUpload_Basico',
             'Redes/SeguimientoCE'
         ),
@@ -2122,6 +2157,38 @@ $config['Redes'] = array(
             'switchery/switchery.min'
         ),
         'Permiso' => 'VSGRCE'
+    ),
+    'CatalogoSwitchRedes' => array(
+        'liga' => 'Catálogo Switch',
+        'icono' => '',
+        'Url' => '/Redes/CatalogoSwitch',
+        'css' => array(
+            'Proyecto/tareasTecnico'
+        ),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array(
+            'Base/Base', 
+            'Componentes/HerramientasWeb/Utileria',
+            'Componentes/HerramientasWeb/Modal',
+            'Componentes/Selects/Select', 
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/Tabla', 
+            'Componentes/Tablas/TablaBasica',
+            'Redes/CatalogoSwitch'
+        ),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'DrawingBoard/js/drawingboard.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
+        ),
+        'Permiso' => 'VCSRCE'
     )
 );
 

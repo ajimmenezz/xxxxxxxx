@@ -105,7 +105,8 @@ $config['Secciones'] = array(
     'Redes' => array(
         'Dashboard-Redes' => 'Dashboard',
         'Seguimiento-Redes' => 'Seguimiento',
-        'Seguimiento-GeneralRedes' => 'SeguimientoCE'
+        'Seguimiento-GeneralRedes' => 'SeguimientoCE',
+        'CatalogoSwitchRedes' => 'CatalogoSwitch'
     ),
     'Salas4D' => array(
         'Dashboard-Salas4D' => 'Dashboard',
