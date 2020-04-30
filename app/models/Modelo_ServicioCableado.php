@@ -63,7 +63,8 @@ class Modelo_ServicioCableado extends Modelo_Base {
         return $consulta;
     }
 
-    public function setFolioServiceDesk(string $idSolicitud, string $idFolio) {
+    public function setFolioServiceDesk(string $idSolicitud, string $idFolio = '') {
+        $exiteFolio = $this->consulta('SELECT * from t_solicitudes where Folio = "' . $idSolicitud . '"');
         $this->actualizar('UPDATE t_solicitudes
                                             SET Folio = "' . $idFolio . '" 
                                             WHERE Id = "' . $idSolicitud . '"');
@@ -71,7 +72,9 @@ class Modelo_ServicioCableado extends Modelo_Base {
 
     public function setSucursal(string $idServicio, string $idSucursal) {
         $this->actualizar('update t_servicios_ticket set 
-                           IdSucursal = ' . $idSucursal . ' where Id = ' . $idServicio);
+                                    IdSucursal = ' . $idSucursal . ' 
+                                where Ticket = (select tst.Ticket from (select * from t_servicios_ticket) as tst where tst.Id = ' . $idServicio . ') 
+                                    and IdTipoServicio = 49');
     }
 
     public function setProblema(string $idServicio, array $datos) {
@@ -123,15 +126,21 @@ class Modelo_ServicioCableado extends Modelo_Base {
     }
 
     public function setConclusion(string $idServicio, array $datos) {
-        $this->actualizar('update t_servicios_ticket set 
+        if ($datos['nombreCliente'] !== '') {
+            $this->actualizar('update t_servicios_ticket set 
                            IdEstatus = 5,
                            FechaConclusion = NOW(),
                            Firma = "' . $datos['archivos'][0] . '",
                            NombreFirma = "' . $datos['nombreCliente'] . '",
-                           FechaFirma = NOW(),                           
-                           IdTecnicoFirma = ' . $datos['idUsuario'] . ',
-                           FirmaTecnico = "' . $datos['archivos'][1] . '"
+                           FechaFirma = NOW()                           
                            where Id = ' . $idServicio);
+        } else {
+            $this->actualizar('update t_servicios_ticket set 
+                           IdEstatus = 5,
+                           FechaConclusion = NOW(),
+                           FechaFirma = NOW()
+                           where Id = ' . $idServicio);
+        }
     }
 
     public function getEvidencias(string $idServicio) {
@@ -164,7 +173,8 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                                     caa.Nombre AS Area,  
                                                     trn.Nombre AS Nodo,  
                                                     cme.Nombre AS Switch,  
-                                                    trn.NumeroSwitch 
+                                                    trn.NumeroSwitch,
+                                                    trn.Archivos AS Evidencias
                                                 FROM t_servicios_ticket AS tst 
                                                 INNER JOIN t_redes_nodos AS trn ON tst.Id = trn.IdServicio 
                                                 INNER JOIN cat_v3_areas_atencion AS caa ON trn.IdArea = caa.Id 

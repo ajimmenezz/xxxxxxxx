@@ -224,7 +224,7 @@ $(function () {
             datosFiltros.moneda = radioValueFiltros;
             enviarInformacionFiltros('panelDashboardGapsiFilters', datosFiltros);
         });
-        
+
         $("input[name='optionsConciliadoPrincipal").click(function () {
             var radioValueConciliadoP = $("input[name='optionsConciliadoPrincipal']:checked").val();
             datosFiltros.conciliado = radioValueConciliadoP;
@@ -238,12 +238,16 @@ $(function () {
     }
 
     function enviarFiltrosPrincipal(objeto, datosFiltros) {
-        peticion.enviar(objeto, 'Dashboard_Gapsi/filtroPrincipal', datosFiltros, function (respuesta) {
-            $("input[name='optionsRadiosMonedaPrincipal'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
-            $("input[name='optionsConciliadoPrincipal'][value='" + datosFiltros['conciliado'] + "']").attr('checked', true);
-            if (respuesta.tipoProyectos.length !== 0) {
-                anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
-                actualizarObjetosPrincipal(respuesta);
+        peticion.enviar(objeto, 'Dashboard_Gapsi/filtroPrincipals', datosFiltros, function (respuesta) {
+            if (respuesta !== undefined) {
+                $("input[name='optionsRadiosMonedaPrincipal'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
+                $("input[name='optionsConciliadoPrincipal'][value='" + datosFiltros['conciliado'] + "']").attr('checked', true);
+                if (respuesta.tipoProyectos.length !== 0) {
+                    anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
+                    actualizarObjetosPrincipal(respuesta);
+                } else {
+                    modalUndefined(1);
+                }
             } else {
                 modalUndefined(1);
             }
@@ -410,22 +414,26 @@ $(function () {
 
     function enviarInformacionFiltros(objeto, datosFiltros) {
         peticion.enviar(objeto, 'Dashboard_Gapsi/tipoProyecto', datosFiltros, function (respuesta) {
-            if (respuesta.consulta.proyectos.length !== 0) {
-                incializarDatos(respuesta.consulta);
-                setSecciones(respuesta.formulario);
-                incializarObjetos();
-                eventosObjetos();
-                tablasCostosFiltros();
-                costosTotales();
-                $("input[name='optionsRadiosMoneda'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
-                $("input[name='optionsConciliado'][value='" + datosFiltros['conciliado'] + "']").attr('checked', true);
-                anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
-                $('html, body').animate({
-                    scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
-                }, 600);
+            if (respuesta !== undefined) {
+                if (respuesta.consulta.proyectos.length !== 0) {
+                    incializarDatos(respuesta.consulta);
+                    setSecciones(respuesta.formulario);
+                    incializarObjetos();
+                    eventosObjetos();
+                    tablasCostosFiltros();
+                    costosTotales();
+                    $("input[name='optionsRadiosMoneda'][value='" + datosFiltros['moneda'] + "']").attr('checked', true);
+                    $("input[name='optionsConciliado'][value='" + datosFiltros['conciliado'] + "']").attr('checked', true);
+                    anterioresFiltros = JSON.parse(JSON.stringify(datosFiltros));
+                    $('html, body').animate({
+                        scrollTop: $("#contentDashboardGapsiFilters").offset().top - 40
+                    }, 600);
 
+                } else {
+                    modalUndefined(2);
+                }
             } else {
-                modalUndefined(2);
+                modalUndefined(1);
             }
         });
     }
@@ -590,23 +598,31 @@ $(function () {
 
     function seccionDetalles() {
         peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/listaRegistros', datosFiltros, function (respuesta) {
-            $('#dashboardGapsiDetalles').removeClass('hidden').empty().append(respuesta.formulario);
-            $('#dashboardGapsiFilters').addClass('hidden');
-            $('#verDetalles').addClass('hidden');
-            $('#ocultarDetalles').removeClass('hidden');
-            $('html, body').animate({
-                scrollTop: $("#dashboardDetallesConcepto").offset().top - 40
-            }, 600);
-            tablaDetalles = new TablaBasica('data-table-detalles');
-            tablaDetalles.evento(function () {
-                let claveDetalle = tablaDetalles.datosFila(this)[0];
-                modalDetalles(claveDetalle);
-            });
-            $('#descargaPDF').on('click', function () {
-                peticion.enviar('panelDashboardGapsiDetails', 'Dashboard_Gapsi/PDFDetalles', datosFiltros, function (respuesta) {
-                    window.open(respuesta.listaProyectos, '_blank');
+            if (respuesta !== undefined) {
+                $('#dashboardGapsiDetalles').removeClass('hidden').empty().append(respuesta.formulario);
+                $('#dashboardGapsiFilters').addClass('hidden');
+                $('#verDetalles').addClass('hidden');
+                $('#ocultarDetalles').removeClass('hidden');
+                $('html, body').animate({
+                    scrollTop: $("#dashboardDetallesConcepto").offset().top - 40
+                }, 600);
+                tablaDetalles = new TablaBasica('data-table-detalles');
+                tablaDetalles.evento(function () {
+                    let claveDetalle = tablaDetalles.datosFila(this)[0];
+                    modalDetalles(claveDetalle);
                 });
-            });
+                $('#descargaPDF').on('click', function () {
+                    peticion.enviar('panelDashboardGapsiDetails', 'Dashboard_Gapsi/PDFDetalles', datosFiltros, function (respuesta) {
+                        if (respuesta !== undefined) {
+                            window.open(respuesta.listaProyectos, '_blank');
+                        } else {
+                            modalUndefined(1);
+                        }
+                    });
+                });
+            } else {
+                modalUndefined(1);
+            }
         });
 
         $('#ocultarDetalles').on('click', function () {
@@ -620,12 +636,16 @@ $(function () {
     function modalDetalles(clave) {
         try {
             peticion.enviar('panelDashboardGapsiFilters', 'Dashboard_Gapsi/infoRegistro', {'id': clave}, function (respuesta) {
-                $("#divFormularioDetalles").empty().append(respuesta.html);
-                evento.cambiarDiv("#dashboardDetallesConcepto", "#divFormularioDetalles");
-                $('.btn-group').addClass('hidden');
-                $('html, body').animate({
-                    scrollTop: $("#dashboardDetallesConcepto").offset().top - 50
-                }, 600);
+                if (respuesta !== undefined) {
+                    $("#divFormularioDetalles").empty().append(respuesta.html);
+                    evento.cambiarDiv("#dashboardDetallesConcepto", "#divFormularioDetalles");
+                    $('.btn-group').addClass('hidden');
+                    $('html, body').animate({
+                        scrollTop: $("#dashboardDetallesConcepto").offset().top - 50
+                    }, 600);
+                } else {
+                    modalUndefined(1);
+                }
             });
         } catch (e) {
             console.log(e);

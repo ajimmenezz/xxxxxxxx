@@ -93,7 +93,7 @@ class ServiceDesk {
         return $textoError;
     }
 
-    static private function validarAPIKey(string $key) {
+    static public function validarAPIKey(string $key) {
         try {
             self::getFoliosTecnico($key);
         } catch (\Exception $ex) {
@@ -121,7 +121,17 @@ class ServiceDesk {
         self::$FIELDS = 'format=json&OPERATION_NAME=GET_NOTES&TECHNICIAN_KEY=' . $key;
         $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '/notes/?' . self::$FIELDS);
         self::validarError($respuesta);
-        $respuesta = $respuesta->operation->Details;
+
+        if (strpos($respuesta->operation->result->message, "No Notes present for request") !== '') {
+            if (isset($respuesta->operation->Details)) {
+                $respuesta = $respuesta->operation->Details;
+            } else {
+                $respuesta = FALSE;
+            }
+        } else {
+            $respuesta = FALSE;
+        }
+
         return $respuesta;
     }
 
@@ -210,6 +220,24 @@ class ServiceDesk {
                 . "TECHNICIAN_KEY=" . $key;
         $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '/resolution/?' . self::$FIELDS);
         self::validarError($respuesta);
+    }
+
+    static function getResolucion(string $folio) {
+        self::setVariables();
+        $key = Usuario::getAPIKEY();
+        $key = self::validarAPIKey(strval($key));
+
+        self::$FIELDS = 'format=json&OPERATION_NAME=GET_RESOLUTION&TECHNICIAN_KEY=' . $key;
+        $respuesta = self::sendSolicitud(self::$url . '/' . $folio . '?' . self::$FIELDS);
+        self::validarError($respuesta);
+
+        if (isset($respuesta->operation->Details)) {
+            $respuesta = $respuesta->operation->Details;
+        } else {
+            $respuesta = NULL;
+        }
+        
+        return $respuesta;
     }
 
 }

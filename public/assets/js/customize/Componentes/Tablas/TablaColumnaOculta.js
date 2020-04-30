@@ -1,4 +1,4 @@
-class TablaColumnaOculta extends Tabla {
+class TablaColumnaOculta extends ITabla {
     
     iniciarTabla() {
         let tabla = $(`#${this.tabla}`).DataTable({
