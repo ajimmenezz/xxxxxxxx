@@ -25,7 +25,7 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul class="nav nav-pills">
             <?php
-            if ($mostrarCenso) {
+            if (isset($mostrarCenso) && $mostrarCenso) {
                 echo '<li class="active"><a href="#detCenso" data-toggle="tab">Censo</a></li>';
                 $active = '';
             } else {
@@ -41,7 +41,7 @@
 
         <div class="tab-content">
             <?php
-            if ($mostrarCenso) {
+            if (isset($mostrarCenso) && $mostrarCenso) {
                 $active = '';
             ?>
                 <div class="tab-pane fade active in" id="detCenso">
