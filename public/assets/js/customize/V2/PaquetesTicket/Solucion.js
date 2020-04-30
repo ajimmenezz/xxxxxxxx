@@ -63,6 +63,7 @@ class Solucion {
         let selectPunto = _this.formulario.obtenerElemento('selectPuntoInstalaciones');
         let inputSerie = _this.formulario.obtenerElemento('inputSerieInstalaciones');
         let file = _this.formulario.obtenerElemento('agregarEvidenciaEquipo');
+console.log(_this.datos);
 
         this.selectOperacion.evento('change', function () {
             if (_this.selectOperacion.obtenerValor() === '') {

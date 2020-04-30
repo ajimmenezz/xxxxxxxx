@@ -1001,27 +1001,16 @@ $(function () {
                     $('#btnAceptar').addClass('hidden');
                     faltaEvidencia = false;
                 }
-            } else {
-                if (archivosEstablecidos !== null) {
-                    $('#contentFirmasConclucion').removeClass('hidden');
-                    $('#contentServiciosRedes').addClass('hidden');
-                }
+            });
+            if (faltaEvidencia === true) {
+                $('#contentFirmasConclucion').removeClass('hidden');
+                $('#contentServiciosRedes').addClass('hidden');
             }
         } else {
-            datoServicioTabla.firmaCliente = firmaClienet.getImg();
-            datoServicioTabla.nodos = listaTotalNodos;
-
-            peticion.enviar('panelFirmas', 'SeguimientoCE/SeguimientoGeneral/concluir', datoServicioTabla, function (respuesta) {
-                if (!validarError(respuesta)) {
-                    return;
-                }
-                modal.mostrarModal("Exito", '<h4>Se han concluido el servicio correctamente</h4>');
-                $('#btnCerrar').addClass('hidden');
-                modal.btnAceptar('btnAceptar', function () {
-                    modal.cerrarModal();
-                    location.reload();
-                });
-            });
+            if (archivosEstablecidos !== null) {
+                $('#contentFirmasConclucion').removeClass('hidden');
+                $('#contentServiciosRedes').addClass('hidden');
+            }
         }
     });
 
