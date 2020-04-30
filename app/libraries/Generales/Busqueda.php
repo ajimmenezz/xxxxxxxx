@@ -506,7 +506,8 @@ class Busqueda extends General {
                         /* Datos generales del censo */
                         'datos' => $this->DBB->getGeneralesServicio11($servicio)[0],
                         /* Detalles del censo */
-                        'detalles' => $this->DBB->getDetalllesServicio11($servicio)
+                        'detalles' => $this->DBB->getDetalllesServicio11($servicio),
+                        'diferencias' => $this->SeguimientoPoliza->cargaDiferenciasCenso(['servicio' => $servicio,'mostrarCenso' => true])
                     ];
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_11", $data, TRUE);
                     break;

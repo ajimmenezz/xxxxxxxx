@@ -15,7 +15,7 @@
                 <tr>
                     <td class="f-s-15 f-w-600 text-center"><?php echo count($ultimo); ?></td>
                     <td class="f-s-15 f-w-600 text-center"><?php echo count($actual); ?></td>
-                    <td class="f-s-15 f-w-600 text-center"><?php echo '<label class="f-s-15 f-w-600 ' . ($conteo > 0 ? 'text-success' : 'text-danger') . '">' . ($conteo > 0 ? '+' : '').$conteo . '</label>' ?></td>
+                    <td class="f-s-15 f-w-600 text-center"><?php echo '<label class="f-s-15 f-w-600 ' . ($conteo > 0 ? 'text-success' : 'text-danger') . '">' . ($conteo > 0 ? '+' : '') . $conteo . '</label>' ?></td>
                 </tr>
             </tbody>
         </table>
@@ -24,7 +24,15 @@
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <ul class="nav nav-pills">
-            <li class="active"><a href="#difConteos" data-toggle="tab">Diferencias (Conteos)</a></li>
+            <?php
+            if ($mostrarCenso) {
+                echo '<li class="active"><a href="#detCenso" data-toggle="tab">Censo</a></li>';
+                $active = '';
+            } else {
+                $active = ' class="active"';
+            }
+            ?>
+            <li <?php echo $active; ?>><a href="#difConteos" data-toggle="tab">Diferencias (Conteos)</a></li>
             <li><a href="#difSeries" data-toggle="tab">Diferencias (Series)</a></li>
             <li><a href="#cambiosSeries" data-toggle="tab">Cambios Serie</a></li>
             <li><a href="#difFaltantes" data-toggle="tab">Faltantes</a></li>
@@ -32,7 +40,54 @@
         </ul>
 
         <div class="tab-content">
-            <div class="tab-pane fade active in" id="difConteos">
+            <?php
+            if ($mostrarCenso) {
+                $active = '';
+            ?>
+                <div class="tab-pane fade active in" id="detCenso">
+                    <div class="row m-t-15">
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Área</th>
+                                        <th>Punto</th>
+                                        <th>Línea</th>
+                                        <th>Sublínea</th>
+                                        <th>Marca</th>
+                                        <th>Modelo</th>
+                                        <th>Serie</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    if (isset($actual) && count($actual) > 0) {
+                                        foreach ($actual as $k => $v) {
+                                            echo '
+                                            <tr>
+                                                <td>' . $v['Area'] . '</td>
+                                                <td>' . $v['Punto'] . '</td>
+                                                <td>' . $v['Linea'] . '</td>
+                                                <td>' . $v['Sublinea'] . '</td>
+                                                <td>' . $v['Marca'] . '</td>
+                                                <td>' . $v['Modelo'] . '</td>
+                                                <td>' . $v['Serie'] . '</td>
+                                            </tr>
+                                            ';
+                                        }
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <?php
+            } else {
+                $active = ' active in ';
+            }
+            ?>
+            <div class="tab-pane fade <?php echo $active; ?>" id="difConteos">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <h4>Diferencia de Puntos x Área</h4>
@@ -406,14 +461,6 @@
                 </div>
             </div>
         </div>
-
-    </div>
-</div>
-
-
-
-<div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12">
 
     </div>
 </div>

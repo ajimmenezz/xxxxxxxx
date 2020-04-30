@@ -6240,6 +6240,9 @@ class Seguimientos extends General
     public function cargaDiferenciasCenso(array $datos)
     {
         $dataDiff = $this->getDataForCensoCompare($datos['servicio']);
+        if(isset($datos['mostrarCenso']) && $datos['mostrarCenso']){
+            $dataDiff['mostrarCenso'] = true;
+        }
         return ['html' => parent::getCI()->load->view('Poliza/Modal/DiferenciaCensos', $dataDiff, TRUE)];
     }
 
