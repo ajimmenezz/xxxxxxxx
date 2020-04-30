@@ -36,6 +36,7 @@
                 <!--<li class="hidden"><a href="#Datos" data-toggle="tab">Datos</a></li>-->
                 <li class="hidden"><a href="#AreaPuntos" data-toggle="tab">Puntos por Área</a></li>
                 <li class="hidden"><a href="#EquiposPunto" data-toggle="tab">Equipos por Punto</a></li>
+                <li class="hidden"><a href="#DiferenciasCenso" data-toggle="tab">Diferencias</a></li>
                 <li class=""><a href="#DocumentacionFirmada" data-toggle="tab">Documentación Firmada</a></li>
                 <!--<li class=""><a href="#Notas" data-toggle="tab">Conversación</a></li>-->
                 <li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>
@@ -322,161 +323,11 @@
             </div>
         </div>
 
-        <!--Empezando la seccion Datos-->
-        <!--        <div class="tab-pane fade " id="Datos">            
-                    <div class="panel-body">
-        
-                        Empezando la tabla de servcicio de Censos
-                        <div class="row">                
-                            <div class="col-md-12">
-                                <table id="data-table-censo-modelos" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                                    <thead>
-                                        <tr>                                
-                                            <th class="all">Área Atención</th>
-                                            <th class="all">Punto</th>
-                                            <th class="all">Modelo</th>
-                                            <th class="all">Serie</th>
-                                            <th class="all">Número Terminal</th>
-                                            <th class="never">IdAreaAtencion</th>                                
-                                            <th class="never">IdModelo</th>                                
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-        <?php
-        //                                if (!empty($informacionDatosCenso)) {
-        //                                    foreach ($informacionDatosCenso as $key => $value) {
-        //                                        echo '<tr>';
-        //                                        echo '<td>' . $value['Sucursal'] . '</td>';
-        //                                        echo '<td>' . $value['Punto'] . '</td>';
-        //                                        echo '<td>' . $value['Linea'] . ' - ' . $value['Marca'] . ' - ' . $value['Modelo'] . '</td>';
-        //                                        echo '<td>' . $value['Serie'] . '</td>';
-        //                                        echo '<td>' . $value['Extra'] . '</td>';
-        //                                        echo '<td>' . $value['IdArea'] . '</td>';
-        //                                        echo '<td>' . $value['IdModelo'] . '</td>';
-        //                                        echo '</tr>';
-        //                                    }
-        //                                }
-        ?>                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        Finalizando la tabla de servcicio de Censos
-        
-                        Empezando mensaje de tabla
-                        <div class="row">
-                            <div class="col-md-12 m-t-20">
-                                <div class="alert alert-warning fade in m-b-15">                            
-                                    Para eliminar el registro de la tabla solo tiene que dar click sobre la fila para eliminarlo.                            
-                                </div>                        
-                            </div>
-                        </div>
-                        Finalizando mensaje de tabla
-        
-                        Empezando formulario servicio censo datos Censo
-                        <form class="margin-bottom-0" id="formServicioCenso" data-parsley-validate="true">
-                            <div class="row m-r-10">
-                                <div class="col-md-10 col-xs-8">
-                                    <h3 class="m-t-10">Datos del Censo</h3>
-                                </div>
-                            </div>
-        
-                            Empezando Separador
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="underline m-b-15 m-t-15"></div>
-                                </div>
-                            </div>
-                            Finalizando 
-        
-                            Empezando Area de Atencion, Punto y Modelo
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="seguimientoCenso">Área de Atención *</label>
-                                        <select id="selectAreasAtencion" class="form-control" style="width: 100%" data-parsley-required="true">
-                                            <option value="">Seleccionar</option>
-        <?php
-        foreach ($areasAtencion as $item) {
-            //                                        echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-        }
-        ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">                                           
-                                        <label for="seguimientoCenso">Punto *</label>
-                                        <input id="inputPuntoCenso" type="number" class="form-control"  placeholder="Cantidad"/>
-                                    </div>                               
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="seguimientoCenso">Modelo *</label>
-                                        <select id="selectModelosCenso" class="form-control" style="width: 100%" data-parsley-required="true">
-                                            <option value="">Seleccionar</option>
-        <?php
-        foreach ($modelos as $item) {
-            //                                        echo '<option value="' . $item['IdMod'] . '">' . $item['Linea'] . ' - ' . $item['Marca'] . ' - ' . $item['Modelo'] . '</option>';
-        }
-        ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            Finalizando
-        
-        
-                            Empezando Serie e Numero de termina
-                            <div class="row"> 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="seguimientoCenso">Serie *</label>
-                                        <input type="text" class="form-control" id="inputSerieCenso" placeholder="Serie" style="width: 100%" data-parsley-required="true"/>                            
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="seguimientoCenso">Número de Terminal *</label>
-                                        <input type="text" class="form-control" id="inputNumeroTerminalCenso" placeholder="ABCDFG99" style="width: 100%" data-parsley-required="true"/>                            
-                                    </div>
-                                </div>
-                            </div>
-                            Finalizando 
-        
-                            <div class="row">
-                                <div class="col-md-12 m-t-20">
-                                    <div class="alert alert-warning fade in m-b-15">                            
-                                        Para guardar el nuevo dato necesita dar clic en el botón Agregar para colocarlo en la tabla y después dar clic en el botón Guardar para tener el nuevo registro.                             
-                                    </div>                        
-                                </div>
-                            </div>
-        
-                            <div class="row m-t-10">
-                                Empezando error 
-                                <div class="col-md-12">
-                                    <div class="errorDatosCenso"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group text-center">
-                                        <br>
-                                        <a id="btnAgregaEquipoCenso" href="javascript:;" class="btn btn-success m-r-5"><i class="fa fa-plus"></i> Agregar</a>
-                                    </div>
-                                </div>
-                                Finalizando Error
-                                <div class="col-md-6">
-                                    <div class="form-group text-center">
-                                        <br>
-                                        <a id="btnGuardarServicioCenso" href="javascript:;" class="btn btn-primary m-r-5 "><i class="fa fa-floppy-o"></i> Guardar</a>                            
-                                    </div>
-                                </div>
-                            </div>
-        
-                        </form>
-                        Finalizando formulario servicio censo
-                    </div>
-                </div>-->
-        <!--Finalizando la seccion Datos-->
+        <div class="tab-pane fade" id="DiferenciasCenso">
+            <div class="panel-body">
+                <div id="contentDiferenciasCensos"></div>
+            </div>
+        </div>
 
         <!--Empezando la seccion Documentacion Firmada-->
         <div class="tab-pane fade " id="DocumentacionFirmada">

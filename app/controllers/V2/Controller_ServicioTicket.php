@@ -10,8 +10,6 @@ use Librerias\V2\PaquetesTicket\GestorServicios as GestorServicio;
 use Librerias\V2\PaquetesAlmacen\AlmacenVirtual as AlmacenVirtual;
 use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 use Librerias\V2\PaquetesEquipo\Equipo as Equipo;
-use Librerias\V2\PaquetesSucursales\SucursalAdist as Sucursal;
-use Librerias\V2\PaquetesSucursales\Censo as Censo;
 
 class Controller_ServicioTicket extends CI_Controller {
 
@@ -87,11 +85,11 @@ class Controller_ServicioTicket extends CI_Controller {
 
     private function htmlBotonVuelta() {
         $boton = FALSE;
-
+        
         if (Usuario::getIdPerfil() === '83' || Usuario::getIdDepartamento() === '19') {
             $boton = TRUE;
         }
-
+        
         return $boton;
     }
 
@@ -160,6 +158,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->servicio->runAccion($evento, $datosServicio);
             $this->datos['solucion'] = $this->servicio->getSolucion();
             $this->datos['datosServicio'] = $this->gestorServicios->getInformacion($datosServicio['tipo'], array('datosServicio' => $this->servicio->getDatos()));
+            $this->datos['firmas'] = $this->servicio->getFirmas($datosServicio['id']);
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (Exception $ex) {
@@ -271,6 +270,9 @@ class Controller_ServicioTicket extends CI_Controller {
             $this->setResolucionServiceDesk($datosServicio);
             $this->concluirServicio($datosServicio);
 
+            if (isset($datosServicio['nodos'])) {
+                $this->almacenVirtual->updateAlmacen($datosServicio);
+            }
             $this->datos['operacion'] = TRUE;
             echo json_encode($this->datos);
         } catch (\Exception $ex) {

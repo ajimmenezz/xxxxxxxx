@@ -169,7 +169,7 @@ class PDF extends \FPDF {
         $this->SetFillColor(217, 217, 217);
         $this->SetTextColor(10, 10, 10);
         $this->SetLineWidth(.2);
-        $this->SetFont('', 'B');
+        $this->SetFont('', 'B', 10);
 
         // Cabecera
         if ($cabecera !== []) {

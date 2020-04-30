@@ -1606,6 +1606,9 @@ function cargarFormularioSeguimiento() {
         case "#EquiposPunto":
           cargaEquiposPuntoCenso(respuesta.servicio);
           break;
+        case "#DiferenciasCenso":
+          cargaDiferenciasCenso(respuesta.servicio);
+          break;
       }
     });
     $("#divNotasServicio").slimScroll({ height: "400px" });
@@ -1742,6 +1745,21 @@ function cargarFormularioSeguimiento() {
     if ($("#EquiposPunto").hasClass("active")) {
       cargaEquiposPuntoCenso(servicio);
     }
+    
+    if ($("#DiferenciasCenso").hasClass("active")) {
+      cargaDiferenciasCenso(servicio);
+    }
+  }
+
+  function cargaDiferenciasCenso(){
+    evento.enviarEvento(
+      "Seguimiento/CargaDiferenciasCenso",
+      {servicio:arguments[0]},
+      "#seccion-servicio-censo",
+      function(respuesta) {
+        $("#contentDiferenciasCensos").empty().append(respuesta.html);
+      }
+    );
   }
 
   function cargaEquiposPuntoCenso() {
@@ -2572,10 +2590,13 @@ function cargarFormularioSeguimiento() {
       $("[href=#AreaPuntos]")
         .parent("li")
         .removeClass("hidden");
-      $("[href=#EquiposPunto]")
-        .parent("li")
-        .removeClass("hidden");
-    } else {
+        $("[href=#EquiposPunto]")
+          .parent("li")
+          .removeClass("hidden");
+        $("[href=#DiferenciasCenso]")
+          .parent("li")
+          .removeClass("hidden");
+      } else {
       if (respuesta.datosServicio.IdSucursal !== null) {
         select.cambiarOpcion(
           "#selectSucursales",
@@ -2584,8 +2605,9 @@ function cargarFormularioSeguimiento() {
       }
     }
   };
+
   function colocarBotonGuardarCambiosCenso(datosServicio) {
-    if (datosServicio.Firma !== null) {
+    if (datosServicio.Firma !== null && datosServicio.Firma !== '') {
       $("#divBotonesServicioCenso").addClass("hidden");
       $("#divGuardarCambiosServicioCenso").removeClass("hidden");
     }
@@ -2610,6 +2632,9 @@ function cargarFormularioSeguimiento() {
             .parent("li")
             .removeClass("hidden");
           $("[href=#EquiposPunto]")
+            .parent("li")
+            .removeClass("hidden");
+          $("[href=#DiferenciasCenso]")
             .parent("li")
             .removeClass("hidden");
         }

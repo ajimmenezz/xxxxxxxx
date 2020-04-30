@@ -103,11 +103,18 @@ class Modelo_ServicioCableado extends Modelo_Base {
     }
 
     public function setServicio(string $idServicio, array $datos) {
-        $this->insertarArray('t_servicios_generales', array('IdUsuario' => $datos['idUsuario'],
-            'IdServicio' => $idServicio,
-            'Descripcion' => $datos['observaciones'],
-            'Archivos' => $datos['archivos'],
-            'Fecha' => $datos['fecha']));
+        $this->insertar('insert into t_servicios_generales values(
+                                null,
+                                ' . $datos['idUsuario'] . ',
+                                ' . $idServicio . ',
+                                "' . $datos['observaciones'] . '",
+                                "' . $datos['archivos'] . '",
+                                now(),
+                                null,
+                                null,
+                                null,
+                                null    
+                             )');
     }
 
     public function updateServicio(string $idServicio, array $datos) {
@@ -172,8 +179,14 @@ class Modelo_ServicioCableado extends Modelo_Base {
                                                 INNER JOIN t_redes_nodos AS trn ON tst.Id = trn.IdServicio 
                                                 INNER JOIN cat_v3_areas_atencion AS caa ON trn.IdArea = caa.Id 
                                                 INNER JOIN cat_v3_modelos_equipo AS cme ON trn.IdSwitch = cme.Id 
-                                                WHERE tst.Id =' . $datosServicio['id']);
-
+                                                WHERE tst.Id =' . $datosServicio['id']); 
+ 
+        $datos['evidencias'] = $this->consulta('SELECT Archivos FROM t_redes_nodos WHERE IdServicio =' . $datosServicio['id']); 
+        
+        $datos['evidenciasGenerales'] = $this->consulta('SELECT Archivos FROM t_servicios_generales WHERE IdServicio =' . $datosServicio['id']); 
+ 
+        $datos['totalMaterial'] = $this->ejecutaFuncion('call getTotalRedesServiceMaterial(' . $datosServicio['id'] . ')');
+        
         $datos['infoFirmas'] = $this->consulta('SELECT  
                                                     tst.Firma,  
                                                     tst.NombreFirma,  

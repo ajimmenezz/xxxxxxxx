@@ -366,6 +366,9 @@ class Controller_Seguimiento extends Base
             case 'CargaEquiposPuntoCenso':
                 $resultado = $this->Seguimientos->cargaEquiposPuntoCenso($this->input->post());
                 break;
+            case 'CargaDiferenciasCenso':
+                $resultado = $this->Seguimientos->cargaDiferenciasCenso($this->input->post());
+                break;
             case 'CargaFormularioCapturaCenso':
                 $resultado = $this->Seguimientos->cargaFormularioCapturaCenso($this->input->post());
                 break;

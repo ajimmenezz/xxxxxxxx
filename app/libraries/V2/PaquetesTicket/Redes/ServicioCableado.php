@@ -201,9 +201,9 @@ class ServicioCableado implements Servicio {
             $datos['archivos'] .= ',' . $consulta[0]['Archivos'];
         }
 
-        $consulta = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
+        $existenDatos = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
 
-        if (empty($consulta)) {
+        if (empty($existenDatos)) {
             $this->DBServiciosGeneralRedes->setServicio($this->id, $datos);
         } else {
             $consulta = $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
@@ -250,55 +250,28 @@ class ServicioCableado implements Servicio {
 
     public function getPDF(array $datos) {
         $informacionServicio = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
-
-        $this->pdf = new PDF($this->id);
-        $this->pdf->AddPage();
-        $this->pdf->tituloTabla('Información General');
-        $this->pdf->tabla(array(), $informacionServicio['infoGeneral']);
-
-        $totalMaterial = $this->gestorNodos->getTotalMaterial();
-        $arrayNuevoTotalMaterial = array();
-
-        foreach ($totalMaterial as $key => $value) {
-            $arrayNuevoTotalMaterial[$key] = array($value['Producto'], $value['Cantidad']);
+        if ($this->folioSolicitud == null) {
+            $this->folioSolicitud = '';
         }
-
-        $this->FancyTable(array('Material', 'Cantidad'), $arrayNuevoTotalMaterial);
-
-        $contador = 1;
-        foreach ($informacionServicio['infoNodos'] as $key => $value) {
-            $ancho = $this->pdf->GetPageWidth() - 20;
-            $y = $this->pdf->GetY();
-            $x = 30;
-
-            if ($x < $ancho) {
-                $arrayNuevo = array(
-                    'Area' => $value['Area'],
-                    'Nodo' => $value['Nodo'],
-                    'Switch' => $value['Switch'],
-                    'NumeroSwitch' => $value['NumeroSwitch']);
-                $this->pdf->tituloTabla('Solución del Nodo: ' . $contador);
-                $this->pdf->tabla(array(), array($arrayNuevo));
-                $evidencias = explode(',', $value['Evidencias']);
-                $this->pdf->tablaImagenes($evidencias);
-                $contador ++;
-                $x += 80;
-            } else {
-                $x = 30;
-                $y += 50;
-            }
-
-            $altura = $y + 258;
-
-            if ($altura > ($this->pdf->GetPageHeight())) {
-                $this->pdf->AddPage();
-            }
+        $pdf = new PDF($this->folioSolicitud);
+        $pdf->AddPage();
+        $pdf->tituloTabla('Información General');
+        $pdf->tabla(array(), $informacionServicio['infoGeneral']);
+        $pdf->tituloTabla('Solución del Servicio');
+        $pdf->tabla(array(), $informacionServicio['infoNodos']);
+        if (!empty($informacionServicio['evidencias'])) {
+            $evidencias = explode(',', $informacionServicio['evidencias'][0]['Archivos']);
+            $pdf->tablaImagenes($evidencias);
+            $pdf->tituloTabla('Material');
+            $pdf->tabla(array('Tipo', 'Producto', 'Cantidad'), $informacionServicio['totalMaterial']);
+        } else{
+            $evidencias = explode(',', $informacionServicio['evidenciasGenerales'][0]['Archivos']);
+            $pdf->tablaImagenes($evidencias);
         }
-
-        $this->pdf->tituloTabla('Firmas del Servicio');
-        $this->pdf->firma($informacionServicio['infoFirmas'][0]);
-        $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', $this->id . '-PDF');
-        $this->pdf->Output('F', $carpeta, true);
+        $pdf->tituloTabla('Firmas del Servicio');
+        $pdf->firma($informacionServicio['infoFirmas'][0]);
+        $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
+        $pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
         return $archivo;
     }

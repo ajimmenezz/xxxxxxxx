@@ -13,6 +13,7 @@ class Busqueda extends General {
     private $fechas;
     private $Excel;
     private $InformacionServicios;
+    private $SeguimientoPoliza;
 
     public function __construct() {
         parent::__construct();
@@ -23,6 +24,7 @@ class Busqueda extends General {
         $this->fechas = \Librerias\Generales\Dashboard::factory();
         $this->Excel = new \Librerias\Generales\CExcel();
         $this->InformacionServicios = \Librerias\WebServices\InformacionServicios::factory();
+        $this->SeguimientoPoliza = \Librerias\Poliza\Seguimientos::factory();
         parent::getCI()->load->helper('date');
     }
 
@@ -792,7 +794,7 @@ class Busqueda extends General {
     
     public function exportarCenso(array $datos = null){
         $listaCenso = $this->DBB->getinfoEqiposCenso($datos['servicio']);
-        
+        $detallesDiferenciaCenso = $this->SeguimientoPoliza->getDataForCensoCompare($datos['servicio']);
         $host = $_SERVER['SERVER_NAME'];
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
             $liga = 'http://siccob.solutions';
@@ -801,9 +803,35 @@ class Busqueda extends General {
         }
         
         if($listaCenso){
-            $this->Excel->createSheet('Censo', 0);
-            $this->Excel->setActiveSheet(0);
-            $arrayTitulos = [
+            
+            $this->contenidoCenso($listaCenso);
+            $this->EncabezadoDiferenciasConteos($detallesDiferenciaCenso['generales'], count($detallesDiferenciaCenso['ultimo']), count($detallesDiferenciaCenso['actual']));
+            $this->diferenciasConteos($detallesDiferenciaCenso);
+            $this->diferenciasSeries($detallesDiferenciaCenso['diferenciasActual'], $detallesDiferenciaCenso['diferenciasUltimo'], $detallesDiferenciaCenso['generales']);
+            $this->cambiosSeries($detallesDiferenciaCenso['cambiosSerie']);
+            $this->faltantes($detallesDiferenciaCenso['diferenciasKit']['faltantes']);
+            $this->sobrantes($detallesDiferenciaCenso['diferenciasKit']['sobrantes']);
+                        
+            $nombreArchivo = 'Censo-'.$listaCenso[0]['Sucursal'] .'_'. $datos['servicio'] . '.xlsx';
+            $nombreArchivo = trim($nombreArchivo);
+            $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
+
+            $path = "../public/storage/Archivos/Reportes/";
+            if (!is_dir($path)) {
+                mkdir($path, 775, true);
+            }
+            $this->Excel->saveFile($ruta);
+
+            return ['ruta' => $liga . '/storage/Archivos/Reportes/' . $nombreArchivo];
+        } else {
+            return ['ruta' => 500, 'mensaje' => 'No hay Registros en el censo'];
+        }
+    }
+    
+    public function contenidoCenso($listaCenso) {
+        $this->Excel->createSheet('Censo', 0);
+        $this->Excel->setActiveSheet(0);
+        $arrayTitulos = [
                 'Sucursal',
                 'Área de Atención',
                 'Punto',
@@ -819,21 +847,278 @@ class Busqueda extends General {
             $arrayAlign = ['justify', 'center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
 
             $this->Excel->setTableContent('A', 1, $listaCenso, true, $arrayAlign);
-            
-            $nombreArchivo = 'Censo-'.$listaCenso[0]['Sucursal'] .'_'. $datos['servicio'] . '.xlsx';
-            $nombreArchivo = trim($nombreArchivo);
-            $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
-
-            $path = "../public/storage/Archivos/Reportes/";
-            if (!is_dir($path)) {
-                mkdir($path, 775, true);
+    }
+    
+    public function EncabezadoDiferenciasConteos($informacionGeneralCenso, $ultimo, $actual) {
+        $this->Excel->createSheet('Diferencias(Conteos)', 1);
+        $this->Excel->setActiveSheet(1);
+        $this->Excel->setTableTitle('A1', 'K1', $informacionGeneralCenso["Sucursal"], ['center']);
+        $this->Excel->setTableTitle('A2', 'D2', 'Censo ' . $informacionGeneralCenso["Fecha"], ['center']);
+        $this->Excel->setTableTitle('A3', 'D3', $ultimo, ['center']);
+        $this->Excel->setTableTitle('E2', 'G2', 'Censo ' . $informacionGeneralCenso["FechaUltimo"], ['center']);
+        $this->Excel->setTableTitle('E3', 'G3', $actual, ['center']);
+        $this->Excel->setTableTitle('H2', 'K2', 'Diferencia de Equipos', ['center']);
+        $this->Excel->setTableTitle('H3', 'K3', $actual - $ultimo, ['center']);
+    }
+    
+    public function diferenciasConteos($detallesGeneralesCenso) {
+        $this->Excel->setActiveSheet(1);
+        $this->Excel->setTableTitle('A5', 'B5', 'Diferencia de Puntos por Área');
+        $this->Excel->setTableTitle('D5', 'E5', 'Diferencia de Líneas');
+        $this->Excel->setTableTitle('G5', 'H5', 'Diferencia de Sublíneas');
+        $this->Excel->setTableTitle('J5', 'K5', 'Diferencia de Modelos');
+        
+        $titulosArea = [
+                'Área',
+                'Total de Puntos'];
+        $this->Excel->setTableSubtitles('A', 6, $titulosArea);
+        $titulosLinea = [
+                'Línea',
+                'Total de Equipos'];
+        $this->Excel->setTableSubtitles('D', 6, $titulosLinea);
+        $titulosSublineas = [
+                'SubLíneas',
+                'Total de Equipos'];
+        $this->Excel->setTableSubtitles('G', 6, $titulosSublineas);
+        $titulosModelos = [
+                'Modelos',
+                'Total de Equipos'];
+        $this->Excel->setTableSubtitles('J', 6, $titulosModelos);
+        $arrayWidth = [20, 20];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setColumnsWidth('D', $arrayWidth);
+        $this->Excel->setColumnsWidth('G', $arrayWidth);
+        $this->Excel->setColumnsWidth('J', $arrayWidth);
+        $arrayAlign = ['center', 'center'];
+        
+        $listaAreas = array();
+        $listaLineas = array();
+        $listaSubLineas = array();
+        $listaModelos = array();
+        
+        foreach ($detallesGeneralesCenso['diferenciaAreas'] as $k => $v) {
+            if($v != 0){
+                $listaAreas[$k]['Area'] = $k;
+                $listaAreas[$k]['Valor'] = $v;
             }
-            $this->Excel->saveFile($ruta);
-
-            return ['ruta' => $liga . '/storage/Archivos/Reportes/' . $nombreArchivo];
+        }
+        
+        foreach ($detallesGeneralesCenso['diferenciaLineas'] as $k => $v) {
+            if($v != 0){
+                $listaLineas[$k]['Area'] = $k;
+                $listaLineas[$k]['Valor'] = $v;
+            }
+        }
+        
+        foreach ($detallesGeneralesCenso['diferenciaSublineas'] as $k => $v) {
+            if($v != 0){
+                $listaSubLineas[$k]['Area'] = $k;
+                $listaSubLineas[$k]['Valor'] = $v;
+            }
+        }
+        
+        foreach ($detallesGeneralesCenso['diferenciaModelos'] as $k => $v) {
+            if($v != 0){
+                $listaModelos[$k]['Area'] = $k;
+                $listaModelos[$k]['Valor'] = $v;
+            }
+        }
+        
+//        var_dump('<pre>');
+//        var_dump($listaAreas);
+//        var_dump('</pre>');
+        if(count($listaAreas) > 0){
+            $this->Excel->setTableContent('A', 6, $listaAreas, true, $arrayAlign);
         } else {
-            return false;
+            $this->Excel->setTableTitle('A7', 'B7', 'No existen registros', ['center']);
+        }
+        if(count($listaLineas) > 0){
+            $this->Excel->setTableContent('D', 6, $listaLineas, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('D7', 'E7', 'No existen registros', ['center']);
+        }
+        if(count($listaSubLineas) > 0){
+            $this->Excel->setTableContent('G', 6, $listaSubLineas, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('G7', 'H7', 'No existen registros', ['center']);
+        }
+        if(count($listaModelos) > 0){
+            $this->Excel->setTableContent('J', 6, $listaModelos, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('J7', 'K7', 'No existen registros', ['center']);
         }
     }
+    
+    public function diferenciasSeries($diferenciasActual, $diferenciasUltimo, $fechas) {
+        $listaDiferenciasActual = array();
+        $listaDiferenciasUltimo = array();
+        $this->Excel->createSheet('Diferencias(Series)', 2);
+        $this->Excel->setActiveSheet(2);
+        $this->Excel->setTableTitle('A1', 'G1', 'Equipos que no existen en el censo de ' . $fechas["Fecha"]);
+        $this->Excel->setTableTitle('I1', 'O1', 'Equipos que no existen en el censo de ' . $fechas["FechaUltimo"] . ' (Actual)');
+        $arrayTitulos = [
+                'Área',
+                'Punto',
+                'Línea',
+                'Sublínea',
+                'Marca',
+                'Modelo',
+                'Serie'];
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        $this->Excel->setTableSubtitles('I', 2, $arrayTitulos);
+        $arrayWidth = [15, 8, 20, 20, 20, 30, 30];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setColumnsWidth('I', $arrayWidth);
+        $arrayAlign = ['center', 'center', 'justify', 'justify', 'justify', 'justify', 'center'];
+        
+        foreach ($diferenciasActual as $k => $v) {
+            $listaDiferenciasActual[$k]['Area'] = $v['Area'];
+            $listaDiferenciasActual[$k]['Punto'] = $v['Punto'];
+            $listaDiferenciasActual[$k]['Linea'] = $v['Linea'];
+            $listaDiferenciasActual[$k]['Sublinea'] = $v['Sublinea'];
+            $listaDiferenciasActual[$k]['Marca'] = $v['Marca'];
+            $listaDiferenciasActual[$k]['Modelo'] = $v['Modelo'];
+            $listaDiferenciasActual[$k]['SerieAnt'] = $v['Serie'];
+        }
+        foreach ($diferenciasUltimo as $k => $v) {
+            $listaDiferenciasUltimo[$k]['Area'] = $v['Area'];
+            $listaDiferenciasUltimo[$k]['Punto'] = $v['Punto'];
+            $listaDiferenciasUltimo[$k]['Linea'] = $v['Linea'];
+            $listaDiferenciasUltimo[$k]['Sublinea'] = $v['Sublinea'];
+            $listaDiferenciasUltimo[$k]['Marca'] = $v['Marca'];
+            $listaDiferenciasUltimo[$k]['Modelo'] = $v['Modelo'];
+            $listaDiferenciasUltimo[$k]['SerieAnt'] = $v['Serie'];
+        }
+        if(count($listaDiferenciasActual) > 0){
+            $this->Excel->setTableContent('A', 2, $listaDiferenciasActual, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A3', 'G3', 'No existen registros', ['center']);
+        }
+        if(count($listaDiferenciasUltimo) > 0){
+            $this->Excel->setTableContent('I', 2, $listaDiferenciasUltimo, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('I3', 'O3', 'No existen registros', ['center']);
+        }
+    }
+    
+    public function cambiosSeries($cambiosSerie) {
+        $listaCambiosSerie = array();
+        $this->Excel->createSheet('Cambios Serie', 3);
+        $this->Excel->setActiveSheet(3);
+        $this->Excel->setTableTitle('A1', 'H1', 'Equipos que posiblemente cambiaron de tener Serie a ser ILEGIBLE');
+        $arrayTitulos = [
+                'Área',
+                'Punto',
+                'Línea',
+                'Sublínea',
+                'Marca',
+                'Modelo',
+                'Serie Anterior',
+                'Serie Actual'];
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        $arrayWidth = [15, 8, 20, 20, 20, 30, 30, 30];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $arrayAlign = ['center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
 
+        foreach ($cambiosSerie as $k => $v) {
+            $listaCambiosSerie[$k]['Area'] = $v['Area'];
+            $listaCambiosSerie[$k]['Punto'] = $v['Punto'];
+            $listaCambiosSerie[$k]['Linea'] = $v['Linea'];
+            $listaCambiosSerie[$k]['Sublinea'] = $v['Sublinea'];
+            $listaCambiosSerie[$k]['Marca'] = $v['Marca'];
+            $listaCambiosSerie[$k]['Modelo'] = $v['Modelo'];
+            $listaCambiosSerie[$k]['SerieAnt'] = $v['Serie'];
+            $listaCambiosSerie[$k]['SerieAct'] = 'ILEGIBLE';
+        }
+
+        if(count($listaCambiosSerie) > 0){
+            $this->Excel->setTableContent('A', 2, $listaCambiosSerie, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A3', 'H3', 'No existen registros', ['center']);
+        }
+    }
+    
+    public function faltantes($diferenciasKitFaltantes) {
+        $listaFaltantes = array();
+        $this->Excel->createSheet('Faltantes', 4);
+        $this->Excel->setActiveSheet(4);
+        $this->Excel->setTableTitle('A1', 'E1', 'Equipos que faltan basado en el Kit Estandar de Área');
+        $arrayTitulos = [
+                'Área',
+                'Punto',
+                'Línea',
+                'Sublínea',
+                'Cantidad'];
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        $arrayWidth = [30, 8, 20, 20, 20];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $arrayAlign = ['justify', 'center', 'justify', 'justify', 'justify'];
+        
+        $i = 0;
+        foreach ($diferenciasKitFaltantes as $kArea => $vArea) {
+            foreach ($vArea as $kPunto => $vPunto) {
+                foreach ($vPunto as $k => $v) {
+                    $listaFaltantes[$i]["Area"] = $diferenciasKitFaltantes[$kArea][$kPunto][$k]['Area'];
+                    $listaFaltantes[$i]["Punto"] = str_replace("P", "", $kPunto);
+                    $listaFaltantes[$i]["Linea"] = $diferenciasKitFaltantes[$kArea][$kPunto][$k]['Linea'];
+                    $listaFaltantes[$i]["Sublinea"] = $diferenciasKitFaltantes[$kArea][$kPunto][$k]['Sublinea'];
+                    $listaFaltantes[$i]["Cantidad"] = $diferenciasKitFaltantes[$kArea][$kPunto][$k]['Cantidad'];
+                    $i++;
+                }
+            }
+        }
+        
+        if(count($listaFaltantes) > 0){
+            $this->Excel->setTableContent('A', 2, $listaFaltantes, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A3', 'E3', 'No existen registros', ['center']);
+        }        
+    }
+    
+    public function sobrantes($diferenciasKitSobrantes) {
+        $listaSobrantes = array();
+        $lista = array();
+        $this->Excel->createSheet('Sobrantes', 5);
+        $this->Excel->setActiveSheet(5);
+        $this->Excel->setTableTitle('A1', 'G1', 'Equipos que sobran basado en el Kit Estandar de Área');
+        $arrayTitulos = [
+                'Área',
+                'Punto',
+                'Línea',
+                'Sublínea',
+                'Marca',
+                'Modelo',
+                'Serie'];
+        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
+        $arrayWidth = [30, 8, 20, 20, 20, 30, 30];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $arrayAlign = ['justify', 'center', 'justify', 'justify', 'justify', 'justify', 'center'];
+        
+        $i = 0;
+        foreach ($diferenciasKitSobrantes as $kArea => $vArea) {
+            foreach ($vArea as $kPunto => $vPunto) {
+                foreach ($vPunto as $k => $v) {
+                    $listaSobrantes[$kPunto][$k]["Area"] = $v['Area'];
+                    $listaSobrantes[$kPunto][$k]["Punto"] = $v['Punto'];
+                    $listaSobrantes[$kPunto][$k]["Linea"] = $v['Linea'];
+                    $listaSobrantes[$kPunto][$k]["Sublinea"] = $v['Sublinea'];
+                    $listaSobrantes[$kPunto][$k]["Marca"] = $v['Marca'];
+                    $listaSobrantes[$kPunto][$k]["Modelo"] = $v['Modelo'];
+                    $listaSobrantes[$kPunto][$k]["Serie"] = $v['Serie'];
+                }
+            }
+        }
+        foreach ($listaSobrantes as $k => $v) {
+            foreach ($v as $key => $value) {
+                $lista[$i] = $value;
+                $i++;
+            }
+        }
+        
+        if(count($lista) > 0){
+            $this->Excel->setTableContent('A', 2, $lista, true, $arrayAlign);
+        } else {
+            $this->Excel->setTableTitle('A3', 'G3', 'No existen registros', ['center']);
+        }
+    }
 }
