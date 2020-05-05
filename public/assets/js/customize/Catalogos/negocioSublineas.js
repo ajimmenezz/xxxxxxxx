@@ -16,13 +16,14 @@ $(function () {
 
     App.init();
     let vista = 0;
+    let datosEnvioPrincipal = null;
 
     tablaPrincipal.evento(function () {
         var datos = tablaPrincipal.datosFila(this);
-        let datosEnvio = {
+        datosEnvioPrincipal = {
             IdUnidadNegocio: datos[0]
         }
-        evento.enviarEvento('EventoCatalogoSublineasArea/GetSublienasArea', datosEnvio, '#seccionUnidadesNegocio', function (respuesta) {
+        evento.enviarEvento('EventoCatalogoSublineasArea/GetSublienasArea', datosEnvioPrincipal, '#seccionUnidadesNegocio', function (respuesta) {
             if (respuesta.code == 200) {
                 $('#btnEvent').removeClass('hidden');
                 vista = 1;
@@ -48,9 +49,10 @@ $(function () {
     tablaSublineas.evento(function () {
         var datos = tablaSublineas.datosFila(this);
         let datosEnvio = {
+            IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
             IdArea: datos[0]
         }
-        evento.enviarEvento('EventoCatalogoSublineasArea/GetSublienasArea', datosEnvio, '#seccionUnidadesNegocio', function (respuesta) {
+        evento.enviarEvento('EventoCatalogoSublineasArea/GetSublineas', datosEnvio, '#seccionUnidadesNegocio', function (respuesta) {
             console.log(respuesta);
 //            if (respuesta) {
 //                vista = 2;

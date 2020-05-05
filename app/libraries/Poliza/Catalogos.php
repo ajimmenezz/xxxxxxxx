@@ -162,7 +162,7 @@ class Catalogos extends General {
                                                         FROM
                                                             cat_v3_sublineas_x_area
                                                         WHERE
-                                                            IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . '
+                                                            IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . '
                                                             AND Flag = 1');
 
         return array('code' => 200, 'data' => $data);
