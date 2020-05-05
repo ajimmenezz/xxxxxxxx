@@ -22,8 +22,8 @@ class Controller_SublineasArea extends Base {
 
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
-            case 'MostrarTablaSublienasArea':
-                $resultado = $this->catologosPoliza->mostrarTablaSublienasArea($this->input->post());
+            case 'GetSublienasArea':
+                $resultado = $this->catologosPoliza->getSublienasArea($this->input->post());
                 break;
         }
         echo json_encode($resultado);

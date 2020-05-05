@@ -1348,6 +1348,31 @@ $config['Catalogos Generales'] = array(
         ),
         'Permiso' => 'VCUN'
     ),
+    'Catalogo-Sublineas-Area' => array(
+        'liga' => 'Sublineas de Area',
+        'icono' => '',
+        'Url' => '/Poliza/UnidadesNegocioSublineasArea',
+        'css' => array(),
+        'pluginsCss' => array(
+            'bootstrap-datepicker/css/datepicker',
+            'bootstrap-datepicker/css/datepicker3',
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Catalogos/unidades_negocio'),
+        'pluginsJs' => array(
+            'bootstrap-datepicker/js/bootstrap-datepicker',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'masked-input/masked-input.min'
+        ),
+        'Permiso' => 'VCUN'
+    ),
     'Catalogo-Sucursales' => array(
         'liga' => 'Sucursales',
         'icono' => '',
