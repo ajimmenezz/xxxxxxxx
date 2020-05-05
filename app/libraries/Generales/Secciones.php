@@ -602,6 +602,9 @@ class Secciones extends General {
             case 'Poliza/Unidades_Negocio':
                 $datos['ListaUnidadeNegocio'] = $this->Catalogo->CatUnidadesNegocio("3");
                 break;
+            case 'Poliza/SublineasArea':
+                $datos['ListaUnidadeNegocio'] = $this->Catalogo->CatUnidadesNegocio("3");
+                break;
             default:
                 break;
         }
