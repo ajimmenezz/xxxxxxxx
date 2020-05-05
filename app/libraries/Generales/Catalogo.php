@@ -3590,7 +3590,7 @@ class Catalogo extends General {
             //Obtiene Informacion 
             case '3';
                 $flag = (is_null($datos['Flag'])) ? '' : ' AND Flag = ' . $datos['Flag'];
-                return $this->DBC->getJuntarTablas('SELECT * FROM cat_v3_unidades_negocio ' . $flag);
+                return $this->DBC->getJuntarTablas('SELECT *, cliente(IdCliente) AS Cliente FROM cat_v3_unidades_negocio ' . $flag);
                 break;
             default:
                 break;
