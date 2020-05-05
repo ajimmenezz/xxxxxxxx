@@ -21,12 +21,16 @@ class Controller_SublineasArea extends Base {
      */
 
     public function manejarEvento(string $evento = null) {
-        switch ($evento) {
-            case 'GetSublienasArea':
-                $resultado = $this->catologosPoliza->getSublienasArea($this->input->post());
-                break;
+        try {
+            switch ($evento) {
+                case 'GetSublienasArea':
+                    $resultado = $this->catologosPoliza->getSublienasArea($this->input->post());
+                    break;
+            }
+            echo json_encode($resultado);
+        } catch (\Exception $exc) {
+            echo json_encode(array('code' => 400, 'message' => $exc->getMessage()));
         }
-        echo json_encode($resultado);
     }
 
 }
