@@ -3597,44 +3597,4 @@ class Catalogo extends General {
         }
     }
 
-    public function catSublineasArea(string $operacion, array $datos = null, array $where = null) {
-        switch ($operacion) {
-            //Inserta en la tabla
-            case '1':
-                $validar = array('Nombre' => $datos[0]);
-                $consulta = $this->DBC->setArticulo('cat_v3_unidades_negocio', array('Nombre' => $datos[0], 'Flag' => '1'), $validar);
-                if (!empty($consulta)) {
-                    return $this->catUnidadesNegocio('3');
-                } else {
-                    return FALSE;
-                }
-                break;
-            //Actualiza en la tabla
-            case '2':
-                //nombre de parametro para verificar que permiso no se repita
-                $parametro = 'Nombre';
-                $consulta = $this->DBC->actualizarArticulo(
-                        'cat_v3_unidades_negocio', array(
-                    'Nombre' => $datos[1],
-                    'Flag' => $datos[2]
-                        ), array('Id' => $datos[0]),
-                        //Variable para mandar datos de restriccion para que no se repita el nombre
-                        $datos[1], $parametro
-                );
-                if (!empty($consulta)) {
-                    return $this->catUnidadesNegocio('3');
-                } else {
-                    return FALSE;
-                }
-                break;
-            //Obtiene Informacion 
-            case '3';
-                $flag = (is_null($datos['Flag'])) ? '' : ' AND Flag = ' . $datos['Flag'];
-                return $this->DBC->getJuntarTablas('SELECT *, cliente(IdCliente) AS Cliente FROM cat_v3_unidades_negocio ' . $flag);
-                break;
-            default:
-                break;
-        }
-    }
-
 }

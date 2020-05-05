@@ -127,12 +127,12 @@ class Catalogos extends General {
                                                                     WHERE
                                                                         IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . ')
                                                                         AS Tabla');
-                
+
                 foreach ($sublineas as $k => $v) {
                     array_push($arraySulineas, $v['Sublinea']);
                     array_push($arrayCantidad, $v['Cantidad']);
                 }
-                
+
                 $data['IdArea'] = $value['IdArea'];
                 $data['Area'] = $value['Area'];
                 $data['Sublineas'] = implode('<br>', $arraySulineas);
@@ -143,4 +143,29 @@ class Catalogos extends General {
             throw new \Exception('No hay Áreas de atención para esa unidad de negocio');
         }
     }
+
+    public function getSublineas(array $datos) {
+        $data = array();
+        $arraySublinea = array();
+        $sublineas = $this->catalogo->catSublineasEquipo(3, array('Flag' => '1'));
+
+        foreach ($sublineas as $key => $value) {
+            $arraySublinea[$key]['Id'] = $value['IdSub'];
+            $arraySublinea[$key]['Nombre'] = $value['Sublinea'];
+        }
+
+        $data['sublineas'] = $arraySublinea;
+        $data['sublineasArea'] = $this->catalogo->catConsultaGeneral('SELECT 
+                                                            Id,
+                                                            sublinea(IdSublinea) AS Sublinea,
+                                                            Cantidad
+                                                        FROM
+                                                            cat_v3_sublineas_x_area
+                                                        WHERE
+                                                            IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . '
+                                                            AND Flag = 1');
+
+        return array('code' => 200, 'data' => $data);
+    }
+
 }
