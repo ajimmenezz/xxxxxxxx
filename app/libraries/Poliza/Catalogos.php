@@ -108,22 +108,35 @@ class Catalogos extends General {
 
     public function getSublienasArea(array $datos) {
         $data = array();
+        $areasAtencion = $this->catalogo->catConsultaGeneral('SELECT 
+                                                    cvsxa.IdArea,
+                                                areaAtencion(cvsxa.IdArea) AS Area
+                                            FROM
+                                                cat_v3_sublineas_x_area cvsxa
+                                                WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . '
+                                                GROUP BY cvsxa.IdArea');
+        if (!empty($areasAtencion)) {
+            foreach ($areasAtencion as $key => $value) {
+                $arraySulineas = array();
+                $sublineas = $this->catalogo->catConsultaGeneral('SELECT * FROM(SELECT 
+                                                                        sublinea(IdSublinea) Sublinea
+                                                                    FROM
+                                                                        cat_v3_sublineas_x_area
+                                                                    WHERE
+                                                                        IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . ')
+                                                                        AS Tabla');
+                
+                foreach ($sublineas as $k => $v) {
+                    array_push($arraySulineas, $v['Sublinea']);
+                }
 
-//        $data['flag'] = $this->getSublineasArea($array);
-
-
-
+                $data['IdArea'] = $value['IdArea'];
+                $data['Area'] = $value['Area'];
+                $data['Sublineas'] = implode('<br>', $arraySulineas);
+            }
+            return array('code' => 200, 'data' => $data);
+        } else {
+            throw new \Exception('No hay Áreas de atención para esa unidad de negocio');
+        }
     }
-    
-//    public function getSublineasArea(array $datos){
-//        $arrayRespuesta = array();
-//        $this->catalogo->catConsultaGeneral('    SELECT 
-//    sublinea(IdSublinea) AS Sublinea
-//FROM
-//    cat_v3_sublineas_x_area
-//WHERE
-//    IdUnidadNegocio = 2 AND IdArea = 1');
-//        return $arrayRespuesta;
-//    }
-
 }
