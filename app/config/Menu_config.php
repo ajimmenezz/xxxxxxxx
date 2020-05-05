@@ -1354,16 +1354,12 @@ $config['Catalogos Generales'] = array(
         'Url' => '/Poliza/UnidadesNegocioSublineasArea',
         'css' => array(),
         'pluginsCss' => array(
-            'bootstrap-datepicker/css/datepicker',
-            'bootstrap-datepicker/css/datepicker3',
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Catalogos/unidades_negocio'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Catalogos/negocioSublineas'),
         'pluginsJs' => array(
-            'bootstrap-datepicker/js/bootstrap-datepicker',
-            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
             'select2/dist/js/select2.min',
