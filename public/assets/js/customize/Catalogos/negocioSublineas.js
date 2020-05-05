@@ -11,6 +11,7 @@ $(function () {
     //Creando tabla de areas
     let tablaPrincipal = new TablaBasica('data-table-unidad-negocios');
     let tablaSublineas = new TablaBasica('data-table-sublineas');
+    let selectSublineas = new SelectBasico('selectSublinea');
 
     evento.mostrarAyuda('Ayuda_Proyectos');
 
@@ -53,24 +54,40 @@ $(function () {
             IdArea: datos[0]
         }
         evento.enviarEvento('EventoCatalogoSublineasArea/GetSublineas', datosEnvio, '#seccionUnidadesNegocio', function (respuesta) {
-            console.log(respuesta);
-//            if (respuesta) {
-//                vista = 2;
-//                cargaTablaInfoSublinea();
-//            } else {
-//                evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
-//            }
+            if (respuesta.code == 200) {
+                vista = 2;
+                cargaSelectSublinea(respuesta.data.sublineas);
+                cargaTablaInfoSublinea(respuesta.data.sublineasArea);
+            } else {
+                evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
+            }
         });
     });
-
-    function cargaTablaInfoSublinea() {
+    
+    function cargaSelectSublinea(infoSublineas) {
+        selectSublineas.cargaDatosEnSelect(infoSublineas);
+    }
+    
+    $('#agregarSublinea').on('click', function () {
+        
+    });
+    
+    function cargaTablaInfoSublinea(infoSublinea) {
         $('#tablaInfoSublineas').removeClass('hidden');
         $('#tablaSublineas').addClass('hidden');
-
+//        $.each(infoSublinea, function (key, value) {
+//            tablaNodos.agregarDatosFila([
+//                value.IdNodo,
+//                value.IdArea,
+//                value.Nombre,
+//                value.IdSwitch,
+//                value.NumeroSwitch
+//            ]);
+//        });
     }
 
     $('#guardarSublinea').on('click', function () {
-
+        
     });
 
     $('#btnRegresar').on('click', function () {

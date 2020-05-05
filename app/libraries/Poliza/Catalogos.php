@@ -150,8 +150,8 @@ class Catalogos extends General {
         $sublineas = $this->catalogo->catSublineasEquipo(3, array('Flag' => '1'));
 
         foreach ($sublineas as $key => $value) {
-            $arraySublinea[$key]['Id'] = $value['IdSub'];
-            $arraySublinea[$key]['Nombre'] = $value['Sublinea'];
+            $arraySublinea[$key]['id'] = $value['IdSub'];
+            $arraySublinea[$key]['text'] = $value['Sublinea'];
         }
 
         $data['sublineas'] = $arraySublinea;
