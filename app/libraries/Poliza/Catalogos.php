@@ -118,8 +118,10 @@ class Catalogos extends General {
         if (!empty($areasAtencion)) {
             foreach ($areasAtencion as $key => $value) {
                 $arraySulineas = array();
+                $arrayCantidad = array();
                 $sublineas = $this->catalogo->catConsultaGeneral('SELECT * FROM(SELECT 
-                                                                        sublinea(IdSublinea) Sublinea
+                                                                        sublinea(IdSublinea) Sublinea,
+                                                                        Cantidad
                                                                     FROM
                                                                         cat_v3_sublineas_x_area
                                                                     WHERE
@@ -128,11 +130,13 @@ class Catalogos extends General {
                 
                 foreach ($sublineas as $k => $v) {
                     array_push($arraySulineas, $v['Sublinea']);
+                    array_push($arrayCantidad, $v['Cantidad']);
                 }
-
+                
                 $data['IdArea'] = $value['IdArea'];
                 $data['Area'] = $value['Area'];
                 $data['Sublineas'] = implode('<br>', $arraySulineas);
+                $data['Cantidad'] = implode('<br>', $arrayCantidad);
             }
             return array('code' => 200, 'data' => $data);
         } else {
