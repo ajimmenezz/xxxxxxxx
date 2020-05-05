@@ -1,8 +1,6 @@
 $(function () {
     //Objetos
     var evento = new Base();
-    var tabla = new Tabla();
-    var select = new Select();
 
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
@@ -11,61 +9,68 @@ $(function () {
     evento.cerrarSesion();
 
     //Creando tabla de areas
-    tabla.generaTablaPersonal('#data-table-unidad-negocios', null, null, true);
-    tabla.generaTablaPersonal('#data-table-sublineas', null, null, true);
+    let tablaPrincipal = new TablaBasica('data-table-unidad-negocios');
+    let tablaSublineas = new TablaBasica('data-table-sublineas');
 
     evento.mostrarAyuda('Ayuda_Proyectos');
 
     App.init();
     let vista = 0;
 
-    $('#data-table-unidad-negocios tbody').on('click', 'tr', function () {
-        var datos = $('#data-table-unidad-negocios').DataTable().row(this).data();
+    tablaPrincipal.evento(function () {
+        var datos = tablaPrincipal.datosFila(this);
         let datosEnvio = {
             IdUnidadNegocio: datos[0]
         }
         evento.enviarEvento('EventoCatalogoSublineasArea/GetSublienasArea', datosEnvio, '#seccionUnidadesNegocio', function (respuesta) {
-            if (respuesta) {
+            if (respuesta.code == 200) {
                 $('#btnEvent').removeClass('hidden');
                 vista = 1;
-                cargaTablaSublineas();
+                cargaTablaSublineas(respuesta.data);
             } else {
                 evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
             }
         });
     });
 
-    function cargaTablaSublineas() {
+    function cargaTablaSublineas(sublienasArea) {
         $('#tablaSublineas').removeClass('hidden');
         $('#tablaUnidades').addClass('hidden');
-        
+        tablaSublineas.limpiartabla();
+        tablaSublineas.agregarDatosFila([
+            sublienasArea.IdArea,
+            sublienasArea.Area,
+            sublienasArea.Sublineas,
+            sublienasArea.Cantidad
+        ]);
     }
 
-    $('#data-table-sublineas tbody').on('click', 'tr', function () {
-        var datos = $('#data-table-sublineas').DataTable().row(this).data();
+    tablaSublineas.evento(function () {
+        var datos = tablaSublineas.datosFila(this);
         let datosEnvio = {
             IdArea: datos[0]
         }
         evento.enviarEvento('EventoCatalogoSublineasArea/GetSublienasArea', datosEnvio, '#seccionUnidadesNegocio', function (respuesta) {
-            if (respuesta) {
-                vista = 2;
-                cargaTablaInfoSublinea();
-            } else {
-                evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
-            }
+            console.log(respuesta);
+//            if (respuesta) {
+//                vista = 2;
+//                cargaTablaInfoSublinea();
+//            } else {
+//                evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
+//            }
         });
     });
 
     function cargaTablaInfoSublinea() {
         $('#tablaInfoSublineas').removeClass('hidden');
         $('#tablaSublineas').addClass('hidden');
-        
+
     }
 
     $('#guardarSublinea').on('click', function () {
-        
+
     });
-    
+
     $('#btnRegresar').on('click', function () {
         switch (vista) {
             case 1:
