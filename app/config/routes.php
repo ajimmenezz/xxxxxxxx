@@ -104,6 +104,7 @@ $route['Poliza/Seguimiento/Servicio/concluir'] = 'V2/Controller_ServicioTicket/s
 $route['Poliza/Seguimiento/Servicio/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
 $route['Poliza/Seguimiento/Servicio/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
 $route['Poliza/Seguimiento/Servicio/Seguimiento'] = 'V2/Controller_ServicioTicket/seguimientoServicio';
+$route['Poliza/EventoCatalogoUnidadNegocio/(:any)'] = 'Poliza/Controller_UnidadesNegocio/manejarEvento/$1';
 
 
 /* Routers para el manejo nuevo de Proyectos */
