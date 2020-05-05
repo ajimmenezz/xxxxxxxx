@@ -106,4 +106,25 @@ class Catalogos extends General {
         return array('formulario' => parent::getCI()->load->view('Poliza/Modal/FormularioCinemexValidacion', $data, TRUE), 'datos' => $data);
     }
 
+    public function mostrarTablaSublienasArea(array $datos) {
+        $data = array();
+
+//        $data['flag'] = $this->getSublineasArea($array);
+
+
+
+        return array('formulario' => parent::getCI()->load->view('Poliza/SublineasArea', $data, TRUE), 'datos' => $data);
+    }
+    
+//    public function getSublineasArea(array $datos){
+//        $arrayRespuesta = array();
+//        $this->catalogo->catConsultaGeneral('    SELECT 
+//    sublinea(IdSublinea) AS Sublinea
+//FROM
+//    cat_v3_sublineas_x_area
+//WHERE
+//    IdUnidadNegocio = 2 AND IdArea = 1');
+//        return $arrayRespuesta;
+//    }
+
 }
