@@ -1,7 +1,7 @@
 <!-- Empezando #contenido -->
 <div id="content" class="content">
     <!-- Empezando titulo de la pagina -->
-    <h1 class="page-header">Unidades de Negocio</small></h1>
+    <h1 class="page-header">Catálogo Sublineas por Área</h1>
     <!-- Finalizando titulo de la pagina -->
     <!-- Empezando panel catálogo de Unidades de negocio -->
     <div id="seccionUnidadesNegocio" class="panel panel-inverse">
@@ -16,11 +16,6 @@
         <!--Finalizando cabecera del panel-->
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
-
-            <!--Empezando formulario -->
-            <div id="formularioUnidadesNegocio" class="row m-t-10" >
-            </div>
-            <!--Finalizando formulario-->
 
             <div id='listaUnidadesNegocio'>               
 
@@ -37,15 +32,9 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-6 col-xs-6">
-                                    <h3 class="m-t-10">Lista de Unidades de Negocio</h3>
-                                </div>
-                                <div class="col-md-6 col-xs-6">
-                                    <div class="form-group text-right">
-                                        <a href="javascript:;" class="btn btn-success btn-lg " id="btnAgregarUnidadNegocio"><i class="fa fa-plus"></i> Agregar</a>
-                                    </div>
+                                    <h3 class="m-t-10">Unidades de Negocio</h3>
                                 </div>
                             </div>
-
                             <!--Empezando Separador-->
                             <div class="row">
                                 <div class="col-md-12">
@@ -63,8 +52,8 @@
                         <thead>
                             <tr>
                                 <th class="never">Id</th>
-                                <th class="all">Nombre</th>
-                                <th class="all">Estatus</th>
+                                <th class="all">Cliente</th>
+                                <th class="all">Unidad de Negocio</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,12 +62,8 @@
                                 foreach ($datos['ListaUnidadeNegocio'] as $key => $value) {
                                     echo '<tr>';
                                     echo '<td>' . $value['Id'] . '</td>';
+                                    echo '<td>' . $value['Cliente'] . '</td>';
                                     echo '<td>' . $value['Nombre'] . '</td>';
-                                    if ($value['Flag'] === '1') {
-                                        echo '<td data-flag="' . $value['Flag'] . '">Activo</td>';
-                                    } else {
-                                        echo '<td data-flag="' . $value['Flag'] . '">Inactivo</td>';
-                                    }
                                     echo '</tr>';
                                 }
                             }
