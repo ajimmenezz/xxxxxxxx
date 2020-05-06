@@ -160,8 +160,8 @@ class Catalogos extends General {
         $sublineas = $this->catalogo->catSublineasEquipo(3, array('Flag' => '1'));
 
         foreach ($sublineas as $key => $value) {
-            $arraySublinea[$key]['Id'] = $value['IdSub'];
-            $arraySublinea[$key]['Nombre'] = $value['Sublinea'];
+            $arraySublinea[$key]['id'] = $value['IdSub'];
+            $arraySublinea[$key]['text'] = $value['Sublinea'];
         }
 
         $data['sublineas'] = $arraySublinea;
@@ -172,7 +172,7 @@ class Catalogos extends General {
                                                         FROM
                                                             cat_v3_sublineas_x_area
                                                         WHERE
-                                                            IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . '
+                                                            IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . '
                                                             AND Flag = 1');
 
         return array('code' => 200, 'data' => $data);

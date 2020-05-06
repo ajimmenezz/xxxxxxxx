@@ -1358,7 +1358,15 @@ $config['Catalogos Generales'] = array(
             'select2/dist/css/select2.min',
             'parsley/src/parsley'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Select', 'Base/Tabla', 'Catalogos/negocioSublineas'),
+        
+        'js' => array(
+            'Base/Base', 
+            'Base/Socket',
+            'Componentes/Selects/ISelect',
+            'Componentes/Selects/SelectBasico', 
+            'Componentes/Tablas/ITabla', 
+            'Componentes/Tablas/TablaBasica', 
+            'Catalogos/negocioSublineas'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
