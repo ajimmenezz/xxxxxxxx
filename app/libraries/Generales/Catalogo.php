@@ -3557,4 +3557,96 @@ class Catalogo extends General {
         }
     }
 
+    public function catUnidadesNegocio(string $operacion, array $datos = null, array $where = null) {
+        switch ($operacion) {
+            //Inserta en la tabla
+            case '1':
+                $validar = array('Nombre' => $datos[0]);
+                $consulta = $this->DBC->setArticulo('cat_v3_unidades_negocio', array('Nombre' => $datos[0], 'IdCliente' => $datos[1], 'Flag' => '1'), $validar);
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocio('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Actualiza en la tabla
+            case '2':
+                //nombre de parametro para verificar que permiso no se repita
+                $parametro = 'Nombre';
+                $consulta = $this->DBC->actualizarArticulo(
+                        'cat_v3_unidades_negocio', array(
+                    'Nombre' => $datos[1],
+                    'IdCliente' => $datos[2],
+                    'Flag' => $datos[3]
+                        ), array('Id' => $datos[0]),
+                        //Variable para mandar datos de restriccion para que no se repita el nombre
+                        $datos[1], $parametro
+                );
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocio('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Obtiene Informacion 
+            case '3';
+                $flag = (is_null($datos['Flag'])) ? '' : ' AND Flag = ' . $datos['Flag'];
+                return $this->DBC->getJuntarTablas('SELECT *, cliente(IdCliente) AS Cliente FROM cat_v3_unidades_negocio ' . $flag);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public function catSublineasArea(string $operacion, array $datos = null, string $where = null) {
+        switch ($operacion) {
+            //Inserta en la tabla
+            case '1':
+                $consulta = $this->DBC->setArticulo('cat_v3_sublineas_x_area', array(
+                    'IdUnidadNegocio' => $datos[0],
+                    'IdArea' => $datos[1],
+                    'IdSublinea' => $datos[2],
+                    'Cantidad' => $datos[3],
+                    'Flag' => '1'));
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocio('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Actualiza en la tabla
+            case '2':
+                //nombre de parametro para verificar que permiso no se repita
+                $consulta = $this->DBC->actualizarArticulo(
+                        'cat_v3_sublineas_x_area', array(
+                    'Cantidad' => $datos[1]
+                        ), array('Id' => $datos[0])
+                );
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocio('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Obtiene Informacion 
+            case '3';
+                return $this->DBC->getJuntarTablas('SELECT 
+                                                        cvsa.Id,
+                                                        cvsa.IdSublinea,
+                                                        cvsa.IdArea,
+                                                        areaAtencion(cvsa.IdArea) AS Area,
+                                                        cvse.Nombre AS Sublinea,
+                                                        linea(cvse.Linea) AS Linea,
+                                                        cvsa.Cantidad,
+                                                        CONCAT(cvse.Nombre, " - ", linea(cvse.Linea)) AS LineaSublinea
+                                                    FROM
+                                                        cat_v3_sublineas_x_area cvsa
+                                                        INNER JOIN cat_v3_sublineas_equipo cvse
+                                                        ON cvse.Id = cvsa.IdSublinea ' . $where);
+                break;
+            default:
+                break;
+        }
+    }
+
 }

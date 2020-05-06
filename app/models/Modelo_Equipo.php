@@ -34,7 +34,7 @@ class Modelo_Equipo extends Base {
                                         ORDER BY Equipo ASC');
         return $consulta;
     }
-    
+
     public function getEquipoCensadosAreaPuntoInstalaciones(array $datos) {
         $consulta = $this->consulta('SELECT 
                                           tc.IdModelo,
@@ -53,6 +53,16 @@ class Modelo_Equipo extends Base {
                                         and tst.IdEstatus = 4)
                                         AND tc.IdModelo  NOT IN(SELECT IdModelo FROM t_instalaciones_equipos_poliza WHERE IdOperacion IN(2,3) AND IdServicio = "' . $datos['servicio'] . '")
                                         ORDER BY Equipo ASC');
+        return $consulta;
+    }
+
+    public function getRefaccionesEquipo(string $idModelo, string $where = '') {
+        $consulta = $this->consulta("SELECT 
+                                        *
+                                        FROM cat_v3_componentes_equipo
+                                        WHERE IdModelo = '" . $idModelo . "'
+                                        AND Flag = 1
+                                        " . $where);
         return $consulta;
     }
 
