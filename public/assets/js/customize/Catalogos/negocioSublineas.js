@@ -84,8 +84,9 @@ $(function () {
             $('#data-table-infoSublineas').append(
                     '<tr id="fila' + value.Id + '">\n\
                         <td class="idNever">' + value.Id + '</td>\n\
+                        <td class="idNever">' + value.IdSublinea + '</td>\n\
                         <td>' + value.Sublinea + '</td>\n\
-                        <td><input id="input' + value.Id + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '"/></td>\n\
+                        <td><input id="input' + value.IdSublinea + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '"/></td>\n\
                     </tr>');
         });
         $(".idNever").hide();
@@ -99,6 +100,7 @@ $(function () {
 
                 $('#data-table-infoSublineas').append(
                         '<tr id="fila' + idSublinea + '">\n\
+                        <td class="idNever">0</td>\n\
                         <td class="idNever">' + idSublinea + '</td>\n\
                         <td>' + txtSublinea + '</td>\n\
                         <td><input id="input' + idSublinea + '" type="text" class="form-control" style="width: 100%"/></td>\n\
@@ -110,11 +112,13 @@ $(function () {
         $('#guardarSublinea').on('click', function () {
             var datosTablaSublinea = $('#data-table-infoSublineas').DataTable().rows().data();
             let arraySublineas = [];
+
             $.each(datosTablaSublinea, function (key, value) {
                 arraySublineas[key] = {
-                    IdSublinea: value[0],
-                    Nombre: value[1],
-                    Cantidad: $(`#input${value[0]}`).val()
+                    Id: value[0],
+                    IdSublinea: value[1],
+                    Nombre: value[2],
+                    Cantidad: $(`#input${value[1]}`).val()
                 }
             });
             let envioDatos = {

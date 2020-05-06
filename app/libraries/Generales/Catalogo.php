@@ -3598,4 +3598,50 @@ class Catalogo extends General {
         }
     }
 
+    public function catSublineasArea(string $operacion, array $datos = null, string $where = null) {
+        switch ($operacion) {
+            //Inserta en la tabla
+            case '1':
+                $consulta = $this->DBC->setArticulo('cat_v3_sublineas_x_area', array(
+                    'IdUnidadNegocio' => $datos[0],
+                    'IdArea' => $datos[1],
+                    'IdSublinea' => $datos[2],
+                    'Cantidad' => $datos[3],
+                    'Flag' => '1'));
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocio('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Actualiza en la tabla
+            case '2':
+                //nombre de parametro para verificar que permiso no se repita
+                var_dump($datos[0]);
+                $consulta = $this->DBC->actualizarArticulo(
+                        'cat_v3_sublineas_x_area', array(
+                    'Cantidad' => $datos[1]
+                        ), array('Id' => $datos[0])
+                );
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocio('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Obtiene Informacion 
+            case '3';
+                return $this->DBC->getJuntarTablas('SELECT 
+                                                        Id,
+                                                        IdSublinea,
+                                                        sublinea(IdSublinea) AS Sublinea,
+                                                        Cantidad
+                                                    FROM
+                                                        cat_v3_sublineas_x_area ' . $where);
+                break;
+            default:
+                break;
+        }
+    }
+
 }
