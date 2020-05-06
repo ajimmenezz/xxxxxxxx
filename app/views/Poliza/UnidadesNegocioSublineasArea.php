@@ -124,6 +124,7 @@
                                 <thead>
                                     <tr>
                                         <th class="idNever">Id</th>
+                                        <th class="idNever">IdSublinea</th>
                                         <th class="all">Sublinea</th>
                                         <th class="all">Cantidad</th>
                                     </tr>
