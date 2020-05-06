@@ -59,13 +59,15 @@ $(function () {
             datosEnvioSublineas = {
                 IdArea: 0
             }
-            cargaDatosSelect();
+            cargaDatosSelect(sublienasArea.areasAtencion, sublienasArea.sublineas);
             vista = 3;
         }
     }
 
-    function cargaDatosSelect() {
-        selectArea.iniciarSelect();
+    function cargaDatosSelect(areasAtencion, sublineas) {
+        selectArea.cargaDatosEnSelect(areasAtencion);
+        selectSublineas.cargaDatosEnSelect(sublineas);
+        cargaTablaInfoSublinea();
     }
 
     tablaSublineas.evento(function () {
@@ -90,22 +92,24 @@ $(function () {
         selectSublineas.cargaDatosEnSelect(infoSublineas);
     }
 
-    function cargaTablaInfoSublinea(infoSublinea) {
+    function cargaTablaInfoSublinea(infoSublinea = null) {
         $('#tablaInfoSublineas').removeClass('hidden');
         $('#tablaSublineas').addClass('hidden');
 
         $('#data-table-infoSublineas tbody tr').each(function () {
             $(this).remove();
         });
-        $.each(infoSublinea, function (key, value) {
-            $('#data-table-infoSublineas').append(
-                    '<tr id="fila' + value.Id + '">\n\
+        if (infoSublinea != null) {
+            $.each(infoSublinea, function (key, value) {
+                $('#data-table-infoSublineas').append(
+                        '<tr id="fila' + value.Id + '">\n\
                         <td class="idNever">' + value.Id + '</td>\n\
                         <td class="idNever">' + value.IdSublinea + '</td>\n\
                         <td>' + value.LineaSublinea + '</td>\n\
                         <td><input id="input' + value.IdSublinea + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '" data-parsley-required="true"/></td>\n\
                     </tr>');
-        });
+            });
+        }
         $(".idNever").hide();
 
         $('#agregarSublinea').on('click', function () {
@@ -141,10 +145,15 @@ $(function () {
                 });
                 if (datosEnvioSublineas.IdArea != 0 || area != '') {
                     let envioDatos = {
-                        IdUnidadNegocio: datosEnvioSublineas.IdUnidadNegocio,
-                        IdArea: datosEnvioSublineas.IdArea,
+                        IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
                         sublineas: arraySublineas
                     }
+                    if (datosEnvioSublineas.IdArea != 0) {
+                        envioDatos.IdArea = datosEnvioSublineas.IdArea;
+                    } else if (area != '') {
+                        envioDatos.IdArea = area;
+                    }
+
                     evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
                         if (respuesta.code == 200) {
                             evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
