@@ -28,6 +28,7 @@ $(function () {
         evento.enviarEvento('EventoCatalogoSublineasArea/GetSublienasArea', datosEnvioPrincipal, '#seccionUnidadesNegocio', function (respuesta) {
             if (respuesta.code == 200) {
                 $('#btnEvent').removeClass('hidden');
+                $('#nombreUnidad').text("Unidad: "+datos[2]);
                 vista = 1;
                 cargaTablaSublineas(respuesta.data);
             } else {
@@ -59,6 +60,7 @@ $(function () {
         evento.enviarEvento('EventoCatalogoSublineasArea/GetSublineas', datosEnvioSublineas, '#seccionUnidadesNegocio', function (respuesta) {
             if (respuesta.code == 200) {
                 vista = 2;
+                $('#sublineaArea').text(datos[1]);
                 cargaSelectSublinea(respuesta.data.sublineas);
                 cargaTablaInfoSublinea(respuesta.data.sublineasArea);
             } else {
@@ -73,6 +75,7 @@ $(function () {
 
     function cargaTablaInfoSublinea(infoSublinea) {
         $('#tablaInfoSublineas').removeClass('hidden');
+        $('#subtitulo2').removeClass('hidden');
         $('#tablaSublineas').addClass('hidden');
 
         $('#data-table-infoSublineas tbody tr').each(function () {
@@ -92,6 +95,8 @@ $(function () {
             if (evento.validarFormulario('#formAgregarSublinea')) {
                 let idSublinea = selectSublineas.obtenerValor();
                 let txtSublinea = selectSublineas.obtenerTexto();
+                $("#selectSublinea").find(`option[value='${idSublinea}']`).remove();
+                selectSublineas.definirValor();
 
                 $('#data-table-infoSublineas').append(
                         '<tr id="fila' + idSublinea + '">\n\
@@ -145,6 +150,7 @@ $(function () {
             case 2:
                 $('#tablaSublineas').removeClass('hidden');
                 $('#tablaInfoSublineas').addClass('hidden');
+                $('#subtitulo2').addClass('hidden');
                 vista = 1;
                 break;
         }
