@@ -177,5 +177,9 @@ class Catalogos extends General {
 
         return array('code' => 200, 'data' => $data);
     }
+    
+    public function setSublineas(array $datos){
+        var_dump($datos);
+    }
 
 }

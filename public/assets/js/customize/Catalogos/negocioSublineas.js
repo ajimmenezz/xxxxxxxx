@@ -101,16 +101,18 @@ $(function () {
         });
 
         $('#guardarSublinea').on('click', function () {
-            var datosTablaSUblinea = $('#data-table-infoSublineas').DataTable().rows().data();
+            var datosTablaSublinea = $('#data-table-infoSublineas').DataTable().rows().data();
+            console.log(datosTablaSublinea);
             let arraySublineas = [];
-            $.each(datosTablaSUblinea, function (key, value) {
+            $.each(datosTablaSublinea, function (key, value) {
                 arraySublineas[key] = {
                     IdSublinea: value[0],
                     Nombre: value[1],
                     Cantidad: $(`#input${value[0]}`).val()
                 }
             });
-            evento.enviarEvento('EventoCatalogoSublineasArea/', arraySublineas, '#seccionUnidadesNegocio', function (respuesta) {
+            console.log(arraySublineas);
+            evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', arraySublineas, '#seccionUnidadesNegocio', function (respuesta) {
                 if (respuesta.code == 200) {
                     evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
                     setTimeout(function () {

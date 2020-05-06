@@ -29,6 +29,9 @@ class Controller_SublineasArea extends Base {
                 case 'GetSublineas':
                     $resultado = $this->catologosPoliza->getSublineas($this->input->post());
                     break;
+                case 'SetSublineas':
+                    $resultado = $this->catologosPoliza->setSublineas($this->input->post());
+                    break;
             }
             echo json_encode($resultado);
         } catch (\Exception $exc) {
