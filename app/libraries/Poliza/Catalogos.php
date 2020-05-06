@@ -118,31 +118,19 @@ class Catalogos extends General {
 
     public function getSublienasArea(array $datos) {
         $data = array();
-        $areasAtencion = $this->catalogo->catConsultaGeneral('SELECT 
-                                                    IdArea,
-                                                areaAtencion(IdArea) AS Area
-                                            FROM
-                                                cat_v3_sublineas_x_area
-                                                WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . '
-                                                GROUP BY IdArea');
+        $areasAtencion = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+
         if (!empty($areasAtencion)) {
             foreach ($areasAtencion as $key => $value) {
                 $arraySulineas = array();
                 $arrayCantidad = array();
-                $sublineas = $this->catalogo->catConsultaGeneral('SELECT * FROM(SELECT 
-                                                                        sublinea(IdSublinea) Sublinea,
-                                                                        Cantidad
-                                                                    FROM
-                                                                        cat_v3_sublineas_x_area
-                                                                    WHERE
-                                                                        IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . ')
-                                                                        AS Tabla');
+                $sublineas = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . ' AND Flag = 1');
 
-//                $sublineas = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . ' AND Flag = 1');
-//                var_dump($sublineas);
-                foreach ($sublineas as $k => $v) {
-                    array_push($arraySulineas, $v['Sublinea']);
-                    array_push($arrayCantidad, $v['Cantidad']);
+                if (!empty($sublineas)) {
+                    foreach ($sublineas as $k => $v) {
+                        array_push($arraySulineas, $v['Sublinea']);
+                        array_push($arrayCantidad, $v['Cantidad']);
+                    }
                 }
 
                 $data['IdArea'] = $value['IdArea'];
@@ -152,7 +140,7 @@ class Catalogos extends General {
             }
             return array('code' => 200, 'data' => $data);
         } else {
-            throw new \Exception('No hay Áreas de atención para esa unidad de negocio');
+            return array('code' => 200, 'data' => []);
         }
     }
 
@@ -163,19 +151,10 @@ class Catalogos extends General {
 
         foreach ($sublineas as $key => $value) {
             $arraySublinea[$key]['id'] = $value['IdSub'];
-            $arraySublinea[$key]['text'] = $value['Sublinea'];
+            $arraySublinea[$key]['text'] = $value['Sublinea'] . ' - ' . $value['Linea'];
         }
 
         $data['sublineas'] = $arraySublinea;
-//        $data['sublineasArea'] = $this->catalogo->catConsultaGeneral('SELECT 
-//                                                            Id,
-//                                                            sublinea(IdSublinea) AS Sublinea,
-//                                                            Cantidad
-//                                                        FROM
-//                                                            cat_v3_sublineas_x_area
-//                                                        WHERE
-//                                                            IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . '
-//                                                            AND Flag = 1');
         $data['sublineasArea'] = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . ' AND Flag = 1');
         return array('code' => 200, 'data' => $data);
     }
@@ -189,9 +168,8 @@ class Catalogos extends General {
                 $this->catalogo->catSublineasArea(2, array($value['Id'], $value['Cantidad']));
             }
         }
-//        
-//        $respuesta = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . ' AND Flag = 1');
-//        var_dump($respuesta);
+
+        return $this->getSublienasArea($datos);
     }
 
 }

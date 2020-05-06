@@ -86,7 +86,7 @@ $(function () {
             html += '   <div class="col-md-12">';
             html += '      <div class="form-group">';
             html += '           <label for="nombreActualizarUnidadNegocio">Nombre *</label> ';
-            html += '           <input type="text" class="form-control" id="inputActualizarNombreUnidadNegocio" placeholder="Ingresa el nombre de la unidad de negocio" value="' + datos[1] + '" data-parsley-required="true"/> ';
+            html += '           <input type="text" class="form-control" id="inputActualizarNombreUnidadNegocio" placeholder="Ingresa el nombre de la unidad de negocio" value="' + datos[2] + '" data-parsley-required="true"/> ';
             html += '       </div>';
             html += '   </div>';
             html += '   <div class="col-md-12">';

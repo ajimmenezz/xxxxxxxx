@@ -3617,7 +3617,6 @@ class Catalogo extends General {
             //Actualiza en la tabla
             case '2':
                 //nombre de parametro para verificar que permiso no se repita
-                var_dump($datos[0]);
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_sublineas_x_area', array(
                     'Cantidad' => $datos[1]
@@ -3634,6 +3633,8 @@ class Catalogo extends General {
                 return $this->DBC->getJuntarTablas('SELECT 
                                                         Id,
                                                         IdSublinea,
+                                                        IdArea,
+                                                        areaAtencion(IdArea) AS Area,
                                                         sublinea(IdSublinea) AS Sublinea,
                                                         Cantidad
                                                     FROM
