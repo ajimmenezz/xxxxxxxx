@@ -128,6 +128,7 @@ $(function () {
         }
         $(".idNever").hide();
 
+        $('#agregarSublinea').off();
         $('#agregarSublinea').on('click', function () {
             if (evento.validarFormulario('#formAgregarSublinea')) {
                 let idSublinea = selectSublineas.obtenerValor();

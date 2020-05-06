@@ -128,6 +128,7 @@ class Catalogos extends General {
 
         $data['sublineas'] = $arraySublinea;
         $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion();
+        $data['tabla'] = array();
 
         if (!empty($sublineasArea)) {
             foreach ($sublineasArea as $key => $value) {
@@ -142,10 +143,11 @@ class Catalogos extends General {
                     }
                 }
 
-                $data['IdArea'] = $value['IdArea'];
-                $data['Area'] = $value['Area'];
-                $data['Sublineas'] = implode('<br>', $arraySulineas);
-                $data['Cantidad'] = implode('<br>', $arrayCantidad);
+                array_push($data['tabla'], array(
+                    'IdArea' => $value['IdArea'],
+                    'Area' => $value['Area'],
+                    'Sublineas' => implode('<br>', $arraySulineas),
+                    'Cantidad' => implode('<br>', $arrayCantidad)));
             }
             return array('code' => 200, 'data' => $data);
         } else {
@@ -193,6 +195,7 @@ class Catalogos extends General {
     public function setSublineas(array $datos) {
         foreach ($datos['sublineas'] as $key => $value) {
             $sublineaArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvsa.IdArea = ' . $datos['IdArea'] . '  AND cvsa.IdSublinea = ' . $value['IdSublinea'] . ' AND cvsa.Flag = 1');
+
             if (!$sublineaArea) {
                 $this->catalogo->catSublineasArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], $value['IdSublinea'], $value['Cantidad'], 1));
             } else {
