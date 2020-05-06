@@ -119,20 +119,22 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table id="data-table-infoSublineas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th class="idNever">Id</th>
-                                        <th class="idNever">IdSublinea</th>
-                                        <th class="all">Sublinea</th>
-                                        <th class="all">Cantidad</th>
-                                    </tr>
-                                </thead>
-                                <tbody>                                      
-                                </tbody>
-                            </table>
-                        </div>
+                        <form id="formTable" data-parsley-validate="true" enctype="multipart/form-data">
+                            <div class="table-responsive">
+                                <table id="data-table-infoSublineas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="idNever">Id</th>
+                                            <th class="idNever">IdSublinea</th>
+                                            <th class="all">Sublinea</th>
+                                            <th class="all">Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                      
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
                     </div>
                     <div class="col-md-4 col-md-offset-5 col-sm-offset-4">
                         <a href="javascript:;" class="btn btn-success btn-lg " id="guardarSublinea">Guardar</a>

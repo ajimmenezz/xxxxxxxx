@@ -28,7 +28,7 @@ $(function () {
         evento.enviarEvento('EventoCatalogoSublineasArea/GetSublienasArea', datosEnvioPrincipal, '#seccionUnidadesNegocio', function (respuesta) {
             if (respuesta.code == 200) {
                 $('#btnEvent').removeClass('hidden');
-                $('#nombreUnidad').text("Unidad: "+datos[2]);
+                $('#nombreUnidad').text("Unidad: " + datos[2]);
                 vista = 1;
                 cargaTablaSublineas(respuesta.data);
             } else {
@@ -60,7 +60,7 @@ $(function () {
         evento.enviarEvento('EventoCatalogoSublineasArea/GetSublineas', datosEnvioSublineas, '#seccionUnidadesNegocio', function (respuesta) {
             if (respuesta.code == 200) {
                 vista = 2;
-                $('#sublineaArea').text(" - "+datos[1]);
+                $('#sublineaArea').text(" - " + datos[1]);
                 cargaSelectSublinea(respuesta.data.sublineas);
                 cargaTablaInfoSublinea(respuesta.data.sublineasArea);
             } else {
@@ -86,7 +86,7 @@ $(function () {
                         <td class="idNever">' + value.Id + '</td>\n\
                         <td class="idNever">' + value.IdSublinea + '</td>\n\
                         <td>' + value.Sublinea + '</td>\n\
-                        <td><input id="input' + value.IdSublinea + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '"/></td>\n\
+                        <td><input id="input' + value.IdSublinea + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '" data-parsley-required="true"/></td>\n\
                     </tr>');
         });
         $(".idNever").hide();
@@ -103,7 +103,7 @@ $(function () {
                         <td class="idNever">0</td>\n\
                         <td class="idNever">' + idSublinea + '</td>\n\
                         <td>' + txtSublinea + '</td>\n\
-                        <td><input id="input' + idSublinea + '" type="text" class="form-control" style="width: 100%"/></td>\n\
+                        <td><input id="input' + idSublinea + '" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/></td>\n\
                     </tr>');
                 $(".idNever").hide();
             }
@@ -112,30 +112,31 @@ $(function () {
         $('#guardarSublinea').on('click', function () {
             var datosTablaSublinea = $('#data-table-infoSublineas').DataTable().rows().data();
             let arraySublineas = [];
-
-            $.each(datosTablaSublinea, function (key, value) {
-                arraySublineas[key] = {
-                    Id: value[0],
-                    IdSublinea: value[1],
-                    Nombre: value[2],
-                    Cantidad: $(`#input${value[1]}`).val()
+            if (evento.validarFormulario('#formTable')) {
+                $.each(datosTablaSublinea, function (key, value) {
+                    arraySublineas[key] = {
+                        Id: value[0],
+                        IdSublinea: value[1],
+                        Nombre: value[2],
+                        Cantidad: $(`#input${value[1]}`).val()
+                    }
+                });
+                let envioDatos = {
+                    IdUnidadNegocio: datosEnvioSublineas.IdUnidadNegocio,
+                    IdArea: datosEnvioSublineas.IdArea,
+                    sublineas: arraySublineas
                 }
-            });
-            let envioDatos = {
-                IdUnidadNegocio: datosEnvioSublineas.IdUnidadNegocio,
-                IdArea: datosEnvioSublineas.IdArea,
-                sublineas: arraySublineas
+                evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
+                    if (respuesta.code == 200) {
+                        evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
+                    }
+                });
             }
-            evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
-                if (respuesta.code == 200) {
-                    evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
-                    setTimeout(function () {
-                        location.reload();
-                    }, 2000);
-                } else {
-                    evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
-                }
-            });
         });
     }
 
