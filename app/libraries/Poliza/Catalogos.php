@@ -156,8 +156,11 @@ class Catalogos extends General {
     }
 
     public function getCatalogoSelectAreaAtencion() {
+        $idsArea = array();
         $arrayAreaAtencion = array();
         $areasAtencion = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
+        
+        var_dump($areasAtencion);
 
         foreach ($areasAtencion as $key => $value) {
             $arrayAreaAtencion[$key]['id'] = $value['Id'];
