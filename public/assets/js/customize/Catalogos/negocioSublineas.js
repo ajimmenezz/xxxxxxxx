@@ -60,7 +60,7 @@ $(function () {
         evento.enviarEvento('EventoCatalogoSublineasArea/GetSublineas', datosEnvioSublineas, '#seccionUnidadesNegocio', function (respuesta) {
             if (respuesta.code == 200) {
                 vista = 2;
-                $('#sublineaArea').text(datos[1]);
+                $('#sublineaArea').text(" - "+datos[1]);
                 cargaSelectSublinea(respuesta.data.sublineas);
                 cargaTablaInfoSublinea(respuesta.data.sublineasArea);
             } else {
@@ -75,7 +75,6 @@ $(function () {
 
     function cargaTablaInfoSublinea(infoSublinea) {
         $('#tablaInfoSublineas').removeClass('hidden');
-        $('#subtitulo2').removeClass('hidden');
         $('#tablaSublineas').addClass('hidden');
 
         $('#data-table-infoSublineas tbody tr').each(function () {
@@ -150,7 +149,7 @@ $(function () {
             case 2:
                 $('#tablaSublineas').removeClass('hidden');
                 $('#tablaInfoSublineas').addClass('hidden');
-                $('#subtitulo2').addClass('hidden');
+                $('#sublineaArea').text(" ");
                 vista = 1;
                 break;
         }
