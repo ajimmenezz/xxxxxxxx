@@ -3631,14 +3631,18 @@ class Catalogo extends General {
             //Obtiene Informacion 
             case '3';
                 return $this->DBC->getJuntarTablas('SELECT 
-                                                        Id,
-                                                        IdSublinea,
-                                                        IdArea,
-                                                        areaAtencion(IdArea) AS Area,
-                                                        sublinea(IdSublinea) AS Sublinea,
-                                                        Cantidad
+                                                        cvsa.Id,
+                                                        cvsa.IdSublinea,
+                                                        cvsa.IdArea,
+                                                        areaAtencion(cvsa.IdArea) AS Area,
+                                                        cvse.Nombre AS Sublinea,
+                                                        linea(cvse.Linea) AS Linea,
+                                                        cvsa.Cantidad,
+                                                        CONCAT(cvse.Nombre, " - ", linea(cvse.Linea)) AS LineaSublinea
                                                     FROM
-                                                        cat_v3_sublineas_x_area ' . $where);
+                                                        cat_v3_sublineas_x_area cvsa
+                                                        INNER JOIN cat_v3_sublineas_equipo cvse
+                                                        ON cvse.Id = cvsa.IdSublinea ' . $where);
                 break;
             default:
                 break;
