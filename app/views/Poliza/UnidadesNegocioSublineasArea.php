@@ -101,13 +101,23 @@
                 <!--Empezando tabla  -->
                 <div id="tablaInfoSublineas"  class="hidden">
                     <div class="col-md-12">                    
-                        <div class="col-md-4">
+                        <div class="col-md-8">
                             <form id="formAgregarSublinea" data-parsley-validate="true" enctype="multipart/form-data">
-                                <div class="form-group">
-                                    <label>Sublinea</label>
-                                    <select id="selectSublinea" class="form-control" data-parsley-required="true" style="width: 100%" data-parsley-required="true">
-                                        <option value="">Seleccionar</option>
-                                    </select>
+                                <div id="addAreaAtencion" class="col-md-6 hidden">
+                                    <div class="form-group">
+                                        <label>Area de Atención</label>
+                                        <select id="selectArea" class="form-control" style="width: 100%">
+                                            <option value="">Seleccionar</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Sublinea</label>
+                                        <select id="selectSublinea" class="form-control" style="width: 100%" data-parsley-required="true">
+                                            <option value="">Seleccionar</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </form>
                         </div>

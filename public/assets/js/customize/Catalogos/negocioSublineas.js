@@ -11,6 +11,7 @@ $(function () {
     //Creando tabla de areas
     let tablaPrincipal = new TablaBasica('data-table-unidad-negocios');
     let tablaSublineas = new TablaBasica('data-table-sublineas');
+    let selectArea = new SelectBasico('selectArea');
     let selectSublineas = new SelectBasico('selectSublinea');
 
     evento.mostrarAyuda('Ayuda_Proyectos');
@@ -39,16 +40,31 @@ $(function () {
 
     function cargaTablaSublineas(sublienasArea) {
         $('#subtitulo').removeClass('hidden');
-        $('#tablaSublineas').removeClass('hidden');
-        $('#tablaUnidades').addClass('hidden');
         $('#titulo').addClass('hidden');
-        tablaSublineas.limpiartabla();
-        tablaSublineas.agregarDatosFila([
-            sublienasArea.IdArea,
-            sublienasArea.Area,
-            sublienasArea.Sublineas,
-            sublienasArea.Cantidad
-        ]);
+        if (typeof sublienasArea.IdArea !== 'undefined') {
+            $('#tablaSublineas').removeClass('hidden');
+            $('#tablaUnidades').addClass('hidden');
+            $('#addAreaAtencion').addClass('hidden');
+            $('#addAreaAtencion').attr('data-parsley-required', 'false');
+            tablaSublineas.limpiartabla();
+            tablaSublineas.agregarDatosFila([
+                sublienasArea.IdArea,
+                sublienasArea.Area,
+                sublienasArea.Sublineas,
+                sublienasArea.Cantidad
+            ]);
+        } else {
+            $('#tablaInfoSublineas').removeClass('hidden');
+            $('#tablaUnidades').addClass('hidden');
+            $('#addAreaAtencion').removeClass('hidden');
+            $('#addAreaAtencion').attr('data-parsley-required', 'true');
+            cargaDatosSelect();
+            vista = 3;
+        }
+    }
+    
+    function cargaDatosSelect() {
+        selectArea.iniciarSelect();
     }
 
     tablaSublineas.evento(function () {
@@ -155,6 +171,18 @@ $(function () {
                 $('#tablaSublineas').removeClass('hidden');
                 $('#tablaInfoSublineas').addClass('hidden');
                 $('#sublineaArea').text(" ");
+                $('#data-table-infoSublineas tbody tr').each(function () {
+                    $(this).remove();
+                });
+                vista = 1;
+                break;
+            case 3:
+                $('#tablaUnidades').removeClass('hidden');
+                $('#tablaInfoSublineas').addClass('hidden');
+                $('#sublineaArea').text(" ");
+                $('#data-table-infoSublineas tbody tr').each(function () {
+                    $(this).remove();
+                });
                 vista = 1;
                 break;
         }
