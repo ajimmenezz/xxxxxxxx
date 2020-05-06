@@ -101,13 +101,15 @@
                 <!--Empezando tabla  -->
                 <div id="tablaInfoSublineas"  class="hidden">
                     <div class="col-md-12">                    
-                        <div class="col-md-4">                    
-                            <div class="form-group">
-                                <label>Sublinea</label>
-                                <select id="selectSublinea" class="form-control" data-parsley-required="true" style="width: 100%" data-parsley-required="true">
-                                    <option value="">Seleccionar</option>
-                                </select>
-                            </div>
+                        <div class="col-md-4">
+                            <form id="formAgregarSublinea" data-parsley-validate="true" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label>Sublinea</label>
+                                    <select id="selectSublinea" class="form-control" data-parsley-required="true" style="width: 100%" data-parsley-required="true">
+                                        <option value="">Seleccionar</option>
+                                    </select>
+                                </div>
+                            </form>
                         </div>
                         <div class="col-md-2">                    
                             <div class="form-group text-right">
@@ -121,7 +123,7 @@
                             <table id="data-table-infoSublineas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
-                                        <th class="never">Id</th>
+                                        <th class="idNever">Id</th>
                                         <th class="all">Sublinea</th>
                                         <th class="all">Cantidad</th>
                                     </tr>
