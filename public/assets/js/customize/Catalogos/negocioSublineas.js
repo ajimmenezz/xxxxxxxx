@@ -63,32 +63,65 @@ $(function () {
             }
         });
     });
-    
+
     function cargaSelectSublinea(infoSublineas) {
         selectSublineas.cargaDatosEnSelect(infoSublineas);
     }
-    
-    $('#agregarSublinea').on('click', function () {
-        
-    });
-    
+
     function cargaTablaInfoSublinea(infoSublinea) {
         $('#tablaInfoSublineas').removeClass('hidden');
         $('#tablaSublineas').addClass('hidden');
-//        $.each(infoSublinea, function (key, value) {
-//            tablaNodos.agregarDatosFila([
-//                value.IdNodo,
-//                value.IdArea,
-//                value.Nombre,
-//                value.IdSwitch,
-//                value.NumeroSwitch
-//            ]);
-//        });
-    }
 
-    $('#guardarSublinea').on('click', function () {
-        
-    });
+        $('#data-table-infoSublineas tbody tr').each(function () {
+            $(this).remove();
+        });
+        $.each(infoSublinea, function (key, value) {
+            $('#data-table-infoSublineas').append(
+                    '<tr id="fila' + value.Id + '">\n\
+                        <td class="idNever">' + value.Id + '</td>\n\
+                        <td>' + value.Sublinea + '</td>\n\
+                        <td><input id="input' + value.Id + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '"/></td>\n\
+                    </tr>');
+        });
+        $(".idNever").hide();
+
+        $('#agregarSublinea').on('click', function () {
+            if (evento.validarFormulario('#formAgregarSublinea')) {
+                let idSublinea = selectSublineas.obtenerValor();
+                let txtSublinea = selectSublineas.obtenerTexto();
+
+                $('#data-table-infoSublineas').append(
+                        '<tr id="fila' + idSublinea + '">\n\
+                        <td class="idNever">' + idSublinea + '</td>\n\
+                        <td>' + txtSublinea + '</td>\n\
+                        <td><input id="input' + idSublinea + '" type="text" class="form-control" style="width: 100%"/></td>\n\
+                    </tr>');
+                $(".idNever").hide();
+            }
+        });
+
+        $('#guardarSublinea').on('click', function () {
+            var datosTablaSUblinea = $('#data-table-infoSublineas').DataTable().rows().data();
+            let arraySublineas = [];
+            $.each(datosTablaSUblinea, function (key, value) {
+                arraySublineas[key] = {
+                    IdSublinea: value[0],
+                    Nombre: value[1],
+                    Cantidad: $(`#input${value[0]}`).val()
+                }
+            });
+            evento.enviarEvento('EventoCatalogoSublineasArea/', arraySublineas, '#seccionUnidadesNegocio', function (respuesta) {
+                if (respuesta.code == 200) {
+                    evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
+                }
+            });
+        });
+    }
 
     $('#btnRegresar').on('click', function () {
         switch (vista) {
