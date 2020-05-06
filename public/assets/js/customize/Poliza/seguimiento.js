@@ -1758,6 +1758,7 @@ function cargarFormularioSeguimiento() {
       "#seccion-servicio-censo",
       function(respuesta) {
         $("#contentDiferenciasCensos").empty().append(respuesta.html);
+        $('[data-toggle="tooltip"]').tooltip()
       }
     );
   }
@@ -1782,7 +1783,8 @@ function cargarFormularioSeguimiento() {
           var data = {
             servicio: servicio,
             area: $(this).attr("data-area"),
-            punto: $(this).attr("data-punto")
+            punto: $(this).attr("data-punto"),
+            un: $(this).attr("data-unidad-negocio")
           };
           evento.enviarEvento(
             "Seguimiento/CargaFormularioCapturaCenso",

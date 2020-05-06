@@ -105,21 +105,26 @@
                                 if (isset($diferenciaAreas) && count($diferenciaAreas) > 0) {
                                     foreach ($diferenciaAreas as $k => $v) {
                                         if ($v !== 0) {
-                                            $label = '<label class="f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
+                                            $label = '<label class="f-s-16 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
                                             echo '
-                            <tr>
-                                <td>' . $k . '</td>
-                                <td>' . $label . '</td>
-                            </tr>
-                            ';
+                                            <tr>
+                                                <td class="f-s-13">
+                                                    <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="' . $areas[$k]['Descripcion'] . '">
+                                                        <i class="fa fa-2x fa-info-circle"></i>
+                                                    </button>
+                                                    ' . $k . '
+                                                </td>
+                                                <td>' . $label . '</td>
+                                            </tr>
+                                            ';
                                             $c++;
                                         }
                                     }
                                 }
                                 if ($c <= 0) {
                                     echo '
-                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
-                    ';
+                                    <tr><td colspan="2">Sin diferencias encontradas</td></tr>
+                                ';
                                 }
                                 ?>
                             </tbody>
@@ -143,19 +148,24 @@
                                         if ($v !== 0) {
                                             $label = '<label class="f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
                                             echo '
-                            <tr>
-                                <td>' . $k . '</td>
-                                <td>' . $label . '</td>
-                            </tr>
-                            ';
+                                            <tr>
+                                                <td class="f-s-13">
+                                                    <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="' . $lineas[$k]['Descripcion'] . '">
+                                                        <i class="fa fa-2x fa-info-circle"></i>
+                                                    </button>
+                                                    ' . $k . '
+                                                </td>
+                                                <td>' . $label . '</td>
+                                            </tr>
+                                            ';
                                             $c++;
                                         }
                                     }
                                 }
                                 if ($c <= 0) {
                                     echo '
-                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
-                    ';
+                                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
+                                    ';
                                 }
                                 ?>
                             </tbody>
@@ -180,20 +190,26 @@
                                     foreach ($diferenciaSublineas as $k => $v) {
                                         if ($v !== 0) {
                                             $label = '<label class="f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
+                                            $tooltip = '<p>' . $sublineas[$k]['Linea'] . ($sublineas[$k]['Descripcion'] != '' ? '<br />' . $sublineas[$k]['Descripcion'] : '') . '</p>';
                                             echo '
-                            <tr>
-                                <td>' . $k . '</td>
-                                <td>' . $label . '</td>
-                            </tr>
-                            ';
+                                            <tr>
+                                                <td class="f-s-13">
+                                                    <button type="button" class="btn btn-secondary"  data-html="true" data-toggle="tooltip" data-placement="top" title="' . $tooltip . '">
+                                                        <i class="fa fa-2x fa-info-circle"></i>
+                                                    </button>
+                                                    ' . $k . '
+                                                </td>
+                                                <td>' . $label . '</td>
+                                            </tr>
+                                            ';
                                             $c++;
                                         }
                                     }
                                 }
                                 if ($c <= 0) {
                                     echo '
-                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
-                    ';
+                                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
+                                    ';
                                 }
                                 ?>
                             </tbody>
@@ -216,20 +232,27 @@
                                     foreach ($diferenciaModelos as $k => $v) {
                                         if ($v !== 0) {
                                             $label = '<label class="f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
+                                            $tooltip = '<p>' . $modelos[$k]['Linea'] . '<br />' . $modelos[$k]['Sublinea'] . '<br />' . $modelos[$k]['Marca'];
+                                            $tooltip .= $modelos[$k]['Descripcion'] != '' ? '<br />' . $modelos[$k]['Descripcion'] . '</p>' : '</p>';
                                             echo '
-                            <tr>
-                                <td>' . $k . '</td>
-                                <td>' . $label . '</td>
-                            </tr>
-                            ';
+                                            <tr>
+                                                <td class="f-s-13">
+                                                    <button type="button" class="btn btn-secondary"  data-html="true" data-toggle="tooltip" data-placement="top" title="' . $tooltip . '">
+                                                        <i class="fa fa-2x fa-info-circle"></i>
+                                                    </button>
+                                                    ' . $k . '
+                                                </td>
+                                                <td>' . $label . '</td>
+                                            </tr>
+                                            ';
                                             $c++;
                                         }
                                     }
                                 }
                                 if ($c <= 0) {
                                     echo '
-                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
-                    ';
+                                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
+                                    ';
                                 }
                                 ?>
                             </tbody>

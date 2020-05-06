@@ -6232,7 +6232,8 @@ class Seguimientos extends General
         $puntosRevisados = $this->DBCensos->getPuntosCensoRevisados($datos['servicio']);
         $data = [
             'areasPuntos' => $areasPuntos,
-            'puntosRevisados' => $puntosRevisados
+            'puntosRevisados' => $puntosRevisados,
+            'unidadNegocio' => $this->DBCensos->getUnidadNegocioByServicio($datos['servicio'])
         ];
         return ['html' => parent::getCI()->load->view('Poliza/Modal/CensoEquiposPuntoGroupArea', $data, TRUE)];
     }
@@ -6266,7 +6267,11 @@ class Seguimientos extends General
             'diferenciasUltimo' => $diferenciaSeries['diferenciasUltimo'],
             'diferenciasActual2' => $this->getCensoDiferenciasSeries($actual, $ultimo),
             'diferenciasUltimo2' => $this->getCensoDiferenciasSeries($ultimo, $actual),
-            'diferenciasKit' => $this->getCensoDiferenciasKit($actual)
+            'diferenciasKit' => $this->getCensoDiferenciasKit($actual),
+            'areas' => $this->DBCensos->getFullDataAreas(),
+            'lineas' => $this->DBCensos->getFullDataLineas(),
+            'sublineas' => $this->DBCensos->getFullDataSublineas(),
+            'modelos' => $this->DBCensos->getFullDataModelos()
         ];
     }
 
@@ -6537,7 +6542,7 @@ class Seguimientos extends General
 
     public function cargaFormularioCapturaCenso(array $datos)
     {
-        $kitStandarArea = $this->DBCensos->getKitStandarArea($datos['area']);
+        $kitStandarArea = $this->DBCensos->getKitStandarArea($datos['area'], $datos['un']);
         $modelosStandar = $this->DBCensos->getModelosStandarByArea($datos['area']);
         $equiposCensados = $this->DBCensos->getEquiposCensoByAreaPunto($datos);
         $nombreArea = $this->DBCensos->getNombreAreaById($datos['area']);

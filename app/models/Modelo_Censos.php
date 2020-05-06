@@ -135,8 +135,9 @@ class Modelo_Censos extends Modelo_Base
         }
     }
 
-    public function getKitStandarArea(int $area)
+    public function getKitStandarArea(int $area, int $unidadNegocio = null)
     {
+        $condicion = $unidadNegocio !== null ? " and csxa.IdUnidadNegocio = '" . $unidadNegocio . "' " : "";
         $consulta = $this->consulta("select 
                                     csxa.IdSublinea,
                                     linea(cse.Linea) as Linea,
@@ -145,14 +146,16 @@ class Modelo_Censos extends Modelo_Base
                                     from cat_v3_sublineas_x_area csxa 
                                     inner join cat_v3_sublineas_equipo cse on csxa.IdSublinea = cse.Id
                                     where csxa.IdArea = '" . $area . "'
+                                    " . $condicion . "
                                     and csxa.Flag = 1
                                     group by csxa.IdSublinea
                                     order by Linea, Sublinea;");
         return $consulta;
     }
 
-    public function getModelosStandarByArea(int $area)
+    public function getModelosStandarByArea(int $area, int $unidadNegocio = null)
     {
+        $condicion = $unidadNegocio !== null ? " and csxa.IdUnidadNegocio = '" . $unidadNegocio . "' " : "";
         $consulta = $this->consulta("select 
                                     modelos.Id,
                                     marcas.Nombre as Marca,
@@ -163,7 +166,7 @@ class Modelo_Censos extends Modelo_Base
                                     where marcas.Sublinea in (select 
                                                                 IdSublinea 
                                                                 from cat_v3_sublineas_x_area 
-                                                                where IdArea = '" . $area . "')
+                                                                where IdArea = '" . $area . "' " . $condicion . ")
                                     and modelos.Flag = 1;");
         return $consulta;
     }
@@ -889,7 +892,8 @@ class Modelo_Censos extends Modelo_Base
             where tst.Id = '" . $idServicio . "'")[0];
     }
 
-    public function getKitSublineasXArea(){
+    public function getKitSublineasXArea()
+    {
         return $this->consulta("
             select 
             csa.Id,
@@ -901,5 +905,73 @@ class Modelo_Censos extends Modelo_Base
             sublinea(csa.IdSublinea) as Sublinea
             from cat_v3_sublineas_x_area csa
             where Flag = 1");
+    }
+
+    public function getFullDataAreas()
+    {
+        $areas = $this->consulta("select * from cat_v3_areas_atencion where Flag <>2");
+        $arrayReturn = [];
+        foreach ($areas as $k => $v) {
+            $arrayReturn[$v['Nombre']] = $v;
+        }
+        return $arrayReturn;
+    }
+
+    public function getFullDataLineas()
+    {
+        $lineas = $this->consulta("select * from cat_v3_lineas_equipo where Flag <> 2");
+        $arrayReturn = [];
+        foreach ($lineas as $k => $v) {
+            $arrayReturn[$v['Nombre']] = $v;
+        }
+        return $arrayReturn;
+    }
+
+    public function getFullDataSublineas()
+    {
+        $lineas = $this->consulta("select
+        Id,
+        linea(Linea) as Linea,
+        Nombre,
+        Descripcion,
+        Flag
+        from cat_v3_sublineas_equipo
+        where Flag <> 2");
+        $arrayReturn = [];
+        foreach ($lineas as $k => $v) {
+            $arrayReturn[$v['Nombre']] = $v;
+        }
+        return $arrayReturn;
+    }
+
+    public function getFullDataModelos()
+    {
+        $modelos = $this->consulta("select
+        Id,
+        linea(lineaByModelo(Id)) as Linea,
+        sublinea(sublineaByModelo(Id)) as Sublinea,
+        marca(Marca) as Marca,
+        Nombre,
+        Descripcion
+        from cat_v3_modelos_equipo
+        where Flag <> 2");
+        $arrayReturn = [];
+        foreach ($modelos as $k => $v) {
+            $arrayReturn[$v['Nombre']] = $v;
+        }
+        return $arrayReturn;
+    }
+
+    public function getUnidadNegocioByServicio($servicio)
+    {
+        return $this->consulta("
+        select 
+        IdUnidadNegocio 
+        from cat_v3_sucursales where Id = (
+            select
+            IdSucursal
+            from t_servicios_ticket 
+            where Id = 56216
+        )")[0]['IdUnidadNegocio'];
     }
 }
