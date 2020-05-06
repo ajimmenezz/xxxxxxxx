@@ -119,7 +119,6 @@ class Catalogos extends General {
     public function getSublienasArea(array $datos) {
         $data = array();
         $sublineasArea = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
-        $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion();
 
         if (!empty($sublineasArea)) {
             foreach ($sublineasArea as $key => $value) {
@@ -167,6 +166,7 @@ class Catalogos extends General {
             $arraySublinea[$key]['text'] = $value['Sublinea'] . ' - ' . $value['Linea'];
         }
 
+        $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion();
         $data['sublineas'] = $arraySublinea;
         $data['sublineasArea'] = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . ' AND Flag = 1');
         return array('code' => 200, 'data' => $data);
