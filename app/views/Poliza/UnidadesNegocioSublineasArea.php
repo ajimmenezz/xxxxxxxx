@@ -81,19 +81,30 @@
 
                 <!--Empezando tabla  -->
                 <div id="tablaSublineas" class="hidden">
-                    <div class="table-responsive">
-                        <table id="data-table-sublineas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                            <thead>
-                                <tr>
-                                    <th class="never">Id</th>
-                                    <th class="all">Area de Atención</th>
-                                    <th class="all">Sublinea</th>
-                                    <th class="all">Cantidad</th>
-                                </tr>
-                            </thead>
-                            <tbody>                                     
-                            </tbody>
-                        </table>
+                    <div class="col-md-12">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">                    
+                            <div class="form-group text-right">
+                                <br>
+                                <a href="javascript:;" class="btn btn-success" id="agregarArea"><i class="fa fa-plus"></i> Agregar</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table id="data-table-sublineas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="never">Id</th>
+                                        <th class="all">Area de Atención</th>
+                                        <th class="all">Sublinea</th>
+                                        <th class="all">Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>                                     
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <!--Finalizando tabla-->

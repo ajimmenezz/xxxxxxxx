@@ -52,6 +52,7 @@ $(function () {
                 sublienasArea.Sublineas,
                 sublienasArea.Cantidad
             ]);
+            nuevaArea(sublienasArea.areasAtencion, sublienasArea.sublineas);
         } else {
             $('#tablaInfoSublineas').removeClass('hidden');
             $('#tablaUnidades').addClass('hidden');
@@ -90,6 +91,21 @@ $(function () {
 
     function cargaSelectSublinea(infoSublineas) {
         selectSublineas.cargaDatosEnSelect(infoSublineas);
+    }
+
+    function nuevaArea(areasAtencion, sublineas) {
+        $('#agregarArea').on('click', function () {
+            $('#tablaInfoSublineas').removeClass('hidden');
+            $('#tablaSublineas').addClass('hidden');
+            $('#addAreaAtencion').removeClass('hidden');
+            datosEnvioSublineas = {
+                IdArea: 0
+            }
+            selectArea.cargaDatosEnSelect(areasAtencion);
+            selectSublineas.cargaDatosEnSelect(sublineas);
+            cargaTablaInfoSublinea();
+            vista = 2;
+        });
     }
 
     function cargaTablaInfoSublinea(infoSublinea = null) {
@@ -187,6 +203,7 @@ $(function () {
                 $('#tablaSublineas').removeClass('hidden');
                 $('#tablaInfoSublineas').addClass('hidden');
                 $('#sublineaArea').text(" ");
+                $('#addAreaAtencion').addClass('hidden');
                 $('#data-table-infoSublineas tbody tr').each(function () {
                     $(this).remove();
                 });
