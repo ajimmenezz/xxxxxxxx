@@ -37,6 +37,9 @@
                                         <a href="javascript:;" class="btn btn-success btn-lg " id="btnRegresar"><i class="fa fa-reply"></i> Regresar</a>
                                     </div>
                                 </div>
+                                <div id="subtitulo2" class="col-md-6 col-xs-6 hidden">
+                                    <h5 id="sublineaArea" class="m-t-10"></h5>
+                                </div>
                             </div>
 
                             <!--Empezando Separador-->
