@@ -18,6 +18,7 @@ $(function () {
     App.init();
     let vista = 0;
     let datosEnvioPrincipal = null;
+    let datosEnvioSublineas = null;
 
     tablaPrincipal.evento(function () {
         var datos = tablaPrincipal.datosFila(this);
@@ -36,8 +37,10 @@ $(function () {
     });
 
     function cargaTablaSublineas(sublienasArea) {
+        $('#subtitulo').removeClass('hidden');
         $('#tablaSublineas').removeClass('hidden');
         $('#tablaUnidades').addClass('hidden');
+        $('#titulo').addClass('hidden');
         tablaSublineas.limpiartabla();
         tablaSublineas.agregarDatosFila([
             sublienasArea.IdArea,
@@ -49,11 +52,11 @@ $(function () {
 
     tablaSublineas.evento(function () {
         var datos = tablaSublineas.datosFila(this);
-        let datosEnvio = {
+        datosEnvioSublineas = {
             IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
             IdArea: datos[0]
         }
-        evento.enviarEvento('EventoCatalogoSublineasArea/GetSublineas', datosEnvio, '#seccionUnidadesNegocio', function (respuesta) {
+        evento.enviarEvento('EventoCatalogoSublineasArea/GetSublineas', datosEnvioSublineas, '#seccionUnidadesNegocio', function (respuesta) {
             if (respuesta.code == 200) {
                 vista = 2;
                 cargaSelectSublinea(respuesta.data.sublineas);
@@ -102,7 +105,6 @@ $(function () {
 
         $('#guardarSublinea').on('click', function () {
             var datosTablaSublinea = $('#data-table-infoSublineas').DataTable().rows().data();
-            console.log(datosTablaSublinea);
             let arraySublineas = [];
             $.each(datosTablaSublinea, function (key, value) {
                 arraySublineas[key] = {
@@ -111,8 +113,12 @@ $(function () {
                     Cantidad: $(`#input${value[0]}`).val()
                 }
             });
-            console.log(arraySublineas);
-            evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', arraySublineas, '#seccionUnidadesNegocio', function (respuesta) {
+            let envioDatos = {
+                IdUnidadNegocio: datosEnvioSublineas.IdUnidadNegocio,
+                IdArea: datosEnvioSublineas.IdArea,
+                sublineas: arraySublineas
+            }
+            evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
                 if (respuesta.code == 200) {
                     evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
                     setTimeout(function () {
@@ -129,7 +135,9 @@ $(function () {
         switch (vista) {
             case 1:
                 $('#tablaUnidades').removeClass('hidden');
+                $('#titulo').removeClass('hidden');
                 $('#tablaSublineas').addClass('hidden');
+                $('#subtitulo').addClass('hidden');
                 $('#btnEvent').addClass('hidden');
                 vista = 0;
                 break;
