@@ -102,7 +102,7 @@ $(function () {
                     '<tr id="fila' + value.Id + '">\n\
                         <td class="idNever">' + value.Id + '</td>\n\
                         <td class="idNever">' + value.IdSublinea + '</td>\n\
-                        <td>' + value.Sublinea + '</td>\n\
+                        <td>' + value.LineaSublinea + '</td>\n\
                         <td><input id="input' + value.IdSublinea + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '" data-parsley-required="true"/></td>\n\
                     </tr>');
         });
