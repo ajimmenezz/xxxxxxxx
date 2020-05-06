@@ -41,17 +41,19 @@ $(function () {
     function cargaTablaSublineas(sublienasArea) {
         $('#subtitulo').removeClass('hidden');
         $('#titulo').addClass('hidden');
-        if (typeof sublienasArea.IdArea !== 'undefined') {
+        if (typeof sublienasArea.tabla !== 'undefined') {
             $('#tablaSublineas').removeClass('hidden');
             $('#tablaUnidades').addClass('hidden');
             $('#addAreaAtencion').addClass('hidden');
             tablaSublineas.limpiartabla();
-            tablaSublineas.agregarDatosFila([
-                sublienasArea.IdArea,
-                sublienasArea.Area,
-                sublienasArea.Sublineas,
-                sublienasArea.Cantidad
-            ]);
+            $.each(sublienasArea.tabla, function (key, value) {
+                tablaSublineas.agregarDatosFila([
+                    value.IdArea,
+                    value.Area,
+                    value.Sublineas,
+                    value.Cantidad
+                ]);
+            });
             nuevaArea(sublienasArea.areasAtencion, sublienasArea.sublineas);
         } else {
             $('#tablaInfoSublineas').removeClass('hidden');
