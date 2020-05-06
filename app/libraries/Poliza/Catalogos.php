@@ -106,6 +106,16 @@ class Catalogos extends General {
         return array('formulario' => parent::getCI()->load->view('Poliza/Modal/FormularioCinemexValidacion', $data, TRUE), 'datos' => $data);
     }
 
+    public function mostrarFormularioUnidadNegocio(array $datos) {
+        $data['clientes'] = $this->catalogo->catClientes(3, array('Flag' => '1'));
+        return array('formulario' => parent::getCI()->load->view('Poliza/Formularios/formularioUnidadNegocio', $data, TRUE));
+    }
+    
+    public function mostrarDatosActualizarUnidadNegocio() {
+        $data['clientes'] = $this->catalogo->catClientes(3, array('Flag' => '1'));
+        return $data;
+    }
+
     public function getSublienasArea(array $datos) {
         $data = array();
         $areasAtencion = $this->catalogo->catConsultaGeneral('SELECT 

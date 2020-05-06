@@ -63,8 +63,10 @@
                         <thead>
                             <tr>
                                 <th class="never">Id</th>
+                                <th class="all">Cliente</th>
                                 <th class="all">Nombre</th>
                                 <th class="all">Estatus</th>
+                                <th class="never">IdCliente</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,12 +75,14 @@
                                 foreach ($datos['ListaUnidadeNegocio'] as $key => $value) {
                                     echo '<tr>';
                                     echo '<td>' . $value['Id'] . '</td>';
+                                    echo '<td>' . $value['Cliente'] . '</td>';
                                     echo '<td>' . $value['Nombre'] . '</td>';
                                     if ($value['Flag'] === '1') {
                                         echo '<td data-flag="' . $value['Flag'] . '">Activo</td>';
                                     } else {
                                         echo '<td data-flag="' . $value['Flag'] . '">Inactivo</td>';
                                     }
+                                    echo '<td>' . $value['IdCliente'] . '</td>';
                                     echo '</tr>';
                                 }
                             }

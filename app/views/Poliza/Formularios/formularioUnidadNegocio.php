@@ -5,7 +5,20 @@
             <div class="underline m-b-15 m-t-15"></div>
         </div>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="selectClienteUnidadNegocio">Cliente *</label>
+            <select id="selectClienteUnidadNegocio" class="form-control" style="width: 100%">
+                <option value="">Seleccionar</option>
+                <?php
+                foreach ($clientes as $item) {
+                    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                }
+                ?>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-6">
         <div class="form-group">
             <label for="nombreArea">Nombre *</label>
             <input type="text" class="form-control" id="inputNombreUnidadNegocio" placeholder="Ingresa nombre de la unidad de negocio" style="width: 100%" data-parsley-required="true"/>                            

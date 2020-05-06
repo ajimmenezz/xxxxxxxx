@@ -3562,7 +3562,7 @@ class Catalogo extends General {
             //Inserta en la tabla
             case '1':
                 $validar = array('Nombre' => $datos[0]);
-                $consulta = $this->DBC->setArticulo('cat_v3_unidades_negocio', array('Nombre' => $datos[0], 'Flag' => '1'), $validar);
+                $consulta = $this->DBC->setArticulo('cat_v3_unidades_negocio', array('Nombre' => $datos[0], 'IdCliente' => $datos[1], 'Flag' => '1'), $validar);
                 if (!empty($consulta)) {
                     return $this->catUnidadesNegocio('3');
                 } else {
@@ -3576,7 +3576,8 @@ class Catalogo extends General {
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_unidades_negocio', array(
                     'Nombre' => $datos[1],
-                    'Flag' => $datos[2]
+                    'IdCliente' => $datos[2],
+                    'Flag' => $datos[3]
                         ), array('Id' => $datos[0]),
                         //Variable para mandar datos de restriccion para que no se repita el nombre
                         $datos[1], $parametro

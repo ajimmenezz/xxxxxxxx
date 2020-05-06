@@ -5,12 +5,13 @@ use Controladores\Controller_Base as Base;
 class Controller_UnidadesNegocio extends Base {
 
     private $catalogo;
-    private $catologosGenericos;
+    private $catologosPoliza;
 
     public function __construct() {
         parent::__construct();
         $this->catalogo = \Librerias\Generales\Catalogo::factory();
-        $this->catologosGenericos = \Librerias\Catalogos\CatalogosGenericos::factory();
+//        $this->catologosGenericos = \Librerias\Catalogos\CatalogosGenericos::factory();
+        $this->catologosPoliza = \Librerias\Poliza\Catalogos::factory();
     }
 
     /*
@@ -23,13 +24,16 @@ class Controller_UnidadesNegocio extends Base {
     public function manejarEvento(string $evento = null) {
         switch ($evento) {
             case 'Nueva_Unidad_Negocio':
-                $resultado = $this->catalogo->catUnidadesNegocio('1', array($this->input->post('nombre')));
+                $resultado = $this->catalogo->catUnidadesNegocio('1', array($this->input->post('nombre'), $this->input->post('cliente')));
                 break;
             case 'Actualizar_Unidad_Negocio':
-                $resultado = $this->catalogo->catUnidadesNegocio('2', array($this->input->post('id'), $this->input->post('nombre'), $this->input->post('estatus')));
+                $resultado = $this->catalogo->catUnidadesNegocio('2', array($this->input->post('id'), $this->input->post('nombre'), $this->input->post('cliente'), $this->input->post('estatus')));
+                break;
+            case 'MostrarDatosActualizar':
+                $resultado = $this->catologosPoliza->mostrarDatosActualizarUnidadNegocio();
                 break;
             case 'MostrarFormularioUnidadNegocio':
-                $resultado = $this->catologosGenericos->mostrarFormularioUnidadNegocio($this->input->post());
+                $resultado = $this->catologosPoliza->mostrarFormularioUnidadNegocio($this->input->post());
                 break;
         }
         echo json_encode($resultado);
