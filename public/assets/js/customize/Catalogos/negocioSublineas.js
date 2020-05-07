@@ -169,15 +169,9 @@ $(function () {
                     }
                     
                     evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
-                        console.log(envioDatos);
-//                        if (respuesta.code == 200) {
-//                            evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
-//                            setTimeout(function () {
-//                                location.reload();
-//                            }, 2000);
-//                        } else {
-//                            evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
-//                        }
+                        console.log(respuesta);
+                        cargaTablaSublineas(respuesta.data);
+                        $('#tablaInfoSublineas').addClass('hidden');
                     });
                 } else {
                     evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No hay Area.', 3000);
