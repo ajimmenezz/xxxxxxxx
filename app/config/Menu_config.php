@@ -1365,7 +1365,7 @@ $config['Catalogos Generales'] = array(
             'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico', 
             'Componentes/Tablas/ITabla', 
-            'Componentes/Tablas/TablaBasica', 
+            'Componentes/Tablas/TablaBasica',
             'Catalogos/negocioSublineas'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',

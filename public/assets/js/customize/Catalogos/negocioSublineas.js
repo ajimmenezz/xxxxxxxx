@@ -11,6 +11,7 @@ $(function () {
     //Creando tabla de areas
     let tablaPrincipal = new TablaBasica('data-table-unidad-negocios');
     let tablaSublineas = new TablaBasica('data-table-sublineas');
+    let tablaInfoSublineas = new TablaBasica('data-table-infoSublineas', [], true);
     let selectArea = new SelectBasico('selectArea');
     let selectSublineas = new SelectBasico('selectSublinea');
 
@@ -113,22 +114,17 @@ $(function () {
     function cargaTablaInfoSublinea(infoSublinea = null) {
         $('#tablaInfoSublineas').removeClass('hidden');
         $('#tablaSublineas').addClass('hidden');
-
-        $('#data-table-infoSublineas tbody tr').each(function () {
-            $(this).remove();
-        });
+        tablaInfoSublineas.limpiartabla();
         if (infoSublinea != null) {
             $.each(infoSublinea, function (key, value) {
-                $('#data-table-infoSublineas').append(
-                        '<tr id="fila' + value.Id + '">\n\
-                        <td class="idNever">' + value.Id + '</td>\n\
-                        <td class="idNever">' + value.IdSublinea + '</td>\n\
-                        <td>' + value.LineaSublinea + '</td>\n\
-                        <td><input id="input' + value.IdSublinea + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '" data-parsley-required="true"/></td>\n\
-                    </tr>');
+                tablaInfoSublineas.agregarDatosFila([
+                    value.Id,
+                    value.IdSublinea,
+                    value.LineaSublinea,
+                    '<td><input id="input' + value.IdSublinea + '" type="text" class="form-control" style="width: 100%" value="' + value.Cantidad + '" data-parsley-required="true"/></td>'
+                ]);
             });
         }
-        $(".idNever").hide();
 
         $('#agregarSublinea').off();
         $('#agregarSublinea').on('click', function () {
@@ -137,20 +133,19 @@ $(function () {
                 let txtSublinea = selectSublineas.obtenerTexto();
                 $("#selectSublinea").find(`option[value='${idSublinea}']`).remove();
                 selectSublineas.definirValor();
-
-                $('#data-table-infoSublineas').append(
-                        '<tr id="fila' + idSublinea + '">\n\
-                        <td class="idNever">0</td>\n\
-                        <td class="idNever">' + idSublinea + '</td>\n\
-                        <td>' + txtSublinea + '</td>\n\
-                        <td><input id="input' + idSublinea + '" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/></td>\n\
-                    </tr>');
-                $(".idNever").hide();
+                
+                tablaInfoSublineas.agregarDatosFila([
+                    0,
+                    idSublinea,
+                    txtSublinea,
+                    '<td><input id="input' + idSublinea + '" type="text" class="form-control" style="width: 100%" data-parsley-required="true"/></td>'
+                ]);
             }
         });
 
+        $('#guardarSublinea').off();
         $('#guardarSublinea').on('click', function () {
-            var datosTablaSublinea = $('#data-table-infoSublineas').DataTable().rows().data();
+            var datosTablaSublinea = tablaInfoSublineas.datosTabla();
             let arraySublineas = [];
             let area = selectArea.obtenerValor();
             if (evento.validarFormulario('#formTable')) {
@@ -172,16 +167,17 @@ $(function () {
                     } else if (area != '') {
                         envioDatos.IdArea = area;
                     }
-
+                    
                     evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
-                        if (respuesta.code == 200) {
-                            evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
-                            setTimeout(function () {
-                                location.reload();
-                            }, 2000);
-                        } else {
-                            evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
-                        }
+                        console.log(envioDatos);
+//                        if (respuesta.code == 200) {
+//                            evento.mostrarMensaje('.errorUnidadesNegocio', true, 'Información guardada exitosamente.', 3000);
+//                            setTimeout(function () {
+//                                location.reload();
+//                            }, 2000);
+//                        } else {
+//                            evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
+//                        }
                     });
                 } else {
                     evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No hay Area.', 3000);
@@ -206,18 +202,14 @@ $(function () {
                 $('#tablaInfoSublineas').addClass('hidden');
                 $('#sublineaArea').text(" ");
                 $('#addAreaAtencion').addClass('hidden');
-                $('#data-table-infoSublineas tbody tr').each(function () {
-                    $(this).remove();
-                });
+                tablaInfoSublineas.limpiartabla();
                 vista = 1;
                 break;
             case 3:
                 $('#tablaUnidades').removeClass('hidden');
                 $('#tablaInfoSublineas').addClass('hidden');
                 $('#sublineaArea').text(" ");
-                $('#data-table-infoSublineas tbody tr').each(function () {
-                    $(this).remove();
-                });
+                tablaInfoSublineas.limpiartabla();
                 vista = 1;
                 break;
         }

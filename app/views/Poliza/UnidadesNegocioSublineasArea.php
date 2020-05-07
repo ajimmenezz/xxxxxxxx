@@ -145,8 +145,8 @@
                                 <table id="data-table-infoSublineas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                     <thead>
                                         <tr>
-                                            <th class="idNever">Id</th>
-                                            <th class="idNever">IdSublinea</th>
+                                            <th class="never">Id</th>
+                                            <th class="never">IdSublinea</th>
                                             <th class="all">Sublinea</th>
                                             <th class="all">Cantidad</th>
                                         </tr>
