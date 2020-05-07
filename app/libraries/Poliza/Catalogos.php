@@ -127,7 +127,7 @@ class Catalogos extends General {
         }
 
         $data['sublineas'] = $arraySublinea;
-        $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion();
+
         $data['tabla'] = array();
 
         if (!empty($sublineasArea)) {
@@ -149,19 +149,32 @@ class Catalogos extends General {
                     'Sublineas' => implode('<br>', $arraySulineas),
                     'Cantidad' => implode('<br>', $arrayCantidad)));
             }
+
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+
             return array('code' => 200, 'data' => $data);
         } else {
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
             return array('code' => 200, 'data' => $data);
         }
     }
 
-    public function getCatalogoSelectAreaAtencion() {
+    public function getCatalogoSelectAreaAtencion(array $datos) {
+        $arrayIdsArea = array();
         $arrayAreaAtencion = array();
+        $contador = 0;
         $areasAtencion = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
 
+        foreach ($datos as $key => $value) {
+            array_push($arrayIdsArea, $value['IdArea']);
+        }
+
         foreach ($areasAtencion as $key => $value) {
-            $arrayAreaAtencion[$key]['id'] = $value['Id'];
-            $arrayAreaAtencion[$key]['text'] = $value['Nombre'];
+            if (!in_array($value['Id'], $arrayIdsArea)) {
+                $arrayAreaAtencion[$contador]['id'] = $value['Id'];
+                $arrayAreaAtencion[$contador]['text'] = $value['Nombre'];
+                $contador ++;
+            }
         }
 
         return $arrayAreaAtencion;
