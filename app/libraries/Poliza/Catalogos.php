@@ -315,7 +315,7 @@ class Catalogos extends General {
             $modeloArea = $this->catalogo->catModelosArea(3, [], 'WHERE cvma.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvma.IdArea = ' . $datos['IdArea'] . '  AND cvma.IdModelo = ' . $value['IdModelo'] . ' AND cvma.Flag = 1');
 
             if (!$modeloArea) {
-                $this->catalogo->catModelosArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], $value['IdModelo'], $value['Cantidad'], 1));
+                $this->catalogo->catModelosArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], $value['IdModelo'], 1));
             }
         }
 
