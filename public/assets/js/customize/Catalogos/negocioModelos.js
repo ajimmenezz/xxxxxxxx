@@ -14,4 +14,8 @@ $(function () {
     
     let tablaPrincipal = new TablaBasica('data-table-unidad-negocios');
     
+    tablaPrincipal.evento(function () {
+        console.log("dede");
+    });
+    
 }); 
