@@ -247,7 +247,7 @@ class Catalogos extends General {
     public function getModelosArea(array $datos) {
         $data = array();
         $arrayModelo = array();
-        $arrayModelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE cvma.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $arrayModelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
         $modelos = $this->catalogo->catModelosEquipo(4);
 
         foreach ($modelos as $key => $value) {
@@ -262,7 +262,7 @@ class Catalogos extends General {
         if (!empty($arrayModelosArea)) {
             foreach ($arrayModelosArea as $key => $value) {
                 $arrayModelos = array();
-                $modelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE cvma.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvma.IdArea = ' . $value['IdArea'] . ' AND cvma.Flag = 1');
+                $modelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . ' AND Flag = 1');
 
                 if (!empty($modelosArea)) {
                     foreach ($modelosArea as $k => $v) {
@@ -289,18 +289,18 @@ class Catalogos extends General {
         $data = array();
         $arrayModelo = array();
         $arrayIdsModelosArea = array();
-        $modelos = $this->catalogo->catModelosEquipo(3, array('Flag' => '1'));
+        $modelos = $this->catalogo->catModelosEquipo(4);
         $contador = 0;
-        $data['modelosArea'] = $this->catalogo->catModelosArea(3, [], 'WHERE cvma.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvma.IdArea = ' . $datos['IdArea'] . ' AND cvma.Flag = 1');
+        $data['modelosArea'] = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . ' AND Flag = 1');
 
         foreach ($data['modelosArea'] as $key => $value) {
             array_push($arrayIdsModelosArea, $value['IdModelo']);
         }
         
         foreach ($modelos as $key => $value) {
-            if (!in_array($value['IdMod'], $arrayIdsModelosArea)) {
-                $arrayModelo[$contador]['id'] = $value['IdMod'];
-                $arrayModelo[$contador]['text'] = $value['Modelo'];
+            if (!in_array($value['Id'], $arrayIdsModelosArea)) {
+                $arrayModelo[$contador]['id'] = $value['Id'];
+                $arrayModelo[$contador]['text'] = $value['Equipo'];
                 $contador ++;
             }
         }
@@ -312,7 +312,7 @@ class Catalogos extends General {
 
     public function setModelos(array $datos) {
         foreach ($datos['modelos'] as $key => $value) {
-            $modeloArea = $this->catalogo->catModelosArea(3, [], 'WHERE cvma.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvma.IdArea = ' . $datos['IdArea'] . '  AND cvma.IdModelo = ' . $value['IdModelo'] . ' AND cvma.Flag = 1');
+            $modeloArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . '  AND IdModelo = ' . $value['IdModelo'] . ' AND Flag = 1');
 
             if (!$modeloArea) {
                 $this->catalogo->catModelosArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], $value['IdModelo'], 1));
