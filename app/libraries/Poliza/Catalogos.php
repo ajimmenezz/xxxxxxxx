@@ -219,6 +219,31 @@ class Catalogos extends General {
         return $this->getSublienasArea($datos);
     }
 
+    public function getAreasSublineas(array $datos) {
+        $data = array();
+        $sublineasArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $data['tabla'] = array();
+
+        if (!empty($sublineasArea)) {
+            foreach ($sublineasArea as $key => $value) {
+                array_push($data['tabla'], array(
+                    'IdArea' => $value['IdArea'],
+                    'Area' => $value['Area']));
+            }
+
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            throw new \Exception('No hay áreas de atención para eliminiar');
+        }
+    }
+
+    public function flagSublineaArea(array $datos) {
+        $this->catalogo->catSublineasArea(4, $datos);
+        return $this->getSublienasArea($datos);
+    }
+
     public function getModelosArea(array $datos) {
         $data = array();
         $arrayModelo = array();

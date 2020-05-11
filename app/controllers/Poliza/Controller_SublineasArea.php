@@ -32,6 +32,12 @@ class Controller_SublineasArea extends Base {
                 case 'SetSublineas':
                     $resultado = $this->catologosPoliza->setSublineas($this->input->post());
                     break;
+                case 'GetAreasSublineas':
+                    $resultado = $this->catologosPoliza->GetAreasSublineas($this->input->post());
+                    break;
+                case 'FlagSublineaArea':
+                    $resultado = $this->catologosPoliza->flagSublineaArea($this->input->post());
+                    break;
             }
             echo json_encode($resultado);
         } catch (\Exception $exc) {
