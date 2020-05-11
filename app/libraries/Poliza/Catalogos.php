@@ -296,10 +296,10 @@ class Catalogos extends General {
         foreach ($data['modelosArea'] as $key => $value) {
             array_push($arrayIdsModelosArea, $value['IdModelo']);
         }
-
+        
         foreach ($modelos as $key => $value) {
-            if (!in_array($value['IdModelo'], $arrayIdsModelosArea)) {
-                $arrayModelo[$contador]['id'] = $value['IdModelo'];
+            if (!in_array($value['IdMod'], $arrayIdsModelosArea)) {
+                $arrayModelo[$contador]['id'] = $value['IdMod'];
                 $arrayModelo[$contador]['text'] = $value['Modelo'];
                 $contador ++;
             }

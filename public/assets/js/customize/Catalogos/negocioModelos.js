@@ -47,11 +47,13 @@ $(function () {
             $('#tablaUnidades').addClass('hidden');
             $('#addAreaAtencion').addClass('hidden');
             tablaModelos.limpiartabla();
-//            $.each(infoRespuesta.tabla, function (key, value) {
-//                tablaModelos.agregarDatosFila([
-//                    value.
-//                ]);
-//            });
+            $.each(infoRespuesta.tabla, function (key, value) {
+                tablaModelos.agregarDatosFila([
+                    value.IdArea,
+                    value.Area,
+                    value.Modelos
+                ]);
+            });
             nuevaArea(infoRespuesta.areasAtencion, infoRespuesta.modelos);
         } else {
             $('#tablaInfoModelos').removeClass('hidden');
@@ -117,7 +119,7 @@ $(function () {
                 tablaInfoModelos.agregarDatosFila([
                     value.Id,
                     value.IdModelo,
-                    value.LineaModelo,
+                    value.Modelo,
                 ]);
             });
         }
