@@ -77,7 +77,7 @@ $(function () {
             IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
             IdArea: datos[0]
         }
-        evento.enviarEvento('EventoCatalogoModelosArea/', datosEnvioModelos, '#seccionUnidadesNegocio', function (respuesta) {
+        evento.enviarEvento('EventoCatalogoModelosArea/GetModelos', datosEnvioModelos, '#seccionUnidadesNegocio', function (respuesta) {
             if (respuesta.code == 200) {
                 vista = 2;
                 $('#modeloArea').text(" - " + datos[1]);
@@ -162,7 +162,7 @@ $(function () {
                         envioDatos.IdArea = area;
                     }
                     
-                    evento.enviarEvento('EventoCatalogoModelosArea/', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
+                    evento.enviarEvento('EventoCatalogoModelosArea/SetModelos', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
                         cargaTablaModelos(respuesta.data);
                         $('#tablaInfoModelos').addClass('hidden');
                     });
