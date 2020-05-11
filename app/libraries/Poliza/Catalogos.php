@@ -247,20 +247,20 @@ class Catalogos extends General {
     public function getModelosArea(array $datos) {
         $data = array();
         $arrayModelo = array();
-        $sublineasArea = $this->catalogo->catModelosArea(3, [], 'WHERE cvma.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
-        $modelos = $this->catalogo->catModelosEquipo(3, array('Flag' => '1'));
+        $arrayModelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE cvma.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $modelos = $this->catalogo->catModelosEquipo(4);
 
         foreach ($modelos as $key => $value) {
             $arrayModelo[$key]['id'] = $value['Id'];
-            $arrayModelo[$key]['text'] = $value['Modelo'];
+            $arrayModelo[$key]['text'] = $value['Equipo'];
         }
 
         $data['modelos'] = $arrayModelo;
 
         $data['tabla'] = array();
 
-        if (!empty($sublineasArea)) {
-            foreach ($sublineasArea as $key => $value) {
+        if (!empty($arrayModelosArea)) {
+            foreach ($arrayModelosArea as $key => $value) {
                 $arrayModelos = array();
                 $modelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE cvma.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvma.IdArea = ' . $value['IdArea'] . ' AND cvma.Flag = 1');
 
