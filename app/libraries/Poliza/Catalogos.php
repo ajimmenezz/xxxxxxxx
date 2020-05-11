@@ -322,4 +322,25 @@ class Catalogos extends General {
         return $this->getModelosArea($datos);
     }
 
+    public function getUnidadesArea(array $datos) {
+        $data = array();
+        $unidadesArea = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $data['tabla'] = array();
+
+        if (!empty($unidadesArea)) {
+            foreach ($unidadesArea as $key => $value) {
+                array_push($data['tabla'], array(
+                    'IdArea' => $value['IdArea'],
+                    'Area' => $value['Area']));
+            }
+
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            $data['areasAtencion'] = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
+            return array('code' => 200, 'data' => $data);
+        }
+    }
+
 }

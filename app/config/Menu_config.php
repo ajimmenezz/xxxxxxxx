@@ -1397,10 +1397,10 @@ $config['Catalogos Generales'] = array(
         ),
         'Permiso' => 'VCAA'
     ),
-    'Catalogo-Sublineas-Area' => array(
-        'liga' => 'Sublineas de Area',
+    'Catalogo-Unidades-Area' => array(
+        'liga' => 'Unidades Negocio de Área',
         'icono' => '',
-        'Url' => '/Poliza/UnidadesNegocioSublineasArea',
+        'Url' => '/Poliza/UnidadesNegocioArea',
         'css' => array(),
         'pluginsCss' => array(
             'DataTables/css/data-table',
@@ -1409,19 +1409,17 @@ $config['Catalogos Generales'] = array(
         ),
         'js' => array(
             'Base/Base',
-            'Base/Socket',
             'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
-            'Catalogos/negocioSublineas'),
+            'Catalogos/negocioModelos'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
             'select2/dist/js/select2.min',
             'parsley/dist/parsley',
-            'parsley/src/i18n/es',
-            'masked-input/masked-input.min'
+            'parsley/src/i18n/es'
         ),
         'Permiso' => 'VCSA'
     ),
@@ -1448,6 +1446,34 @@ $config['Catalogos Generales'] = array(
             'select2/dist/js/select2.min',
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
+        ),
+        'Permiso' => 'VCSA'
+    ),
+    'Catalogo-Sublineas-Area' => array(
+        'liga' => 'Sublineas de Area',
+        'icono' => '',
+        'Url' => '/Poliza/UnidadesNegocioSublineasArea',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array(
+            'Base/Base',
+            'Base/Socket',
+            'Componentes/Selects/ISelect',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/ITabla',
+            'Componentes/Tablas/TablaBasica',
+            'Catalogos/negocioSublineas'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'masked-input/masked-input.min'
         ),
         'Permiso' => 'VCSA'
     ),
