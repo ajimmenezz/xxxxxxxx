@@ -7,6 +7,15 @@ class TablaBasica extends ITabla {
         });               
         tabla.draw();
     }
+    
+    iniciarTablaScroll() {        
+        let tabla = $(`#${this.tabla}`).DataTable({
+            responsive: true,
+            language: super.obtenerIdioma(),
+            paging: false
+        });               
+        tabla.draw();
+    }
 };
 
 
