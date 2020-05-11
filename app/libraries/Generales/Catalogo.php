@@ -3616,7 +3616,6 @@ class Catalogo extends General {
                 break;
             //Actualiza en la tabla
             case '2':
-                //nombre de parametro para verificar que permiso no se repita
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_sublineas_x_area', array(
                     'Cantidad' => $datos[1]
@@ -3644,6 +3643,18 @@ class Catalogo extends General {
                                                         INNER JOIN cat_v3_sublineas_equipo cvse
                                                         ON cvse.Id = cvsa.IdSublinea ' . $where);
                 break;
+            case '4':
+                $consulta = $this->DBC->actualizarArticulo(
+                        'cat_v3_sublineas_x_area', array(
+                    'Flag' => 0
+                        ), $datos
+                );
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocio('3');
+                } else {
+                    return FALSE;
+                }
+                break;
             default:
                 break;
         }
@@ -3666,7 +3677,6 @@ class Catalogo extends General {
                 break;
             //Actualiza en la tabla
             case '2':
-                //nombre de parametro para verificar que permiso no se repita
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_modelos_x_area', array(
                         ), array('Id' => $datos[0])

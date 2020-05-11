@@ -32,6 +32,7 @@ class Controller_ModelosArea extends Base {
                 case 'SetModelos':
                     $resultado = $this->catologosPoliza->setModelos($this->input->post());
                     break;
+                
             }
             echo json_encode($resultado);
         } catch (\Exception $exc) {
