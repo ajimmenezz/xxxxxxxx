@@ -102,7 +102,8 @@ $config['Secciones'] = array(
         'Seguimiento-Equipos' => 'Seguimiento_Equipos',
         'Reporte-Inventario' => 'Inventarios',
         'Catalogo-Unidades-Negocio' => 'Unidades_Negocio',
-        'Catalogo-Sublineas-Area' => 'UnidadesNegocioSublineasArea'
+        'Catalogo-Sublineas-Area' => 'UnidadesNegocioSublineasArea',
+        'Catalogo-Modelos-Area' => 'UnidadesNegocioModelosArea'
     ),
     'Redes' => array(
         'Dashboard-Redes' => 'Dashboard',

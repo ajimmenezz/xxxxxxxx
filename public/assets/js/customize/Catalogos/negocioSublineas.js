@@ -169,7 +169,6 @@ $(function () {
                     }
                     
                     evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
-                        console.log(respuesta);
                         cargaTablaSublineas(respuesta.data);
                         $('#tablaInfoSublineas').addClass('hidden');
                     });
