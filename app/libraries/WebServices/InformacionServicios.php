@@ -401,11 +401,10 @@ class InformacionServicios extends General {
                 $observaciones = "<div>Observaciones: " . $informacionDiagnostico[0]['Observaciones'] . "</div>";
             }
 
-
             if (!empty($informacionCorrectivo)) {
-                $documentoPdf = '';
-            } else {
                 $documentoPdf = "<div><a href='" . $linkPdf . "' target='_blank'>DOCUMENTO PDF</a></div>";
+            } else {
+                $documentoPdf = '';
             }
 
             $descripcion = "<br>"
