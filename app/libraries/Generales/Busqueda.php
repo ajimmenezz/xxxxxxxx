@@ -853,15 +853,15 @@ class Busqueda extends General {
     public function EncabezadoDiferenciasConteos($informacionGeneralCenso, $ultimo, $actual, $diferenciaSublineas) {
         $this->Excel->createSheet('Diferencias(Conteos)', 1);
         $this->Excel->setActiveSheet(1);
-        $this->Excel->setTableTitle('A1', 'O1', $informacionGeneralCenso["Sucursal"], ['center']);
-        $this->Excel->setTableTitle('A2', 'D2', 'Censo ' . $informacionGeneralCenso["FechaUltimo"], ['center']);
-        $this->Excel->setTableTitle('A3', 'D3', $ultimo, ['center']);
-        $this->Excel->setTableTitle('E2', 'G2', 'Censo ' . $informacionGeneralCenso["Fecha"], ['center']);
-        $this->Excel->setTableTitle('E3', 'G3', $actual, ['center']);
-        $this->Excel->setTableTitle('H2', 'K2', 'Total Faltantes', ['center']);
-        $this->Excel->setTableTitle('H3', 'K3', isset($diferenciaSublineas['conteo']['faltantes']) ? '-' . $diferenciaSublineas['conteo']['faltantes'] : 0, ['center']);
-        $this->Excel->setTableTitle('L2', 'O2', 'Total Sobrantes', ['center']);
-        $this->Excel->setTableTitle('L3', 'O3', isset($diferenciaSublineas['conteo']['sobrantes']) ? '+' . $diferenciaSublineas['conteo']['sobrantes'] : 0, ['center']);
+        $this->Excel->setTableTitle('A1', 'J1', $informacionGeneralCenso["Sucursal"], ['center']);
+        $this->Excel->setTableTitle('A2', 'B2', 'Censo ' . $informacionGeneralCenso["FechaUltimo"], ['center']);
+        $this->Excel->setTableTitle('A3', 'B3', $ultimo, ['center']);
+        $this->Excel->setTableTitle('C2', 'D2', 'Censo ' . $informacionGeneralCenso["Fecha"], ['center']);
+        $this->Excel->setTableTitle('C3', 'D3', $actual, ['center']);
+        $this->Excel->setTableTitle('E2', 'G2', 'Total Faltantes', ['center']);
+        $this->Excel->setTableTitle('E3', 'G3', isset($diferenciaSublineas['conteo']['faltantes']) ? '-' . $diferenciaSublineas['conteo']['faltantes'] : 0, ['center']);
+        $this->Excel->setTableTitle('H2', 'J2', 'Total Sobrantes', ['center']);
+        $this->Excel->setTableTitle('H3', 'J3', isset($diferenciaSublineas['conteo']['sobrantes']) ? '+' . $diferenciaSublineas['conteo']['sobrantes'] : 0, ['center']);
     }
     
     public function diferenciasConteos($detallesGeneralesCenso) {
@@ -944,7 +944,7 @@ class Busqueda extends General {
             if($v != 0){
                 $listaEquiposArea[$k]['Area'] = $k;
                 $listaEquiposArea[$k]['EquiposxPunto'] = $v["EquiposxPunto"];
-                $listaEquiposArea[$k]['TextoKit'] = $v["TextoKit"];
+                $listaEquiposArea[$k]['TextoKit'] = $v['Puntos'] * $v['EquiposxPunto'];
                 $listaEquiposArea[$k]['TotalCensado'] = $v["TotalCensado"];
                 $listaEquiposArea[$k]['Faltantes'] = $v["Faltantes"];
                 $listaEquiposArea[$k]['Sobrantes'] = $v["Sobrantes"];
