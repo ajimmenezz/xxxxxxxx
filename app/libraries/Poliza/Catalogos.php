@@ -255,6 +255,26 @@ class Catalogos extends General {
             throw new \Exception('No hay áreas de atención para eliminiar');
         }
     }
+    public function GetSublineasSelectEliminar(array $datos) {
+        $data = array();
+        $arraySublinea = array();
+        $sublineasArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvsa.IdArea = '. $datos['IdArea']);
+        $contador = 0;
+
+        if (!empty($sublineasArea)) {
+            foreach ($sublineasArea as $key => $value) {
+                $arraySublinea[$contador]['id'] = $value['Id'];
+                $arraySublinea[$contador]['text'] = $value['Sublinea'];
+                $contador ++;
+            }
+            
+            $data['sublineas'] = $arraySublinea;
+            
+            return array('code' => 200, 'data' => $data);
+        } else {
+            throw new \Exception('No hay áreas de atención para eliminiar');
+        }
+    }
 
     public function flagSublineaArea(array $datos) {
         $this->catalogo->catSublineasArea(4, $datos);

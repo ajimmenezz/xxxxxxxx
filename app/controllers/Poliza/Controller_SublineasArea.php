@@ -35,6 +35,9 @@ class Controller_SublineasArea extends Base {
                 case 'GetAreasSublineas':
                     $resultado = $this->catologosPoliza->GetAreasSublineas($this->input->post());
                     break;
+                case 'GetSublineasSelectEliminar':
+                    $resultado = $this->catologosPoliza->GetSublineasSelectEliminar($this->input->post());
+                    break;
                 case 'FlagSublineaArea':
                     $resultado = $this->catologosPoliza->flagSublineaArea($this->input->post());
                     break;
