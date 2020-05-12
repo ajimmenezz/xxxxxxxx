@@ -892,7 +892,7 @@ class Modelo_Censos extends Modelo_Base
             where tst.Id = '" . $idServicio . "'")[0];
     }
 
-    public function getKitSublineasXArea()
+    public function getKitSublineasXArea($unidadNegocio)
     {
         return $this->consulta("
             select 
@@ -904,7 +904,8 @@ class Modelo_Censos extends Modelo_Base
             linea((select Linea from cat_v3_sublineas_equipo where Id = csa.IdSublinea)) as Linea,
             sublinea(csa.IdSublinea) as Sublinea
             from cat_v3_sublineas_x_area csa
-            where Flag = 1");
+            where Flag = 1
+            and IdUnidadNegocio = '" . $unidadNegocio . "'");
     }
 
     public function getFullDataAreas()
@@ -973,5 +974,36 @@ class Modelo_Censos extends Modelo_Base
             from t_servicios_ticket 
             where Id = 56216
         )")[0]['IdUnidadNegocio'];
+    }
+
+    public function getKitAreas($unidadNegocio)
+    {
+        $consulta = $this->consulta("
+        select
+        csa.Id,
+        csa.IdArea,
+        csa.IdSublinea,
+        areaAtencion(csa.IdArea) as Area,
+        sublinea(csa.IdSublinea) as Sublinea,
+        csa.Cantidad
+        from cat_v3_sublineas_x_area csa
+        where csa.IdUnidadNegocio = 2
+        and Flag = 1");
+
+        $arrayReturn = [];
+        if (!empty($consulta)) {
+            foreach ($consulta as $k => $v) {
+                if (!array_key_exists($v['Area'], $arrayReturn)) {
+                    $arrayReturn[$v['Area']] = [
+                        'total' => 0,
+                        'texto' => ''
+                    ];
+                }
+                $arrayReturn[$v['Area']]['total'] += $v['Cantidad'];
+                $arrayReturn[$v['Area']]['texto'] .= '<br />' . $v['Cantidad'] . ' ' . $v['Sublinea'];
+            }
+        }
+
+        return $arrayReturn;
     }
 }

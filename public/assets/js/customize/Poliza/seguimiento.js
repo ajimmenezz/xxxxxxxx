@@ -1,35 +1,35 @@
 function seguimientoOld(evento, datos, datosTabla) {
-//    var evento = new Base();
-    //var websocket = new Socket();
-    var file = new Upload();
-    var file3 = new Upload();
-    var tabla = new Tabla();
-    var select = new Select();
-    var servicios = new Servicio();
-    var nota = new Nota();
-    var dataCategoria;
-    var eventoAuxiliar = new Base();
-    var tablaAuxiliar = new Tabla();
-    var servicioAuxiliar = new Servicio();
-    //Evento que maneja las peticiones del socket
-    //websocket.socketMensaje();
-    //Muestra la hora en el sistema
-    // evento.horaServidor($("#horaServidor").val());
-    //Evento para cerra la session
-    //evento.cerrarSesion();
-    //Creando tabla de areas
-//    tabla.generaTablaPersonal("#data-table-poliza", null, null, true, true, [
-//        [0, "desc"]
-//    ]);
-    //Evento para mostrar la ayuda del sistema
-    evento.mostrarAyuda("Ayuda_Proyectos");
-    //Inicializa funciones de la plantilla
-//    App.init();
-    var data = {servicio: datos.servicio, operacion: datos.operacion};
-    cargarFormularioSeguimiento(data, datosTabla, "#panelSeguimientoPoliza");
+  //    var evento = new Base();
+  //var websocket = new Socket();
+  var file = new Upload();
+  var file3 = new Upload();
+  var tabla = new Tabla();
+  var select = new Select();
+  var servicios = new Servicio();
+  var nota = new Nota();
+  var dataCategoria;
+  var eventoAuxiliar = new Base();
+  var tablaAuxiliar = new Tabla();
+  var servicioAuxiliar = new Servicio();
+  //Evento que maneja las peticiones del socket
+  //websocket.socketMensaje();
+  //Muestra la hora en el sistema
+  // evento.horaServidor($("#horaServidor").val());
+  //Evento para cerra la session
+  //evento.cerrarSesion();
+  //Creando tabla de areas
+  //    tabla.generaTablaPersonal("#data-table-poliza", null, null, true, true, [
+  //        [0, "desc"]
+  //    ]);
+  //Evento para mostrar la ayuda del sistema
+  evento.mostrarAyuda("Ayuda_Proyectos");
+  //Inicializa funciones de la plantilla
+  //    App.init();
+  var data = { servicio: datos.servicio, operacion: datos.operacion };
+  cargarFormularioSeguimiento(data, datosTabla, "#panelSeguimientoPoliza");
 
   $("#btnBuscarFolio").off("click");
-  $("#btnBuscarFolio").on("click", function() {
+  $("#btnBuscarFolio").on("click", function () {
     var folio = $("#inputBuscarFolio").val();
     if (folio !== "") {
       var data = { departamento: "11", folio: folio };
@@ -37,7 +37,7 @@ function seguimientoOld(evento, datos, datosTabla) {
         "Seguimiento/MostrarServicios",
         data,
         "#panelSeguimientoPoliza",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta !== false) {
             recargandoTablaPoliza(respuesta);
           } else {
@@ -61,25 +61,25 @@ function seguimientoOld(evento, datos, datosTabla) {
   });
 
   $("#btnMostrarServicios").off("click");
-  $("#btnMostrarServicios").on("click", function() {
+  $("#btnMostrarServicios").on("click", function () {
     $("#inputBuscarFolio").val("");
     var data = { departamento: "11" };
     evento.enviarEvento(
       "Seguimiento/MostrarServicios",
       data,
       "#panelSeguimientoPoliza",
-      function(respuesta) {
+      function (respuesta) {
         recargandoTablaPoliza(respuesta);
       }
     );
   });
 
 
-function cargarFormularioSeguimiento() {
+  function cargarFormularioSeguimiento() {
     var data = arguments[0];
     var datosTabla = arguments[1];
     var panel = arguments[2];
-    evento.enviarEvento("Seguimiento/Servicio_Datos", data, panel, function(
+    evento.enviarEvento("Seguimiento/Servicio_Datos", data, panel, function (
       respuesta
     ) {
       var datosDelServicio = respuesta.datosServicio;
@@ -169,7 +169,7 @@ function cargarFormularioSeguimiento() {
       mostrarTabla(sucursal, respuesta, datosTabla);
     }
 
-    $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
+    $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
       var target = $(e.target).attr("href");
       switch (target) {
         case "#revisionTecnica":
@@ -189,7 +189,7 @@ function cargarFormularioSeguimiento() {
           break;
       }
     });
-    $("#concluirServicioChecklist").on("click", function() {
+    $("#concluirServicioChecklist").on("click", function () {
       var servicio = $("#hiddenServicio").val();
       var sucursal = $("#selectSucursales option:selected").val();
       if (sucursal !== "") {
@@ -198,7 +198,7 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/MostrarDatosServicio",
           datosServicio,
           "#seguimiento-checklist",
-          function(respuesta) {
+          function (respuesta) {
             if (respuesta.sucursal) {
               concluirServicioChecklist(servicio, datosTabla, sucursal);
             } else {
@@ -221,9 +221,9 @@ function cargarFormularioSeguimiento() {
       }
     });
   };
-  
+
   function limpiarRevisionArea() {
-    $(".categoriaRevisionArea li").each(function() {
+    $(".categoriaRevisionArea li").each(function () {
       $(this).removeClass("active");
     });
     $(".categoriaRevisionArea li")
@@ -236,7 +236,7 @@ function cargarFormularioSeguimiento() {
       .addClass("hidden");
   };
   function limpiarRevisionPunto() {
-    $(".categoriaRevisionPunto li").each(function() {
+    $(".categoriaRevisionPunto li").each(function () {
       $(this).removeClass("active");
     });
     $(".categoriaRevisionPunto li")
@@ -258,7 +258,7 @@ function cargarFormularioSeguimiento() {
     var myBoardFirma = servicios.campoLapiz("campoLapiz");
     var myBoardTecnico = servicios.campoLapiz("campoLapizTecnico");
     $("#btnGuardarFirma").off("click");
-    $("#btnGuardarFirma").on("click", function() {
+    $("#btnGuardarFirma").on("click", function () {
       var img = myBoardFirma.getImg();
       var imgInput = myBoardFirma.blankCanvas == img ? "" : img;
       var imgTecnico = myBoardTecnico.getImg();
@@ -285,7 +285,7 @@ function cargarFormularioSeguimiento() {
                     "Seguimiento/GuardarConclusionChecklist",
                     dataInsertar,
                     "#modal-dialogo",
-                    function(respuesta) {
+                    function (respuesta) {
                       if (respuesta) {
                         servicios.mensajeModal(
                           "Servicio concluido.",
@@ -358,7 +358,7 @@ function cargarFormularioSeguimiento() {
       "tab"
     );
     $("[id*=categoria-]").off("click");
-    $("[id*=categoria-]").on("click", function() {
+    $("[id*=categoria-]").on("click", function () {
       $("#listaPregunta").removeClass("hidden");
       $("#guardarListaPregunta").removeClass("hidden");
       dataCategoria = $(this).data("id-categoria");
@@ -369,7 +369,7 @@ function cargarFormularioSeguimiento() {
       "tab"
     );
     $("[id*=categoriaPunto-]").off("click");
-    $("[id*=categoriaPunto-]").on("click", function() {
+    $("[id*=categoriaPunto-]").on("click", function () {
       $("#checklistRevisionPunto").removeClass("hidden");
       dataCategoria = $(this).data("id-categoria-punto");
       mostrarPuntoPorCategoria(dataCategoria, sucursal, respuesta, datosTabla);
@@ -385,7 +385,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/RevisionTecnica",
       { servicio: servicio },
       "#seguimiento-checklist",
-      function(respuesta) {
+      function (respuesta) {
         $("#revisionTecnica")
           .empty()
           .append(respuesta.html);
@@ -444,7 +444,7 @@ function cargarFormularioSeguimiento() {
           "lfrtip",
           false
         );
-        $("#selectAreaPunto").on("change", function() {
+        $("#selectAreaPunto").on("change", function () {
           var _this = $("#selectAreaPunto option:selected");
           var _value = _this.val();
           $("#selectEquipo")
@@ -460,22 +460,22 @@ function cargarFormularioSeguimiento() {
               "Seguimiento/ConsultaEquipoXAreaPuntoUltimoCenso",
               datos,
               "#seguimiento-checklist",
-              function(respuesta) {
-                $.each(respuesta, function(k, v) {
+              function (respuesta) {
+                $.each(respuesta, function (k, v) {
                   $("#selectEquipo").append(
                     '<option data-terminal="' +
-                      v.Extra +
-                      '"  data-serie="' +
-                      v.Serie +
-                      '" data-modelo="' +
-                      v.IdModelo +
-                      '" value="' +
-                      v.Serie +
-                      '">' +
-                      v.Equipo +
-                      " (" +
-                      v.Serie +
-                      ")</option>"
+                    v.Extra +
+                    '"  data-serie="' +
+                    v.Serie +
+                    '" data-modelo="' +
+                    v.IdModelo +
+                    '" value="' +
+                    v.Serie +
+                    '">' +
+                    v.Equipo +
+                    " (" +
+                    v.Serie +
+                    ")</option>"
                   );
                 });
               }
@@ -488,19 +488,19 @@ function cargarFormularioSeguimiento() {
         });
         $('#clasificacionesFalla li a[data-toggle="tab"]').on(
           "shown.bs.tab",
-          function(e) {
+          function (e) {
             var target = $(e.target).attr("href");
             initDiagnosticoEquipo(target, servicio);
           }
         );
-        $("#selectEquipo").on("change", function() {
+        $("#selectEquipo").on("change", function () {
           var _this = $("#selectEquipo option:selected");
           var _value = _this.val();
           if (_value !== "") {
-            $("#clasificacionesFalla li").each(function() {
+            $("#clasificacionesFalla li").each(function () {
               $(this).removeClass("active");
             });
-            $("#contentClasificacionesFalla .tab-pane").each(function() {
+            $("#contentClasificacionesFalla .tab-pane").each(function () {
               $(this).removeClass("active in");
             });
             evento.mostraDiv("#divDiagnosticoEquipo");
@@ -514,7 +514,7 @@ function cargarFormularioSeguimiento() {
             select.cambiarOpcion("#selectComponenteDiagnosticoCorrectivo", "");
           }
         });
-        $("#selectImpericiaTipoFallaEquipoCorrectivo").on("change", function() {
+        $("#selectImpericiaTipoFallaEquipoCorrectivo").on("change", function () {
           var _modelo = $("#selectEquipo option:selected").attr("data-modelo");
           var tipoFalla = $(this).val();
           var datos = { tipoFalla: tipoFalla, equipo: _modelo };
@@ -530,8 +530,8 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo",
             datos,
             "#seguimiento-checklist",
-            function(respuesta) {
-              $.each(respuesta, function(k, v) {
+            function (respuesta) {
+              $.each(respuesta, function (k, v) {
                 $("#selectImpericiaFallaDiagnosticoCorrectivo").append(
                   '<option value="' + v.Id + '">' + v.Nombre + "</option>"
                 );
@@ -544,7 +544,7 @@ function cargarFormularioSeguimiento() {
             }
           );
         });
-        $("#selectTipoFallaEquipoCorrectivo").on("change", function() {
+        $("#selectTipoFallaEquipoCorrectivo").on("change", function () {
           var _modelo = $("#selectEquipo option:selected").attr("data-modelo");
           var tipoFalla = $(this).val();
           var datos = { tipoFalla: tipoFalla, equipo: _modelo };
@@ -557,8 +557,8 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo",
             datos,
             "#seguimiento-checklist",
-            function(respuesta) {
-              $.each(respuesta, function(k, v) {
+            function (respuesta) {
+              $.each(respuesta, function (k, v) {
                 $("#selectFallaDiagnosticoCorrectivo").append(
                   '<option value="' + v.Id + '">' + v.Nombre + "</option>"
                 );
@@ -569,7 +569,7 @@ function cargarFormularioSeguimiento() {
             }
           );
         });
-        $("#selectComponenteDiagnosticoCorrectivo").on("change", function() {
+        $("#selectComponenteDiagnosticoCorrectivo").on("change", function () {
           var _componente = $(this).val();
           var _modelo = $("#selectEquipo option:selected").attr("data-modelo");
           var datos = { equipo: _modelo };
@@ -583,8 +583,8 @@ function cargarFormularioSeguimiento() {
               "Seguimiento/ConsultaTiposFallasEquipos",
               datos,
               "#seguimiento-checklist",
-              function(respuesta) {
-                $.each(respuesta, function(k, v) {
+              function (respuesta) {
+                $.each(respuesta, function (k, v) {
                   $("#selectTipoFallaComponenteCorrectivo").append(
                     '<option value="' + v.Id + '">' + v.Nombre + "</option>"
                   );
@@ -598,7 +598,7 @@ function cargarFormularioSeguimiento() {
             );
           }
         });
-        $("#selectTipoFallaComponenteCorrectivo").on("change", function() {
+        $("#selectTipoFallaComponenteCorrectivo").on("change", function () {
           var _componente = $("#selectComponenteDiagnosticoCorrectivo").val();
           var tipoFalla = $(this).val();
           var datos = { tipoFalla: tipoFalla, componente: _componente };
@@ -614,8 +614,8 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ConsultaFallasRefacionXTipoFallaChecklist",
             datos,
             "#seguimiento-checklist",
-            function(respuesta) {
-              $.each(respuesta, function(k, v) {
+            function (respuesta) {
+              $.each(respuesta, function (k, v) {
                 $("#selectFallaComponenteDiagnosticoCorrectivo").append(
                   '<option value="' + v.Id + '">' + v.Nombre + "</option>"
                 );
@@ -629,7 +629,7 @@ function cargarFormularioSeguimiento() {
           );
         });
         $("#btnGuardarImpericiaChecklist").on("click");
-        $("#btnGuardarImpericiaChecklist").on("click", function() {
+        $("#btnGuardarImpericiaChecklist").on("click", function () {
           var tipoFalla = $(
             "#selectImpericiaTipoFallaEquipoCorrectivo option:selected"
           ).val();
@@ -647,7 +647,7 @@ function cargarFormularioSeguimiento() {
           );
         });
         $("#btnGuardarFallaEquipoChecklist").on("click");
-        $("#btnGuardarFallaEquipoChecklist").on("click", function() {
+        $("#btnGuardarFallaEquipoChecklist").on("click", function () {
           var tipoFalla = $(
             "#selectTipoFallaEquipoCorrectivo option:selected"
           ).val();
@@ -665,7 +665,7 @@ function cargarFormularioSeguimiento() {
           );
         });
         $("#btnGuardarFallaComponenteChecklist").off("click");
-        $("#btnGuardarFallaComponenteChecklist").on("click", function() {
+        $("#btnGuardarFallaComponenteChecklist").on("click", function () {
           var componente = $(
             "#selectComponenteDiagnosticoCorrectivo option:selected"
           ).val();
@@ -686,7 +686,7 @@ function cargarFormularioSeguimiento() {
           );
         });
         $("#btnGuardarReporteMultimediaChecklist").off("click");
-        $("#btnGuardarReporteMultimediaChecklist").on("click", function() {
+        $("#btnGuardarReporteMultimediaChecklist").on("click", function () {
           var evidencia = $("#evidenciasReporteMultimediaCorrectivo").val();
           guardarRevisionTecnicaChecklist(
             5,
@@ -701,9 +701,9 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/MostrarFallasTecnicasChecklist",
           { servicio: servicio },
           "#seguimiento-checklist",
-          function(listaFallas) {
+          function (listaFallas) {
             tabla.limpiarTabla("#tablaFallasTecnicas");
-            $.each(listaFallas, function(key, value) {
+            $.each(listaFallas, function (key, value) {
               tabla.agregarFila("#tablaFallasTecnicas", [
                 value.Id,
                 value.AreaPunto,
@@ -717,7 +717,7 @@ function cargarFormularioSeguimiento() {
             });
           }
         );
-        $("#tablaFallasTecnicas tbody").on("click", "tr", function() {
+        $("#tablaFallasTecnicas tbody").on("click", "tr", function () {
           let _this = this;
           var datosTabla = $("#tablaFallasTecnicas")
             .DataTable()
@@ -728,14 +728,14 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ActualizarRevisionTecnica",
             dato,
             "#panel-catalogo-checklist",
-            function(respuestaRevision) {
+            function (respuestaRevision) {
               evento.iniciarModal(
                 "#modalEditRevisionChecklist",
                 "Editar Revisión Tecnica",
                 respuestaRevision.modal
               );
               $("#editarEstatus").off("click");
-              $("#editarEstatus").on("click", function() {
+              $("#editarEstatus").on("click", function () {
                 var estatusRevision = $("#editarEstatus").val();
                 if (estatusRevision === `1`) {
                   estatusRevision = 0;
@@ -752,7 +752,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/EditarRevisionTecnicaChecklist",
                   datos,
                   "",
-                  function(consultaRevision) {
+                  function (consultaRevision) {
                     if (consultaRevision) {
                       evento.terminarModal("#modalEditRevisionChecklist");
                       evento.mostrarMensaje(
@@ -814,10 +814,10 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/" + metodo,
         datos,
         "#seguimiento-checklist",
-        function(respuesta) {
+        function (respuesta) {
           switch (_tab) {
             case "#impericia":
-              $.each(respuesta, function(k, v) {
+              $.each(respuesta, function (k, v) {
                 $("#selectImpericiaTipoFallaEquipoCorrectivo").append(
                   '<option value="' + v.Id + '">' + v.Nombre + "</option>"
                 );
@@ -828,7 +828,7 @@ function cargarFormularioSeguimiento() {
               break;
             case "#falla-equipo":
               metodo = "ConsultaTiposFallasEquipos";
-              $.each(respuesta, function(k, v) {
+              $.each(respuesta, function (k, v) {
                 $("#selectTipoFallaEquipoCorrectivo").append(
                   '<option value="' + v.Id + '">' + v.Nombre + "</option>"
                 );
@@ -837,7 +837,7 @@ function cargarFormularioSeguimiento() {
               break;
             case "#falla-componente":
               metodo = "ConsultaRefacionXEquipo";
-              $.each(respuesta, function(k, v) {
+              $.each(respuesta, function (k, v) {
                 $("#selectComponenteDiagnosticoCorrectivo").append(
                   '<option value="' + v.Id + '">' + v.Nombre + "</option>"
                 );
@@ -881,10 +881,10 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/GuardarRevisionTecnicaChecklist",
         "#seguimiento-checklist",
         datos,
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.code === 200) {
             tabla.limpiarTabla("#tablaFallasTecnicas");
-            $.each(respuesta.listaFallas, function(key, value) {
+            $.each(respuesta.listaFallas, function (key, value) {
               tabla.agregarFila("#tablaFallasTecnicas", [
                 value.Id,
                 value.AreaPunto,
@@ -912,10 +912,10 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/GuardarRevisionTecnicaChecklist",
         "#seguimiento-checklist",
         datos,
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.code === 200) {
             tabla.limpiarTabla("#tablaFallasTecnicas");
-            $.each(respuesta.listaFallas, function(key, value) {
+            $.each(respuesta.listaFallas, function (key, value) {
               tabla.agregarFila("#tablaFallasTecnicas", [
                 value.Id,
                 value.AreaPunto,
@@ -1007,7 +1007,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/MostrarPreguntas",
       datos,
       "#seguimiento-checklist",
-      function(preguntasCategoria) {
+      function (preguntasCategoria) {
         var lista = preguntasCategoria[0];
         tabla.limpiarTabla("#tabla-categorias");
         if (!preguntasCategoria) {
@@ -1018,7 +1018,7 @@ function cargarFormularioSeguimiento() {
             3000
           );
         } else {
-          $.each(lista, function(clave, valor) {
+          $.each(lista, function (clave, valor) {
             if (valor.IdArea) {
               var decicionUno =
                 '<form><fieldset id="group-' +
@@ -1058,7 +1058,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/MostrarPuntoRevision",
       datos,
       "#seguimiento-checklist",
-      function(datosPuntos) {
+      function (datosPuntos) {
         mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
       }
     );
@@ -1069,7 +1069,7 @@ function cargarFormularioSeguimiento() {
     var idArea = null;
     $(".area").empty();
     $(".punto").empty();
-    $.each(datosPuntos.pushArea, function(area, pregunta) {
+    $.each(datosPuntos.pushArea, function (area, pregunta) {
       idArea = area.replace(/\s/g, "-");
       puntos = imprimirAreaPregunta(area, pregunta, html);
       html = imprimirPuntos(
@@ -1089,7 +1089,7 @@ function cargarFormularioSeguimiento() {
   };
   function imprimirAreaPregunta(area, pregunta, html) {
     var puntos = null;
-    $.each(pregunta, function(etiqueta, listaPuntos) {
+    $.each(pregunta, function (etiqueta, listaPuntos) {
       html +=
         '<div class="m-t-30"><p>' +
         area +
@@ -1109,9 +1109,9 @@ function cargarFormularioSeguimiento() {
     servicio,
     area
   ) {
-    $.each(puntos, function(key, punto) {
+    $.each(puntos, function (key, punto) {
       var checked = "";
-      $.each(checkList, function(key, valor) {
+      $.each(checkList, function (key, valor) {
         if (area === valor.Area && punto === valor.Punto) {
           checked = "checked";
         }
@@ -1119,31 +1119,31 @@ function cargarFormularioSeguimiento() {
       html += `<div  class="row area-${idArea}">
                         <div class="col-md-12 m-t-15">
                             <input class="punto checkPunto" data-datos="${servicio +
-                              "-" +
-                              categoria +
-                              "-" +
-                              area +
-                              "-" +
-                              punto}"  type="checkbox" name="punto" style="width: 17px; height: 15px; margin: 0;" value="" ${checked}/> Punto ${punto}
+        "-" +
+        categoria +
+        "-" +
+        area +
+        "-" +
+        punto}"  type="checkbox" name="punto" style="width: 17px; height: 15px; margin: 0;" value="" ${checked}/> Punto ${punto}
                             <a href="javascript:;" class="btn btn-success btn-xs m-l-10 nuevaImagenPunto" data-idpunto="${servicio +
-                              "-" +
-                              categoria +
-                              "-" +
-                              area +
-                              "-" +
-                              punto}">
+        "-" +
+        categoria +
+        "-" +
+        area +
+        "-" +
+        punto}">
                                 <i class="fa fa-plus"></i> Imagen
                             </a>
                         </div>
                         <div class="col-md-12 m-t-10 imagen-punto-${punto}">
                             ${cargarEvidencias(
-                              checkList,
-                              idArea,
-                              categoria,
-                              punto,
-                              servicio,
-                              area
-                            )}
+          checkList,
+          idArea,
+          categoria,
+          punto,
+          servicio,
+          area
+        )}
                         </div>
                      </div>`;
     });
@@ -1159,7 +1159,7 @@ function cargarFormularioSeguimiento() {
     area
   ) {
     var html = "";
-    $.each(checkList, function(index, checked) {
+    $.each(checkList, function (index, checked) {
       var area = checked.Area.replace(/\s/g, "-");
       var idImagen = area + "-" + punto;
       if (
@@ -1190,7 +1190,7 @@ function cargarFormularioSeguimiento() {
   ) {
     var html = "";
     var listaEvidencias = evidencias.split(",");
-    $.each(listaEvidencias, function(index, evidencia) {
+    $.each(listaEvidencias, function (index, evidencia) {
       html += `<div class = "evidencia">
                         <a href="${evidencia}" data-lightbox="${idImagen}" ><img src="${evidencia}" alt="" /></a>
                         <a href="javascript:;" class="btn btn-danger btn-xs eliminarImagenPunto" data-evidencia="${evidencia}" data-ideliminar="${servicio +
@@ -1217,7 +1217,7 @@ function cargarFormularioSeguimiento() {
                                 </div>
                             </div>`;
     $(".nuevaImagenPunto").off("click");
-    $(".nuevaImagenPunto").on("click", function() {
+    $(".nuevaImagenPunto").on("click", function () {
       evento.mostrarModal("Agregar evidencia", evidenciaHtml);
       file.crearUpload(
         "#evidenciaPunto",
@@ -1239,14 +1239,14 @@ function cargarFormularioSeguimiento() {
       };
     });
     $("#btnModalConfirmar").off("click");
-    $("#btnModalConfirmar").on("click", function() {
+    $("#btnModalConfirmar").on("click", function () {
       datos.evidencia = $("#evidenciaPunto").val();
       file.enviarArchivos(
         "#evidenciaPunto",
         "Seguimiento/GuardarRevisionPunto",
         "#modal-dialog",
         datos,
-        function(datosPuntos) {
+        function (datosPuntos) {
           mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
           evento.cerrarModal();
         }
@@ -1257,7 +1257,7 @@ function cargarFormularioSeguimiento() {
     var urlEvidencia = null;
     var datos = null;
     $(".eliminarImagenPunto").off("click");
-    $(".eliminarImagenPunto").on("click", function() {
+    $(".eliminarImagenPunto").on("click", function () {
       urlEvidencia = $(this).attr("data-evidencia");
       datos = $(this).attr("data-ideliminar");
       datos = datos.split("-");
@@ -1272,7 +1272,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/EliminarEvidenciaChecklist",
         datos,
         "#seguimiento-checklist",
-        function(datosPuntos) {
+        function (datosPuntos) {
           mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
         }
       );
@@ -1289,7 +1289,7 @@ function cargarFormularioSeguimiento() {
                                 </div>
                             </div>`;
     $(".checkPunto").off("click");
-    $(".checkPunto").on("click", function() {
+    $(".checkPunto").on("click", function () {
       var _this = $(this);
       datos = $(this).attr("data-datos");
       datos = datos.split("-");
@@ -1320,13 +1320,13 @@ function cargarFormularioSeguimiento() {
           punto: datos[3]
         };
         $("#btnModalConfirmar").off("click");
-        $("#btnModalConfirmar").on("click", function() {
+        $("#btnModalConfirmar").on("click", function () {
           file.enviarArchivos(
             "#evidenciaPunto",
             "Seguimiento/GuardarRevisionPunto",
             "#modal-dialog",
             datos,
-            function(datosPuntos) {
+            function (datosPuntos) {
               mostrarInformacionPuntos(datosPuntos, dataCategoria, servicio);
               evento.cerrarModal();
             }
@@ -1338,7 +1338,7 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/ActualizarRevisionPunto",
           datos,
           "",
-          function(respuesta) {
+          function (respuesta) {
             if (respuesta) {
               $(_this.parents(".area-" + area))
                 .find(".imagen-punto-" + datos.punto)
@@ -1362,8 +1362,8 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/ConsultarRevisonArea",
       datos,
       "#seguimiento-checklist",
-      function(respuesta) {
-        $.each(respuesta, function(key, valor) {
+      function (respuesta) {
+        $.each(respuesta, function (key, valor) {
           if (dataCategoria == valor.IdCategoria) {
             if (valor.Flag === `1`) {
               var $radios = $(
@@ -1386,7 +1386,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/GuardarInformacionChecklist",
       datos,
       "#seguimiento-checklist",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta) {
           var sucursalSelect = $("#selectSucursales option:selected").val();
           mostrarTabla(sucursalSelect);
@@ -1413,15 +1413,15 @@ function cargarFormularioSeguimiento() {
     var servicio = datosTabla[0];
     var ticket = datosTabla[1];
     $("#guardarRevisionFisicaArea").off("click");
-    $("#guardarRevisionFisicaArea").on("click", function() {
+    $("#guardarRevisionFisicaArea").on("click", function () {
       guardarRevisionArea(servicio);
     });
-    $("#selectSucursales").on("change", function() {
+    $("#selectSucursales").on("change", function () {
       $("#listaPregunta").addClass("hidden");
       $("#guardarListaPregunta").addClass("hidden");
     });
     $("#guardarSucursalChecklist").off("click");
-    $("#guardarSucursalChecklist").on("click", function() {
+    $("#guardarSucursalChecklist").on("click", function () {
       var datos = {
         sucursal: $("#selectSucursales").val(),
         servicio: servicio,
@@ -1430,7 +1430,7 @@ function cargarFormularioSeguimiento() {
       guardarInformacionChecklist(datos);
     });
     $("#detallesServicioChecklist").off("click");
-    $("#detallesServicioChecklist").on("click", function(e) {
+    $("#detallesServicioChecklist").on("click", function (e) {
       if ($("#masDetalles").hasClass("hidden")) {
         $("#masDetalles").removeClass("hidden");
         $("#detallesServicioChecklist")
@@ -1445,7 +1445,7 @@ function cargarFormularioSeguimiento() {
     });
     //Evento que vuelve a mostrar la lista de servicios de Poliza
     $("#btnRegresarSeguimientoCenso").off("click");
-    $("#btnRegresarSeguimientoCenso").on("click", function() {
+    $("#btnRegresarSeguimientoCenso").on("click", function () {
       $("#seccionSeguimientoServicio")
         .empty()
         .addClass("hidden");
@@ -1453,7 +1453,7 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de crear un nuevo servicio
     $("#btnNuevoServicio").off("click");
-    $("#btnNuevoServicio").on("click", function() {
+    $("#btnNuevoServicio").on("click", function () {
       var data = { servicio: servicio };
       servicios.nuevoServicio(
         data,
@@ -1466,7 +1466,7 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de cancelar servicio
     $("#btnCancelarServicioChecklist").off("click");
-    $("#btnCancelarServicioChecklist").on("click", function() {
+    $("#btnCancelarServicioChecklist").on("click", function () {
       var data = { servicio: servicio, ticket: respuesta.datosServicio.Ticket };
       servicios.cancelarServicio(
         data,
@@ -1477,16 +1477,16 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de generar el archivo Pdf
     $("#btnGeneraPdfServicio").off("click");
-    $("#btnGeneraPdfServicio").on("click", function() {
+    $("#btnGeneraPdfServicio").on("click", function () {
       var data = { servicio: datosTabla[0], ticket: ticket, generarPDF: true };
-      evento.enviarEvento("Seguimiento/GenerarPDF", data, "", function(
+      evento.enviarEvento("Seguimiento/GenerarPDF", data, "", function (
         respuesta
       ) {
         window.open(respuesta, "_blank");
       });
     });
     $("#btnRegresarSeguimiento").off("click");
-    $("#btnRegresarSeguimiento").on("click", function() {
+    $("#btnRegresarSeguimiento").on("click", function () {
       $("#seccionSeguimientoServicio")
         .empty()
         .addClass("hidden");
@@ -1505,10 +1505,10 @@ function cargarFormularioSeguimiento() {
     for (var i = 0; i < listaConceptos.length; i++) {
       var desicion = $(
         "fieldset[id*=group-" +
-          listaConceptos[i][2] +
-          "] input[name*='desicion-" +
-          listaConceptos[i][2] +
-          "']:checked"
+        listaConceptos[i][2] +
+        "] input[name*='desicion-" +
+        listaConceptos[i][2] +
+        "']:checked"
       ).val();
       datosConcepto +=
         '{"IdConceptoFisico" : "' +
@@ -1531,7 +1531,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/GuardarInformacionChecklist",
       datos,
       "#seguimiento-checklist",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta) {
           evento.mostrarMensaje(
             "#errorRevisionArea",
@@ -1552,7 +1552,7 @@ function cargarFormularioSeguimiento() {
   };
   function recargandoTablaPoliza(informacionServicio) {
     tabla.limpiarTabla("#data-table-poliza");
-    $.each(informacionServicio.serviciosAsignados, function(key, item) {
+    $.each(informacionServicio.serviciosAsignados, function (key, item) {
       tabla.agregarFila("#data-table-poliza", [
         item.Id,
         item.Ticket,
@@ -1597,7 +1597,7 @@ function cargarFormularioSeguimiento() {
     );
     $("#contentAreaPuntos").empty();
     $("#contentEquiposPunto").empty();
-    $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
+    $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
       var target = $(e.target).attr("href");
       switch (target) {
         case "#AreaPuntos":
@@ -1615,17 +1615,17 @@ function cargarFormularioSeguimiento() {
     nota.initButtons({ servicio: datosTabla[0] }, "Seguimiento");
 
     $("#btnRestaurarCenso").off("click");
-    $("#btnRestaurarCenso").on("click", function() {
+    $("#btnRestaurarCenso").on("click", function () {
       restauraCensoAnterior(respuesta.servicio);
     });
 
     $("#btnDownloadTemplate").off("click");
-    $("#btnDownloadTemplate").on("click", function() {
+    $("#btnDownloadTemplate").on("click", function () {
       downloadCensoTemplate(respuesta.servicio);
     });
 
     $("#btnUploadTemplate").off("click");
-    $("#btnUploadTemplate").on("click", function() {
+    $("#btnUploadTemplate").on("click", function () {
       uploadCensoTemplateForm(respuesta.servicio);
     });
   };
@@ -1655,13 +1655,13 @@ function cargarFormularioSeguimiento() {
     );
 
     $("#btnModalConfirmar").off("click");
-    $("#btnModalConfirmar").on("click", function() {
+    $("#btnModalConfirmar").on("click", function () {
       file.enviarArchivos(
         "#censoTemplate",
         "/Poliza/Seguimiento/UploadCensoTemplate",
         "#modal-dialogo",
         { servicio: servicio },
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.code == 200) {
             evento.cerrarModal();
             reloadCenso(servicio);
@@ -1684,7 +1684,7 @@ function cargarFormularioSeguimiento() {
       "/Poliza/Seguimiento/DownloadCensoTemplate",
       { servicio: servicio },
       "#seccion-servicio-censo",
-      function(respuesta) {
+      function (respuesta) {
         window.open(respuesta.link);
       }
     );
@@ -1696,7 +1696,7 @@ function cargarFormularioSeguimiento() {
       "/Poliza/Seguimiento/InfomacionRestaurarCenso",
       { servicio: servicio },
       "#seccion-servicio-censo",
-      function(respuesta) {
+      function (respuesta) {
         evento.mostrarModal(
           "Restaurar Último Censo Concluido",
           respuesta.message
@@ -1704,12 +1704,12 @@ function cargarFormularioSeguimiento() {
 
         if (respuesta.code == 200) {
           $("#btnModalConfirmar").off("click");
-          $("#btnModalConfirmar").on("click", function() {
+          $("#btnModalConfirmar").on("click", function () {
             evento.enviarEvento(
               "/Poliza/Seguimiento/RestaurarCenso",
               { servicio: servicio },
               "#modal-dialogo",
-              function(resp) {
+              function (resp) {
                 if (resp.code == 200) {
                   evento.cerrarModal();
                   reloadCenso(servicio);
@@ -1720,7 +1720,7 @@ function cargarFormularioSeguimiento() {
                       "<p>Ocurrió un error al restaurar el censo anterior. Intente de nuevo o pongáse en contácto con el Administrador</p>"
                     );
                   $("#btnModalConfirmar").off("click");
-                  $("#btnModalConfirmar").on("click", function() {
+                  $("#btnModalConfirmar").on("click", function () {
                     evento.cerrarModal();
                   });
                 }
@@ -1729,7 +1729,7 @@ function cargarFormularioSeguimiento() {
           });
         } else {
           $("#btnModalConfirmar").off("click");
-          $("#btnModalConfirmar").on("click", function() {
+          $("#btnModalConfirmar").on("click", function () {
             evento.cerrarModal();
           });
         }
@@ -1745,20 +1745,43 @@ function cargarFormularioSeguimiento() {
     if ($("#EquiposPunto").hasClass("active")) {
       cargaEquiposPuntoCenso(servicio);
     }
-    
+
     if ($("#DiferenciasCenso").hasClass("active")) {
       cargaDiferenciasCenso(servicio);
     }
   }
 
-  function cargaDiferenciasCenso(){
+  function cargaDiferenciasCenso() {
     evento.enviarEvento(
       "Seguimiento/CargaDiferenciasCenso",
-      {servicio:arguments[0]},
+      { servicio: arguments[0] },
       "#seccion-servicio-censo",
-      function(respuesta) {
+      function (respuesta) {
         $("#contentDiferenciasCensos").empty().append(respuesta.html);
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip();
+        tabla.generaTablaPersonal(
+          ".counting-table",
+          null,
+          null,
+          true,
+          false,
+          [],
+          null,
+          null,
+          false
+        );
+
+        $(".missing-device").off("click");
+        $(".missing-device").on("click", function () {
+          tabla.buscarEnTabla("#missing-devices-table", $(this).attr("data-name"));
+          $('a[href="#difFaltantes"]').tab("show");
+        });
+
+        $(".leftover-device").off("click");
+        $(".leftover-device").on("click", function () {
+          tabla.buscarEnTabla("#leftover-devices-table", $(this).attr("data-name"));
+          $('a[href="#difSobrantes"]').tab("show");
+        });
       }
     );
   }
@@ -1773,12 +1796,12 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/CargaEquiposPuntoCenso",
       { servicio: servicio },
       "#seccion-servicio-censo",
-      function(respuesta) {
+      function (respuesta) {
         $("#contentEquiposPunto")
           .empty()
           .append(respuesta.html);
         $(".btnPuntoArea").off("click");
-        $(".btnPuntoArea").on("click", function() {
+        $(".btnPuntoArea").on("click", function () {
           var buttonPuntoArea = $(this);
           var data = {
             servicio: servicio,
@@ -1790,21 +1813,21 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/CargaFormularioCapturaCenso",
             data,
             "#seccion-servicio-censo",
-            function(respuesta) {
+            function (respuesta) {
               $("#formularioCapturaCenso")
                 .empty()
                 .append(respuesta.html);
               $("#formularioCapturaCenso").show();
               $("#contentEquiposPunto").hide();
               $(".btnCancelarCapturaCenso").off("click");
-              $(".btnCancelarCapturaCenso").on("click", function() {
+              $(".btnCancelarCapturaCenso").on("click", function () {
                 $("#formularioCapturaCenso")
                   .empty()
                   .hide();
                 $("#contentEquiposPunto").show();
               });
               $(".existeModelosEstandar").off("click");
-              $(".existeModelosEstandar").on("click", function() {
+              $(".existeModelosEstandar").on("click", function () {
                 var fila = $(this).closest("tr.registroEquiposEstandar");
                 if ($(this).is(":checked")) {
                   fila.find(".listModelosEstandar").removeAttr("disabled");
@@ -1825,7 +1848,7 @@ function cargarFormularioSeguimiento() {
                 }
               });
               $(".ilegibleModelosEstandar").off("click");
-              $(".ilegibleModelosEstandar").on("click", function() {
+              $(".ilegibleModelosEstandar").on("click", function () {
                 var fila = $(this).closest("tr.registroEquiposEstandar");
                 var campoSerie = fila.find(".serieModelosEstandar");
                 if ($(this).is(":checked")) {
@@ -1837,7 +1860,7 @@ function cargarFormularioSeguimiento() {
                 }
               });
               $("#checkIlegibleEquipoAdicional").off("click");
-              $("#checkIlegibleEquipoAdicional").on("click", function() {
+              $("#checkIlegibleEquipoAdicional").on("click", function () {
                 var campoSerie = $("#txtSerieEquipoAdicional");
                 if ($(this).is(":checked")) {
                   campoSerie.attr("disabled", true);
@@ -1848,7 +1871,7 @@ function cargarFormularioSeguimiento() {
                 }
               });
               $(".ilegibleEquiposAdicionales").off("click");
-              $(".ilegibleEquiposAdicionales").on("click", function() {
+              $(".ilegibleEquiposAdicionales").on("click", function () {
                 var fila = $(this).closest("tr.registrosAdicionales");
                 var campoSerie = fila.find(".serieEquiposAdicionales");
                 if ($(this).is(":checked")) {
@@ -1860,7 +1883,7 @@ function cargarFormularioSeguimiento() {
                 }
               });
               select.crearSelect("#listModelosEquipoAdicional");
-              $("#listModelosEquipoAdicional").on("change", function() {
+              $("#listModelosEquipoAdicional").on("change", function () {
                 var modelo = $(
                   "#listModelosEquipoAdicional option:selected"
                 ).text();
@@ -1905,7 +1928,7 @@ function cargarFormularioSeguimiento() {
                   }
                 }
               });
-              $(".listModelosEquiposAdicionales").on("change", function() {
+              $(".listModelosEquiposAdicionales").on("change", function () {
                 var modelo = $("option:selected", this).text();
                 var fila = $(this).closest("tr.registrosAdicionales");
                 if (fila.find(".macEquiposAdicionales").length) {
@@ -1933,7 +1956,7 @@ function cargarFormularioSeguimiento() {
                 }
               });
               $(".btnGuardarCapturaCenso").off("click");
-              $(".btnGuardarCapturaCenso").on("click", function() {
+              $(".btnGuardarCapturaCenso").on("click", function () {
                 data = {
                   servicio: servicio,
                   area: data.area,
@@ -1942,7 +1965,7 @@ function cargarFormularioSeguimiento() {
                   activosEstandar: []
                 };
 
-                $(".registroEquiposEstandar").each(function() {
+                $(".registroEquiposEstandar").each(function () {
                   var fila = $(this);
                   if (fila.hasClass("registroNuevo")) {
                     var checkExiste = fila.find(".existeModelosEstandar");
@@ -2034,7 +2057,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/GuardaEquiposPuntoCenso",
                   data,
                   "#seccion-servicio-censo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code == 200) {
                       cargaEquiposPuntoCenso(servicio);
                     } else {
@@ -2049,7 +2072,7 @@ function cargarFormularioSeguimiento() {
                 );
               });
               $("#btnAgregarEquipoAdicional").off("click");
-              $("#btnAgregarEquipoAdicional").on("click", function() {
+              $("#btnAgregarEquipoAdicional").on("click", function () {
                 data = {
                   servicio: servicio,
                   area: data.area,
@@ -2177,7 +2200,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/GuardarEquipoAdicionalCenso",
                   data,
                   "#seccion-servicio-censo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code == 200) {
                       buttonPuntoArea.click();
                     } else {
@@ -2185,8 +2208,8 @@ function cargarFormularioSeguimiento() {
                         ".divErrorEquipoAdicional",
                         false,
                         "Error:" +
-                          respuesta.error +
-                          ". <br />Por favor contácte al administrador.",
+                        respuesta.error +
+                        ". <br />Por favor contácte al administrador.",
                         6000
                       );
                     }
@@ -2194,7 +2217,7 @@ function cargarFormularioSeguimiento() {
                 );
               });
               $(".btnEliminarEquiposAdicionalesCenso").off("click");
-              $(".btnEliminarEquiposAdicionalesCenso").on("click", function() {
+              $(".btnEliminarEquiposAdicionalesCenso").on("click", function () {
                 var fila = $(this).closest("tr.registrosAdicionales");
                 var datos = {
                   id: $(this).attr("data-id")
@@ -2203,7 +2226,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/EliminarEquiposAdicionalesCenso",
                   datos,
                   "#seccion-servicio-censo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code == 200) {
                       fila.remove();
                     } else {
@@ -2220,7 +2243,7 @@ function cargarFormularioSeguimiento() {
               $(".btnGuardarCambiosEquiposAdicionalesCenso").off("click");
               $(".btnGuardarCambiosEquiposAdicionalesCenso").on(
                 "click",
-                function() {
+                function () {
                   var fila = $(this).closest("tr.registrosAdicionales");
                   data = {
                     servicio: servicio,
@@ -2356,7 +2379,7 @@ function cargarFormularioSeguimiento() {
                     "Seguimiento/GuardaCambiosEquiposAdicionalesCenso",
                     data,
                     "#seccion-servicio-censo",
-                    function(respuesta) {
+                    function (respuesta) {
                       if (respuesta.code == 200) {
                         evento.mostrarMensaje(
                           ".divErrorEquipoAdicional",
@@ -2369,8 +2392,8 @@ function cargarFormularioSeguimiento() {
                           ".divErrorEquipoAdicional",
                           false,
                           "Error:" +
-                            respuesta.error +
-                            ".<br />Por favor contácte al administrador.",
+                          respuesta.error +
+                          ".<br />Por favor contácte al administrador.",
                           6000
                         );
                       }
@@ -2391,12 +2414,12 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/CargaAreasPuntosCenso",
       { servicio: servicio },
       "#seccion-servicio-censo",
-      function(respuesta) {
+      function (respuesta) {
         $("#contentAreaPuntos")
           .empty()
           .append(respuesta.html);
         $("#btnAgregarAreaPuntos").off("click");
-        $("#btnAgregarAreaPuntos").on("click", function() {
+        $("#btnAgregarAreaPuntos").on("click", function () {
           var data = {
             servicio: servicio,
             area: $("#listAreasAtencion").val(),
@@ -2414,7 +2437,7 @@ function cargarFormularioSeguimiento() {
               "Seguimiento/AgregaAreaPuntosCenso",
               data,
               "#seccion-servicio-censo",
-              function(respuesta) {
+              function (respuesta) {
                 if (respuesta.code == 200) {
                   cargaAreasPuntosCenso(servicio);
                 } else {
@@ -2430,9 +2453,9 @@ function cargarFormularioSeguimiento() {
           }
         });
         $(".btnGuardarCambiosAreasPuntos").off("click");
-        $(".btnGuardarCambiosAreasPuntos").on("click", function() {
+        $(".btnGuardarCambiosAreasPuntos").on("click", function () {
           var areasPuntos = [];
-          $(".cantidadPuntosAreas").each(function() {
+          $(".cantidadPuntosAreas").each(function () {
             areasPuntos.push({
               Id: $(this).attr("data-id"),
               Cantidad: $.trim($(this).val())
@@ -2442,7 +2465,7 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/GuardaCambiosAreasPuntos",
             { areasPuntos: areasPuntos },
             "#seccion-servicio-censo",
-            function(respuesta) {
+            function (respuesta) {
               if (respuesta.code == 200) {
                 cargaAreasPuntosCenso(servicio);
               } else {
@@ -2465,7 +2488,7 @@ function cargarFormularioSeguimiento() {
     var respuesta = arguments[1];
     var servicio = datosTabla[0];
     //evento para mostrar los detalles de las descripciones
-    $("#detallesServicioCenso").on("click", function(e) {
+    $("#detallesServicioCenso").on("click", function (e) {
       if ($("#masDetalles").hasClass("hidden")) {
         $("#masDetalles").removeClass("hidden");
         $("#detallesServicioCenso")
@@ -2478,16 +2501,16 @@ function cargarFormularioSeguimiento() {
           .html("<a>+ Detalles</a>");
       }
     });
-    $("#btnGuardarDatosGenerales").on("click", function(e) {
+    $("#btnGuardarDatosGenerales").on("click", function (e) {
       guardarFormularioDatosGeneralesCenso(datosTabla);
     });
-    $("#btnAgregaEquipoCenso").on("click", function(e) {
+    $("#btnAgregaEquipoCenso").on("click", function (e) {
       if (validarFormularioDatosCenso()) {
         agregandoModeloCensoTabla();
         limpiarFormularioDatosCenso();
       }
     });
-    $("#btnGuardarServicioCenso").on("click", function(e) {
+    $("#btnGuardarServicioCenso").on("click", function (e) {
       var datosTablaModelos = $("#data-table-censo-modelos")
         .DataTable()
         .rows()
@@ -2503,14 +2526,14 @@ function cargarFormularioSeguimiento() {
         );
       }
     });
-    $("#btnConcluirServicioCenso").on("click", function(e) {
+    $("#btnConcluirServicioCenso").on("click", function (e) {
       concluirServicioCenso([], datosTabla);
     });
-    $("#btnGuardarCambiosServicioCenso").on("click", function(e) {
+    $("#btnGuardarCambiosServicioCenso").on("click", function (e) {
       guardarCambiosConcluirServicioCenso([], datosTabla);
     });
     //Evento encargado de eliminar un fila de la tabla censos
-    $("#data-table-censo-modelos tbody").on("click", "tr", function() {
+    $("#data-table-censo-modelos tbody").on("click", "tr", function () {
       var datosTablaModelos = $("#data-table-censo-modelos")
         .DataTable()
         .rows(this)
@@ -2521,7 +2544,7 @@ function cargarFormularioSeguimiento() {
     });
     //Evento que vuelve a mostrar la lista de servicios de Poliza
     $("#btnRegresarSeguimientoCenso").off("click");
-    $("#btnRegresarSeguimientoCenso").on("click", function() {
+    $("#btnRegresarSeguimientoCenso").on("click", function () {
       $("#seccionSeguimientoServicio")
         .empty()
         .addClass("hidden");
@@ -2529,7 +2552,7 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de crear un nuevo servicio
     $("#btnNuevoServicioSeguimiento").off("click");
-    $("#btnNuevoServicioSeguimiento").on("click", function() {
+    $("#btnNuevoServicioSeguimiento").on("click", function () {
       var data = { servicio: servicio };
       servicios.nuevoServicio(
         data,
@@ -2542,7 +2565,7 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de cancelar servicio
     $("#btnCancelarServicioSeguimiento").off("click");
-    $("#btnCancelarServicioSeguimiento").on("click", function() {
+    $("#btnCancelarServicioSeguimiento").on("click", function () {
       var data = { servicio: servicio, ticket: respuesta.datosServicio.Ticket };
       servicios.cancelarServicio(
         data,
@@ -2553,13 +2576,13 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de generar el archivo Pdf
     $("#btnGeneraPdfServicio").off("click");
-    $("#btnGeneraPdfServicio").on("click", function() {
+    $("#btnGeneraPdfServicio").on("click", function () {
       var data = { servicio: datosTabla[0] };
       evento.enviarEvento(
         "Seguimiento/Servicio_ToPdf",
         data,
         "#seccion-servicio-censo",
-        function(respuesta) {
+        function (respuesta) {
           window.open(respuesta.link);
         }
       );
@@ -2592,13 +2615,13 @@ function cargarFormularioSeguimiento() {
       $("[href=#AreaPuntos]")
         .parent("li")
         .removeClass("hidden");
-        $("[href=#EquiposPunto]")
-          .parent("li")
-          .removeClass("hidden");
-        $("[href=#DiferenciasCenso]")
-          .parent("li")
-          .removeClass("hidden");
-      } else {
+      $("[href=#EquiposPunto]")
+        .parent("li")
+        .removeClass("hidden");
+      $("[href=#DiferenciasCenso]")
+        .parent("li")
+        .removeClass("hidden");
+    } else {
       if (respuesta.datosServicio.IdSucursal !== null) {
         select.cambiarOpcion(
           "#selectSucursales",
@@ -2628,7 +2651,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/GuardarDatosGeneralesCenso",
         data,
         "#seccion-servicio-censo",
-        function(respuesta) {
+        function (respuesta) {
           $("#selectSucursales").attr("disabled", "disabled");
           $("[href=#AreaPuntos]")
             .parent("li")
@@ -2732,7 +2755,7 @@ function cargarFormularioSeguimiento() {
       idAreaAtencion,
       idModelo
     ]);
-    $.each(filas, function(key, value) {
+    $.each(filas, function (key, value) {
       tabla.agregarFila("#data-table-censo-modelos", value);
       evento.mostrarMensaje(
         ".errorDatosCenso",
@@ -2766,7 +2789,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/GuardarDatosCenso",
       data,
       "#seccion-servicio-censo",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta instanceof Array) {
           limpiarFormularioDatosCenso(true);
           recargandoTablaCensoModelos(
@@ -2798,11 +2821,11 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/VerificarDuplicidadCenso",
       { servicio: servicio },
       "#seccion-servicio-censo",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta.code != "200") {
           evento.mostrarModal("Error en el censo", respuesta.message);
           $("#btnModalConfirmar").off("click");
-          $("#btnModalConfirmar").on("click", function() {
+          $("#btnModalConfirmar").on("click", function () {
             evento.cerrarModal();
           });
         } else {
@@ -2854,7 +2877,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/GuardarDatosGeneralesCenso",
         dataGenerales,
         "#seccion-servicio-censo",
-        function(respuesta) {
+        function (respuesta) {
           servicios.servicioValidacion(data, datosTablaPoliza[1]);
         }
       );
@@ -2869,7 +2892,7 @@ function cargarFormularioSeguimiento() {
     evento.mostrarModal("Advertencia", mensaje);
     $("#btnModalConfirmar").addClass("hidden");
     $("#btnModalAbortar").addClass("hidden");
-    $("#btnAceptarGuardarCambios").on("click", function() {
+    $("#btnAceptarGuardarCambios").on("click", function () {
       evento.cerrarModal();
       var dataCensos = {
         servicio: servicio,
@@ -2880,7 +2903,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/EliminarCenso",
         dataCensos,
         "#seccion-servicio-censo",
-        function(respuesta) {
+        function (respuesta) {
           if (!respuesta || respuesta instanceof Object) {
             recargandoTablaCensoModelos(
               respuesta,
@@ -2898,7 +2921,7 @@ function cargarFormularioSeguimiento() {
         }
       );
     });
-    $("#btnCancelarGuardarCambios").on("click", function() {
+    $("#btnCancelarGuardarCambios").on("click", function () {
       evento.cerrarModal();
     });
   };
@@ -2907,7 +2930,7 @@ function cargarFormularioSeguimiento() {
     var mensaje = arguments[1];
     var divError = arguments[2];
     tabla.limpiarTabla("#data-table-censo-modelos");
-    $.each(respuesta, function(key, valor) {
+    $.each(respuesta, function (key, valor) {
       tabla.agregarFila(
         "#data-table-censo-modelos",
         [
@@ -2973,7 +2996,7 @@ function cargarFormularioSeguimiento() {
     var respuesta = arguments[1];
     var servicio = datosTablaPoliza[0];
     //evento para mostrar los detalles de las descripciones
-    $("#detallesServicioMantenimiento").on("click", function(e) {
+    $("#detallesServicioMantenimiento").on("click", function (e) {
       if ($("#masDetalles").hasClass("hidden")) {
         $("#masDetalles").removeClass("hidden");
         $("#detallesServicioMantenimiento")
@@ -2986,26 +3009,26 @@ function cargarFormularioSeguimiento() {
           .html("<a>+ Detalles</a>");
       }
     });
-    $("#btnGuardarDatosMantenimiento").on("click", function(e) {
+    $("#btnGuardarDatosMantenimiento").on("click", function (e) {
       guardarFormularioDatosMantenimiento(servicio);
     });
-    $("#radioAreaAtencion").click(function() {
+    $("#radioAreaAtencion").click(function () {
       $("#divAreaAtencion").removeClass("hidden");
       $("#divAreaPunto").addClass("hidden");
       select.cambiarOpcion("#selectAreaPuntoProblemasAdicionales", "");
     });
-    $("#radioAreaPunto").click(function() {
+    $("#radioAreaPunto").click(function () {
       $("#divAreaPunto").removeClass("hidden");
       $("#divAreaAtencion").addClass("hidden");
       select.cambiarOpcion("#selectAreasAtencionProblemasAdicionales", "");
     });
-    $("#btnAgregarProblemasAdicionales").on("click", function(e) {
+    $("#btnAgregarProblemasAdicionales").on("click", function (e) {
       if (validarFormularioProblemasAdicionales()) {
         guardarFormularioProblemasAdicionales(servicio);
       }
     });
     //Evento encargado de eliminar un fila de la tabla censos
-    $("#data-table-puntos-censados tbody").on("click", "tr", function() {
+    $("#data-table-puntos-censados tbody").on("click", "tr", function () {
       var datosTablaPuntosCensado = $("#data-table-puntos-censados")
         .DataTable()
         .rows(this)
@@ -3016,18 +3039,18 @@ function cargarFormularioSeguimiento() {
         datosTablaPoliza
       );
     });
-    $("#btnConcluirServicioMantenimiento").on("click", function(e) {
+    $("#btnConcluirServicioMantenimiento").on("click", function (e) {
       concluirServicioMantenimiento(servicio, datosTablaPoliza);
     });
-    $("#btnGuardarCambiosServicioMantenimiento").on("click", function(e) {
+    $("#btnGuardarCambiosServicioMantenimiento").on("click", function (e) {
       guardarCambiosConcluirServicioMantenimiento(servicio, datosTablaPoliza);
     });
     //Evento que vuelve a mostrar la lista de servicios de Poliza
-    $("#btnRegresarSeguimientoMantenimiento").on("click", function() {
+    $("#btnRegresarSeguimientoMantenimiento").on("click", function () {
       location.reload();
     });
     //Encargado de crear un nuevo servicio
-    $("#btnNuevoServicioSeguimiento").on("click", function() {
+    $("#btnNuevoServicioSeguimiento").on("click", function () {
       var data = { servicio: servicio };
       servicios.nuevoServicio(
         data,
@@ -3039,7 +3062,7 @@ function cargarFormularioSeguimiento() {
       );
     });
     //Encargado de cancelar el servicio
-    $("#btnCancelarServicioSeguimiento").on("click", function() {
+    $("#btnCancelarServicioSeguimiento").on("click", function () {
       var data = { servicio: servicio, ticket: respuesta.datosServicio.Ticket };
       servicios.cancelarServicio(
         data,
@@ -3050,13 +3073,13 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de generar el archivo Pdf
     $("#btnGeneraPdfServicio").off("click");
-    $("#btnGeneraPdfServicio").on("click", function() {
+    $("#btnGeneraPdfServicio").on("click", function () {
       var data = { servicio: servicio };
       evento.enviarEvento(
         "Seguimiento/Servicio_ToPdf",
         data,
         "#seccion-servicio-mantemiento",
-        function(respuesta) {
+        function (respuesta) {
           window.open(respuesta.link);
         }
       );
@@ -3093,7 +3116,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarDatosMantenimiento",
         data,
         "#seccion-servicio-censo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta instanceof Array) {
             recargandoTablaPuntosCensados(
               respuesta,
@@ -3125,7 +3148,7 @@ function cargarFormularioSeguimiento() {
     var mensaje = arguments[1];
     var divError = arguments[2];
     tabla.limpiarTabla("#data-table-puntos-censados");
-    $.each(respuesta, function(key, valor) {
+    $.each(respuesta, function (key, valor) {
       tabla.agregarFila(
         "#data-table-puntos-censados",
         [
@@ -3225,7 +3248,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/guardarProblemasAdicionales",
       "#seccion-servicio-mantemiento",
       data,
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta instanceof Array) {
           limpiarFormularioProblemasAdicionales();
           recargandoTablaProblemasAdicionales(
@@ -3308,7 +3331,7 @@ function cargarFormularioSeguimiento() {
       { data: "Sucursal" },
       {
         data: "Punto",
-        render: function(data, type, row, meta) {
+        render: function (data, type, row, meta) {
           if (data === "0") {
             data = "-";
           }
@@ -3319,16 +3342,16 @@ function cargarFormularioSeguimiento() {
       {
         data: null,
         sClass: "Evidencias",
-        render: function(data, type, row, meta) {
+        render: function (data, type, row, meta) {
           var evidencias = data.Evidencias.split(",");
           var filas = [];
-          $.each(evidencias, function(key, valor) {
+          $.each(evidencias, function (key, valor) {
             filas.push([
               '<a href="' +
-                valor +
-                '" target="_blank"> <img src="' +
-                valor +
-                '" title="" style="max-height:150px"/> </a>'
+              valor +
+              '" target="_blank"> <img src="' +
+              valor +
+              '" title="" style="max-height:150px"/> </a>'
             ]);
           });
           return filas;
@@ -3338,7 +3361,7 @@ function cargarFormularioSeguimiento() {
       {
         data: null,
         sClass: "Acciones",
-        render: function(data, type, row, meta) {
+        render: function (data, type, row, meta) {
           return (
             '<a id="btnEliminarProblemaAdicional' +
             row.Id +
@@ -3369,7 +3392,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/mostrarFormularioAntesYDespues",
       dataTabla,
       "#seccion-servicio-mantemiento",
-      function(respuesta) {
+      function (respuesta) {
         iniciarAntesYDespues(respuesta, datosTablaPuntosCensados, servicio);
         eventosAntesYDespues(
           datosTablaPuntosCensados,
@@ -3456,7 +3479,7 @@ function cargarFormularioSeguimiento() {
     var datosTablaPoliza = arguments[3];
     var sucursal = respuesta.idSucursal[0].IdSucursal;
     var nombreCampo = "";
-    $("#btnGuardarAntes").on("click", function(e) {
+    $("#btnGuardarAntes").on("click", function (e) {
       if (
         validarCampos(
           $("#inputDescripcionAntes").val(),
@@ -3472,7 +3495,7 @@ function cargarFormularioSeguimiento() {
         );
       }
     });
-    $("#btnGuardarDespues").on("click", function(e) {
+    $("#btnGuardarDespues").on("click", function (e) {
       if (
         validarCampos(
           $("#inputDescripcionDespues").val(),
@@ -3488,13 +3511,13 @@ function cargarFormularioSeguimiento() {
         );
       }
     });
-    $("#btnRegresarAntesYDespues").on("click", function() {
+    $("#btnRegresarAntesYDespues").on("click", function () {
       $("#antesYDespues")
         .empty()
         .addClass("hidden");
       $("#seccionSeguimientoServicio").removeClass("hidden");
     });
-    $("#selectEquipoAntesYDespues").on("change", function() {
+    $("#selectEquipoAntesYDespues").on("change", function () {
       $("#datosProblemaEquipo").removeClass("hidden");
       var serie = $("#selectEquipoAntesYDespues option:selected").attr(
         "data-serie"
@@ -3530,14 +3553,14 @@ function cargarFormularioSeguimiento() {
         }
       );
     });
-    $("#btnGuardarFallasEquipo").on("click", function() {
+    $("#btnGuardarFallasEquipo").on("click", function () {
       guardarFormularioFallasEquipo(
         datosTablaPuntosCensados,
         servicio,
         datosTablaPoliza
       );
     });
-    $("#selectUtilizadoEquipoFaltante").on("change", function() {
+    $("#selectUtilizadoEquipoFaltante").on("change", function () {
       var utilizar = $("#selectUtilizadoEquipoFaltante option:selected").attr(
         "value"
       );
@@ -3566,9 +3589,9 @@ function cargarFormularioSeguimiento() {
           $("#seleccionRefaccionAntesDespues").addClass("hidden");
       }
     });
-    $("#selectEquipoRefaccionAntesDespues").on("change", function() {
+    $("#selectEquipoRefaccionAntesDespues").on("change", function () {
       var objetoNuevoComponentesEquipo = {};
-      $.each(respuesta.componentesEquipo, function(key, valor) {
+      $.each(respuesta.componentesEquipo, function (key, valor) {
         objetoNuevoComponentesEquipo[key] = {
           Id: valor.IdCom,
           Nombre: valor.Componente,
@@ -3587,10 +3610,10 @@ function cargarFormularioSeguimiento() {
         $("#selectRefaccionAntesDespues").attr("disabled", "disabled");
       }
     });
-    $("#btnAgregarEquipoFaltanteMantenimiento").on("click", function(e) {
+    $("#btnAgregarEquipoFaltanteMantenimiento").on("click", function (e) {
       redireccionEquipoFaltanteAntesDespues(nombreCampo);
     });
-    $("#btnGuardarTablaEquiposMantenimiento").on("click", function(e) {
+    $("#btnGuardarTablaEquiposMantenimiento").on("click", function (e) {
       var datosTablaModelos = $("#data-table-equipos-faltantes")
         .DataTable()
         .rows()
@@ -3612,7 +3635,7 @@ function cargarFormularioSeguimiento() {
         );
       }
     });
-    $("#data-table-equipos-faltantes tbody").on("click", "tr", function() {
+    $("#data-table-equipos-faltantes tbody").on("click", "tr", function () {
       var datosTablaEquiposFaltantes = $("#data-table-equipos-faltantes")
         .DataTable()
         .rows(this)
@@ -3649,7 +3672,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarProblemasEquipo",
         data,
         "#seccion-servicio-mantemiento-puntos-censados",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta !== "existeRegistro") {
             if (respuesta !== "faltaEvidencia") {
               limpiarFormularioFallasEquipo();
@@ -3719,7 +3742,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/guardarAntesYDespues",
       data,
       "#seccion-servicio-mantemiento-puntos-censados",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta !== "faltaEvidencia") {
           $("#antesYDespues")
             .empty()
@@ -3922,7 +3945,7 @@ function cargarFormularioSeguimiento() {
       data.item,
       data.tipoItem
     ]);
-    $.each(filas, function(key, value) {
+    $.each(filas, function (key, value) {
       tabla.agregarFila("#data-table-equipos-faltantes", value);
       select.cambiarOpcion("#selectUtilizadoEquipoFaltante", "");
       select.cambiarOpcion("#selectEquipoAnteDespues", "");
@@ -3964,7 +3987,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/guardarEquiposFaltantes",
       data,
       "#seccion-servicio-mantemiento-puntos-censados",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta instanceof Array) {
           recargandoTablaEquiposFaltantes(
             respuesta,
@@ -3992,7 +4015,7 @@ function cargarFormularioSeguimiento() {
     evento.mostrarModal("Advertencia", mensaje);
     $("#btnModalConfirmar").addClass("hidden");
     $("#btnModalAbortar").addClass("hidden");
-    $("#btnAceptarGuardarCambios").on("click", function() {
+    $("#btnAceptarGuardarCambios").on("click", function () {
       evento.cerrarModal();
       var dataEquiposFaltantes = {
         servicio: servicio,
@@ -4005,7 +4028,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/EliminarEquipoFaltante",
         dataEquiposFaltantes,
         "#seccion-servicio-mantemiento-puntos-censados",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta instanceof Array) {
             recargandoTablaEquiposFaltantes(
               respuesta,
@@ -4029,7 +4052,7 @@ function cargarFormularioSeguimiento() {
         }
       );
     });
-    $("#btnCancelarGuardarCambios").on("click", function() {
+    $("#btnCancelarGuardarCambios").on("click", function () {
       evento.cerrarModal();
     });
   };
@@ -4038,7 +4061,7 @@ function cargarFormularioSeguimiento() {
     var mensaje = arguments[1];
     var divError = arguments[2];
     tabla.limpiarTabla("#data-table-equipos-faltantes");
-    $.each(respuesta, function(key, valor) {
+    $.each(respuesta, function (key, valor) {
       tabla.agregarFila(
         "#data-table-equipos-faltantes",
         [
@@ -4062,7 +4085,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/verificarDocumentacion",
       data,
       "#seccion-servicio-mantemiento",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta !== "faltaDocumentacion") {
           var dataConcluir = {
             servicio: servicio,
@@ -4094,7 +4117,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/verificarDocumentacion",
       data,
       "#seccion-servicio-mantemiento",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta !== "faltaDocumentacion") {
           var datavalicacion = {
             servicio: servicio,
@@ -4206,7 +4229,7 @@ function cargarFormularioSeguimiento() {
     $("#data-table-reparacion-refaccion-stock tbody").on(
       "click",
       "tr",
-      function() {
+      function () {
         var check = $(this).find(".checkRefaccionesStock");
         if (check.hasClass("fa-square-o")) {
           check.removeClass("fa-square-o");
@@ -4217,7 +4240,7 @@ function cargarFormularioSeguimiento() {
         }
       }
     );
-    $("#data-table-reparacion-cambio-stock").on("click", "tr", function() {
+    $("#data-table-reparacion-cambio-stock").on("click", "tr", function () {
       var check = $(this).find(".checkEquipoStock");
       if (check.hasClass("fa-square-o")) {
         $(".checkEquipoStock").removeClass("fa-check-square-o");
@@ -4613,7 +4636,7 @@ function cargarFormularioSeguimiento() {
 
     var listaPaqueteria = [];
     var datosListaPaqueteria = respuesta.informacion.listaPaqueteria;
-    $.each(datosListaPaqueteria, function(key, value) {
+    $.each(datosListaPaqueteria, function (key, value) {
       listaPaqueteria.push({ id: value.Id, text: value.Nombre });
     });
     select.cargaDatos("#selectListaTipoEnvioGarantia", listaPaqueteria);
@@ -4771,7 +4794,7 @@ function cargarFormularioSeguimiento() {
 
     //evento para mostrar los detalles de las descripciones
     $("#detallesServicioCorrectivo").off("click");
-    $("#detallesServicioCorrectivo").on("click", function(e) {
+    $("#detallesServicioCorrectivo").on("click", function (e) {
       if ($("#masDetalles").hasClass("hidden")) {
         $("#masDetalles").removeClass("hidden");
         $("#detallesServicioCorrectivo")
@@ -4784,7 +4807,7 @@ function cargarFormularioSeguimiento() {
           .html("<a>+ Detalles</a>");
       }
     });
-    $("#selectSucursalesCorrectivo").on("change", function(event, data) {
+    $("#selectSucursalesCorrectivo").on("change", function (event, data) {
       $("#selectAreaPuntoCorrectivo")
         .empty()
         .append('<option data-punto="" value="">Seleccionar</option>');
@@ -4806,28 +4829,28 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/ConsultaAreaPuntoXSucursal",
           dataSucursal,
           "#seccion-servicio-correctivo",
-          function(respuesta) {
+          function (respuesta) {
             if (respuesta !== false) {
-              $.each(respuesta, function(key, valor) {
+              $.each(respuesta, function (key, valor) {
                 $("#selectAreaPuntoCorrectivo").append(
                   '<option value="' +
-                    valor.IdArea +
-                    "-" +
-                    valor.Punto +
-                    '">' +
-                    valor.Area +
-                    " " +
-                    valor.Punto +
-                    "</option>"
+                  valor.IdArea +
+                  "-" +
+                  valor.Punto +
+                  '">' +
+                  valor.Area +
+                  " " +
+                  valor.Punto +
+                  "</option>"
                 );
               });
               if (datosGeneralesCorrectivo.length > 0) {
                 $(
                   '#selectAreaPuntoCorrectivo > option[value="' +
-                    datosGeneralesCorrectivo[0].IdArea +
-                    "-" +
-                    datosGeneralesCorrectivo[0].Punto +
-                    '"]'
+                  datosGeneralesCorrectivo[0].IdArea +
+                  "-" +
+                  datosGeneralesCorrectivo[0].Punto +
+                  '"]'
                 )
                   .attr("selected", "selected", "selected", "selected")
                   .trigger("change");
@@ -4845,7 +4868,7 @@ function cargarFormularioSeguimiento() {
         );
       }
     });
-    $("#selectAreaPuntoCorrectivo").on("change", function(event, data) {
+    $("#selectAreaPuntoCorrectivo").on("change", function (event, data) {
       $("#selectEquipoCorrectivo")
         .empty()
         .append(
@@ -4876,21 +4899,21 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/ConsultaEquipoXAreaPuntoUltimoCenso",
           dataEquipo,
           "#seccion-servicio-correctivo",
-          function(respuesta) {
+          function (respuesta) {
             var nuevoArrayIdModelos = [];
-            $.each(respuesta, function(key, valor) {
+            $.each(respuesta, function (key, valor) {
               $("#selectEquipoCorrectivo").append(
                 '<option data-serie="' +
-                  valor.Serie +
-                  '" data-terminal="' +
-                  valor.Extra +
-                  '" value=' +
-                  valor.IdModelo +
-                  ">" +
-                  valor.Equipo +
-                  " (" +
-                  valor.Serie +
-                  ")</option>"
+                valor.Serie +
+                '" data-terminal="' +
+                valor.Extra +
+                '" value=' +
+                valor.IdModelo +
+                ">" +
+                valor.Equipo +
+                " (" +
+                valor.Serie +
+                ")</option>"
               );
               nuevoArrayIdModelos.push(valor.IdModelo);
             });
@@ -4917,7 +4940,7 @@ function cargarFormularioSeguimiento() {
         );
       }
     });
-    $("#selectImpericiaTipoFallaEquipoCorrectivo").on("change", function() {
+    $("#selectImpericiaTipoFallaEquipoCorrectivo").on("change", function () {
       var tipoFalla = $("#selectImpericiaTipoFallaEquipoCorrectivo").val();
       var equipo = $("#selectEquipoCorrectivo").val();
       if (equipo === "") {
@@ -4930,14 +4953,14 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo",
         dataTipoFalla,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           $("#selectImpericiaFallaDiagnosticoCorrectivo").removeAttr(
             "disabled"
           );
           $("#selectImpericiaFallaDiagnosticoCorrectivo")
             .empty()
             .append('<option value="">Seleccionar</option>');
-          $.each(respuesta, function(key, valor) {
+          $.each(respuesta, function (key, valor) {
             $("#selectImpericiaFallaDiagnosticoCorrectivo").append(
               "<option value=" + valor.Id + ">" + valor.Nombre + "</option>"
             );
@@ -4953,7 +4976,7 @@ function cargarFormularioSeguimiento() {
         }
       );
     });
-    $("#selectTipoFallaEquipoCorrectivo").on("change", function() {
+    $("#selectTipoFallaEquipoCorrectivo").on("change", function () {
       var tipoFalla = $("#selectTipoFallaEquipoCorrectivo").val();
       var equipo = $("#selectEquipoCorrectivo").val();
       if (equipo === "") {
@@ -4966,12 +4989,12 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/ConsultaFallasEquiposXTipoFallaYEquipo",
         dataTipoFalla,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           $("#selectFallaDiagnosticoCorrectivo").removeAttr("disabled");
           $("#selectFallaDiagnosticoCorrectivo")
             .empty()
             .append('<option value="">Seleccionar</option>');
-          $.each(respuesta, function(key, valor) {
+          $.each(respuesta, function (key, valor) {
             $("#selectFallaDiagnosticoCorrectivo").append(
               "<option value=" + valor.Id + ">" + valor.Nombre + "</option>"
             );
@@ -4987,7 +5010,7 @@ function cargarFormularioSeguimiento() {
         }
       );
     });
-    $("#selectComponenteDiagnosticoCorrectivo").on("change", function() {
+    $("#selectComponenteDiagnosticoCorrectivo").on("change", function () {
       var componente = $("#selectComponenteDiagnosticoCorrectivo").val();
       var dataFallaComponente = { componente: componente };
       select.cambiarOpcion("#selectTipoFallaComponenteCorrectivo", "");
@@ -5002,15 +5025,15 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/ConsultaTipoFallaXRefaccion",
         dataFallaComponente,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           $("#selectTipoFallaComponenteCorrectivo").removeAttr("disabled");
-          $.each(respuesta, function(key, valor) {
+          $.each(respuesta, function (key, valor) {
             $("#selectTipoFallaComponenteCorrectivo").append(
               "<option value=" +
-                valor.IdTipoFalla +
-                ">" +
-                valor.NombreTipo +
-                "</option>"
+              valor.IdTipoFalla +
+              ">" +
+              valor.NombreTipo +
+              "</option>"
             );
           });
           if (datosDiagnosticoEquipo !== undefined) {
@@ -5024,7 +5047,7 @@ function cargarFormularioSeguimiento() {
         }
       );
     });
-    $("#selectTipoFallaComponenteCorrectivo").on("change", function() {
+    $("#selectTipoFallaComponenteCorrectivo").on("change", function () {
       var componente = $("#selectComponenteDiagnosticoCorrectivo").val();
       var tipoFalla = $("#selectTipoFallaComponenteCorrectivo").val();
       var dataTipoFalla = { tipoFalla: tipoFalla, componente: componente };
@@ -5036,12 +5059,12 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/ConsultaFallasRefacionXTipoFalla",
         dataTipoFalla,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta) {
             $("#selectFallaComponenteDiagnosticoCorrectivo").removeAttr(
               "disabled"
             );
-            $.each(respuesta, function(key, valor) {
+            $.each(respuesta, function (key, valor) {
               $("#selectFallaComponenteDiagnosticoCorrectivo").append(
                 "<option value=" + valor.Id + ">" + valor.Nombre + "</option>"
               );
@@ -5057,7 +5080,7 @@ function cargarFormularioSeguimiento() {
       );
     });
     $("#camposExtrasCorrectivo").off("click");
-    $("#camposExtrasCorrectivo").on("click", function(e) {
+    $("#camposExtrasCorrectivo").on("click", function (e) {
       if ($("#divCamposExtraCorrectivo").hasClass("hidden")) {
         $("#divCamposExtraCorrectivo").removeClass("hidden");
         $("#camposExtrasCorrectivo")
@@ -5072,18 +5095,18 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/ConsultaModelosEquipos",
           [],
           "#seccion-servicio-correctivo",
-          function(respuesta) {
-            $.each(respuesta, function(key, valor) {
+          function (respuesta) {
+            $.each(respuesta, function (key, valor) {
               $("#selectEquipoCorrectivo").append(
                 '<option data-serie="" data-terminal="" value=' +
-                  valor.IdMod +
-                  ">" +
-                  valor.Linea +
-                  " - " +
-                  valor.Marca +
-                  " - " +
-                  valor.Modelo +
-                  "</option>"
+                valor.IdMod +
+                ">" +
+                valor.Linea +
+                " - " +
+                valor.Marca +
+                " - " +
+                valor.Modelo +
+                "</option>"
               );
             });
           }
@@ -5111,17 +5134,17 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarDatosCorrectivo").off("click");
-    $("#btnGuardarDatosCorrectivo").on("click", function(e) {
+    $("#btnGuardarDatosCorrectivo").on("click", function (e) {
       validarFormularioDatosGeneralesCorrectivo(datosTabla);
     });
     $("#btnGuardarReporteFalsoCorrectivo").off("click");
-    $("#btnGuardarReporteFalsoCorrectivo").on("click", function(e) {
+    $("#btnGuardarReporteFalsoCorrectivo").on("click", function (e) {
       var data = { servicio: servicio };
       evento.enviarEvento(
         "Seguimiento/varifiarBitacora",
         data,
         "#seccion-servicio-correctivo",
-        function(resultado) {
+        function (resultado) {
           if (resultado.code === 200) {
             if (respuesta.informacion.diagnosticoEquipo === null) {
               if ($("#evidenciasReporteFalsoCorrectivo").val() !== "") {
@@ -5197,7 +5220,7 @@ function cargarFormularioSeguimiento() {
       );
     });
     $("#btnGuardarImpericiaCorrectivo").off("click");
-    $("#btnGuardarImpericiaCorrectivo").on("click", function(e) {
+    $("#btnGuardarImpericiaCorrectivo").on("click", function (e) {
       if (
         validarCampos(
           $("#inputObservacionesImpericiaCorrectivo").val(),
@@ -5283,7 +5306,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarFallaEquipoCorrectivo").off("click");
-    $("#btnGuardarFallaEquipoCorrectivo").on("click", function(e) {
+    $("#btnGuardarFallaEquipoCorrectivo").on("click", function (e) {
       if (
         validarCampos(
           $("#inputObservacionesFallaEquipoCorrectivo").val(),
@@ -5369,7 +5392,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarFallaComponenteCorrectivo").off("click");
-    $("#btnGuardarFallaComponenteCorrectivo").on("click", function(e) {
+    $("#btnGuardarFallaComponenteCorrectivo").on("click", function (e) {
       if (
         validarCampos(
           $("#inputObservacionesFallaComponenteCorrectivo").val(),
@@ -5463,7 +5486,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarReporteMultimediaCorrectivo").off("click");
-    $("#btnGuardarReporteMultimediaCorrectivo").on("click", function(e) {
+    $("#btnGuardarReporteMultimediaCorrectivo").on("click", function (e) {
       if (
         validarCampos(
           $("#inputObservacionesReporteMultimediaCorrectivo").val(),
@@ -5536,7 +5559,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnAgregarSolicitudRefaccion").off("click");
-    $("#btnAgregarSolicitudRefaccion").on("click", function(e) {
+    $("#btnAgregarSolicitudRefaccion").on("click", function (e) {
       if (
         validarCampos(
           $("#selectRefaccionSolicitud").val(),
@@ -5573,14 +5596,14 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarSolicitudRefaccion").off("click");
-    $("#btnGuardarSolicitudRefaccion").on("click", function(e) {
+    $("#btnGuardarSolicitudRefaccion").on("click", function (e) {
       var data = { servicio: servicio };
       var respuestaAnterior = respuesta;
       evento.enviarEvento(
         "Seguimiento/verificarDiagnostico",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta) {
             var datosTablaRefaccionesSolicitudes = $(
               "#data-table-solicitud-refacciones"
@@ -5630,7 +5653,7 @@ function cargarFormularioSeguimiento() {
     $("#data-table-servicios-solicitudes-refacciones tbody").on(
       "click",
       "tr",
-      function() {
+      function () {
         var datosTablaRefaccionSolicitud = $(
           "#data-table-servicios-solicitudes-refacciones"
         )
@@ -5654,7 +5677,7 @@ function cargarFormularioSeguimiento() {
             true
           );
           var nuevoArray = datosTablaRefaccionSolicitud[0][3].split("<br>");
-          $.each(nuevoArray, function(key, item) {
+          $.each(nuevoArray, function (key, item) {
             var nuevoArray2 = item.split("-");
             tabla.agregarFila("#data-table-detalles-solicitud", [
               datosTablaRefaccionSolicitud[0][5][key],
@@ -5665,7 +5688,7 @@ function cargarFormularioSeguimiento() {
           $("#data-table-detalles-solicitud tbody").on(
             "click",
             "tr",
-            function() {
+            function () {
               var datosTablaDetallesSolicitud = $(
                 "#data-table-detalles-solicitud"
               )
@@ -5683,14 +5706,14 @@ function cargarFormularioSeguimiento() {
         }
       }
     );
-    $("#data-table-solicitud-refacciones tbody").on("click", "tr", function() {
+    $("#data-table-solicitud-refacciones tbody").on("click", "tr", function () {
       tabla.eliminarFila("#data-table-solicitud-refacciones", this);
     });
-    $("#data-table-reparacion-refaccion tbody").on("click", "tr", function() {
+    $("#data-table-reparacion-refaccion tbody").on("click", "tr", function () {
       tabla.eliminarFila("#data-table-reparacion-refaccion", this);
     });
     $("#btnAgregarSolicitudEquipo").off("click");
-    $("#btnAgregarSolicitudEquipo").on("click", function(e) {
+    $("#btnAgregarSolicitudEquipo").on("click", function (e) {
       if (
         validarCampos(
           $("#selectEquipoSolicitud").val(),
@@ -5710,14 +5733,14 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarSolicitudEquipo").off("click");
-    $("#btnGuardarSolicitudEquipo").on("click", function(e) {
+    $("#btnGuardarSolicitudEquipo").on("click", function (e) {
       var data = { servicio: servicio };
       var respuestaAnterior = respuesta;
       evento.enviarEvento(
         "Seguimiento/verificarDiagnostico",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta) {
             var datosTablaEquiposSolicitudes = $(
               "#data-table-solicitud-equipos"
@@ -5767,7 +5790,7 @@ function cargarFormularioSeguimiento() {
     $("#data-table-servicios-solicitudes-equipos tbody").on(
       "click",
       "tr",
-      function() {
+      function () {
         var datosTablaEquiposSolicitud = $(
           "#data-table-servicios-solicitudes-equipos"
         )
@@ -5791,7 +5814,7 @@ function cargarFormularioSeguimiento() {
             true
           );
           var nuevoArray = datosTablaEquiposSolicitud[0][3].split("<br>");
-          $.each(nuevoArray, function(key, item) {
+          $.each(nuevoArray, function (key, item) {
             var nuevoArray2 = item.split("_");
             tabla.agregarFila("#data-table-detalles-solicitud", [
               datosTablaEquiposSolicitud[0][5][key],
@@ -5802,7 +5825,7 @@ function cargarFormularioSeguimiento() {
           $("#data-table-detalles-solicitud tbody").on(
             "click",
             "tr",
-            function() {
+            function () {
               var datosTablaDetallesSolicitud = $(
                 "#data-table-detalles-solicitud"
               )
@@ -5820,10 +5843,10 @@ function cargarFormularioSeguimiento() {
         }
       }
     );
-    $("#data-table-solicitud-equipos tbody").on("click", "tr", function() {
+    $("#data-table-solicitud-equipos tbody").on("click", "tr", function () {
       tabla.eliminarFila("#data-table-solicitud-equipos", this);
     });
-    $("input[name=radioEquipoRespaldo]").change(function() {
+    $("input[name=radioEquipoRespaldo]").change(function () {
       var textoRadio = $(this).val();
       if (textoRadio === "dejar") {
         $("#dejarEquipoGarantia").removeClass("hidden");
@@ -5846,7 +5869,7 @@ function cargarFormularioSeguimiento() {
           if (respuesta.informacion.correctivoGarantiaRespaldo.length > 0) {
             if (
               respuesta.informacion.correctivoGarantiaRespaldo[0].EsRespaldo ===
-                "0" &&
+              "0" &&
               respuesta.informacion.correctivoGarantiaRespaldo[0]
                 .SolicitaEquipo === "0"
             ) {
@@ -5862,7 +5885,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarInformacionGarantia").off("click");
-    $("#btnGuardarInformacionGarantia").on("click", function(e) {
+    $("#btnGuardarInformacionGarantia").on("click", function (e) {
       if (
         validarCampos(
           $("#selectEquipoRespaldo").val(),
@@ -5928,7 +5951,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnSolicitarEquipoRespaldo").off("click");
-    $("#btnSolicitarEquipoRespaldo").on("click", function(e) {
+    $("#btnSolicitarEquipoRespaldo").on("click", function (e) {
       evento.mostrarModal(
         "Confirmar Solicitud de Equipo de Respaldo",
         formularioAsignacionSolicitud()
@@ -5938,25 +5961,25 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/ConsultaAtiendeAlmacen",
         {},
         "#modal-dialogo",
-        function(respuesta) {
+        function (respuesta) {
           $("#selectAtiendeSolcitud").removeAttr("disabled", "disabled");
           $("#selectAtiendeSolcitud")
             .empty()
             .append('<option value="">Seleccionar</option>');
-          $.each(respuesta, function(key, valor) {
+          $.each(respuesta, function (key, valor) {
             $("#selectAtiendeSolcitud").append(
               "<option value=" +
-                valor.IdUsuario +
-                ">" +
-                valor.Nombre +
-                "</option>"
+              valor.IdUsuario +
+              ">" +
+              valor.Nombre +
+              "</option>"
             );
           });
           select.cambiarOpcion("#selectAtiendeSolcitud", "12");
         }
       );
       $("#btnModalConfirmar").off("click");
-      $("#btnModalConfirmar").on("click", function() {
+      $("#btnModalConfirmar").on("click", function () {
         var sucursal = $("#selectSucursalesCorrectivo").val();
         var data = {
           servicio: servicio,
@@ -5967,7 +5990,7 @@ function cargarFormularioSeguimiento() {
       });
     });
     $("#btnAutorizadoSinRespaldo").off("click");
-    $("#btnAutorizadoSinRespaldo").on("click", function(e) {
+    $("#btnAutorizadoSinRespaldo").on("click", function (e) {
       evento.mostrarModal(
         "Autorizado sin Respaldo",
         formularioPersonalAutoriza()
@@ -5979,7 +6002,7 @@ function cargarFormularioSeguimiento() {
       $("#btnModalConfirmar").addClass("hidden");
       $("#btnModalAbortar").addClass("hidden");
       $("#btnGuardarAutorizacion").off("click");
-      $("#btnGuardarAutorizacion").on("click", function(e) {
+      $("#btnGuardarAutorizacion").on("click", function (e) {
         if (
           validarCampos(
             $("#inputAutoriza").val(),
@@ -6009,12 +6032,12 @@ function cargarFormularioSeguimiento() {
         }
       });
       $("#btnCerrarAutorizacion").off("click");
-      $("#btnCerrarAutorizacion").on("click", function(e) {
+      $("#btnCerrarAutorizacion").on("click", function (e) {
         evento.cerrarModal();
       });
     });
     $("#btnGuardarEntregarEquipo").off("click");
-    $("#btnGuardarEntregarEquipo").on("click", function(e) {
+    $("#btnGuardarEntregarEquipo").on("click", function (e) {
       if (
         validarCampos(
           $("#selectEntregaGarantia").val(),
@@ -6072,7 +6095,7 @@ function cargarFormularioSeguimiento() {
           .html("Enviar copia a *");
         var atiendeLaboratorio = [];
         var datosAtiendeLaboratorio = respuesta.informacion.atiendeLaboratorio;
-        $.each(datosAtiendeLaboratorio, function(key, value) {
+        $.each(datosAtiendeLaboratorio, function (key, value) {
           atiendeLaboratorio.push({ id: value.IdUsuario, text: value.Nombre });
         });
         select.cargaDatos("#selectEntregaGarantia", atiendeLaboratorio);
@@ -6087,7 +6110,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarEntregarTI").off("click");
-    $("#btnGuardarEntregarTI").on("click", function(e) {
+    $("#btnGuardarEntregarTI").on("click", function (e) {
       if (
         validarCampos(
           $("#selectEntregaGarantia").val(),
@@ -6140,7 +6163,7 @@ function cargarFormularioSeguimiento() {
         validarCamposFirma(data);
       }
     });
-    $("#selectTipoEnvioGarantia").on("change", function(event, data) {
+    $("#selectTipoEnvioGarantia").on("change", function (event, data) {
       var lista = [];
       var datos = null;
       if ($(this).val() !== "") {
@@ -6150,7 +6173,7 @@ function cargarFormularioSeguimiento() {
         } else {
           datos = respuesta.informacion.listaConsolidados;
         }
-        $.each(datos, function(key, value) {
+        $.each(datos, function (key, value) {
           lista.push({ id: value.Id, text: value.Nombre });
         });
         select.cargaDatos("#selectListaTipoEnvioGarantia", lista);
@@ -6159,7 +6182,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarEnvioGarantia").off("click");
-    $("#btnGuardarEnvioGarantia").on("click", function() {
+    $("#btnGuardarEnvioGarantia").on("click", function () {
       if (
         validarCampos(
           $("#selectTipoEnvioGarantia").val(),
@@ -6195,7 +6218,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarEnvioEntregaGarantia").off("click");
-    $("#btnGuardarEnvioEntregaGarantia").on("click", function() {
+    $("#btnGuardarEnvioEntregaGarantia").on("click", function () {
       if (
         validarCampos(
           $("#entregaFechaEnvioGarantia").val(),
@@ -6223,7 +6246,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnAgregarReparacionConRefaccion").off("click");
-    $("#btnAgregarReparacionConRefaccion").on("click", function(e) {
+    $("#btnAgregarReparacionConRefaccion").on("click", function (e) {
       if (
         validarCampos(
           $("#selectRefaccionSolucionReparacionConRefaccion").val(),
@@ -6263,19 +6286,19 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnEnviarReporteProblema").off("click");
-    $("#btnEnviarReporteProblema").on("click", function(e) {
+    $("#btnEnviarReporteProblema").on("click", function (e) {
       var data = { servicio: servicio };
       evento.enviarEvento(
         "Seguimiento/verificarDiagnostico",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta) {
             evento.enviarEvento(
               "/Generales/Servicio/VerificarFolioServicio",
               data,
               "#seccion-servicio-correctivo",
-              function(respuesta) {
+              function (respuesta) {
                 if (respuesta === true) {
                   var sucursal = $("#selectSucursalesCorrectivo").val();
                   var dataConcluir = {
@@ -6308,7 +6331,7 @@ function cargarFormularioSeguimiento() {
       );
     });
     $("#btnGuardarReparacionSinEquipo").off("click");
-    $("#btnGuardarReparacionSinEquipo").on("click", function(e) {
+    $("#btnGuardarReparacionSinEquipo").on("click", function (e) {
       if (
         validarCampos(
           $("#selectSolucionReparacionSinEquipo").val(),
@@ -6347,7 +6370,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarConcluirReparacionSinEquipo").off("click");
-    $("#btnGuardarConcluirReparacionSinEquipo").on("click", function(e) {
+    $("#btnGuardarConcluirReparacionSinEquipo").on("click", function (e) {
       if (
         validarCampos(
           $("#inputObservacionesSolucionReparacionSinEquipo").val(),
@@ -6377,7 +6400,7 @@ function cargarFormularioSeguimiento() {
               "Seguimiento/ConsultaCorrectivosSolucionesServicio",
               data,
               "#seccion-servicio-correctivo",
-              function(respuesta) {
+              function (respuesta) {
                 if (respuesta) {
                   guardarConcluirCorrectivoReparacionSinEquipo(
                     servicio,
@@ -6401,10 +6424,10 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarSolucionReparacionConRefaccion").off("click");
-    $("#btnGuardarSolucionReparacionConRefaccion").on("click", function(e) {
+    $("#btnGuardarSolucionReparacionConRefaccion").on("click", function (e) {
       if ($("#data-table-reparacion-refaccion-stock").length) {
         var _refacciones = "";
-        $(".checkRefaccionesStock").each(function() {
+        $(".checkRefaccionesStock").each(function () {
           if ($(this).hasClass("fa-check-square-o")) {
             _refacciones += "," + $(this).attr("data-id");
           }
@@ -6456,7 +6479,7 @@ function cargarFormularioSeguimiento() {
           } else if (
             $("#evidenciasSolucionReparacionConRefaccion").val() !== "" &&
             respuesta.informacion.evidenciasCorrectivosSoluciones.length !==
-              null
+            null
           ) {
             guardarConcluirCorrectivoReparacionConRefaccion(
               servicio,
@@ -6484,7 +6507,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarConcluirSolucionReparacionConRefaccion").off("click");
-    $("#btnGuardarConcluirSolucionReparacionConRefaccion").on("click", function(
+    $("#btnGuardarConcluirSolucionReparacionConRefaccion").on("click", function (
       e
     ) {
       if (
@@ -6496,7 +6519,7 @@ function cargarFormularioSeguimiento() {
       ) {
         if ($("#data-table-reparacion-refaccion-stock").length) {
           var _refacciones = "";
-          $(".checkRefaccionesStock").each(function() {
+          $(".checkRefaccionesStock").each(function () {
             if ($(this).hasClass("fa-check-square-o")) {
               _refacciones += "," + $(this).attr("data-id");
             }
@@ -6509,7 +6532,7 @@ function cargarFormularioSeguimiento() {
             (_evidencias !== "" ||
               (respuesta.informacion.evidenciasCorrectivosSoluciones !== null &&
                 respuesta.informacion.evidenciasCorrectivosSoluciones.length >
-                  0))
+                0))
           ) {
             guardarConcluirCorrectivoReparacionConRefaccion(
               servicio,
@@ -6553,7 +6576,7 @@ function cargarFormularioSeguimiento() {
                 "Seguimiento/ConsultaCorrectivosSolucionesServicio",
                 data,
                 "#seccion-servicio-correctivo",
-                function(respuesta) {
+                function (respuesta) {
                   if (respuesta) {
                     guardarConcluirCorrectivoReparacionConRefaccion(
                       servicio,
@@ -6586,11 +6609,11 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarSolucionCambioEquipo").off("click");
-    $("#btnGuardarSolucionCambioEquipo").on("click", function(e) {
+    $("#btnGuardarSolucionCambioEquipo").on("click", function (e) {
       if ($("#data-table-reparacion-cambio-stock").length) {
         var _equipos = "";
         var _dataEquipo = [];
-        $(".checkEquipoStock").each(function() {
+        $(".checkEquipoStock").each(function () {
           if ($(this).hasClass("fa-check-square-o")) {
             _equipos += "," + $(this).attr("data-id");
             _dataEquipo["equipo"] = $(this).attr("data-id-producto");
@@ -6672,7 +6695,7 @@ function cargarFormularioSeguimiento() {
       }
     });
     $("#btnGuardarConcluirSolucionCambioEquipo").off("click");
-    $("#btnGuardarConcluirSolucionCambioEquipo").on("click", function(e) {
+    $("#btnGuardarConcluirSolucionCambioEquipo").on("click", function (e) {
       if (
         validarCampos(
           $("#inputObservacionesSolucionCambioEquipo").val(),
@@ -6683,7 +6706,7 @@ function cargarFormularioSeguimiento() {
         if ($("#data-table-reparacion-cambio-stock").length) {
           var _equipos = "";
           var _dataEquipo = [];
-          $(".checkEquipoStock").each(function() {
+          $(".checkEquipoStock").each(function () {
             if ($(this).hasClass("fa-check-square-o")) {
               _equipos += "," + $(this).attr("data-id");
               _dataEquipo["equipo"] = $(this).attr("data-id-producto");
@@ -6697,7 +6720,7 @@ function cargarFormularioSeguimiento() {
             (_evidencias !== "" ||
               (respuesta.informacion.evidenciasCorrectivosSoluciones !== null &&
                 respuesta.informacion.evidenciasCorrectivosSoluciones.length >
-                  0))
+                0))
           ) {
             guardarConcluirCorrectivoCambioEquipo(
               servicio,
@@ -6748,7 +6771,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/ConsultaCorrectivosSolucionesServicio",
                   data,
                   "#seccion-servicio-correctivo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta) {
                       guardarConcluirCorrectivoCambioEquipo(
                         servicio,
@@ -6775,7 +6798,7 @@ function cargarFormularioSeguimiento() {
     });
     //Evento que vuelve a mostrar la lista de servicios de Poliza
     $("#btnRegresarSeguimientoCorrectivo").off("click");
-    $("#btnRegresarSeguimientoCorrectivo").on("click", function() {
+    $("#btnRegresarSeguimientoCorrectivo").on("click", function () {
       $("#seccionSeguimientoServicio")
         .empty()
         .addClass("hidden");
@@ -6783,7 +6806,7 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de crear un nuevo servicio
     $("#btnNuevoServicioSeguimiento").off("click");
-    $("#btnNuevoServicioSeguimiento").on("click", function() {
+    $("#btnNuevoServicioSeguimiento").on("click", function () {
       var data = { servicio: servicio };
       servicios.nuevoServicio(
         data,
@@ -6796,7 +6819,7 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de cancelar servicio
     $("#btnCancelarServicioSeguimiento").off("click");
-    $("#btnCancelarServicioSeguimiento").on("click", function() {
+    $("#btnCancelarServicioSeguimiento").on("click", function () {
       var data = { servicio: servicio, ticket: respuesta.datosServicio.Ticket };
       servicios.cancelarServicio(
         data,
@@ -6807,29 +6830,29 @@ function cargarFormularioSeguimiento() {
     });
     //Encargado de generar el archivo Pdf
     $("#btnGeneraPdfServicio").off("click");
-    $("#btnGeneraPdfServicio").on("click", function() {
+    $("#btnGeneraPdfServicio").on("click", function () {
       var data = { servicio: servicio };
       evento.enviarEvento(
         "Seguimiento/Servicio_ToPdf",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           window.open(respuesta.link);
         }
       );
     });
-    $(".solicitarTraslado").on("click", function() {
+    $(".solicitarTraslado").on("click", function () {
       window.open("/Poliza/Seguimiento_Equipos", "_self");
     });
 
     $("#btnAgregarObservacionesReporteFalso").off("click");
-    $("#btnAgregarObservacionesReporteFalso").on("click", function() {
+    $("#btnAgregarObservacionesReporteFalso").on("click", function () {
       $(this).addClass("hidden");
       $("#divFormAgregarObservaciones").removeClass("hidden");
     });
 
     $("#btnCancelarAgregarObservacionesReporteFalso").off("click");
-    $("#btnCancelarAgregarObservacionesReporteFalso").on("click", function() {
+    $("#btnCancelarAgregarObservacionesReporteFalso").on("click", function () {
       $("#divFormAgregarObservaciones").addClass("hidden");
       $("#btnAgregarObservacionesReporteFalso").removeClass("hidden");
       file.limpiar("#archivosAgregarObservacionesReporteFalso");
@@ -6837,7 +6860,7 @@ function cargarFormularioSeguimiento() {
     });
 
     $("#btnConfirmarAgregarObservacionesReporteFalso").off("click");
-    $("#btnConfirmarAgregarObservacionesReporteFalso").on("click", function() {
+    $("#btnConfirmarAgregarObservacionesReporteFalso").on("click", function () {
       var observaciones = $("#txtAgregarObservacion").val();
       var data = { servicio: servicio, observaciones: observaciones };
       if (observaciones !== "") {
@@ -6846,7 +6869,7 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/guardarObservacionesBitacora",
           "#seccion-servicio-correctivo",
           data,
-          function(respuesta) {
+          function (respuesta) {
             if (respuesta.code === 200) {
               $("#divBitacoraReporteFalso")
                 .empty()
@@ -6996,7 +7019,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/GuardarDatosGeneralesCorrectivo",
       data,
       "#seccion-servicio-correctivo",
-      function(respuesta) {
+      function (respuesta) {
         var equipo = $("#selectEquipoCorrectivo").val();
         var dataEquipo = { equipo: equipo };
         if (respuesta === true) {
@@ -7007,7 +7030,7 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ConsultaTiposFallasEquiposImpericia",
             dataEquipo,
             "#seccion-servicio-correctivo",
-            function(respuesta) {
+            function (respuesta) {
               if (respuesta instanceof Array || respuesta instanceof Object) {
                 $("#selectImpericiaTipoFallaEquipoCorrectivo").removeAttr(
                   "disabled"
@@ -7015,13 +7038,13 @@ function cargarFormularioSeguimiento() {
                 $("#selectImpericiaTipoFallaEquipoCorrectivo")
                   .empty()
                   .append('<option value="">Seleccionar</option>');
-                $.each(respuesta, function(key, valor) {
+                $.each(respuesta, function (key, valor) {
                   $("#selectImpericiaTipoFallaEquipoCorrectivo").append(
                     "<option value=" +
-                      valor.Id +
-                      ">" +
-                      valor.Nombre +
-                      "</option>"
+                    valor.Id +
+                    ">" +
+                    valor.Nombre +
+                    "</option>"
                   );
                 });
                 $(".mensajeImpericia").addClass("hidden");
@@ -7034,19 +7057,19 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ConsultaTiposFallasEquipos",
             dataEquipo,
             "#seccion-servicio-correctivo",
-            function(respuesta) {
+            function (respuesta) {
               if (respuesta instanceof Array || respuesta instanceof Object) {
                 $("#selectTipoFallaEquipoCorrectivo").removeAttr("disabled");
                 $("#selectTipoFallaEquipoCorrectivo")
                   .empty()
                   .append('<option value="">Seleccionar</option>');
-                $.each(respuesta, function(key, valor) {
+                $.each(respuesta, function (key, valor) {
                   $("#selectTipoFallaEquipoCorrectivo").append(
                     "<option value=" +
-                      valor.Id +
-                      ">" +
-                      valor.Nombre +
-                      "</option>"
+                    valor.Id +
+                    ">" +
+                    valor.Nombre +
+                    "</option>"
                   );
                 });
                 $(".mensajeTipoFalla").addClass("hidden");
@@ -7059,7 +7082,7 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ConsultaRefacionXEquipo",
             dataEquipo,
             "#seccion-servicio-correctivo",
-            function(respuesta) {
+            function (respuesta) {
               if (respuesta instanceof Array || respuesta instanceof Object) {
                 $("#selectComponenteDiagnosticoCorrectivo").removeAttr(
                   "disabled"
@@ -7081,27 +7104,27 @@ function cargarFormularioSeguimiento() {
                 $("#selectRefaccionSolucionReparacionConRefaccion")
                   .empty()
                   .append('<option value="">Seleccionar</option>');
-                $.each(respuesta, function(key, valor) {
+                $.each(respuesta, function (key, valor) {
                   $("#selectComponenteDiagnosticoCorrectivo").append(
                     "<option value=" +
-                      valor.Id +
-                      ">" +
-                      valor.Nombre +
-                      "</option>"
+                    valor.Id +
+                    ">" +
+                    valor.Nombre +
+                    "</option>"
                   );
                   $("#selectRefaccionSolicitud").append(
                     "<option value=" +
-                      valor.Id +
-                      ">" +
-                      valor.Nombre +
-                      "</option>"
+                    valor.Id +
+                    ">" +
+                    valor.Nombre +
+                    "</option>"
                   );
                   $("#selectRefaccionSolucionReparacionConRefaccion").append(
                     "<option value=" +
-                      valor.Id +
-                      ">" +
-                      valor.Nombre +
-                      "</option>"
+                    valor.Id +
+                    ">" +
+                    valor.Nombre +
+                    "</option>"
                   );
                 });
                 $(".mensajeRefaccion").addClass("hidden");
@@ -7114,7 +7137,7 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ConsultaEquiposXLinea",
             dataEquipo,
             "#seccion-servicio-correctivo",
-            function(respuesta) {
+            function (respuesta) {
               if (respuesta instanceof Array || respuesta instanceof Object) {
                 $("#selectEquipoSolicitud").removeAttr("disabled");
                 $("#selectEquipoRespaldo").removeAttr("disabled");
@@ -7130,39 +7153,39 @@ function cargarFormularioSeguimiento() {
                 $("#selectEquipoSolucionCambioEquipo")
                   .empty()
                   .append('<option value="">Seleccionar</option>');
-                $.each(respuesta, function(key, valor) {
+                $.each(respuesta, function (key, valor) {
                   $("#selectEquipoSolicitud").append(
                     "<option value=" +
-                      valor.IdMod +
-                      ">" +
-                      valor.Linea +
-                      " - " +
-                      valor.Marca +
-                      " - " +
-                      valor.Modelo +
-                      "</option>"
+                    valor.IdMod +
+                    ">" +
+                    valor.Linea +
+                    " - " +
+                    valor.Marca +
+                    " - " +
+                    valor.Modelo +
+                    "</option>"
                   );
                   $("#selectEquipoRespaldo").append(
                     "<option value=" +
-                      valor.IdMod +
-                      ">" +
-                      valor.Linea +
-                      " - " +
-                      valor.Marca +
-                      " - " +
-                      valor.Modelo +
-                      "</option>"
+                    valor.IdMod +
+                    ">" +
+                    valor.Linea +
+                    " - " +
+                    valor.Marca +
+                    " - " +
+                    valor.Modelo +
+                    "</option>"
                   );
                   $("#selectEquipoSolucionCambioEquipo").append(
                     "<option value=" +
-                      valor.IdMod +
-                      ">" +
-                      valor.Linea +
-                      " - " +
-                      valor.Marca +
-                      " - " +
-                      valor.Modelo +
-                      "</option>"
+                    valor.IdMod +
+                    ">" +
+                    valor.Linea +
+                    " - " +
+                    valor.Marca +
+                    " - " +
+                    valor.Modelo +
+                    "</option>"
                   );
                 });
               }
@@ -7172,19 +7195,19 @@ function cargarFormularioSeguimiento() {
             "Seguimiento/ConsultaCatalogoSolucionesEquipoXEquipo",
             dataEquipo,
             "#seccion-servicio-correctivo",
-            function(respuesta) {
+            function (respuesta) {
               if (respuesta instanceof Array || respuesta instanceof Object) {
                 $("#selectSolucionReparacionSinEquipo").removeAttr("disabled");
                 $("#selectSolucionReparacionSinEquipo")
                   .empty()
                   .append('<option value="">Seleccionar</option>');
-                $.each(respuesta, function(key, valor) {
+                $.each(respuesta, function (key, valor) {
                   $("#selectSolucionReparacionSinEquipo").append(
                     "<option value=" +
-                      valor.Id +
-                      ">" +
-                      valor.Nombre +
-                      "</option>"
+                    valor.Id +
+                    ">" +
+                    valor.Nombre +
+                    "</option>"
                   );
                 });
                 $(".mensajeSolucion").addClass("hidden");
@@ -7300,7 +7323,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarDiagnosticoEquipo",
         "#seccion-servicio-correctivo",
         data,
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta !== "faltaDatosGenerales") {
             if (tipoDiagnostico === "5" || tipoDiagnostico === "1") {
               var dataSD = {
@@ -7312,7 +7335,7 @@ function cargarFormularioSeguimiento() {
                 "Seguimiento/enviarSolucionCorrectivoSD",
                 dataSD,
                 "#seccion-servicio-correctivo",
-                function(respuesta) {
+                function (respuesta) {
                   if (respuesta.code === 200) {
                     if (respuesta.message === "serviciosConcluidos") {
                       modalCampoFirma(
@@ -7361,7 +7384,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarDiagnosticoEquipo",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta !== "faltaDatosGenerales") {
             if (tipoDiagnostico === "5" || tipoDiagnostico === "1") {
               var dataSD = {
@@ -7373,7 +7396,7 @@ function cargarFormularioSeguimiento() {
                 "Seguimiento/enviarSolucionCorrectivoSD",
                 dataSD,
                 "#seccion-servicio-correctivo",
-                function(respuesta) {
+                function (respuesta) {
                   if (respuesta.code === 200) {
                     if (respuesta.message === "serviciosConcluidos") {
                       modalCampoFirma(
@@ -7537,7 +7560,7 @@ function cargarFormularioSeguimiento() {
     var nombreRefaccion = $("#selectRefaccionSolicitud option:selected").text();
     var cantidad = $("#inputCantidadRefaccionSolicitud").val();
     filas.push([idRefaccion, nombreRefaccion, cantidad]);
-    $.each(filas, function(key, value) {
+    $.each(filas, function (key, value) {
       tabla.agregarFila("#data-table-solicitud-refacciones", value);
     });
     evento.mostrarMensaje(
@@ -7559,7 +7582,7 @@ function cargarFormularioSeguimiento() {
       "#inputCantidadRefaccionSolicitudReparacionConRefaccion"
     ).val();
     filas.push([idRefaccion, nombreRefaccion, cantidad]);
-    $.each(filas, function(key, value) {
+    $.each(filas, function (key, value) {
       tabla.agregarFila("#data-table-reparacion-refaccion", value);
     });
     evento.mostrarMensaje(
@@ -7599,7 +7622,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/SolicitarMultimedia",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta instanceof Array || respuesta instanceof Object) {
             select.cambiarOpcion("#selectEquipoRespaldo", "");
             $("#inputSerieRespaldo").val("");
@@ -7629,7 +7652,7 @@ function cargarFormularioSeguimiento() {
     }
 
     if (tipoSolicitud === "almacen") {
-      $.each(respuestaDatos.informacion.atiende, function(key, valor) {
+      $.each(respuestaDatos.informacion.atiende, function (key, valor) {
         $("#selectAtiendeSolcitud").append(
           "<option value=" + valor.IdUsuario + ">" + valor.Nombre + "</option>"
         );
@@ -7642,14 +7665,14 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/ConsultaCorrectivoTI",
         data,
         "#confirmarSolicitud",
-        function(respuesta) {
-          $.each(respuesta, function(key, valor) {
+        function (respuesta) {
+          $.each(respuesta, function (key, valor) {
             $("#selectAtiendeSolcitud").append(
               "<option value=" +
-                valor.userId +
-                ">" +
-                valor.userName +
-                "</option>"
+              valor.userId +
+              ">" +
+              valor.userName +
+              "</option>"
             );
           });
           $("#selectAtiendeSolcitud").removeAttr("disabled");
@@ -7658,7 +7681,7 @@ function cargarFormularioSeguimiento() {
     }
 
     $("#btnModalConfirmar").off("click");
-    $("#btnModalConfirmar").on("click", function() {
+    $("#btnModalConfirmar").on("click", function () {
       if ($("#selectAtiendeSolcitud").val() !== "") {
         var atiende = $("#selectAtiendeSolcitud").val();
         var nombreSucursal = $(
@@ -7678,7 +7701,7 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/guardarRefaccionesSolicitud",
           data,
           "#modal-dialogo",
-          function(respuesta) {
+          function (respuesta) {
             if (respuesta instanceof Array || respuesta instanceof Object) {
               select.cambiarOpcion("#selectEquipoRespaldo", "");
               $("#inputSerieRespaldo").val("");
@@ -7730,7 +7753,7 @@ function cargarFormularioSeguimiento() {
     tabla.limpiarTabla("#data-table-servicios-solicitudes-refacciones");
     if (solicitudesRefaccion.length > 0) {
       var refaccionCantidad;
-      $.each(solicitudesRefaccion, function(key, item) {
+      $.each(solicitudesRefaccion, function (key, item) {
         var idSolicitudes = solicitudesRefaccion[key]["Id"];
         var arrayIdSolicitudes = idSolicitudes.split(",");
         refaccionCantidad = item.RefaccionCantidad.replace(/,/g, "<br>");
@@ -7749,7 +7772,7 @@ function cargarFormularioSeguimiento() {
     tabla.limpiarTabla("#data-table-servicios-solicitudes-equipos");
     if (solicitudesEquipo.length > 0) {
       var equipoCantidad = "";
-      $.each(solicitudesEquipo, function(key, item) {
+      $.each(solicitudesEquipo, function (key, item) {
         var idSolicitudes = solicitudesEquipo[key]["Id"];
         var arrayIdSolicitudes = idSolicitudes.split(",");
         equipoCantidad = item.EquipoCantidad.replace(/,/g, "<br>");
@@ -7766,7 +7789,7 @@ function cargarFormularioSeguimiento() {
   };
   function recargandoTablaReparacionRefaccion(ReparacionRefaccion) {
     tabla.limpiarTabla("#data-table-reparacion-refaccion");
-    $.each(ReparacionRefaccion, function(key, item) {
+    $.each(ReparacionRefaccion, function (key, item) {
       tabla.agregarFila("#data-table-reparacion-refaccion", [
         item.IdRefaccion,
         item.NombreRefaccion,
@@ -7780,7 +7803,7 @@ function cargarFormularioSeguimiento() {
     var nombreEquipo = $("#selectEquipoSolicitud option:selected").text();
     var cantidad = "1";
     filas.push([idEquipo, nombreEquipo, cantidad]);
-    $.each(filas, function(key, value) {
+    $.each(filas, function (key, value) {
       tabla.agregarFila("#data-table-solicitud-equipos", value);
     });
     evento.mostrarMensaje(
@@ -7819,7 +7842,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/SolicitarMultimedia",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta instanceof Array || respuesta instanceof Object) {
             tabla.limpiarTabla("#data-table-solicitud-equipos");
             $("#inputSerieRespaldo").removeAttr("disabled");
@@ -7851,7 +7874,7 @@ function cargarFormularioSeguimiento() {
     }
 
     if (tipoSolicitud === "almacen") {
-      $.each(respuestaDatos.informacion.atiende, function(key, valor) {
+      $.each(respuestaDatos.informacion.atiende, function (key, valor) {
         $("#selectAtiendeSolcitud").append(
           "<option value=" + valor.IdUsuario + ">" + valor.Nombre + "</option>"
         );
@@ -7864,14 +7887,14 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/ConsultaCorrectivoTI",
         data,
         "#confirmarSolicitud",
-        function(respuesta) {
-          $.each(respuesta, function(key, valor) {
+        function (respuesta) {
+          $.each(respuesta, function (key, valor) {
             $("#selectAtiendeSolcitud").append(
               "<option value=" +
-                valor.userId +
-                ">" +
-                valor.userName +
-                "</option>"
+              valor.userId +
+              ">" +
+              valor.userName +
+              "</option>"
             );
           });
           $("#selectAtiendeSolcitud").removeAttr("disabled");
@@ -7880,7 +7903,7 @@ function cargarFormularioSeguimiento() {
     }
 
     $("#btnModalConfirmar").off("click");
-    $("#btnModalConfirmar").on("click", function() {
+    $("#btnModalConfirmar").on("click", function () {
       if ($("#selectAtiendeSolcitud").val() !== "") {
         var atiende = $("#selectAtiendeSolcitud").val();
         var nombreSucursal = $(
@@ -7900,7 +7923,7 @@ function cargarFormularioSeguimiento() {
           "Seguimiento/guardarEquiposSolicitud",
           data,
           "#modal-dialogo",
-          function(respuesta) {
+          function (respuesta) {
             if (respuesta instanceof Array || respuesta instanceof Object) {
               tabla.limpiarTabla("#data-table-solicitud-equipos");
               $("#inputSerieRespaldo").removeAttr("disabled");
@@ -7957,7 +7980,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/guardarInformacionEquipoRespaldo",
       data,
       "#modal-dialogo",
-      function(respuesta) {
+      function (respuesta) {
         $("#btnGuardarFirma").removeClass("disabled");
         if (respuesta === true) {
           file.limpiar("#evidenciaEnvioGarantia");
@@ -8014,12 +8037,12 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/guardarInformacionEquipoRespaldo",
       "#modal-dialogo",
       data,
-      function(respuesta) {
+      function (respuesta) {
         $("#btnGuardarAutorizacion").removeClass("disabled");
         if (respuesta instanceof Array || respuesta instanceof Object) {
           var html = "";
           var evidencia = respuesta[0].Evidencia.split(",");
-          $.each(evidencia, function(key, value) {
+          $.each(evidencia, function (key, value) {
             html +=
               '<div class = "evidencia2">\n\
                                 <a href = "' +
@@ -8100,7 +8123,7 @@ function cargarFormularioSeguimiento() {
   };
   function guardarSolicitudEquipoRespaldo() {
     var data = arguments[0];
-//    $("#btnModalConfirmar").addClass("disabled");
+    //    $("#btnModalConfirmar").addClass("disabled");
     if (
       validarCampos(
         $("#selectAtiendeSolcitud").val(),
@@ -8122,7 +8145,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarCrearSolicitarEquipoRespaldo",
         dataEquipoRespaldo,
         "#modal-dialogo",
-        function(respuesta) {
+        function (respuesta) {
           $("#btnModalConfirmar").removeClass("disabled");
           if (respuesta instanceof Array || respuesta instanceof Object) {
             file.limpiar("#evidenciaEnvioGarantia");
@@ -8192,7 +8215,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/enviarEntregaEquipoGarantia",
       data,
       "#modal-dialogo",
-      function(respuesta) {
+      function (respuesta) {
         $("#btnGuardarFirma").removeClass("disabled");
         if (respuesta instanceof Array || respuesta instanceof Object) {
           select.cambiarOpcion("#selectTipoEnvioGarantia", "");
@@ -8246,7 +8269,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/enviarEntregaEquipoGarantia",
       data,
       "#modal-dialogo",
-      function(respuesta) {
+      function (respuesta) {
         $("#btnGuardarFirma").removeClass("disabled");
         if (respuesta instanceof Array || respuesta instanceof Object) {
           select.cambiarOpcion("#selectTipoEnvioGarantia", "");
@@ -8313,7 +8336,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/guardarEnvioGarantia",
       "#seccion-servicio-correctivo",
       data,
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta === true) {
           $(".entregaGarantia").removeAttr("disabled");
           $("#mensajeEntregaGarantia").addClass("hidden");
@@ -8352,7 +8375,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/guardarEntregaGarantiafff",
       "#seccion-servicio-correctivo",
       data,
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta === true) {
           evento.mostrarMensaje(
             "#errorGuardarEnvioEntregaGarantia",
@@ -8408,7 +8431,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarReparacionSinEquipo",
         "#seccion-servicio-correctivo",
         data,
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.message !== "faltaDatosGenerales") {
             if (respuesta.message !== "faltaDatosDiagnostico") {
               var dataSD = {
@@ -8424,7 +8447,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/enviarSolucionCorrectivoSD",
                   dataSD,
                   "#seccion-servicio-correctivo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code === 200) {
                       if (respuesta.message === "serviciosConcluidos") {
                         modalCampoFirma(
@@ -8488,7 +8511,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarReparacionSinEquipo",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.message !== "faltaDatosGenerales") {
             if (respuesta.message !== "faltaDatosDiagnostico") {
               var dataSD = {
@@ -8504,7 +8527,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/enviarSolucionCorrectivoSD",
                   dataSD,
                   "#seccion-servicio-correctivo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code === 200) {
                       if (respuesta.message === "serviciosConcluidos") {
                         modalCampoFirma(
@@ -8614,7 +8637,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarReparacionConRefaccion",
         "#seccion-servicio-correctivo",
         data,
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.message !== "faltaDatosGenerales") {
             if (respuesta.message !== "faltaDatosDiagnostico") {
               if (
@@ -8630,7 +8653,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/enviarSolucionCorrectivoSD",
                   dataSD,
                   "#seccion-servicio-correctivo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code === 200) {
                       if (respuesta.message === "serviciosConcluidos") {
                         modalCampoFirma(
@@ -8694,7 +8717,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarReparacionConRefaccion",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.message !== "faltaDatosGenerales") {
             if (respuesta.message !== "faltaDatosDiagnostico") {
               if (
@@ -8710,7 +8733,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/enviarSolucionCorrectivoSD",
                   dataSD,
                   "#seccion-servicio-correctivo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code === 200) {
                       if (respuesta.message === "serviciosConcluidos") {
                         modalCampoFirma(
@@ -8819,7 +8842,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarCambioEquipo",
         "#seccion-servicio-correctivo",
         data,
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.message !== "faltaDatosGenerales") {
             if (respuesta.message !== "faltaDatosDiagnostico") {
               if (
@@ -8835,7 +8858,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/enviarSolucionCorrectivoSD",
                   dataSD,
                   "#seccion-servicio-correctivo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code === 200) {
                       if (respuesta.message === "serviciosConcluidos") {
                         modalCampoFirma(
@@ -8898,7 +8921,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/guardarCambioEquipo",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta.message !== "faltaDatosGenerales") {
             if (respuesta.message !== "faltaDatosDiagnostico") {
               if (
@@ -8914,7 +8937,7 @@ function cargarFormularioSeguimiento() {
                   "Seguimiento/enviarSolucionCorrectivoSD",
                   dataSD,
                   "#seccion-servicio-correctivo",
-                  function(respuesta) {
+                  function (respuesta) {
                     if (respuesta.code === 200) {
                       if (respuesta.message === "serviciosConcluidos") {
                         modalCampoFirma(
@@ -8981,7 +9004,7 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/CambiarEstatus",
       dataConclusion,
       "#seccion-servicio-correctivo",
-      function(respuesta) {
+      function (respuesta) {
         servicios.mensajeModal("Servicio Concluido", "Correcto");
       }
     );
@@ -9015,7 +9038,7 @@ function cargarFormularioSeguimiento() {
         "Firma",
         servicios.modalCampoFirmaExtra(html, "Firma")
       );
-      $.each(encargadosTI, function(key, valor) {
+      $.each(encargadosTI, function (key, valor) {
         $("#selectTI").append(
           "<option value=" + valor.Id + ">" + valor.Nombre + "</option>"
         );
@@ -9039,7 +9062,7 @@ function cargarFormularioSeguimiento() {
         "/Generales/Servicio/ConsultaIdClienteSucursal",
         data,
         "#seccion-servicio-correctivo",
-        function(respuesta) {
+        function (respuesta) {
           idCliente = respuesta[0].IdCliente;
           if (idCliente === "1") {
             html +=
@@ -9058,7 +9081,7 @@ function cargarFormularioSeguimiento() {
             "Firma",
             servicios.modalCampoFirmaExtra(html, "Firma")
           );
-          $.each(encargadosTI, function(key, valor) {
+          $.each(encargadosTI, function (key, valor) {
             $("#selectTI").append(
               "<option value=" + valor.Id + ">" + valor.Nombre + "</option>"
             );
@@ -9147,7 +9170,7 @@ function cargarFormularioSeguimiento() {
                                 </div> ';
     return formularioAutoriza;
   };
-  function vistaDetallesSolicitud () {
+  function vistaDetallesSolicitud() {
     var datosTablaDetallesSolicitud = arguments[0];
     var tipoAlerta = "";
     var textoSolicitud = "";
@@ -9341,7 +9364,7 @@ function cargarFormularioSeguimiento() {
     //
     //        myBoard = servicios.campoLapiz('campoLapiz');
 
-    $("#btnGuardarFirma").on("click", function() {
+    $("#btnGuardarFirma").on("click", function () {
       var img = myBoard.getImg();
       var imgInput = myBoard.blankCanvas == img ? "" : img;
       var correo = $("#tagValor").tagit("assignedTags");
@@ -9478,7 +9501,7 @@ function cargarFormularioSeguimiento() {
     evento.mostrarModal("Advertencia", mensaje);
     $("#btnModalConfirmar").addClass("hidden");
     $("#btnModalAbortar").addClass("hidden");
-    $("#btnAceptarGuardarCambios").on("click", function() {
+    $("#btnAceptarGuardarCambios").on("click", function () {
       evento.cerrarModal();
       var data = {
         servicio: servicio,
@@ -9490,7 +9513,7 @@ function cargarFormularioSeguimiento() {
         "Seguimiento/EliminarDetallesSolicitud",
         data,
         "#modal-dialogo",
-        function(respuesta) {
+        function (respuesta) {
           if (respuesta instanceof Array) {
             if (tipoSolicitud === "refaccion") {
               recargandoTablaSolicitudRefaccion(respuesta);
@@ -9514,7 +9537,7 @@ function cargarFormularioSeguimiento() {
         }
       );
     });
-    $("#btnCancelarGuardarCambios").on("click", function() {
+    $("#btnCancelarGuardarCambios").on("click", function () {
       evento.cerrarModal();
     });
   };
@@ -9524,13 +9547,13 @@ function cargarFormularioSeguimiento() {
       "Seguimiento/verificarDiagnostico",
       data,
       "#seccion-servicio-correctivo",
-      function(respuesta) {
+      function (respuesta) {
         if (respuesta) {
           evento.enviarEvento(
             "/Generales/Servicio/VerificarFolioServicio",
             data,
             "#seccion-servicio-correctivo",
-            function(respuesta) {
+            function (respuesta) {
               if (respuesta === true) {
                 var sucursal = $("#selectSucursalesCorrectivo").val();
                 var dataConcluir = {
@@ -9657,7 +9680,7 @@ function cargarFormularioSeguimiento() {
   /*********Metodos para traslados de equipo en Correctivos ********/
 
   function initDeviceTransferAndDeviceRequest(serviceId) {
-    $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
+    $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
       var target = $(e.target).attr("href");
       switch (target) {
         case "#DeviceTransfers":
@@ -9672,8 +9695,8 @@ function cargarFormularioSeguimiento() {
       "/Poliza/DeviceTransfer/DeviceTransferAndDeviceRequestForm",
       { serviceId: serviceId },
       "#seccionSeguimientoServicio",
-      function(response) {
-        
+      function (response) {
+
       }
     );
   }
@@ -9700,14 +9723,14 @@ function eventoEliminarProblemaAdicional() {
   eventoAuxiliar.mostrarModal("Advertencia", mensaje);
   $("#btnModalConfirmar").addClass("hidden");
   $("#btnModalAbortar").addClass("hidden");
-  $("#btnAceptarGuardarCambios").on("click", function() {
+  $("#btnAceptarGuardarCambios").on("click", function () {
     eventoAuxiliar.cerrarModal();
     var dataProblemaAdicional = { servicio: servicio, id: id };
     eventoAuxiliar.enviarEvento(
       "Seguimiento/Eliminar_ProblemaAdicional",
       dataProblemaAdicional,
       "#seccion-servicio-mantemient",
-      function(respuesta) {
+      function (respuesta) {
         recargandoTablaProblemasAdicionales(
           respuesta,
           "Datos Eliminados correctamente.",
@@ -9716,7 +9739,7 @@ function eventoEliminarProblemaAdicional() {
       }
     );
   });
-  $("#btnCancelarGuardarCambios").on("click", function() {
+  $("#btnCancelarGuardarCambios").on("click", function () {
     eventoAuxiliar.cerrarModal();
   });
 };
@@ -9725,7 +9748,7 @@ function datosNuevosTablaProblemasAdicionales() {
     { data: "Sucursal" },
     {
       data: "Punto",
-      render: function(data, type, row, meta) {
+      render: function (data, type, row, meta) {
         if (data === "0") {
           data = "-";
         }
@@ -9736,16 +9759,16 @@ function datosNuevosTablaProblemasAdicionales() {
     {
       data: null,
       sClass: "Evidencias",
-      render: function(data, type, row, meta) {
+      render: function (data, type, row, meta) {
         var evidencias = data.Evidencias.split(",");
         var filas = [];
-        $.each(evidencias, function(key, valor) {
+        $.each(evidencias, function (key, valor) {
           filas.push([
             '<a href="' +
-              valor +
-              '" target="_blank"> <img src="' +
-              valor +
-              '" title="" style="max-height:150px"/> </a>'
+            valor +
+            '" target="_blank"> <img src="' +
+            valor +
+            '" title="" style="max-height:150px"/> </a>'
           ]);
         });
         return filas;
@@ -9755,7 +9778,7 @@ function datosNuevosTablaProblemasAdicionales() {
     {
       data: null,
       sClass: "Acciones",
-      render: function(data, type, row, meta) {
+      render: function (data, type, row, meta) {
         return (
           '<a id="btnEliminarProblemaAdicional' +
           row.Id +
@@ -9806,7 +9829,7 @@ function eventoEliminarProblemaEquipo() {
   eventoAuxiliar.mostrarModal("Advertencia", mensaje);
   $("#btnModalConfirmar").addClass("hidden");
   $("#btnModalAbortar").addClass("hidden");
-  $("#btnAceptarGuardarCambios").on("click", function() {
+  $("#btnAceptarGuardarCambios").on("click", function () {
     eventoAuxiliar.cerrarModal();
     var dataProblemaAdicional = {
       servicio: servicio,
@@ -9818,7 +9841,7 @@ function eventoEliminarProblemaEquipo() {
       "Seguimiento/Eliminar_ProblemaEquipo",
       dataProblemaAdicional,
       "#seccion-servicio-mantemiento-puntos-censados",
-      function(respuesta) {
+      function (respuesta) {
         recargandoTablaFallasEquipo(
           respuesta,
           "Datos Eliminados correctamente.",
@@ -9827,7 +9850,7 @@ function eventoEliminarProblemaEquipo() {
       }
     );
   });
-  $("#btnCancelarGuardarCambios").on("click", function() {
+  $("#btnCancelarGuardarCambios").on("click", function () {
     eventoAuxiliar.cerrarModal();
   });
 };
@@ -9856,16 +9879,16 @@ function datosNuevosTablaFallasEquipo() {
     {
       data: null,
       sClass: "Evidencias",
-      render: function(data, type, row, meta) {
+      render: function (data, type, row, meta) {
         var evidencias = data.Evidencias.split(",");
         var filas = [];
-        $.each(evidencias, function(key, valor) {
+        $.each(evidencias, function (key, valor) {
           filas.push([
             '<a href="' +
-              valor +
-              '" target="_blank"> <img src="' +
-              valor +
-              '" title="" style="max-height:150px"/> </a>'
+            valor +
+            '" target="_blank"> <img src="' +
+            valor +
+            '" title="" style="max-height:150px"/> </a>'
           ]);
         });
         return filas;
@@ -9874,7 +9897,7 @@ function datosNuevosTablaFallasEquipo() {
     {
       data: null,
       sClass: "Acciones",
-      render: function(data, type, row, meta) {
+      render: function (data, type, row, meta) {
         return (
           '<a onclick="eventoEliminarProblemaEquipo(' +
           row.IdArea +
