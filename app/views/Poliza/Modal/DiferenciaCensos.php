@@ -3,19 +3,21 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th class="f-s-15 f-w-600 text-center" colspan="3"><?php echo $generales['Sucursal']; ?></th>
+                    <th class="f-s-15 f-w-600 text-center" colspan="4"><?php echo $generales['Sucursal']; ?></th>
                 </tr>
                 <tr>
                     <th class="f-s-15 f-w-600 text-center">Censo<br /><?php echo $generales['FechaUltimo']; ?></th>
                     <th class="f-s-15 f-w-600 text-center">Censo<br /><?php echo $generales['Fecha']; ?></th>
-                    <th class="f-s-15 f-w-600 text-center">Diferencia<br />de Equipos</th>
+                    <th class="f-s-15 f-w-600 text-center">Total <br />Faltantes</th>
+                    <th class="f-s-15 f-w-600 text-center">Total <br />Sobrantes</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td class="f-s-15 f-w-600 text-center"><?php echo count($ultimo); ?></td>
                     <td class="f-s-15 f-w-600 text-center"><?php echo count($actual); ?></td>
-                    <td class="f-s-15 f-w-600 text-center"><?php echo '<label class="f-s-15 f-w-600 ' . ($conteo > 0 ? 'text-success' : 'text-danger') . '">' . ($conteo > 0 ? '+' : '') . $conteo . '</label>' ?></td>
+                    <td class="f-s-15 f-w-600 text-center"><label class="f-s-15 f-w-600 text-danger"><?php echo isset($diferenciaSublineas['conteo']['faltantes']) ? '-' . $diferenciaSublineas['conteo']['faltantes'] : 0; ?></label></td>
+                    <td class="f-s-15 f-w-600 text-center"><label class="f-s-15 f-w-600 text-success"><?php echo isset($diferenciaSublineas['conteo']['sobrantes']) ? '+' . $diferenciaSublineas['conteo']['sobrantes'] : 0; ?></label></td>
                 </tr>
             </tbody>
         </table>
@@ -32,7 +34,7 @@
                 $active = ' class="active"';
             }
             ?>
-            <li <?php echo $active; ?>><a href="#difConteos" data-toggle="tab">Diferencias (Conteos)</a></li>
+            <li <?php echo $active; ?>><a href="#difConteos" data-toggle="tab">Faltantes y Sobrantes (Conteos)</a></li>
             <li><a href="#difSeries" data-toggle="tab">Diferencias (Series)</a></li>
             <li><a href="#cambiosSeries" data-toggle="tab">Cambios Serie</a></li>
             <li><a href="#difFaltantes" data-toggle="tab">Faltantes</a></li>
@@ -89,7 +91,51 @@
             ?>
             <div class="tab-pane fade <?php echo $active; ?>" id="difConteos">
                 <div class="row">
-                    <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <h4>Diferencia de Equipos en Áreas</h4>
+                        <div class="underline"></div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="f-s-15 f-w-600 text-center">Área</th>
+                                    <th class="f-s-15 f-w-600 text-center">Número de Puntos</th>
+                                    <th class="f-s-15 f-w-600 text-center">Equipos que deben existir<br />(según el estandar)</th>
+                                    <th class="f-s-15 f-w-600 text-center">Equipos censados</th>
+                                    <th class="f-s-15 f-w-600 text-center">Faltantes<br />(según el estandar)</th>
+                                    <th class="f-s-15 f-w-600 text-center">Sobrantes<br />(según el estandar)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if (isset($diferenciaAreas) && count($diferenciaAreas) > 0) {
+                                    foreach ($diferenciaAreas as $k => $v) {
+                                        $labelF = '<label role="button" data-name="' . $k . '" class="missing-device f-s-15 ' . ($v['Faltantes'] > 0 ? 'text-success' : 'text-danger') . '">' . ($v['Faltantes'] > 0 ? '+' . $v['Faltantes'] : $v['Faltantes']) . '</label>';
+                                        $labelS = '<label role="button" data-name="' . $k . '" class="leftover-device f-s-15 ' . ($v['Sobrantes'] > 0 ? 'text-success' : 'text-danger') . '">' . ($v['Sobrantes'] > 0 ? '+' . $v['Sobrantes'] : $v['Sobrantes']) . '</label>';
+                                        $tooltip = '<p>Cada punto del área debe contener: ' . $v['TextoKit'] . '</p>';
+                                        echo '
+                                        <tr>
+                                            <td class="f-s-13">
+                                                <button type="button" class="btn btn-secondary"  data-html="true" data-toggle="tooltip" data-placement="top" title="' . $tooltip . '">
+                                                    <i class="fa fa-2x fa-info-circle"></i>
+                                                </button>
+                                                ' . $k . '
+                                            </td>                                            
+                                            <td class="f-s-15 text-center">' . $v['Puntos'] . '</td>
+                                            <td class="f-s-15 text-center">' . ($v['Puntos'] * $v['EquiposxPunto']) . '</td>
+                                            <td class="f-s-15 text-center">' . $v['TotalCensado'] . '</td>
+                                            <td class="f-s-15 text-center">' . $labelF . '</td>
+                                            <td class="f-s-15 text-center">' . $labelS . '</td>
+                                        </tr>
+                                    ';
+                                    }
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- <div class="col-md-6 col-sm-6 col-xs-12">
                         <h4>Diferencia de Puntos x Área</h4>
                         <div class="underline"></div>
                         <table class="table table-bordered">
@@ -101,68 +147,80 @@
                             </thead>
                             <tbody>
                                 <?php
-                                $c = 0;
-                                if (isset($diferenciaAreas) && count($diferenciaAreas) > 0) {
-                                    foreach ($diferenciaAreas as $k => $v) {
-                                        if ($v !== 0) {
-                                            $label = '<label class="f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
-                                            echo '
-                            <tr>
-                                <td>' . $k . '</td>
-                                <td>' . $label . '</td>
-                            </tr>
-                            ';
-                                            $c++;
-                                        }
-                                    }
-                                }
-                                if ($c <= 0) {
-                                    echo '
-                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
-                    ';
-                                }
+                                // $c = 0;
+                                // if (isset($diferenciaAreas) && count($diferenciaAreas) > 0) {
+                                //     foreach ($diferenciaAreas as $k => $v) {
+                                //         if ($v !== 0) {
+                                //             $label = '<label class="f-s-16 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
+                                //             echo '
+                                //             <tr>
+                                //                 <td class="f-s-13">
+                                //                     <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="' . $areas[$k]['Descripcion'] . '">
+                                //                         <i class="fa fa-2x fa-info-circle"></i>
+                                //                     </button>
+                                //                     ' . $k . '
+                                //                 </td>
+                                //                 <td>' . $label . '</td>
+                                //             </tr>
+                                //             ';
+                                //             $c++;
+                                //         }
+                                //     }
+                                // }
+                                // if ($c <= 0) {
+                                //     echo '
+                                //     <tr><td colspan="2">Sin diferencias encontradas</td></tr>
+                                // ';
+                                // }
                                 ?>
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
                         <h4>Diferencia de Líneas</h4>
                         <div class="underline"></div>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>Línea</th>
-                                    <th>Total de Equipo</th>
+                                    <th>Faltantes</th>
+                                    <th>Sobrantes</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                $c = 0;
-                                if (isset($diferenciaLineas) && count($diferenciaLineas) > 0) {
-                                    foreach ($diferenciaLineas as $k => $v) {
-                                        if ($v !== 0) {
-                                            $label = '<label class="f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
-                                            echo '
-                            <tr>
-                                <td>' . $k . '</td>
-                                <td>' . $label . '</td>
-                            </tr>
-                            ';
-                                            $c++;
-                                        }
-                                    }
-                                }
-                                if ($c <= 0) {
-                                    echo '
-                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
-                    ';
-                                }
+                                // $c = 0;
+                                // if (isset($diferenciaLineas) && count($diferenciaLineas) > 0) {
+                                //     foreach ($diferenciaLineas as $k => $v) {
+                                //         if ($v !== 0 && $k !== 'conteo') {
+                                //             $labelF = '<label role="button" data-name="' . $k . '" class="missing-device f-s-15 ' . ($v['faltantes'] > 0 ? 'text-success' : 'text-danger') . '">' . ($v['faltantes'] > 0 ? '+' . $v['faltantes'] : $v['faltantes']) . '</label>';
+                                //             $labelS = '<label role="button" data-name="' . $k . '" class="leftover-device f-s-15 ' . ($v['sobrantes'] > 0 ? 'text-success' : 'text-danger') . '">' . ($v['sobrantes'] > 0 ? '+' . $v['sobrantes'] : $v['sobrantes']) . '</label>';
+
+                                //             echo '
+                                //             <tr>
+                                //                 <td class="f-s-13">
+                                //                     <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="' . $lineas[$k]['Descripcion'] . '">
+                                //                         <i class="fa fa-2x fa-info-circle"></i>
+                                //                     </button>
+                                //                     ' . $k . '
+                                //                 </td>
+                                //                 <td>' . $labelF . '</td>
+                                //                 <td>' . $labelS . '</td>
+                                //             </tr>
+                                //             ';
+                                //             $c++;
+                                //         }
+                                //     }
+                                // }
+                                // if ($c <= 0) {
+                                //     echo '
+                                //         <tr><td colspan="3">Sin diferencias encontradas</td></tr>
+                                //     ';
+                                // }
                                 ?>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-                <div class="row">
+                    </div>-->
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <h4>Diferencia de Sublíneas</h4>
                         <div class="underline"></div>
@@ -170,7 +228,8 @@
                             <thead>
                                 <tr>
                                     <th>Sublínea</th>
-                                    <th>Total de Equipo</th>
+                                    <th>Faltantes</th>
+                                    <th>Sobrantes</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -178,63 +237,78 @@
                                 $c = 0;
                                 if (isset($diferenciaSublineas) && count($diferenciaSublineas) > 0) {
                                     foreach ($diferenciaSublineas as $k => $v) {
-                                        if ($v !== 0) {
-                                            $label = '<label class="f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
+                                        if ($v !== 0 && $k !== 'conteo') {
+                                            $labelF = '<label role="button" data-name="' . $k . '" class="missing-device f-s-15 ' . ($v['faltantes'] > 0 ? 'text-success' : 'text-danger') . '">' . ($v['faltantes'] > 0 ? '+' . $v['faltantes'] : $v['faltantes']) . '</label>';
+                                            $labelS = '<label role="button" data-name="' . $k . '" class="leftover-device f-s-15 ' . ($v['sobrantes'] > 0 ? 'text-success' : 'text-danger') . '">' . ($v['sobrantes'] > 0 ? '+' . $v['sobrantes'] : $v['sobrantes']) . '</label>';
+                                            $tooltip = '<p>' . $sublineas[$k]['Linea'] . ($sublineas[$k]['Descripcion'] != '' ? '<br />' . $sublineas[$k]['Descripcion'] : '') . '</p>';
                                             echo '
-                            <tr>
-                                <td>' . $k . '</td>
-                                <td>' . $label . '</td>
-                            </tr>
-                            ';
+                                            <tr>
+                                                <td class="f-s-13">
+                                                    <button type="button" class="btn btn-secondary"  data-html="true" data-toggle="tooltip" data-placement="top" title="' . $tooltip . '">
+                                                        <i class="fa fa-2x fa-info-circle"></i>
+                                                    </button>
+                                                    ' . $k . '
+                                                </td>
+                                                <td>' . $labelF . '</td>
+                                                <td>' . $labelS . '</td>
+                                            </tr>
+                                            ';
                                             $c++;
                                         }
                                     }
                                 }
                                 if ($c <= 0) {
                                     echo '
-                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
-                    ';
+                                        <tr><td colspan="3">Sin diferencias encontradas</td></tr>
+                                    ';
                                 }
                                 ?>
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <h4>Diferencia de Modelos</h4>
+                    <!-- <div class="col-md-4 col-sm-4 col-xs-12">
+                        <h4>Modelos Sobrantes</h4>
                         <div class="underline"></div>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>Modelo</th>
-                                    <th>Total de Equipo</th>
+                                    <th>Total Equipos</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                $c = 0;
-                                if (isset($diferenciaModelos) && count($diferenciaModelos) > 0) {
-                                    foreach ($diferenciaModelos as $k => $v) {
-                                        if ($v !== 0) {
-                                            $label = '<label class="f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
-                                            echo '
-                            <tr>
-                                <td>' . $k . '</td>
-                                <td>' . $label . '</td>
-                            </tr>
-                            ';
-                                            $c++;
-                                        }
-                                    }
-                                }
-                                if ($c <= 0) {
-                                    echo '
-                        <tr><td colspan="2">Sin diferencias encontradas</td></tr>
-                    ';
-                                }
+                                // $c = 0;
+                                // if (isset($diferenciaModelos) && count($diferenciaModelos) > 0) {
+                                //     foreach ($diferenciaModelos as $k => $v) {
+                                //         if ($v !== 0) {
+                                //             $label = '<label role="button" data-name="' . $k . '" class="leftover-device f-s-15 ' . ($v > 0 ? 'text-success' : 'text-danger') . '">' . ($v > 0 ? '+' . $v : $v) . '</label>';
+                                //             $tooltip = '<p>' . $modelos[$k]['Linea'] . '<br />' . $modelos[$k]['Sublinea'] . '<br />' . $modelos[$k]['Marca'];
+                                //             $tooltip .= $modelos[$k]['Descripcion'] != '' ? '<br />' . $modelos[$k]['Descripcion'] . '</p>' : '</p>';
+                                //             echo '
+                                //             <tr>
+                                //                 <td class="f-s-13">
+                                //                     <button type="button" class="btn btn-secondary"  data-html="true" data-toggle="tooltip" data-placement="top" title="' . $tooltip . '">
+                                //                         <i class="fa fa-2x fa-info-circle"></i>
+                                //                     </button>
+                                //                     ' . $k . '
+                                //                 </td>
+                                //                 <td>' . $label . '</td>
+                                //             </tr>
+                                //             ';
+                                //             $c++;
+                                //         }
+                                //     }
+                                // }
+                                // if ($c <= 0) {
+                                //     echo '
+                                //         <tr><td colspan="2">Sin diferencias encontradas</td></tr>
+                                //     ';
+                                // }
                                 ?>
                             </tbody>
                         </table>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="tab-pane fade" id="difSeries">
@@ -379,7 +453,7 @@
                 </div>
                 <div class="row m-t-15">
                     <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
-                        <table class="table table-bordered">
+                        <table id="missing-devices-table" class="table table-bordered counting-table">
                             <thead>
                                 <tr>
                                     <th>Área</th>
@@ -422,7 +496,7 @@
                 </div>
                 <div class="row m-t-15">
                     <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
-                        <table class="table table-bordered">
+                        <table id="leftover-devices-table" class="table table-bordered counting-table">
                             <thead>
                                 <tr>
                                     <th>Área</th>
