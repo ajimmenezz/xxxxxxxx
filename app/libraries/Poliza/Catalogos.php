@@ -151,7 +151,6 @@ class Catalogos extends General {
             }
 
             $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
-
             return array('code' => 200, 'data' => $data);
         } else {
             $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
@@ -213,7 +212,7 @@ class Catalogos extends General {
                     $contador ++;
                 }
             }
-        }else{
+        } else {
             throw new \Exception('No existen sublineas registradas para esta unidad de negocio y àrea de atención');
         }
 
@@ -238,18 +237,19 @@ class Catalogos extends General {
 
     public function getAreasSublineas(array $datos) {
         $data = array();
+        $arraySublinea = array();
         $sublineasArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
-        $data['tabla'] = array();
+        $contador = 0;
 
         if (!empty($sublineasArea)) {
             foreach ($sublineasArea as $key => $value) {
-                array_push($data['tabla'], array(
-                    'IdArea' => $value['IdArea'],
-                    'Area' => $value['Area']));
+                $arraySublinea[$contador]['id'] = $value['IdArea'];
+                $arraySublinea[$contador]['text'] = $value['Area'];
+                $contador ++;
             }
-
-            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
-
+            
+            $data['areasAtencion'] = $arraySublinea;
+            
             return array('code' => 200, 'data' => $data);
         } else {
             throw new \Exception('No hay áreas de atención para eliminiar');
