@@ -3679,7 +3679,8 @@ class Catalogo extends General {
             case '2':
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_modelos_x_area', array(
-                        ), array('Id' => $datos[0])
+                    'Flag' => 0
+                        ), $datos
                 );
                 if (!empty($consulta)) {
                     return $this->catModelosArea('3');
@@ -3721,8 +3722,8 @@ class Catalogo extends General {
             case '2':
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_areas_x_unidad', array(
-                    'Cantidad' => $datos[1]
-                        ), array('Id' => $datos[0])
+                    'Flag' => 0
+                        ), $datos
                 );
                 if (!empty($consulta)) {
                     return $this->catUnidadesNegocioArea('3');
@@ -3740,18 +3741,6 @@ class Catalogo extends General {
                                                         (SELECT Nombre FROM cat_v3_unidades_negocio WHERE Id = IdUnidadNegocio) AS UnidadNegocio
                                                     FROM
                                                         cat_v3_areas_x_unidad ' . $where);
-                break;
-            case '4':
-                $consulta = $this->DBC->actualizarArticulo(
-                        'cat_v3_areas_x_unidad', array(
-                    'Flag' => 0
-                        ), $datos
-                );
-                if (!empty($consulta)) {
-                    return $this->catUnidadesNegocioArea('3');
-                } else {
-                    return FALSE;
-                }
                 break;
             default:
                 break;

@@ -151,7 +151,6 @@ class Catalogos extends General {
             }
 
             $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
-
             return array('code' => 200, 'data' => $data);
         } else {
             $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
@@ -192,12 +191,16 @@ class Catalogos extends General {
             array_push($arrayIdsSublineasArea, $value['IdSublinea']);
         }
 
-        foreach ($sublineas as $key => $value) {
-            if (!in_array($value['IdSub'], $arrayIdsSublineasArea)) {
-                $arraySublinea[$contador]['id'] = $value['IdSub'];
-                $arraySublinea[$contador]['text'] = $value['Sublinea'] . ' - ' . $value['Linea'];
-                $contador ++;
+        if (!empty($sublineas)) {
+            foreach ($sublineas as $key => $value) {
+                if (!in_array($value['IdSub'], $arrayIdsSublineasArea)) {
+                    $arraySublinea[$contador]['id'] = $value['IdSub'];
+                    $arraySublinea[$contador]['text'] = $value['Sublinea'] . ' - ' . $value['Linea'];
+                    $contador ++;
+                }
             }
+        } else {
+            throw new \Exception('No existen sublineas registradas para esta unidad de negocio y àrea de atención');
         }
 
         $data['sublineas'] = $arraySublinea;
@@ -221,21 +224,43 @@ class Catalogos extends General {
 
     public function getAreasSublineas(array $datos) {
         $data = array();
+        $arraySublinea = array();
         $sublineasArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
-        $data['tabla'] = array();
+        $contador = 0;
 
         if (!empty($sublineasArea)) {
             foreach ($sublineasArea as $key => $value) {
-                array_push($data['tabla'], array(
-                    'IdArea' => $value['IdArea'],
-                    'Area' => $value['Area']));
+                $arraySublinea[$contador]['id'] = $value['IdArea'];
+                $arraySublinea[$contador]['text'] = $value['Area'];
+                $contador ++;
             }
 
-            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+            $data['areasAtencion'] = $arraySublinea;
 
             return array('code' => 200, 'data' => $data);
         } else {
             throw new \Exception('No hay áreas de atención para eliminiar');
+        }
+    }
+
+    public function getSublineasSelectEliminar(array $datos) {
+        $data = array();
+        $arraySublinea = array();
+        $sublineasArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvsa.IdArea = ' . $datos['IdArea']);
+        $contador = 0;
+
+        if (!empty($sublineasArea)) {
+            foreach ($sublineasArea as $key => $value) {
+                $arraySublinea[$contador]['id'] = $value['Id'];
+                $arraySublinea[$contador]['text'] = $value['Sublinea'];
+                $contador ++;
+            }
+
+            $data['sublineas'] = $arraySublinea;
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            throw new \Exception('No hay sublineas para eliminiar');
         }
     }
 
@@ -296,7 +321,7 @@ class Catalogos extends General {
         foreach ($data['modelosArea'] as $key => $value) {
             array_push($arrayIdsModelosArea, $value['IdModelo']);
         }
-        
+
         foreach ($modelos as $key => $value) {
             if (!in_array($value['Id'], $arrayIdsModelosArea)) {
                 $arrayModelo[$contador]['id'] = $value['Id'];
@@ -322,6 +347,53 @@ class Catalogos extends General {
         return $this->getModelosArea($datos);
     }
 
+    public function getModelosAreasSelectEliminar(array $datos) {
+        $data = array();
+        $arrayAreas = array();
+        $modelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $contador = 0;
+
+        if (!empty($modelosArea)) {
+            foreach ($modelosArea as $key => $value) {
+                $arrayAreas[$contador]['id'] = $value['Id'];
+                $arrayAreas[$contador]['text'] = $value['Area'];
+                $contador ++;
+            }
+
+            $data['areasAtencion'] = $arrayAreas;
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            throw new \Exception('No hay áreas de atención para eliminiar');
+        }
+    }
+
+    public function getModelosSelectEliminar(array $datos) {
+        $data = array();
+        $arrayModelo = array();
+        $modelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea']);
+        $contador = 0;
+
+        if (!empty($modelosArea)) {
+            foreach ($modelosArea as $key => $value) {
+                $arrayModelo[$contador]['id'] = $value['Id'];
+                $arrayModelo[$contador]['text'] = $value['Modelo'];
+                $contador ++;
+            }
+
+            $data['modelos'] = $arrayModelo;
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            throw new \Exception('No hay áreas de atención para eliminiar');
+        }
+    }
+
+    public function FlagModeloArea(array $datos) {
+        $this->catalogo->catModelosArea(2, $datos);
+        return $this->getModelosArea($datos);
+    }
+
     public function getUnidadesArea(array $datos) {
         $data = array();
         $unidadesArea = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
@@ -341,6 +413,44 @@ class Catalogos extends General {
             $data['areasAtencion'] = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
             return array('code' => 200, 'data' => $data);
         }
+    }
+
+    public function setUnidadesArea(array $datos) {
+        foreach ($datos['areas'] as $key => $value) {
+            $sublineaArea = $this->catalogo->catUnidadesNegocioArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . ' AND cvsa.Flag = 1');
+
+            if (!$sublineaArea) {
+                $this->catalogo->catUnidadesNegocioArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], 1));
+            }
+        }
+
+        return $this->getUnidadesArea($datos);
+    }
+
+    public function getUnidadesAreasSelectEliminar(array $datos) {
+        $data = array();
+        $arrayAreas = array();
+        $unidadesArea = $this->catalogo->catUnidadesNegocioArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $contador = 0;
+
+        if (!empty($unidadesArea)) {
+            foreach ($unidadesArea as $key => $value) {
+                $arrayAreas[$contador]['id'] = $value['Id'];
+                $arrayAreas[$contador]['text'] = $value['Area'];
+                $contador ++;
+            }
+
+            $data['areasAtencion'] = $arrayAreas;
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            throw new \Exception('No hay áreas de atención para eliminiar');
+        }
+    }
+
+    public function flagUnidadArea(array $datos) {
+        $this->catalogo->catUnidadesNegocioArea(2, $datos);
+        return $this->getUnidadesArea($datos);
     }
 
 }

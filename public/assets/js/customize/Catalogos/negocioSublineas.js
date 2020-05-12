@@ -13,6 +13,7 @@ $(function () {
     let tablaSublineas = new TablaBasica('data-table-sublineas');
     let tablaInfoSublineas = new TablaBasica('data-table-infoSublineas', [], true);
     let selectArea = new SelectBasico('selectArea');
+    let selectEliminarArea = new SelectBasico('selectEliminarArea');
     let selectSublineas = new SelectBasico('selectSublinea');
 
     evento.mostrarAyuda('Ayuda_Proyectos');
@@ -133,7 +134,7 @@ $(function () {
                 let txtSublinea = selectSublineas.obtenerTexto();
                 $("#selectSublinea").find(`option[value='${idSublinea}']`).remove();
                 selectSublineas.definirValor();
-                
+
                 tablaInfoSublineas.agregarDatosFila([
                     0,
                     idSublinea,
@@ -167,7 +168,7 @@ $(function () {
                     } else if (area != '') {
                         envioDatos.IdArea = area;
                     }
-                    
+
                     evento.enviarEvento('EventoCatalogoSublineasArea/SetSublineas', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
                         cargaTablaSublineas(respuesta.data);
                         $('#tablaInfoSublineas').addClass('hidden');
@@ -178,6 +179,64 @@ $(function () {
             }
         });
     }
+
+    $('#btnEliminarArea').on('click', function () {
+        $('#titleModal').text('Eliminar Área');
+        $('#labelEliminar').text('Área');
+        $('#btnAceptarEliminarArea').removeClass('hidden');
+        $('#btnAceptarEliminarSublinea').addClass('hidden');
+        evento.enviarEvento('EventoCatalogoSublineasArea/GetAreasSublineas', datosEnvioPrincipal, '#seccionUnidadesNegocio', function (respuesta) {
+            selectEliminarArea.cargaDatosEnSelect(respuesta.data.areasAtencion);
+        });
+    });
+
+    $('#btnEliminarSublinea').on('click', function () {
+        $('#titleModal').text('Eliminar Sublínea');
+        $('#labelEliminar').text('Sublínea');
+        $('#btnAceptarEliminarSublinea').removeClass('hidden');
+        $('#btnAceptarEliminarArea').addClass('hidden');
+        evento.enviarEvento('EventoCatalogoSublineasArea/GetSublineasSelectEliminar', datosEnvioSublineas, '#seccionUnidadesNegocio', function (respuesta) {
+            selectEliminarArea.cargaDatosEnSelect(respuesta.data.sublineas);
+        });
+    });
+
+    $('#btnAceptarEliminarArea').on('click', function () {
+        if (evento.validarFormulario('#formEliminarArea')) {
+            let datosEnvio = {
+                IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
+                IdArea: selectEliminarArea.obtenerValor(),
+                IdSublinea: selectEliminarArea.obtenerValor()
+            }
+            evento.enviarEvento('EventoCatalogoSublineasArea/FlagSublineaArea', datosEnvio, '#modalEliminarArea', function (respuesta) {
+                if (respuesta.code == 200) {
+                    cargaTablaSublineas(respuesta.data);
+                    $('#modalEliminarArea').modal('hide');
+                } else {
+                    evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude borrar la información, intentalo mas tarde.', 3000);
+                }
+            });
+        }
+    });
+
+    $('#btnAceptarEliminarSublinea').on('click', function () {
+        let datosEnvio = {
+            IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
+            IdArea: selectEliminarArea.obtenerValor()
+        }
+        if (evento.validarFormulario('#formEliminarArea')) {
+            evento.enviarEvento('EventoCatalogoSublineasArea/FlagSublineaArea', {}, '#modalEliminarArea', function (respuesta) {
+                selectEliminarArea.cargaDatosEnSelect(respuesta.data.areasAtencion);
+                if (respuesta.code == 200) {
+                    console.log(respuesta);
+                    cargaSelectSublinea(respuesta.data.sublineas);
+                    cargaTablaInfoSublinea(respuesta.data.sublineasArea);
+                    $('#modalEliminarArea').modal('hide');
+                } else {
+                    evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude borrar la información, intentalo mas tarde.', 3000);
+                }
+            });
+        }
+    });
 
     $('#btnRegresar').on('click', function () {
         switch (vista) {
