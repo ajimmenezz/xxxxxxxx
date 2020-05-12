@@ -32,7 +32,15 @@ class Controller_ModelosArea extends Base {
                 case 'SetModelos':
                     $resultado = $this->catologosPoliza->setModelos($this->input->post());
                     break;
-                
+                case 'GetModelosAreasSelectEliminar':
+                    $resultado = $this->catologosPoliza->getModelosAreasSelectEliminar($this->input->post());
+                    break;
+                case 'GetModelosSelectEliminar':
+                    $resultado = $this->catologosPoliza->getModelosSelectEliminar($this->input->post());
+                    break;
+                case 'FlagModeloArea':
+                    $resultado = $this->catologosPoliza->flagModeloArea($this->input->post());
+                    break;
             }
             echo json_encode($resultado);
         } catch (\Exception $exc) {

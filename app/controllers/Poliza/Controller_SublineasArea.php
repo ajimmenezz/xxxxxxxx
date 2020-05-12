@@ -33,10 +33,10 @@ class Controller_SublineasArea extends Base {
                     $resultado = $this->catologosPoliza->setSublineas($this->input->post());
                     break;
                 case 'GetAreasSublineas':
-                    $resultado = $this->catologosPoliza->GetAreasSublineas($this->input->post());
+                    $resultado = $this->catologosPoliza->getAreasSublineas($this->input->post());
                     break;
                 case 'GetSublineasSelectEliminar':
-                    $resultado = $this->catologosPoliza->GetSublineasSelectEliminar($this->input->post());
+                    $resultado = $this->catologosPoliza->getSublineasSelectEliminar($this->input->post());
                     break;
                 case 'FlagSublineaArea':
                     $resultado = $this->catologosPoliza->flagSublineaArea($this->input->post());
