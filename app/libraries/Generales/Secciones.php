@@ -600,9 +600,9 @@ class Secciones extends General {
                 $datos['equipos'] = $this->rehabilitacion->getAlmacenUsuario();
                 break;
             case 'Poliza/Unidades_Negocio':
-                $datos['ListaUnidadeNegocio'] = $this->Catalogo->CatUnidadesNegocio("3");
-                break;
             case 'Poliza/UnidadesNegocioSublineasArea':
+            case 'Poliza/UnidadesNegocioModelosArea':
+            case 'Poliza/UnidadesNegocioArea':
                 $datos['ListaUnidadeNegocio'] = $this->Catalogo->CatUnidadesNegocio("3");
                 break; 
             default:

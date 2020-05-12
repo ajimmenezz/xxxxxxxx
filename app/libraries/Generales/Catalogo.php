@@ -3616,7 +3616,6 @@ class Catalogo extends General {
                 break;
             //Actualiza en la tabla
             case '2':
-                //nombre de parametro para verificar que permiso no se repita
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_sublineas_x_area', array(
                     'Cantidad' => $datos[1]
@@ -3643,6 +3642,116 @@ class Catalogo extends General {
                                                         cat_v3_sublineas_x_area cvsa
                                                         INNER JOIN cat_v3_sublineas_equipo cvse
                                                         ON cvse.Id = cvsa.IdSublinea ' . $where);
+                break;
+            case '4':
+                $consulta = $this->DBC->actualizarArticulo(
+                        'cat_v3_sublineas_x_area', array(
+                    'Flag' => 0
+                        ), $datos
+                );
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocio('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public function catModelosArea(string $operacion, array $datos = null, string $where = null) {
+        switch ($operacion) {
+            //Inserta en la tabla
+            case '1':
+                $consulta = $this->DBC->setArticulo('cat_v3_modelos_x_area', array(
+                    'IdUnidadNegocio' => $datos[0],
+                    'IdArea' => $datos[1],
+                    'IdModelo' => $datos[2],
+                    'Flag' => '1'));
+                if (!empty($consulta)) {
+                    return $this->catModelosArea('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Actualiza en la tabla
+            case '2':
+                $consulta = $this->DBC->actualizarArticulo(
+                        'cat_v3_modelos_x_area', array(
+                        ), array('Id' => $datos[0])
+                );
+                if (!empty($consulta)) {
+                    return $this->catModelosArea('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Obtiene Informacion 
+            case '3';
+                return $this->DBC->getJuntarTablas('SELECT 
+                                                        Id,
+                                                        IdModelo,
+                                                        IdArea,
+                                                        areaAtencion(IdArea) AS Area,
+                                                        modelo(IdModelo) AS Modelo
+                                                    FROM
+                                                        cat_v3_modelos_x_area ' . $where);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public function catUnidadesNegocioArea(string $operacion, array $datos = null, string $where = null) {
+        switch ($operacion) {
+            //Inserta en la tabla
+            case '1':
+                $consulta = $this->DBC->setArticulo('cat_v3_areas_x_unidad', array(
+                    'IdUnidadNegocio' => $datos[0],
+                    'IdArea' => $datos[1],
+                    'Flag' => '1'));
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocioArea('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Actualiza en la tabla
+            case '2':
+                $consulta = $this->DBC->actualizarArticulo(
+                        'cat_v3_areas_x_unidad', array(
+                    'Cantidad' => $datos[1]
+                        ), array('Id' => $datos[0])
+                );
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocioArea('3');
+                } else {
+                    return FALSE;
+                }
+                break;
+            //Obtiene Informacion 
+            case '3';
+                return $this->DBC->getJuntarTablas('SELECT 
+                                                        Id,
+                                                        IdArea,
+                                                        areaAtencion(IdArea) AS Area,
+                                                        IdUnidadNegocio,
+                                                        (SELECT Nombre FROM cat_v3_unidades_negocio WHERE Id = IdUnidadNegocio) AS UnidadNegocio
+                                                    FROM
+                                                        cat_v3_areas_x_unidad ' . $where);
+                break;
+            case '4':
+                $consulta = $this->DBC->actualizarArticulo(
+                        'cat_v3_areas_x_unidad', array(
+                    'Flag' => 0
+                        ), $datos
+                );
+                if (!empty($consulta)) {
+                    return $this->catUnidadesNegocioArea('3');
+                } else {
+                    return FALSE;
+                }
                 break;
             default:
                 break;

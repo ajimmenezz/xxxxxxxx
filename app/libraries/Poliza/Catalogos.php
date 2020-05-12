@@ -127,7 +127,7 @@ class Catalogos extends General {
         }
 
         $data['sublineas'] = $arraySublinea;
-        $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion();
+
         $data['tabla'] = array();
 
         if (!empty($sublineasArea)) {
@@ -149,19 +149,32 @@ class Catalogos extends General {
                     'Sublineas' => implode('<br>', $arraySulineas),
                     'Cantidad' => implode('<br>', $arrayCantidad)));
             }
+
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+
             return array('code' => 200, 'data' => $data);
         } else {
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
             return array('code' => 200, 'data' => $data);
         }
     }
 
-    public function getCatalogoSelectAreaAtencion() {
+    public function getCatalogoSelectAreaAtencion(array $datos) {
+        $arrayIdsArea = array();
         $arrayAreaAtencion = array();
+        $contador = 0;
         $areasAtencion = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
 
+        foreach ($datos as $key => $value) {
+            array_push($arrayIdsArea, $value['IdArea']);
+        }
+
         foreach ($areasAtencion as $key => $value) {
-            $arrayAreaAtencion[$key]['id'] = $value['Id'];
-            $arrayAreaAtencion[$key]['text'] = $value['Nombre'];
+            if (!in_array($value['Id'], $arrayIdsArea)) {
+                $arrayAreaAtencion[$contador]['id'] = $value['Id'];
+                $arrayAreaAtencion[$contador]['text'] = $value['Nombre'];
+                $contador ++;
+            }
         }
 
         return $arrayAreaAtencion;
@@ -204,6 +217,130 @@ class Catalogos extends General {
         }
 
         return $this->getSublienasArea($datos);
+    }
+
+    public function getAreasSublineas(array $datos) {
+        $data = array();
+        $sublineasArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $data['tabla'] = array();
+
+        if (!empty($sublineasArea)) {
+            foreach ($sublineasArea as $key => $value) {
+                array_push($data['tabla'], array(
+                    'IdArea' => $value['IdArea'],
+                    'Area' => $value['Area']));
+            }
+
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            throw new \Exception('No hay áreas de atención para eliminiar');
+        }
+    }
+
+    public function flagSublineaArea(array $datos) {
+        $this->catalogo->catSublineasArea(4, $datos);
+        return $this->getSublienasArea($datos);
+    }
+
+    public function getModelosArea(array $datos) {
+        $data = array();
+        $arrayModelo = array();
+        $arrayModelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $modelos = $this->catalogo->catModelosEquipo(4);
+
+        foreach ($modelos as $key => $value) {
+            $arrayModelo[$key]['id'] = $value['Id'];
+            $arrayModelo[$key]['text'] = $value['Equipo'];
+        }
+
+        $data['modelos'] = $arrayModelo;
+
+        $data['tabla'] = array();
+
+        if (!empty($arrayModelosArea)) {
+            foreach ($arrayModelosArea as $key => $value) {
+                $arrayModelos = array();
+                $modelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . ' AND Flag = 1');
+
+                if (!empty($modelosArea)) {
+                    foreach ($modelosArea as $k => $v) {
+                        array_push($arrayModelos, $v['Modelo']);
+                    }
+                }
+
+                array_push($data['tabla'], array(
+                    'IdArea' => $value['IdArea'],
+                    'Area' => $value['Area'],
+                    'Modelos' => implode('<br>', $arrayModelos)));
+            }
+
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+            return array('code' => 200, 'data' => $data);
+        }
+    }
+
+    public function getModelos(array $datos) {
+        $data = array();
+        $arrayModelo = array();
+        $arrayIdsModelosArea = array();
+        $modelos = $this->catalogo->catModelosEquipo(4);
+        $contador = 0;
+        $data['modelosArea'] = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . ' AND Flag = 1');
+
+        foreach ($data['modelosArea'] as $key => $value) {
+            array_push($arrayIdsModelosArea, $value['IdModelo']);
+        }
+        
+        foreach ($modelos as $key => $value) {
+            if (!in_array($value['Id'], $arrayIdsModelosArea)) {
+                $arrayModelo[$contador]['id'] = $value['Id'];
+                $arrayModelo[$contador]['text'] = $value['Equipo'];
+                $contador ++;
+            }
+        }
+
+        $data['modelos'] = $arrayModelo;
+
+        return array('code' => 200, 'data' => $data);
+    }
+
+    public function setModelos(array $datos) {
+        foreach ($datos['modelos'] as $key => $value) {
+            $modeloArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . '  AND IdModelo = ' . $value['IdModelo'] . ' AND Flag = 1');
+
+            if (!$modeloArea) {
+                $this->catalogo->catModelosArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], $value['IdModelo'], 1));
+            }
+        }
+
+        return $this->getModelosArea($datos);
+    }
+
+    public function getUnidadesArea(array $datos) {
+        $data = array();
+        $unidadesArea = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' GROUP BY IdArea');
+        $data['tabla'] = array();
+
+        if (!empty($unidadesArea)) {
+            foreach ($unidadesArea as $key => $value) {
+                array_push($data['tabla'], array(
+                    'IdArea' => $value['IdArea'],
+                    'Area' => $value['Area']));
+            }
+
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+
+            return array('code' => 200, 'data' => $data);
+        } else {
+            $data['areasAtencion'] = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
+            return array('code' => 200, 'data' => $data);
+        }
     }
 
 }

@@ -2,7 +2,7 @@
 
 use Controladores\Controller_Base as Base;
 
-class Controller_SublineasArea extends Base {
+class Controller_UnidadesNegocioArea extends Base {
 
     private $catalogo;
     private $catologosPoliza;
@@ -23,20 +23,8 @@ class Controller_SublineasArea extends Base {
     public function manejarEvento(string $evento = null) {
         try {
             switch ($evento) {
-                case 'GetSublienasArea':
-                    $resultado = $this->catologosPoliza->getSublienasArea($this->input->post());
-                    break;
-                case 'GetSublineas':
-                    $resultado = $this->catologosPoliza->getSublineas($this->input->post());
-                    break;
-                case 'SetSublineas':
-                    $resultado = $this->catologosPoliza->setSublineas($this->input->post());
-                    break;
-                case 'GetAreasSublineas':
-                    $resultado = $this->catologosPoliza->GetAreasSublineas($this->input->post());
-                    break;
-                case 'FlagSublineaArea':
-                    $resultado = $this->catologosPoliza->flagSublineaArea($this->input->post());
+                case 'GetUnidadesArea':
+                    $resultado = $this->catologosPoliza->getUnidadesArea($this->input->post());
                     break;
             }
             echo json_encode($resultado);

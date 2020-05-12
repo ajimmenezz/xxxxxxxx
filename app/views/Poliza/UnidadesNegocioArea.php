@@ -1,10 +1,10 @@
 <!-- Empezando #contenido -->
 <div id="content" class="content">
     <!-- Empezando titulo de la pagina -->
-    <h1 class="page-header">Catálogo Sublineas por Área</h1>
+    <h1 class="page-header">Catálogo Unidades de Negocio por Área</h1>
     <!-- Finalizando titulo de la pagina -->
-    <!-- Empezando panel catálogo de Unidades de negocio -->
-    <div id="seccionUnidadesNegocio" class="panel panel-inverse">
+    <!-- Empezando panel catálogo de Unidades de negocio por area -->
+    <div id="seccionUnidadesNegocioArea" class="panel panel-inverse">
         <!--Empezando cabecera del panel-->
         <div class="panel-heading">
         </div>
@@ -12,12 +12,12 @@
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
 
-            <div id='listaUnidadesNegocio'>               
+            <div id='listaUnidadesNegocioArea'>               
 
                 <!--Empezando error--> 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="errorUnidadesNegocio"></div>
+                        <div class="errorUnidadesNegocioArea"></div>
                     </div>
                 </div>
                 <!--Finalizando Error-->
@@ -27,10 +27,10 @@
                         <div class="form-group">
                             <div class="row">
                                 <div id="titulo" class="col-md-6 col-xs-6">
-                                    <h3 class="m-t-10">Unidades de Negocio</h3>
+                                    <h3 class="m-t-10">Unidades de Negocio por Área</h3>
                                 </div>
                                 <div id="subtitulo" class="col-md-6 col-xs-6 hidden">
-                                    <h3 id="nombreUnidad" class="m-t-10"><h5 id="sublineaArea" class="m-t-10"></h5></h3>
+                                    <h3 id="nombreUnidadArea" class="m-t-10"><h5 id="unidadArea" class="m-t-10"></h5></h3>
                                 </div>
                                 <div class="col-md-6 col-xs-6">
                                     <div id="btnEvent" class="form-group text-right hidden">
@@ -51,9 +51,9 @@
                 </div>
 
                 <!--Empezando tabla  -->
-                <div id="tablaUnidades">
+                <div id="tablaUnidadesArea">
                     <div class="table-responsive">
-                        <table id="data-table-unidad-negocios" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <table id="data-table-unidad-negocios-area" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
                                     <th class="never">Id</th>
@@ -80,7 +80,7 @@
                 <!--Finalizando tabla-->
 
                 <!--Empezando tabla  -->
-                <div id="tablaSublineas" class="hidden">
+                <div id="tablaUnidadesNegocio" class="hidden">
                     <div class="col-md-12">
                         <div class="col-md-10"></div>
                         <div class="col-md-2">                    
@@ -92,7 +92,7 @@
                     </div>
                     <div class="col-md-12">
                         <div class="table-responsive">
-                            <table id="data-table-sublineas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                            <table id="data-table-unidad-negocio" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
                                         <th class="never">Id</th>

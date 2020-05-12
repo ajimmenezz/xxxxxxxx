@@ -1348,35 +1348,6 @@ $config['Catalogos Generales'] = array(
         ),
         'Permiso' => 'VCUN'
     ),
-    'Catalogo-Sublineas-Area' => array(
-        'liga' => 'Sublineas de Area',
-        'icono' => '',
-        'Url' => '/Poliza/UnidadesNegocioSublineasArea',
-        'css' => array(),
-        'pluginsCss' => array(
-            'DataTables/css/data-table',
-            'select2/dist/css/select2.min',
-            'parsley/src/parsley'
-        ),
-        
-        'js' => array(
-            'Base/Base', 
-            'Base/Socket',
-            'Componentes/Selects/ISelect',
-            'Componentes/Selects/SelectBasico', 
-            'Componentes/Tablas/ITabla', 
-            'Componentes/Tablas/TablaBasica', 
-            'Catalogos/negocioSublineas'),
-        'pluginsJs' => array(
-            'DataTables/js/jquery.dataTables',
-            'DataTables/js/dataTables.responsive',
-            'select2/dist/js/select2.min',
-            'parsley/dist/parsley',
-            'parsley/src/i18n/es',
-            'masked-input/masked-input.min'
-        ),
-        'Permiso' => 'VCUN'
-    ),
     'Catalogo-Sucursales' => array(
         'liga' => 'Sucursales',
         'icono' => '',
@@ -1425,6 +1396,86 @@ $config['Catalogos Generales'] = array(
             'parsley/src/i18n/es'
         ),
         'Permiso' => 'VCAA'
+    ),
+    'Catalogo-Unidades-Area' => array(
+        'liga' => 'Unidades Negocio de Área',
+        'icono' => '',
+        'Url' => '/Poliza/UnidadesNegocioArea',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array(
+            'Base/Base',
+            'Componentes/Selects/ISelect',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/ITabla',
+            'Componentes/Tablas/TablaBasica',
+            'Catalogos/negocioModelos'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
+        ),
+        'Permiso' => 'VCSA'
+    ),
+    'Catalogo-Modelos-Area' => array(
+        'liga' => 'Modelos de Area',
+        'icono' => '',
+        'Url' => '/Poliza/UnidadesNegocioModelosArea',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array(
+            'Base/Base',
+            'Componentes/Selects/ISelect',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/ITabla',
+            'Componentes/Tablas/TablaBasica',
+            'Catalogos/negocioModelos'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es'
+        ),
+        'Permiso' => 'VCSA'
+    ),
+    'Catalogo-Sublineas-Area' => array(
+        'liga' => 'Sublineas de Area',
+        'icono' => '',
+        'Url' => '/Poliza/UnidadesNegocioSublineasArea',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+            'parsley/src/parsley'
+        ),
+        'js' => array(
+            'Base/Base',
+            'Base/Socket',
+            'Componentes/Selects/ISelect',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Tablas/ITabla',
+            'Componentes/Tablas/TablaBasica',
+            'Catalogos/negocioSublineas'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'parsley/dist/parsley',
+            'parsley/src/i18n/es',
+            'masked-input/masked-input.min'
+        ),
+        'Permiso' => 'VCSA'
     ),
     'Catalogo-Areas' => array(
         'liga' => 'Áreas Siccob',
