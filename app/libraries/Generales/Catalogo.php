@@ -3690,15 +3690,13 @@ class Catalogo extends General {
             //Obtiene Informacion 
             case '3';
                 return $this->DBC->getJuntarTablas('SELECT 
-                                                        cvma.Id,
-                                                        cvma.IdModelo,
-                                                        cvma.IdArea,
-                                                        areaAtencion(cvma.IdArea) AS Area,
-                                                        cvme.Nombre AS Modelo
+                                                        Id,
+                                                        IdModelo,
+                                                        IdArea,
+                                                        areaAtencion(IdArea) AS Area,
+                                                        modelo(IdModelo) AS Modelo
                                                     FROM
-                                                        cat_v3_modelos_x_area cvma
-                                                        INNER JOIN cat_v3_modelos_equipo cvme
-                                                        ON cvme.Id = cvma.IdModelo ' . $where);
+                                                        cat_v3_modelos_x_area ' . $where);
                 break;
             default:
                 break;
