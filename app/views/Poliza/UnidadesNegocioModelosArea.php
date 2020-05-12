@@ -82,11 +82,17 @@
                 <!--Empezando tabla  -->
                 <div id="tablaModelos" class="hidden">
                     <div class="col-md-12">
-                        <div class="col-md-10"></div>
+                        <div class="col-md-8"></div>
                         <div class="col-md-2">                    
                             <div class="form-group text-right">
                                 <br>
                                 <a href="javascript:;" class="btn btn-success" id="agregarArea"><i class="fa fa-plus"></i> Agregar</a>
+                            </div>
+                        </div>
+                        <div class="col-md-2">                    
+                            <div class="form-group text-right">
+                                <br>
+                                <label id="btnEliminarArea" href="#modalEliminarArea" class="btn btn-danger bloqueoConclusionBtn" data-toggle="modal"><i class="fa fa-exclamation-triangle"></i> Eliminar</label>
                             </div>
                         </div>
                     </div>
@@ -134,7 +140,13 @@
                         <div class="col-md-2">                    
                             <div class="form-group text-right">
                                 <br>
-                                <a href="javascript:;" class="btn btn-success btn-lg " id="agregarModelo"><i class="fa fa-plus"></i> Agregar</a>
+                                <a href="javascript:;" class="btn btn-success" id="agregarModelo"><i class="fa fa-plus"></i> Agregar</a>
+                            </div>
+                        </div>
+                        <div class="col-md-2">                    
+                            <div class="form-group text-right">
+                                <br>
+                                <label id="btnEliminarSublinea" href="#modalEliminarArea" class="btn btn-danger bloqueoConclusionBtn" data-toggle="modal"><i class="fa fa-exclamation-triangle"></i> Eliminar</label>
                             </div>
                         </div>
                     </div>
@@ -166,4 +178,42 @@
         </div>
         <!-- Finalizando panel catálogo de unidades de negocio -->
     </div>
-    <!-- Finalizando #contenido -->
+</div>
+<!-- Finalizando #contenido -->
+
+<!--Empieza modal de reportar problemas-->
+<div id="modalEliminarArea" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 id="titleModal" class="modal-title"></h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <form id="formEliminarArea" data-parsley-validate="true" enctype="multipart/form-data">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label id="labelEliminar"></label>
+                                <select id="selectEliminarArea" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>   
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarEliminarArea" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnAceptarEliminarSublinea" class="btn btn-sm btn-success hidden"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCancelar" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finaliza modal de reportar problemas-->
