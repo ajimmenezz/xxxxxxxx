@@ -183,21 +183,8 @@ class Catalogos extends General {
         $data = array();
         $arraySublinea = array();
         $arrayIdsSublineasArea = array();
-        $sublineas = $this->catalogo->catConsultaGeneral('SELECT 
-                                                                cvse.*,
-                                                                    cvle.Nombre as Linea
-                                                            FROM
-                                                                cat_v3_sublineas_equipo cvse
-                                                                INNER JOIN cat_v3_lineas_equipo cvle
-                                                                ON cvle.Id = cvse.Linea
-                                                                INNER JOIN cat_v3_marcas_equipo cvme
-                                                                ON cvme.Sublinea = cvse.Id
-                                                                    INNER JOIN cat_v3_modelos_equipo cvmeq
-                                                                ON cvmeq.Marca = cvme.Id
-                                                                WHERE cvmeq.Id IN (SELECT IdModelo FROM cat_v3_modelos_x_area WHERE IdArea = ' . $datos['IdArea'] . ' AND IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ')
-                                                                GROUP BY cvse.Id');
+        $sublineas = $this->catalogo->catSublineasEquipo(3, array('Flag' => '1'));
         $contador = 0;
-
         $data['sublineasArea'] = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvsa.IdArea = ' . $datos['IdArea'] . ' AND cvsa.Flag = 1');
 
         foreach ($data['sublineasArea'] as $key => $value) {
@@ -206,9 +193,9 @@ class Catalogos extends General {
 
         if (!empty($sublineas)) {
             foreach ($sublineas as $key => $value) {
-                if (!in_array($value['Id'], $arrayIdsSublineasArea)) {
-                    $arraySublinea[$contador]['id'] = $value['Id'];
-                    $arraySublinea[$contador]['text'] = $value['Nombre'] . ' - ' . $value['Linea'];
+                if (!in_array($value['IdSub'], $arrayIdsSublineasArea)) {
+                    $arraySublinea[$contador]['id'] = $value['IdSub'];
+                    $arraySublinea[$contador]['text'] = $value['Sublinea'] . ' - ' . $value['Linea'];
                     $contador ++;
                 }
             }
