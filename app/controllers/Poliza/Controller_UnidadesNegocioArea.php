@@ -26,6 +26,15 @@ class Controller_UnidadesNegocioArea extends Base {
                 case 'GetUnidadesArea':
                     $resultado = $this->catologosPoliza->getUnidadesArea($this->input->post());
                     break;
+                case 'SetUnidadesArea':
+                    $resultado = $this->catologosPoliza->setUnidadesArea($this->input->post());
+                    break;
+                case 'GetUnidadesAreasSelectEliminar':
+                    $resultado = $this->catologosPoliza->getUnidadesAreasSelectEliminar($this->input->post());
+                    break;
+                case 'FlagUnidadArea':
+                    $resultado = $this->catologosPoliza->flagUnidadArea($this->input->post());
+                    break;
             }
             echo json_encode($resultado);
         } catch (\Exception $exc) {
