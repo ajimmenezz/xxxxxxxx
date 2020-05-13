@@ -45,18 +45,7 @@ $(function () {
                 value.Area
             ]);
         });
-        cargaDatosSelect(infoRespuesta.areasAtencion);
-    }
-
-    function cargaDatosSelect(areasAtencion) {
-        let arrayAtencion = [];
-        $.each(areasAtencion, function (key, value) {
-            arrayAtencion.push({
-                id: value.Id,
-                text: value.Nombre
-            })
-        });
-        selectArea.cargaDatosEnSelect(arrayAtencion);
+        selectArea.cargaDatosEnSelect(infoRespuesta.areasAtencion);
     }
 
     $('#agregarArea').off();
@@ -92,7 +81,6 @@ $(function () {
         }
 
         evento.enviarEvento('EventoCatalogoUnidadNegocioArea/SetUnidadesArea', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
-            console.log(respuesta);
             if (respuesta.code == 200) {
                 cargaTablaAreas(respuesta.data);
             } else {
@@ -104,7 +92,6 @@ $(function () {
 
     $('#btnEliminarArea').on('click', function () {
         evento.enviarEvento('EventoCatalogoUnidadNegocioArea/GetUnidadesAreasSelectEliminar', datosEnvioPrincipal, '#seccionUnidadesNegocio', function (respuesta) {
-            console.log(respuesta);
             selectEliminarArea.cargaDatosEnSelect(respuesta.data.areasAtencion);
         });
     });
