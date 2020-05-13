@@ -806,8 +806,8 @@ class Busqueda extends General {
         if($listaCenso){
             
             $this->contenidoCenso($listaCenso);
-            $this->EncabezadoDiferenciasConteos($detallesDiferenciaCenso['generales'], count($detallesDiferenciaCenso['ultimo']), count($detallesDiferenciaCenso['actual']), $detallesDiferenciaCenso['diferenciaSublineas']);
-            $this->diferenciasConteos($detallesDiferenciaCenso);
+            $this->EncabezadoDiferenciasConteos($detallesDiferenciaCenso['generales'], count($detallesDiferenciaCenso['ultimo']), count($detallesDiferenciaCenso['actual']), $detallesDiferenciaCenso['diferenciaAreas']);
+            $this->diferenciasConteos($detallesDiferenciaCenso, $detallesDiferenciaCenso['diferenciaAreas']);
             $this->faltantes($detallesDiferenciaCenso['diferenciasKit']['faltantes']);
             $this->sobrantes($detallesDiferenciaCenso['diferenciasKit']['sobrantes']);
 //            $this->diferenciasSeries($detallesDiferenciaCenso['diferenciasActual'], $detallesDiferenciaCenso['diferenciasUltimo'], $detallesDiferenciaCenso['generales']);
@@ -850,21 +850,45 @@ class Busqueda extends General {
             $this->Excel->setTableContent('A', 1, $listaCenso, true, $arrayAlign);
     }
     
-    public function EncabezadoDiferenciasConteos($informacionGeneralCenso, $ultimo, $actual, $diferenciaSublineas) {
+    public function totalesExcel($diferenciaAreas) {
+        $totales = [
+            'area' => 'TOTALES',
+            'puntos' => 0,
+            'debenExistir' => 0,
+            'censados' => 0,
+            'faltantes' => 0,
+            'sobrantes' => 0
+        ];
+        if (isset($diferenciaAreas) && count($diferenciaAreas) > 0) {
+            foreach ($diferenciaAreas as $k => $v) {
+                $totales['puntos'] += $v['Puntos'];
+                $totales['debenExistir'] += ($v['Puntos'] * $v['EquiposxPunto']);
+                $totales['censados'] += $v['TotalCensado'];
+                $totales['faltantes'] += $v['Faltantes'];
+                $totales['sobrantes'] += $v['Sobrantes'];
+            }
+        }
+        
+        return $totales;
+    }
+    
+    public function EncabezadoDiferenciasConteos($informacionGeneralCenso, $ultimo, $actual, $diferenciaAreas) {
+        $totales = $this->totalesExcel($diferenciaAreas);
         $this->Excel->createSheet('Diferencias(Conteos)', 1);
         $this->Excel->setActiveSheet(1);
         $this->Excel->setTableTitle('A1', 'J1', $informacionGeneralCenso["Sucursal"], ['center']);
-        $this->Excel->setTableTitle('A2', 'B2', 'Censo ' . $informacionGeneralCenso["FechaUltimo"], ['center']);
-        $this->Excel->setTableTitle('A3', 'B3', $ultimo, ['center']);
-        $this->Excel->setTableTitle('C2', 'D2', 'Censo ' . $informacionGeneralCenso["Fecha"], ['center']);
-        $this->Excel->setTableTitle('C3', 'D3', $actual, ['center']);
+        $this->Excel->setTableTitle('A2', 'B2', 'Total de Equipos censados');
+        $this->Excel->setTableTitle('A3', 'B3', $totales['censados'], ['center']);
+        $this->Excel->setTableTitle('C2', 'D2', 'Total de equipos que deben existir (basado en el estandar)');
+        $this->Excel->setTableTitle('C3', 'D3', $totales['debenExistir'], ['center']);
         $this->Excel->setTableTitle('E2', 'G2', 'Total Faltantes', ['center']);
-        $this->Excel->setTableTitle('E3', 'G3', isset($diferenciaSublineas['conteo']['faltantes']) ? '-' . $diferenciaSublineas['conteo']['faltantes'] : 0, ['center']);
+        $this->Excel->setTableTitle('E3', 'G3', $totales['faltantes'], ['center']);
         $this->Excel->setTableTitle('H2', 'J2', 'Total Sobrantes', ['center']);
-        $this->Excel->setTableTitle('H3', 'J3', isset($diferenciaSublineas['conteo']['sobrantes']) ? '+' . $diferenciaSublineas['conteo']['sobrantes'] : 0, ['center']);
+        $this->Excel->setTableTitle('H3', 'J3', $totales['sobrantes'], ['center']);
     }
     
-    public function diferenciasConteos($detallesGeneralesCenso) {
+    public function diferenciasConteos($detallesGeneralesCenso, $diferenciaAreas) {
+        $totales = $this->totalesExcel($diferenciaAreas);
         $this->Excel->setActiveSheet(1);
         $this->Excel->setTableTitle('A5', 'C5', 'Diferencia de Sublíneas');
 //        $this->Excel->setTableTitle('D5', 'E5', 'Diferencia de Puntos por Área');
@@ -919,6 +943,8 @@ class Busqueda extends General {
                 $listaSubLineas[$k]['sobrantes'] = $v["sobrantes"];
             }
         }
+        unset($listaSubLineas["conteo"]);
+        $listaSubLineas['Totales'] = array($totales['area'], $totales['faltantes'], $totales['sobrantes']);
         
 //        foreach ($detallesGeneralesCenso['diferenciaAreas'] as $k => $v) {
 //            if($v != 0){
@@ -943,13 +969,14 @@ class Busqueda extends General {
         foreach ($detallesGeneralesCenso['diferenciaAreas'] as $k => $v) {
             if($v != 0){
                 $listaEquiposArea[$k]['Area'] = $k;
-                $listaEquiposArea[$k]['EquiposxPunto'] = $v["EquiposxPunto"];
+                $listaEquiposArea[$k]['EquiposxPunto'] = $v["Puntos"];
                 $listaEquiposArea[$k]['TextoKit'] = $v['Puntos'] * $v['EquiposxPunto'];
                 $listaEquiposArea[$k]['TotalCensado'] = $v["TotalCensado"];
                 $listaEquiposArea[$k]['Faltantes'] = $v["Faltantes"];
                 $listaEquiposArea[$k]['Sobrantes'] = $v["Sobrantes"];
             }
         }
+        array_push($listaEquiposArea, $totales);
         
         if(count($listaSubLineas) > 0){
             $this->Excel->setTableContent('A', 6, $listaSubLineas, true, $arrayAlign);
