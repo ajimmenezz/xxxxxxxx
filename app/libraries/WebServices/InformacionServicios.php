@@ -2477,7 +2477,6 @@ class InformacionServicios extends General {
         $kitArea = $this->DBC->getKitAreas($unidadNegocio);
         $diferenciasKit = $this->getCensoDiferenciasKit($actual, $unidadNegocio);
 
-
         $datosDiferencias = [
             'conteo' => count($actual) - count($ultimo),
             'actual' => $actual,
@@ -2500,6 +2499,24 @@ class InformacionServicios extends General {
             'modelos' => $this->DBC->getFullDataModelos()
         ];
 
+        $totales = [
+            'puntos' => 0,
+            'debenExistir' => 0,
+            'censados' => 0,
+            'faltantes' => 0,
+            'sobrantes' => 0
+        ];
+
+        if (isset($datosDiferencias['diferenciaAreas']) && count($datosDiferencias['diferenciaAreas']) > 0) {
+            foreach ($datosDiferencias['diferenciaAreas'] as $k => $v) {
+                $totales['puntos'] += $v['Puntos'];
+                $totales['debenExistir'] += ($v['Puntos'] * $v['EquiposxPunto']);
+                $totales['censados'] += $v['TotalCensado'];
+                $totales['faltantes'] += $v['Faltantes'];
+                $totales['sobrantes'] += $v['Sobrantes'];
+            }
+        }
+
         $this->setCoordinates(10);
 
         $datos['FechaUltimo'] = $datosDiferencias['generales']['FechaUltimo'];
@@ -2508,6 +2525,7 @@ class InformacionServicios extends General {
         $datos['actual'] = $datosDiferencias['actual'];
         $datos['conteo'] = $datosDiferencias['conteo'];
         $datos['Sucursal'] = $datosDiferencias['generales']['Sucursal'];
+        $datos['Totales'] = $totales;
         $this->setResumenDiferencias($datos, $datosDiferencias['diferenciaSublineas']);
 //        $this->setDiferenciaPuntosArea($datos, $datosDiferencias['diferenciaAreas']);
 //        $this->setDiferenciaLineas($datos, $datosDiferencias['diferenciaLineas']);
@@ -2660,23 +2678,16 @@ class InformacionServicios extends General {
 
         $this->setCoordinates(10);
         $this->setStyleTitle();
-        $this->setCellValue(47, 5, "Censo " . $datos['FechaUltimo'], 'C', true);
+        $this->setCellValue(47, 5, "Total de Equipos censados", 'C', true);
         $this->setStyleTitle();
         $this->setCoordinates(57, $this->y - 5);
-        $this->setCellValue(47, 5, "Censo " . $datos['Fecha'], 'C', true);
+        $this->setCellValue(55, 5, "Total de equipos que deben existir", 'C', true);
         $this->setStyleTitle();
-        $this->setCoordinates(104, $this->y - 5);
-        $this->setCellValue(48, 5, 'TotalFaltantes', 'C', true);
+        $this->setCoordinates(112, $this->y - 5);
+        $this->setCellValue(44, 5, 'Total Faltantes', 'C', true);
         $this->setStyleTitle();
-        $this->setCoordinates(152, $this->y - 5);
-        $this->setCellValue(48, 5, 'TotalFaltantes', 'C', true);
-
-
-        if (isset($datosExtra['conteo']['faltantes'])) {
-            $signoFaltantes = '-';
-        } else {
-            $signoFaltantes = '';
-        }
+        $this->setCoordinates(156, $this->y - 5);
+        $this->setCellValue(44, 5, 'Total Sobrantes', 'C', true);
 
         if (isset($datosExtra['conteo']['sobrantes'])) {
             $signoSobrantes = '+';
@@ -2686,13 +2697,13 @@ class InformacionServicios extends General {
 
         $this->setCoordinates(10);
         $this->setStyleSubtitle();
-        $this->setCellValue(47, 5, count($datos['ultimo']), 'C');
+        $this->setCellValue(47, 5, $datos['Totales']['censados'], 'C');
         $this->setCoordinates(57, $this->y - 5);
-        $this->setCellValue(47, 5, count($datos['actual']), 'C');
-        $this->setCoordinates(104, $this->y - 5);
-        $this->setCellValue(48, 5, $signoFaltantes . $datosExtra['conteo']['faltantes'], 'C');
-        $this->setCoordinates(152, $this->y - 5);
-        $this->setCellValue(48, 5, $signoSobrantes . $datosExtra['conteo']['sobrantes'], 'C');
+        $this->setCellValue(55, 5, $datos['Totales']['debenExistir'], 'C');
+        $this->setCoordinates(112, $this->y - 5);
+        $this->setCellValue(44, 5, $datos['Totales']['faltantes'], 'C');
+        $this->setCoordinates(156, $this->y - 5);
+        $this->setCellValue(44, 5, $signoSobrantes . $datosExtra['conteo']['sobrantes'], 'C');
     }
 
     private function setDiferenciaPuntosArea(array $datos, array $datosExtra) {
@@ -2826,27 +2837,40 @@ class InformacionServicios extends General {
             }
         }
 
+
+
         if (!$contador) {
             $this->setStyleHeader();
             $this->setHeaderValue("No existen registros de diferencia de Sublíneas");
         } else {
             $this->setHeadersDiferenciaSublineas();
-
+            ksort($datosExtra);
+            
             foreach ($datosExtra as $key => $value) {
                 if ($value !== 0) {
-                    $this->setCoordinates(10);
-                    $this->setStyleSubtitle();
-                    $this->setCellValue(100, 5, $key, 'L');
-                    $this->setCoordinates(110, $this->y - 5);
-                    $this->setCellValue(45, 5, $value['faltantes'], 'C');
-                    $this->setCoordinates(155, $this->y - 5);
-                    $this->setCellValue(45, 5, $value['sobrantes'], 'C');
-                    if (($this->y + 5) > 270) {
-                        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-                        $this->setHeadersDiferenciaSublineas();
+                    if ($key !== 'conteo') {
+                        $this->setCoordinates(10);
+                        $this->setStyleSubtitle();
+                        $this->setCellValue(100, 5, $key, 'L');
+                        $this->setCoordinates(110, $this->y - 5);
+                        $this->setCellValue(45, 5, $value['faltantes'], 'C');
+                        $this->setCoordinates(155, $this->y - 5);
+                        $this->setCellValue(45, 5, $value['sobrantes'], 'C');
+                        if (($this->y + 5) > 270) {
+                            $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                            $this->setHeadersDiferenciaSublineas();
+                        }
                     }
                 }
             }
+
+            $this->setCoordinates(10);
+            $this->setStyleSubtitle();
+            $this->setCellValue(100, 5, 'TOTALES', 'L');
+            $this->setCoordinates(110, $this->y - 5);
+            $this->setCellValue(45, 5, $datos['Totales']['faltantes'], 'C');
+            $this->setCoordinates(155, $this->y - 5);
+            $this->setCellValue(45, 5, $datos['Totales']['sobrantes'], 'C');
         }
     }
 
@@ -2890,12 +2914,13 @@ class InformacionServicios extends General {
             }
         }
 
+
         if (!$contador) {
             $this->setStyleHeader();
             $this->setHeaderValue("No existen registros de diferencia de Sublíneas");
         } else {
             $this->setHeadersDiferenciaAreas();
-
+            ksort($datosExtra);
             foreach ($datosExtra as $key => $value) {
                 $this->setCoordinates(10);
                 $this->setStyleSubtitle();
@@ -2915,6 +2940,20 @@ class InformacionServicios extends General {
                     $this->setHeadersDiferenciaSublineas();
                 }
             }
+
+            $this->setCoordinates(10);
+            $this->setStyleSubtitle();
+            $this->setCellValue(45, 5, 'TOTALES', 'L');
+            $this->setCoordinates(55, $this->y - 5);
+            $this->setCellValue(30, 5, $datos['Totales']['puntos'], 'C');
+            $this->setCoordinates(85, $this->y - 5);
+            $this->setCellValue(45, 5, $datos['Totales']['debenExistir'], 'C');
+            $this->setCoordinates(130, $this->y - 5);
+            $this->setCellValue(30, 5, $datos['Totales']['censados'], 'C');
+            $this->setCoordinates(160, $this->y - 5);
+            $this->setCellValue(20, 5, $datos['Totales']['faltantes'], 'C');
+            $this->setCoordinates(180, $this->y - 5);
+            $this->setCellValue(20, 5, $datos['Totales']['sobrantes'], 'C');
         }
     }
 
