@@ -406,7 +406,7 @@ class Catalogos extends General {
 
     public function getUnidadesArea(array $datos) {
         $data = array();
-        $unidadesArea = $this->catalogo->catSublineasArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND Flag = 1 GROUP BY IdArea');
+        $unidadesArea = $this->catalogo->catUnidadesNegocioArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND Flag = 1 GROUP BY IdArea');
         $data['tabla'] = array();
 
         if (!empty($unidadesArea)) {
