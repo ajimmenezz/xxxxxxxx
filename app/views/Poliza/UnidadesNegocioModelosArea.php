@@ -146,7 +146,7 @@
                         <div class="col-md-2">                    
                             <div class="form-group text-right">
                                 <br>
-                                <label id="btnEliminarSublinea" href="#modalEliminarArea" class="btn btn-danger bloqueoConclusionBtn" data-toggle="modal"><i class="fa fa-exclamation-triangle"></i> Eliminar</label>
+                                <label id="btnEliminarModelo" href="#modalEliminarArea" class="btn btn-danger bloqueoConclusionBtn" data-toggle="modal"><i class="fa fa-exclamation-triangle"></i> Eliminar</label>
                             </div>
                         </div>
                     </div>
@@ -209,7 +209,7 @@
             <!--Empieza pie del modal-->
             <div class="modal-footer text-center">
                 <a id="btnAceptarEliminarArea" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
-                <a id="btnAceptarEliminarSublinea" class="btn btn-sm btn-success hidden"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnAceptarEliminarModelo" class="btn btn-sm btn-success hidden"><i class="fa fa-check"></i> Aceptar</a>
                 <a id="btnCancelar" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
             </div>
             <!--Finaliza pie del modal-->

@@ -204,8 +204,7 @@ $(function () {
         if (evento.validarFormulario('#formEliminarArea')) {
             let datosEnvio = {
                 IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
-                IdArea: selectEliminarArea.obtenerValor(),
-                IdSublinea: selectEliminarArea.obtenerValor()
+                IdArea: selectEliminarArea.obtenerValor()
             }
             evento.enviarEvento('EventoCatalogoSublineasArea/FlagSublineaArea', datosEnvio, '#modalEliminarArea', function (respuesta) {
                 if (respuesta.code == 200) {
@@ -221,13 +220,12 @@ $(function () {
     $('#btnAceptarEliminarSublinea').on('click', function () {
         let datosEnvio = {
             IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
-            IdArea: selectEliminarArea.obtenerValor()
+            IdArea: datosEnvioSublineas.IdArea,
+            IdSublinea: selectEliminarArea.obtenerValor()
         }
         if (evento.validarFormulario('#formEliminarArea')) {
-            evento.enviarEvento('EventoCatalogoSublineasArea/FlagSublineaArea', {}, '#modalEliminarArea', function (respuesta) {
-                selectEliminarArea.cargaDatosEnSelect(respuesta.data.areasAtencion);
+            evento.enviarEvento('EventoCatalogoSublineasArea/FlagSublineaArea', datosEnvio, '#modalEliminarArea', function (respuesta) {
                 if (respuesta.code == 200) {
-                    console.log(respuesta);
                     cargaSelectSublinea(respuesta.data.sublineas);
                     cargaTablaInfoSublinea(respuesta.data.sublineasArea);
                     $('#modalEliminarArea').modal('hide');

@@ -373,10 +373,10 @@ class Catalogos extends General {
         $arrayModelo = array();
         $modelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea']);
         $contador = 0;
-
+        
         if (!empty($modelosArea)) {
             foreach ($modelosArea as $key => $value) {
-                $arrayModelo[$contador]['id'] = $value['Id'];
+                $arrayModelo[$contador]['id'] = $value['IdModelo'];
                 $arrayModelo[$contador]['text'] = $value['Modelo'];
                 $contador ++;
             }
