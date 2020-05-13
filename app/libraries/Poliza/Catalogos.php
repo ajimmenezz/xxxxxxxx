@@ -451,7 +451,7 @@ class Catalogos extends General {
 
         if (!empty($unidadesArea)) {
             foreach ($unidadesArea as $key => $value) {
-                $arrayAreas[$contador]['id'] = $value['Id'];
+                $arrayAreas[$contador]['id'] = $value['IdArea'];
                 $arrayAreas[$contador]['text'] = $value['Area'];
                 $contador ++;
             }
