@@ -1421,7 +1421,7 @@ $config['Catalogos Generales'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
         ),
-        'Permiso' => 'VCSA'
+        'Permiso' => 'VCUNA'
     ),
     'Catalogo-Modelos-Area' => array(
         'liga' => 'Modelos de Area',
@@ -1447,7 +1447,7 @@ $config['Catalogos Generales'] = array(
             'parsley/dist/parsley',
             'parsley/src/i18n/es'
         ),
-        'Permiso' => 'VCSA'
+        'Permiso' => 'VCMA'
     ),
     'Catalogo-Sublineas-Area' => array(
         'liga' => 'Sublineas de Area',
