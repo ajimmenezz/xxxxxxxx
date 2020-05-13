@@ -1413,7 +1413,7 @@ $config['Catalogos Generales'] = array(
             'Componentes/Selects/SelectBasico',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
-            'Catalogos/negocioModelos'),
+            'Catalogos/negocioAreas'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',

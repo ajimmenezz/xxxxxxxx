@@ -203,7 +203,6 @@ $(function () {
                 IdArea: selectEliminarArea.obtenerValor()
             }
             evento.enviarEvento('EventoCatalogoModelosArea/FlagModeloArea', datosEnvio, '#modalEliminarArea', function (respuesta) {
-                console.log(respuesta);
                 if (respuesta.code == 200) {
                     cargaTablaModelos(respuesta.data);
                     $('#modalEliminarArea').modal('hide');
@@ -224,13 +223,8 @@ $(function () {
             evento.enviarEvento('EventoCatalogoModelosArea/FlagModeloArea', datosEnvio, '#modalEliminarArea', function (respuesta) {
                 if (respuesta.code == 200) {
                     cargaSelectModelo(respuesta.data.modelos);
-                    cargaTablaModelos(respuesta.data);
                     $('#modalEliminarArea').modal('hide');
-                    $('#tablaModelos').removeClass('hidden');
-                    $('#tablaInfoModelos').addClass('hidden');
-                    $('#modeloArea').text(" ");
-                    $('#addAreaAtencion').addClass('hidden');
-                    tablaInfoModelos.limpiartabla();
+                    cargaTablaInfoModelo(respuesta.data.modelosArea);
                 } else {
                     evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude borrar la información, intentalo mas tarde.', 3000);
                 }

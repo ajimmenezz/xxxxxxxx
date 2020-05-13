@@ -105,6 +105,7 @@ $route['Poliza/Seguimiento/Servicio/validarServicio'] = 'V2/Controller_ServicioT
 $route['Poliza/Seguimiento/Servicio/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
 $route['Poliza/Seguimiento/Servicio/Seguimiento'] = 'V2/Controller_ServicioTicket/seguimientoServicio';
 $route['Poliza/EventoCatalogoUnidadNegocio/(:any)'] = 'Poliza/Controller_UnidadesNegocio/manejarEvento/$1';
+$route['Poliza/EventoCatalogoUnidadNegocioArea/(:any)'] = 'Poliza/Controller_UnidadesNegocioArea/manejarEvento/$1';
 $route['Poliza/EventoCatalogoSublineasArea/(:any)'] = 'Poliza/Controller_SublineasArea/manejarEvento/$1';
 $route['Poliza/EventoCatalogoModelosArea/(:any)'] = 'Poliza/Controller_ModelosArea/manejarEvento/$1';
 

@@ -1,10 +1,10 @@
 <!-- Empezando #contenido -->
 <div id="content" class="content">
     <!-- Empezando titulo de la pagina -->
-    <h1 class="page-header">Catálogo Unidades de Negocio por Área</h1>
+    <h1 class="page-header">Catálogo Area por unidad de negocio</h1>
     <!-- Finalizando titulo de la pagina -->
-    <!-- Empezando panel catálogo de Unidades de negocio por area -->
-    <div id="seccionUnidadesNegocioArea" class="panel panel-inverse">
+    <!-- Empezando panel catálogo de Unidades de negocio -->
+    <div id="seccionUnidadesNegocio" class="panel panel-inverse">
         <!--Empezando cabecera del panel-->
         <div class="panel-heading">
         </div>
@@ -12,12 +12,12 @@
         <!--Empezando cuerpo del panel-->
         <div class="panel-body">
 
-            <div id='listaUnidadesNegocioArea'>               
+            <div id='listaUnidadesNegocio'>               
 
                 <!--Empezando error--> 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="errorUnidadesNegocioArea"></div>
+                        <div class="errorUnidadesNegocio"></div>
                     </div>
                 </div>
                 <!--Finalizando Error-->
@@ -27,10 +27,10 @@
                         <div class="form-group">
                             <div class="row">
                                 <div id="titulo" class="col-md-6 col-xs-6">
-                                    <h3 class="m-t-10">Unidades de Negocio por Área</h3>
+                                    <h3 class="m-t-10">Unidades de Negocio</h3>
                                 </div>
                                 <div id="subtitulo" class="col-md-6 col-xs-6 hidden">
-                                    <h3 id="nombreUnidadArea" class="m-t-10"><h5 id="unidadArea" class="m-t-10"></h5></h3>
+                                    <h3 id="nombreUnidad" class="m-t-10"></h3>
                                 </div>
                                 <div class="col-md-6 col-xs-6">
                                     <div id="btnEvent" class="form-group text-right hidden">
@@ -51,9 +51,9 @@
                 </div>
 
                 <!--Empezando tabla  -->
-                <div id="tablaUnidadesArea">
+                <div id="tablaUnidades">
                     <div class="table-responsive">
-                        <table id="data-table-unidad-negocios-area" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <table id="data-table-unidad-negocios" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
                                     <th class="never">Id</th>
@@ -80,52 +80,14 @@
                 <!--Finalizando tabla-->
 
                 <!--Empezando tabla  -->
-                <div id="tablaUnidadesNegocio" class="hidden">
+                <div id="tablaAreas" class="hidden">
                     <div class="col-md-12">
-                        <div class="col-md-10"></div>
-                        <div class="col-md-2">                    
-                            <div class="form-group text-right">
-                                <br>
-                                <a href="javascript:;" class="btn btn-success" id="agregarArea"><i class="fa fa-plus"></i> Agregar</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table id="data-table-unidad-negocio" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th class="never">Id</th>
-                                        <th class="all">Area de Atención</th>
-                                        <th class="all">Sublinea</th>
-                                        <th class="all">Cantidad</th>
-                                    </tr>
-                                </thead>
-                                <tbody>                                     
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <!--Finalizando tabla-->
-
-                <!--Empezando tabla  -->
-                <div id="tablaInfoSublineas"  class="hidden">
-                    <div class="col-md-12">                    
                         <div class="col-md-8">
-                            <form id="formAgregarSublinea" data-parsley-validate="true" enctype="multipart/form-data">
-                                <div id="addAreaAtencion" class="col-md-6 hidden">
+                            <form id="formAgregarAreas" data-parsley-validate="true" enctype="multipart/form-data">
+                                <div id="addAreaAtencion" class="col-md-6">
                                     <div class="form-group">
                                         <label>Area de Atención</label>
                                         <select id="selectArea" class="form-control" style="width: 100%">
-                                            <option value="">Seleccionar</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Sublinea</label>
-                                        <select id="selectSublinea" class="form-control" style="width: 100%" data-parsley-required="true">
                                             <option value="">Seleccionar</option>
                                         </select>
                                     </div>
@@ -135,30 +97,32 @@
                         <div class="col-md-2">                    
                             <div class="form-group text-right">
                                 <br>
-                                <a href="javascript:;" class="btn btn-success btn-lg " id="agregarSublinea"><i class="fa fa-plus"></i> Agregar</a>
+                                <a href="javascript:;" class="btn btn-success" id="agregarArea"><i class="fa fa-plus"></i> Agregar</a>
+                            </div>
+                        </div>
+                        <div class="col-md-2">                    
+                            <div class="form-group text-right">
+                                <br>
+                                <label id="btnEliminarArea" href="#modalEliminarArea" class="btn btn-danger bloqueoConclusionBtn" data-toggle="modal"><i class="fa fa-exclamation-triangle"></i> Eliminar</label>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <form id="formTable" data-parsley-validate="true" enctype="multipart/form-data">
-                            <div class="table-responsive">
-                                <table id="data-table-infoSublineas" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th class="never">Id</th>
-                                            <th class="never">IdSublinea</th>
-                                            <th class="all">Sublinea</th>
-                                            <th class="all">Cantidad</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>                                      
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
+                        <div class="table-responsive">
+                            <table id="data-table-area" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="never">Id</th>
+                                        <th class="all">Area de Atención</th>
+                                    </tr>
+                                </thead>
+                                <tbody>                                     
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="col-md-4 col-md-offset-5 col-sm-offset-4">
-                        <a href="javascript:;" class="btn btn-success btn-lg " id="guardarSublinea">Guardar</a>
+                        <a href="javascript:;" class="btn btn-success btn-lg " id="guardarArea">Guardar</a>
                     </div>
                 </div>
                 <!--Finalizando tabla-->
@@ -168,4 +132,41 @@
         </div>
         <!-- Finalizando panel catálogo de unidades de negocio -->
     </div>
-    <!-- Finalizando #contenido -->
+</div>
+<!-- Finalizando #contenido -->
+
+<!--Empieza modal de reportar problemas-->
+<div id="modalEliminarArea" class="modal modal-message fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Empieza titulo del modal-->
+            <div class="modal-header" style="text-align: center">
+                <h4 class="modal-title">Eliminar Área</h4>
+            </div>
+            <!--Finaliza titulo del modal-->
+            <!--Empieza cuerpo del modal-->
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <form id="formEliminarArea" data-parsley-validate="true" enctype="multipart/form-data">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label id="labelEliminar"></label>
+                                <select id="selectEliminarArea" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>   
+            </div>
+            <!--Finaliza cuerpo del modal-->
+            <!--Empieza pie del modal-->
+            <div class="modal-footer text-center">
+                <a id="btnAceptarEliminarArea" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Aceptar</a>
+                <a id="btnCancelar" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</a>
+            </div>
+            <!--Finaliza pie del modal-->
+        </div>
+    </div>
+</div>
+<!--Finaliza modal de reportar problemas-->
