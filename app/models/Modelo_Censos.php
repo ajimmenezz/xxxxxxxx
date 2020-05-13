@@ -972,7 +972,7 @@ class Modelo_Censos extends Modelo_Base
             select
             IdSucursal
             from t_servicios_ticket 
-            where Id = 56216
+            where Id = '" . $servicio . "'
         )")[0]['IdUnidadNegocio'];
     }
 
@@ -987,7 +987,7 @@ class Modelo_Censos extends Modelo_Base
         sublinea(csa.IdSublinea) as Sublinea,
         csa.Cantidad
         from cat_v3_sublineas_x_area csa
-        where csa.IdUnidadNegocio = 2
+        where csa.IdUnidadNegocio = '".$unidadNegocio."'
         and Flag = 1");
 
         $arrayReturn = [];
