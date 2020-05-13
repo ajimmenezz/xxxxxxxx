@@ -6282,6 +6282,10 @@ class Seguimientos extends General
         ];
     }
 
+    private function getMissingDevicesPossibleTickets($servicio, $faltantes){
+        
+    }
+
     private function getCensoDiferenciasAreasKit($actual, $diferenciasKit, $kitAreas)
     {
         $arrayReturn = [];
@@ -6319,6 +6323,7 @@ class Seguimientos extends General
             }
         }
 
+        ksort($arrayReturn);
         return $arrayReturn;
     }
 
@@ -6405,6 +6410,7 @@ class Seguimientos extends General
             'sobrantes' => $sobrantes
         ];
 
+        ksort($arrayReturn);
         return $arrayReturn;
     }
 
@@ -6482,7 +6488,6 @@ class Seguimientos extends General
                 }
             }
         }
-
         return ['sobrantes' => $inventarioXPunto, 'faltantes' => $faltantes];
     }
 

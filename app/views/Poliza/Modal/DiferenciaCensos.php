@@ -1,3 +1,22 @@
+<?php
+$totales = [
+    'puntos' => 0,
+    'debenExistir' => 0,
+    'censados' => 0,
+    'faltantes' => 0,
+    'sobrantes' => 0
+];
+if (isset($diferenciaAreas) && count($diferenciaAreas) > 0) {
+    foreach ($diferenciaAreas as $k => $v) {
+        $totales['puntos'] += $v['Puntos'];
+        $totales['debenExistir'] += ($v['Puntos'] * $v['EquiposxPunto']);
+        $totales['censados'] += $v['TotalCensado'];
+        $totales['faltantes'] += $v['Faltantes'];
+        $totales['sobrantes'] += $v['Sobrantes'];
+    }
+}
+?>
+
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
         <table class="table table-bordered">
@@ -6,18 +25,18 @@
                     <th class="f-s-15 f-w-600 text-center" colspan="4"><?php echo $generales['Sucursal']; ?></th>
                 </tr>
                 <tr>
-                    <th class="f-s-15 f-w-600 text-center">Censo<br /><?php echo $generales['FechaUltimo']; ?></th>
-                    <th class="f-s-15 f-w-600 text-center">Censo<br /><?php echo $generales['Fecha']; ?></th>
+                    <th class="f-s-15 f-w-600 text-center">Total de<br />Equipos censados</th>
+                    <th class="f-s-15 f-w-600 text-center">Total de equipos que deben existir<br />(basado en el estandar)</th>
                     <th class="f-s-15 f-w-600 text-center">Total <br />Faltantes</th>
                     <th class="f-s-15 f-w-600 text-center">Total <br />Sobrantes</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="f-s-15 f-w-600 text-center"><?php echo count($ultimo); ?></td>
-                    <td class="f-s-15 f-w-600 text-center"><?php echo count($actual); ?></td>
-                    <td class="f-s-15 f-w-600 text-center"><label class="f-s-15 f-w-600 text-danger"><?php echo isset($diferenciaSublineas['conteo']['faltantes']) ? '-' . $diferenciaSublineas['conteo']['faltantes'] : 0; ?></label></td>
-                    <td class="f-s-15 f-w-600 text-center"><label class="f-s-15 f-w-600 text-success"><?php echo isset($diferenciaSublineas['conteo']['sobrantes']) ? '+' . $diferenciaSublineas['conteo']['sobrantes'] : 0; ?></label></td>
+                    <td class="f-s-15 f-w-600 text-center"><?php echo $totales['censados']; ?></td>
+                    <td class="f-s-15 f-w-600 text-center"><?php echo $totales['debenExistir']; ?></td>
+                    <td class="f-s-15 f-w-600 text-center"><label class="f-s-15 f-w-600 text-danger"><?php echo $totales['faltantes']; ?></label></td>
+                    <td class="f-s-15 f-w-600 text-center"><label class="f-s-15 f-w-600 text-success">+<?php echo $totales['sobrantes']; ?></label></td>
                 </tr>
             </tbody>
         </table>
@@ -131,6 +150,20 @@
                                 }
                                 ?>
                             </tbody>
+                            <tfoot>
+                                <?php
+                                echo '
+                                    <tr>
+                                        <th class="f-s-15 f-w-600 text-center">TOTALES</th>
+                                        <th class="f-s-15 f-w-600 text-center">' . $totales['puntos'] . '</th>
+                                        <th class="f-s-15 f-w-600 text-center">' . $totales['debenExistir'] . '</th>
+                                        <th class="f-s-15 f-w-600 text-center">' . $totales['censados'] . '</th>
+                                        <th class="f-s-15 f-w-600 text-center">' . $totales['faltantes'] . '</th>
+                                        <th class="f-s-15 f-w-600 text-center">' . $totales['sobrantes'] . '</th>
+                                    </tr>
+                                ';
+                                ?>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -264,6 +297,17 @@
                                 }
                                 ?>
                             </tbody>
+                            <tfoot>
+                                <?php
+                                echo '
+                                    <tr>
+                                        <th class="f-s-15 f-w-600 text-center">TOTALES</th>
+                                        <th class="f-s-15 f-w-600 text-center">' . $totales['faltantes'] . '</th>
+                                        <th class="f-s-15 f-w-600 text-center">' . $totales['sobrantes'] . '</th>
+                                    </tr>
+                                ';
+                                ?>
+                            </tfoot>
                         </table>
                     </div>
                     <!-- <div class="col-md-4 col-sm-4 col-xs-12">
