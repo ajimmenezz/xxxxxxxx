@@ -125,6 +125,24 @@ $(function () {
             });
         }
 
+        selectArea.evento('change', function () {
+            let datosEnvio = {
+                IdUnidadNegocio: datosEnvioPrincipal.IdUnidadNegocio,
+                IdArea:selectArea.obtenerValor()
+            }
+            evento.enviarEvento('EventoCatalogoModelosArea/GetModelos', datosEnvio, '#seccionUnidadesNegocio', function (respuesta) {
+                if (respuesta.code == 200) {
+                    selectModelos.cargaDatosEnSelect(respuesta.data.modelos);
+                } else {
+                    evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude obtener los modelos del Área', 3000);
+                }
+            });
+        });
+
+        selectModelos.evento('change', function () {
+            selectArea.bloquearElemento();
+        });
+
         $('#agregarModelo').off();
         $('#agregarModelo').on('click', function () {
             if (evento.validarFormulario('#formAgregarModelos')) {
@@ -166,8 +184,13 @@ $(function () {
                     }
 
                     evento.enviarEvento('EventoCatalogoModelosArea/SetModelos', envioDatos, '#seccionUnidadesNegocio', function (respuesta) {
-                        cargaTablaModelos(respuesta.data);
-                        $('#tablaInfoModelos').addClass('hidden');
+                        if (respuesta.code == 200) {
+                            cargaTablaModelos(respuesta.data);
+                            $('#tablaInfoModelos').addClass('hidden');
+                            selectArea.habilitarElemento();
+                        } else {
+                            evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude guardar la información, intentalo mas tarde.', 3000);
+                        }
                     });
                 } else {
                     evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No hay Area.', 3000);

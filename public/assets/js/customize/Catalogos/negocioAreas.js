@@ -103,7 +103,6 @@ $(function () {
                 IdArea: selectEliminarArea.obtenerValor()
             }
             evento.enviarEvento('EventoCatalogoUnidadNegocioArea/FlagUnidadArea', datosEnvio, '#modalEliminarArea', function (respuesta) {
-                console.log(respuesta);
                 if (respuesta.code == 200) {
                     cargaTablaAreas(respuesta.data);
                     $('#modalEliminarArea').modal('hide');
