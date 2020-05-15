@@ -318,6 +318,10 @@ class Catalogos extends General {
 
             return array('code' => 200, 'data' => $data);
         } else {
+            if(empty($areasAtencion)){
+                throw new \Exception('No hay áreas de atención para esta unidad de negocio');
+            }
+            
             $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla'], $areasAtencion);
             return array('code' => 200, 'data' => $data);
         }
@@ -331,6 +335,10 @@ class Catalogos extends General {
         $contador = 0;
         $data['modelosArea'] = $this->catalogo->catModelosArea(3, [], 'AND cvmxa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvmxa.IdArea = ' . $datos['IdArea'] . ' AND cvmxa.Flag = 1');
 
+        if(empty($data['modelosArea'])){
+            throw new \Exception('No existen modelos para esa área de atención');
+        }
+        
         foreach ($data['modelosArea'] as $key => $value) {
             array_push($arrayIdsModelosArea, $value['IdModelo']);
         }
