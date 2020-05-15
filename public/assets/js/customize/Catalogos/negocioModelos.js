@@ -35,7 +35,7 @@ $(function () {
                 vista = 1;
                 cargaTablaModelos(respuesta.data);
             } else {
-                evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude cargar la información, intentalo mas tarde.', 3000);
+                evento.mostrarMensaje('.errorUnidadesNegocio', false, respuesta.message, 3000);
             }
         });
     });
@@ -134,7 +134,7 @@ $(function () {
                 if (respuesta.code == 200) {
                     selectModelos.cargaDatosEnSelect(respuesta.data.modelos);
                 } else {
-                    evento.mostrarMensaje('.errorUnidadesNegocio', false, 'No se pude obtener los modelos del Área', 3000);
+                    evento.mostrarMensaje('.errorUnidadesNegocio', false, respuesta.message, 3000);
                 }
             });
         });
