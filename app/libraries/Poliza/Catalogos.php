@@ -120,6 +120,7 @@ class Catalogos extends General {
         $data = array();
         $sublineasArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvsa.Flag = 1 GROUP BY IdArea');
         $sublineas = $this->catalogo->catSublineasEquipo(3, array('Flag' => '1'));
+        $areasAtencion = $this->catalogo->catUnidadesNegocioArea(3, [], 'Where IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND Flag = 1');
 
         foreach ($sublineas as $key => $value) {
             $arraySublinea[$key]['id'] = $value['IdSub'];
@@ -150,28 +151,37 @@ class Catalogos extends General {
                     'Cantidad' => implode('<br>', $arrayCantidad)));
             }
 
-            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla'], $areasAtencion);
             return array('code' => 200, 'data' => $data);
         } else {
-            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla'], $areasAtencion);
             return array('code' => 200, 'data' => $data);
         }
     }
 
-    public function getCatalogoSelectAreaAtencion(array $datos) {
+    public function getCatalogoSelectAreaAtencion(array $datos, array $areasAtencion = []) {
         $arrayIdsArea = array();
         $arrayAreaAtencion = array();
         $contador = 0;
-        $areasAtencion = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
 
         foreach ($datos as $key => $value) {
             array_push($arrayIdsArea, $value['IdArea']);
         }
 
         foreach ($areasAtencion as $key => $value) {
-            if (!in_array($value['Id'], $arrayIdsArea)) {
-                $arrayAreaAtencion[$contador]['id'] = $value['Id'];
-                $arrayAreaAtencion[$contador]['text'] = $value['Nombre'];
+            if (isset($value['Nombre'])) {
+                $idArea = $value['Id'];
+            } else {
+                $idArea = $value['IdArea'];
+            }
+
+            if (!in_array($idArea, $arrayIdsArea)) {
+                $arrayAreaAtencion[$contador]['id'] = $idArea;
+                if (isset($value['Nombre'])) {
+                    $arrayAreaAtencion[$contador]['text'] = $value['Nombre'];
+                } else {
+                    $arrayAreaAtencion[$contador]['text'] = $value['Area'];
+                }
                 $contador ++;
             }
         }
@@ -210,12 +220,18 @@ class Catalogos extends General {
 
     public function setSublineas(array $datos) {
         foreach ($datos['sublineas'] as $key => $value) {
-            $sublineaArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvsa.IdArea = ' . $datos['IdArea'] . '  AND cvsa.IdSublinea = ' . $value['IdSublinea'] . ' AND cvsa.Flag = 1');
+            $sublineaArea = $this->catalogo->catSublineasArea(3, [], 'WHERE cvsa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvsa.IdArea = ' . $datos['IdArea'] . '  AND cvsa.IdSublinea = ' . $value['IdSublinea']);
 
             if (!$sublineaArea) {
-                $this->catalogo->catSublineasArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], $value['IdSublinea'], $value['Cantidad'], 1));
+//                var_dump($value);
+                $this->catalogo->catSublineasArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], $value['IdSublinea'], $value['Cantidad']));
             } else {
-                $this->catalogo->catSublineasArea(2, array($value['Id'], $value['Cantidad']));
+                if ($sublineaArea[0]['Flag'] === '0') {
+                    $this->catalogo->catSublineasArea(4, array('IdUnidadNegocio' => $datos['IdUnidadNegocio'], 'IdArea' => $datos['IdArea'], 'IdSublinea' => $value['IdSublinea']), '1');
+                    $this->catalogo->catSublineasArea(2, array($sublineaArea[0]['Id'], $value['Cantidad']));
+                } else {
+                    $this->catalogo->catSublineasArea(2, array($value['Id'], $value['Cantidad']));
+                }
             }
         }
 
@@ -252,7 +268,7 @@ class Catalogos extends General {
         if (!empty($sublineasArea)) {
             foreach ($sublineasArea as $key => $value) {
                 $arraySublinea[$contador]['id'] = $value['Id'];
-                $arraySublinea[$contador]['text'] = $value['Sublinea'];
+                $arraySublinea[$contador]['text'] = $value['Sublinea'] . ' - ' . $value['Linea'];
                 $contador ++;
             }
 
@@ -266,33 +282,25 @@ class Catalogos extends General {
 
     public function flagSublineaArea(array $datos) {
         if (isset($datos['IdSublinea'])) {
-            $this->catalogo->catSublineasArea(4, array('Id' => $datos['IdSublinea']));
+            $this->catalogo->catSublineasArea(4, array('Id' => $datos['IdSublinea']), '0');
             return $this->getSublineas($datos);
         } else {
-            $this->catalogo->catSublineasArea(4, $datos);
+            $this->catalogo->catSublineasArea(4, $datos, '0');
             return $this->getSublienasArea($datos);
         }
     }
 
     public function getModelosArea(array $datos) {
         $data = array();
-        $arrayModelo = array();
-        $arrayModelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND Flag = 1 GROUP BY IdArea');
-        $modelos = $this->catalogo->catModelosEquipo(4);
-
-        foreach ($modelos as $key => $value) {
-            $arrayModelo[$key]['id'] = $value['Id'];
-            $arrayModelo[$key]['text'] = $value['Equipo'];
-        }
-
-        $data['modelos'] = $arrayModelo;
-
+        $arrayModelosArea = $this->catalogo->catModelosArea(3, [], 'AND cvmxa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvmxa.Flag = 1 GROUP BY IdArea');
+        $datos['IdArea'] = 3;
+        $areasAtencion = $this->catalogo->catUnidadesNegocioArea(3, [], 'Where IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND Flag = 1');
         $data['tabla'] = array();
 
         if (!empty($arrayModelosArea)) {
             foreach ($arrayModelosArea as $key => $value) {
                 $arrayModelos = array();
-                $modelosArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['IdArea'] . ' AND Flag = 1');
+                $modelosArea = $this->catalogo->catModelosArea(3, [], 'AND cvmxa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvmxa.IdArea = ' . $value['IdArea'] . ' AND cvmxa.Flag = 1');
 
                 if (!empty($modelosArea)) {
                     foreach ($modelosArea as $k => $v) {
@@ -306,11 +314,11 @@ class Catalogos extends General {
                     'Modelos' => implode('<br>', $arrayModelos)));
             }
 
-            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla'], $areasAtencion);
 
             return array('code' => 200, 'data' => $data);
         } else {
-            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla'], $areasAtencion);
             return array('code' => 200, 'data' => $data);
         }
     }
@@ -319,9 +327,9 @@ class Catalogos extends General {
         $data = array();
         $arrayModelo = array();
         $arrayIdsModelosArea = array();
-        $modelos = $this->catalogo->catModelosEquipo(4);
+        $modelos = $this->consultaModelos($datos);
         $contador = 0;
-        $data['modelosArea'] = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . ' AND Flag = 1');
+        $data['modelosArea'] = $this->catalogo->catModelosArea(3, [], 'AND cvmxa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvmxa.IdArea = ' . $datos['IdArea'] . ' AND cvmxa.Flag = 1');
 
         foreach ($data['modelosArea'] as $key => $value) {
             array_push($arrayIdsModelosArea, $value['IdModelo']);
@@ -342,10 +350,14 @@ class Catalogos extends General {
 
     public function setModelos(array $datos) {
         foreach ($datos['modelos'] as $key => $value) {
-            $modeloArea = $this->catalogo->catModelosArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $datos['IdArea'] . '  AND IdModelo = ' . $value['IdModelo'] . ' AND Flag = 1');
+            $modeloArea = $this->catalogo->catModelosArea(3, [], 'AND cvmxa.IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND cvmxa.IdArea = ' . $datos['IdArea'] . '  AND cvmxa.IdModelo = ' . $value['IdModelo']);
 
             if (!$modeloArea) {
                 $this->catalogo->catModelosArea(1, array($datos['IdUnidadNegocio'], $datos['IdArea'], $value['IdModelo'], 1));
+            } else {
+                if ($modeloArea[0]['Flag'] === '0') {
+                    $this->catalogo->catModelosArea(2, array('IdUnidadNegocio' => $datos['IdUnidadNegocio'], 'IdArea' => $datos['IdArea'], 'IdModelo' => $value['IdModelo']), '1');
+                }
             }
         }
 
@@ -395,7 +407,7 @@ class Catalogos extends General {
     }
 
     public function FlagModeloArea(array $datos) {
-        $this->catalogo->catModelosArea(2, $datos);
+        $this->catalogo->catModelosArea(2, $datos, '0');
 
         if (isset($datos['IdModelo'])) {
             return $this->getModelos($datos);
@@ -404,9 +416,21 @@ class Catalogos extends General {
         }
     }
 
+    public function consultaModelos(array $datos) {
+        return $this->catalogo->catConsultaGeneral("select 
+                                                        cme.Id,
+                                                        modelo(cme.Id) as Equipo
+                                                        from cat_v3_modelos_equipo cme
+                                                        where Flag = 1
+                                                        and sublineaByModelo(cme.Id) in (
+                                                                (select IdSublinea from cat_v3_sublineas_x_area where IdArea = " . $datos['IdArea'] . " and IdUnidadNegocio = " . $datos['IdUnidadNegocio'] . " AND Flag = 1)
+                                                        )");
+    }
+
     public function getUnidadesArea(array $datos) {
         $data = array();
         $unidadesArea = $this->catalogo->catUnidadesNegocioArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND Flag = 1 GROUP BY IdArea');
+        $areasAtencion = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
         $data['tabla'] = array();
 
         if (!empty($unidadesArea)) {
@@ -416,27 +440,25 @@ class Catalogos extends General {
                     'Area' => $value['Area']));
             }
 
-            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla']);
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla'], $areasAtencion);
 
             return array('code' => 200, 'data' => $data);
         } else {
-            $arrayAreas = array();
-            $areasAtencion = $this->catalogo->catAreasAtencion(3, array('Flag' => '1'));
-            foreach ($areasAtencion as $key => $value) {
-                $arrayAreas[$key]['id'] = $value['Id'];
-                $arrayAreas[$key]['text'] = $value['Nombre'];
-            }
-            $data['areasAtencion'] = $arrayAreas;
+            $data['areasAtencion'] = $this->getCatalogoSelectAreaAtencion($data['tabla'], $areasAtencion);
             return array('code' => 200, 'data' => $data);
         }
     }
 
     public function setUnidadesArea(array $datos) {
         foreach ($datos['areas'] as $key => $value) {
-            $sublineaArea = $this->catalogo->catUnidadesNegocioArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['Id'] . ' AND Flag = 1');
+            $unidadesArea = $this->catalogo->catUnidadesNegocioArea(3, [], 'WHERE IdUnidadNegocio = ' . $datos['IdUnidadNegocio'] . ' AND IdArea = ' . $value['Id']);
 
-            if (!$sublineaArea) {
+            if (!$unidadesArea) {
                 $this->catalogo->catUnidadesNegocioArea(1, array($datos['IdUnidadNegocio'], $value['Id'], 1));
+            } else {
+                if ($unidadesArea[0]['Flag'] === '0') {
+                    $this->catalogo->catUnidadesNegocioArea(2, array('IdUnidadNegocio' => $datos['IdUnidadNegocio'], 'IdArea' => $value['Id']), '1');
+                }
             }
         }
 
@@ -465,7 +487,7 @@ class Catalogos extends General {
     }
 
     public function flagUnidadArea(array $datos) {
-        $this->catalogo->catUnidadesNegocioArea(2, $datos);
+        $this->catalogo->catUnidadesNegocioArea(2, $datos, '0');
         return $this->getUnidadesArea($datos);
     }
 

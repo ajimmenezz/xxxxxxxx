@@ -3637,16 +3637,19 @@ class Catalogo extends General {
                                                         cvse.Nombre AS Sublinea,
                                                         linea(cvse.Linea) AS Linea,
                                                         cvsa.Cantidad,
-                                                        CONCAT(cvse.Nombre, " - ", linea(cvse.Linea)) AS LineaSublinea
+                                                        CONCAT(cvse.Nombre, " - ", linea(cvse.Linea)) AS LineaSublinea,
+                                                        cvsa.Flag
                                                     FROM
                                                         cat_v3_sublineas_x_area cvsa
                                                         INNER JOIN cat_v3_sublineas_equipo cvse
-                                                        ON cvse.Id = cvsa.IdSublinea ' . $where);
+                                                        ON cvse.Id = cvsa.IdSublinea 
+                                                        INNER JOIN cat_v3_areas_x_unidad cvaxu
+                                                        ON cvaxu.IdArea = cvsa.IdArea AND cvaxu.IdUnidadNegocio = cvsa.IdUnidadNegocio AND cvaxu.Flag = 1 ' . $where);
                 break;
             case '4':
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_sublineas_x_area', array(
-                    'Flag' => 0
+                    'Flag' => (int) $where
                         ), $datos
                 );
                 if (!empty($consulta)) {
@@ -3679,7 +3682,7 @@ class Catalogo extends General {
             case '2':
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_modelos_x_area', array(
-                    'Flag' => 0
+                    'Flag' => (int) $where 
                         ), $datos
                 );
                 if (!empty($consulta)) {
@@ -3691,13 +3694,28 @@ class Catalogo extends General {
             //Obtiene Informacion 
             case '3';
                 return $this->DBC->getJuntarTablas('SELECT 
-                                                        Id,
-                                                        IdModelo,
-                                                        IdArea,
-                                                        areaAtencion(IdArea) AS Area,
-                                                        modelo(IdModelo) AS Modelo
+                                                        cvmxa.Id,
+                                                        cvmxa.IdModelo,
+                                                        cvmxa.IdArea,
+                                                        areaAtencion(cvmxa.IdArea) AS Area,
+                                                        modelo(cvmxa.IdModelo) AS Modelo,
+                                                        cvmxa.Flag
                                                     FROM
-                                                        cat_v3_modelos_x_area ' . $where);
+                                                        cat_v3_modelos_x_area cvmxa
+                                                            INNER JOIN
+                                                        cat_v3_areas_x_unidad cvaxu ON cvaxu.IdArea = cvmxa.IdArea
+                                                            AND cvaxu.IdUnidadNegocio = cvmxa.IdUnidadNegocio
+                                                            AND cvaxu.Flag = 1
+                                                    WHERE
+                                                        cvmxa.Flag = 1
+                                                            AND sublineaByModelo(cvmxa.IdModelo) IN ((SELECT 
+                                                                IdSublinea
+                                                            FROM
+                                                                cat_v3_sublineas_x_area
+                                                            WHERE
+                                                                IdArea = cvmxa.IdArea
+                                                                    AND IdUnidadNegocio = cvmxa.IdUnidadNegocio))
+                                                         ' . $where);
                 break;
             default:
                 break;
@@ -3722,7 +3740,7 @@ class Catalogo extends General {
             case '2':
                 $consulta = $this->DBC->actualizarArticulo(
                         'cat_v3_areas_x_unidad', array(
-                    'Flag' => 0
+                    'Flag' => (int) $where
                         ), $datos
                 );
                 if (!empty($consulta)) {
@@ -3738,7 +3756,8 @@ class Catalogo extends General {
                                                         IdArea,
                                                         areaAtencion(IdArea) AS Area,
                                                         IdUnidadNegocio,
-                                                        (SELECT Nombre FROM cat_v3_unidades_negocio WHERE Id = IdUnidadNegocio) AS UnidadNegocio
+                                                        (SELECT Nombre FROM cat_v3_unidades_negocio WHERE Id = IdUnidadNegocio) AS UnidadNegocio,
+                                                        Flag
                                                     FROM
                                                         cat_v3_areas_x_unidad ' . $where);
                 break;
