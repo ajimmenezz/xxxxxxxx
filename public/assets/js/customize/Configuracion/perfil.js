@@ -58,6 +58,9 @@ $(function () {
             select.cambiarOpcion('#selectActualizarEstadoCivilUsuario', respuesta.datosUsuario.IdEstadoCivil);
             select.cambiarOpcion('#selectActualizarSexoUsuario', respuesta.datosUsuario.IdSexo);
             select.cambiarOpcion('#selectActualizarDominaUsuario', respuesta.datosConduccion.Dominio);
+            select.cambiarOpcion('#inputActualizarTallaCamisaUsuario', respuesta.datosUsuario.TallaCamisa);
+            select.cambiarOpcion('#inputActualizarTallaZapatosUsuario', respuesta.datosUsuario.TallaZapatos);
+            select.cambiarOpcion('#inputActualizarTallaPantalonUsuario', respuesta.datosUsuario.TallaPantalon);
 
             recargandoTablaAcademicos(respuesta.datosAcademicos);
             recargandoTablaIdiomas(respuesta.datosIdiomas);
