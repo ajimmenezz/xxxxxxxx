@@ -246,7 +246,7 @@
 
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <h4>¿Presentas cualquiera de los siguientes diagnósticos?</h4>
+                                <h3>¿Presentas cualquiera de los siguientes diagnósticos?</h3>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
@@ -289,7 +289,7 @@
                         <br>
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <label class="col-md-12">¿Vives con personas mayores a 65 años?</label>
+                                <h4>¿Vives con personas mayores a 65 años?</h4>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
@@ -307,7 +307,7 @@
                         <br>
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <label class="col-md-12">¿Haz tenido algún tratamiento contra el cáncer?</label>
+                                <h4>¿Haz tenido algún tratamiento contra el cáncer?</h4>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
@@ -325,7 +325,7 @@
                         <br>
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <label class="col-md-12">¿Te han trasplantado algún órgano o médula espinal?</label>
+                                <h4>¿Te han trasplantado algún órgano o médula espinal?</h4>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
@@ -343,7 +343,7 @@
                         <br>
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <label class="col-md-12">¿Eres fumador(a)?</label>
+                                <h4>¿Eres fumador(a)?</h4>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
