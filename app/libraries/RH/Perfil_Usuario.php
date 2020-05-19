@@ -355,17 +355,6 @@ class Perfil_Usuario extends General {
     public function guardarDatosCovid(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
         $datos['idUsuario'] = $usuario['Id'];
-        $datos['PulmonarAsma'] = '0';
-        $datos['Cardiaco'] = '0';
-        $datos['Diabetes'] = '0';
-        $datos['Renal'] = '0';
-        $datos['Hepatica'] = '0';
-        $datos['VIH'] = '0';
-
-        if ($datos['Diagnostico'] !== 0) {
-            $nombreDiagnostico = $datos['Diagnostico'];
-            $datos[$nombreDiagnostico] = '1';
-        }
 
         try {
             $datosCovid = $this->DBU->consultaTRHCovid($datos);
