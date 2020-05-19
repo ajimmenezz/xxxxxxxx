@@ -6455,7 +6455,7 @@ class Seguimientos extends General
         return ['cambiosSerie' => $cambiosSerie, 'diferenciasActual' => $actual, 'diferenciasUltimo' => $ultimo];
     }
 
-    private function getCensoDiferenciasKit($inventario, $unidadNegocio)
+    public function getCensoDiferenciasKit($inventario, $unidadNegocio)
     {
         $kit = $this->createArrayKitSublineaForCompare($unidadNegocio);
         $faltantes = [];

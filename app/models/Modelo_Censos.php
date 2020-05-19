@@ -849,12 +849,14 @@ class Modelo_Censos extends Modelo_Base
         sublineaByModelo(IdModelo) as IdSublinea,
         cme.Marca as IdMarca,
         IdModelo,
+        sucursalByServicio('" . $idServicio . "') as Sucursal,
         areaAtencion(IdArea) as Area,
         linea(lineaByModelo(IdModelo)) as Linea,
         sublinea(sublineaByModelo(IdModelo)) as Sublinea,
         marca(cme.Marca) as Marca,
         cme.Nombre as Modelo,
-        tc.Serie
+        tc.Serie,
+        date_format((select FechaInicio from t_servicios_ticket where Id = '".$idServicio."'),'%d-%m-%Y') as Fecha
         from t_censos tc
         inner join cat_v3_modelos_equipo cme on tc.IdModelo = cme.Id
         where tc.IdServicio = '" . $idServicio . "'
@@ -987,7 +989,7 @@ class Modelo_Censos extends Modelo_Base
         sublinea(csa.IdSublinea) as Sublinea,
         csa.Cantidad
         from cat_v3_sublineas_x_area csa
-        where csa.IdUnidadNegocio = '".$unidadNegocio."'
+        where csa.IdUnidadNegocio = '" . $unidadNegocio . "'
         and Flag = 1");
 
         $arrayReturn = [];
@@ -1005,5 +1007,22 @@ class Modelo_Censos extends Modelo_Base
         }
 
         return $arrayReturn;
+    }
+
+    public function getCensosServicesId(array $data = [])
+    {
+
+        return $this->consulta("
+        select 
+        MAX(tst.Id) as Id,
+        sucursal(tst.IdSucursal) as Sucursal
+        from t_servicios_ticket tst
+        inner join cat_v3_sucursales cs on tst.IdSucursal = cs.Id
+        where tst.IdTipoServicio = 11 
+        and tst.IdEstatus = 4
+        and cs.Flag = 1
+        and cs.IdCliente = 1
+        group by cs.Id
+        order by cs.Nombre");
     }
 }
