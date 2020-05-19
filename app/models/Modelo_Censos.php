@@ -850,13 +850,14 @@ class Modelo_Censos extends Modelo_Base
         cme.Marca as IdMarca,
         IdModelo,
         sucursalByServicio('" . $idServicio . "') as Sucursal,
+        regionBySucursal((select IdSucursal from t_servicios_ticket where Id = '" . $idServicio . "')) as Zona,
         areaAtencion(IdArea) as Area,
         linea(lineaByModelo(IdModelo)) as Linea,
         sublinea(sublineaByModelo(IdModelo)) as Sublinea,
         marca(cme.Marca) as Marca,
         cme.Nombre as Modelo,
         tc.Serie,
-        date_format((select FechaInicio from t_servicios_ticket where Id = '".$idServicio."'),'%d-%m-%Y') as Fecha
+        date_format((select FechaInicio from t_servicios_ticket where Id = '" . $idServicio . "'),'%d-%m-%Y') as Fecha
         from t_censos tc
         inner join cat_v3_modelos_equipo cme on tc.IdModelo = cme.Id
         where tc.IdServicio = '" . $idServicio . "'
@@ -1015,7 +1016,8 @@ class Modelo_Censos extends Modelo_Base
         return $this->consulta("
         select 
         MAX(tst.Id) as Id,
-        sucursal(tst.IdSucursal) as Sucursal
+        sucursal(tst.IdSucursal) as Sucursal,
+        regionBySucursal(tst.IdSucursal) as Zona
         from t_servicios_ticket tst
         inner join cat_v3_sucursales cs on tst.IdSucursal = cs.Id
         where tst.IdTipoServicio = 11 
