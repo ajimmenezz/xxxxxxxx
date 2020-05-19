@@ -393,30 +393,30 @@ class Modelo_Usuario extends Modelo_Base {
 
     public function actualizarTRHCovid(array $datos) {
         $this->actualizar('t_rh_personal_covid', [
-            'ViveConMayores' => $datos['viveConMayores'],
-            'PulmonarAsma' => $datos['pulmonarAsma'],
-            'Cardiaco' => $datos['cardiaco'],
-            'Diabetes' => $datos['diabetes'],
-            'Renal' => $datos['renal'],
-            'Hepatica' => $datos['hepatica'],
-            'TratamientoCancer' => $datos['tratamientoCancer'],
-            'Fumador' => $datos['fumador'],
-            'Transplantes' => $datos['transplantes'],
+            'ViveConMayores' => $datos['ViveConMayores'],
+            'PulmonarAsma' => $datos['PulmonarAsma'],
+            'Cardiaco' => $datos['Cardiaco'],
+            'Diabetes' => $datos['Diabetes'],
+            'Renal' => $datos['Renal'],
+            'Hepatica' => $datos['Hepatica'],
+            'TratamientoCancer' => $datos['TratamientoCancer'],
+            'Fumador' => $datos['Fumador'],
+            'Transplantes' => $datos['Transplantes'],
             'VIH' => $datos['VIH']], ['IdUsuario' => $datos['idUsuario']]);
     }
 
     public function insertarTRHCovid(array $datos) {
         $this->insertar('t_rh_personal_covid', [
             'IdUsuario' => $datos['idUsuario'],
-            'PulmonarAsma' => $datos['pulmonarAsma'],
-            'Cardiaco' => $datos['cardiaco'],
-            'Diabetes' => $datos['diabetes'],
-            'Renal' => $datos['renal'],
-            'Hepatica' => $datos['hepatica'],
-            'TratamientoCancer' => $datos['tratamientoCancer'],
-            'Fumador' => $datos['fumador'],
-            'Renal' => $datos['renal'],
-            'Transplantes' => $datos['transplantes'],
+            'PulmonarAsma' => $datos['PulmonarAsma'],
+            'Cardiaco' => $datos['Cardiaco'],
+            'Diabetes' => $datos['Diabetes'],
+            'Renal' => $datos['Renal'],
+            'Hepatica' => $datos['Hepatica'],
+            'TratamientoCancer' => $datos['TratamientoCancer'],
+            'Fumador' => $datos['Fumador'],
+            'Renal' => $datos['Renal'],
+            'Transplantes' => $datos['Transplantes'],
             'VIH' => $datos['VIH']]);
     }
 

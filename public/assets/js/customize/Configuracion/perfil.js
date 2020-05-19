@@ -61,6 +61,10 @@ $(function () {
             select.cambiarOpcion('#inputActualizarTallaCamisaUsuario', respuesta.datosUsuario.TallaCamisa);
             select.cambiarOpcion('#inputActualizarTallaZapatosUsuario', respuesta.datosUsuario.TallaZapatos);
             select.cambiarOpcion('#inputActualizarTallaPantalonUsuario', respuesta.datosUsuario.TallaPantalon);
+            $('input[type=radio][name=radioPersonas][value="' + respuesta.datosCovid[0].ViveConMayores + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioCancer][value="' + respuesta.datosCovid[0].TratamientoCancer + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioFumador][value="' + respuesta.datosCovid[0].Fumador + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioTransplante][value="' + respuesta.datosCovid[0].Transplantes + '"]').attr("checked", "checked");
 
             recargandoTablaAcademicos(respuesta.datosAcademicos);
             recargandoTablaIdiomas(respuesta.datosIdiomas);
