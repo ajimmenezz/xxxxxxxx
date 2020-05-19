@@ -66,6 +66,24 @@ $(function () {
             $('input[type=radio][name=radioFumador][value="' + respuesta.datosCovid[0].Fumador + '"]').attr("checked", "checked");
             $('input[type=radio][name=radioTransplante][value="' + respuesta.datosCovid[0].Transplantes + '"]').attr("checked", "checked");
 
+            let radioDiagnostico = '0';
+
+            if (respuesta.datosCovid[0].Cardiaco === '1') {
+                radioDiagnostico = 'Cadiaco';
+            } else if (respuesta.datosCovid[0].Diabetes === '1') {
+                radioDiagnostico = 'Diabetes';
+            } else if (respuesta.datosCovid[0].PulmonarAsma === '1') {
+                radioDiagnostico = 'PulmonarAsma';
+            } else if (respuesta.datosCovid[0].Renal === '1') {
+                radioDiagnostico = 'Renal';
+            } else if (respuesta.datosCovid[0].Hepatica === '1') {
+                radioDiagnostico = 'Hepatica';
+            } else if (respuesta.datosCovid[0].VIH === '1') {
+                radioDiagnostico = 'VIH';
+            }
+
+            $('input[type=radio][name=radioDiagnostico][value="' + radioDiagnostico + '"]').attr("checked", "checked");
+
             recargandoTablaAcademicos(respuesta.datosAcademicos);
             recargandoTablaIdiomas(respuesta.datosIdiomas);
             recargandoTablaSoftware(respuesta.datosSoftware);
@@ -696,9 +714,9 @@ $(function () {
             ocultarCargaPaginaInformacionUsuario('#dependientesEconomicos');
         }
     });
-    
+
     $('#btnGuardarInfoSalud').on('click', function () {
-        if(evento.validarFormulario('#formSalud')){
+        if (evento.validarFormulario('#formSalud')) {
             let envioData = {
                 ViveConMayores: $('input[name="radioPersonas"]:checked').val(),
                 TratamientoCancer: $('input[name="radioCancer"]:checked').val(),

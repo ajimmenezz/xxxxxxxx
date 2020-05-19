@@ -462,8 +462,8 @@
 
                         <div class="row m-t-10">
                             <div class="col-md-4">
-                                <label for="inputActualizarEstaturaUsuario">Estatura (M)</label>
-                                <input type="number" step="0.01" min="0" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php echo $datosUsuario['Estatura'] ?>"/>
+                                <label for="inputActualizarEstaturaUsuario">Estatura (CM)</label>
+                                <input type="number" min="0" class="form-control" id="inputActualizarEstaturaUsuario" style="width: 100%"  value="<?php echo $datosUsuario['Estatura'] ?>"/>
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarPesoUsuario">Peso (KG)</label>
