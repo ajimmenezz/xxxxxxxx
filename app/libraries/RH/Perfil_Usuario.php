@@ -36,6 +36,7 @@ class Perfil_Usuario extends General {
         $data['datosSoftware'] = $this->DBU->consultaTRHSoftware(array('IdUsuario' => $usuario['Id']));
         $data['datosSistemas'] = $this->DBU->consultaTRHSistemas(array('IdUsuario' => $usuario['Id']));
         $data['datosDependientes'] = $this->DBU->consultaTRHDependientes(array('IdUsuario' => $usuario['Id']));
+        $data['datosCovid'] = $this->DBU->consultaTRHCovid(array('idUsuario' => $usuario['Id']));
         $data['nivelEstudio'] = $this->catalogo->catRhNivelEstudio('3');
         $data['documentosEstudio'] = $this->catalogo->catRhDocumentosEstudio('3');
         $data['habilidadesIdioma'] = $this->catalogo->catRhHabilidadesIdioma('3');
@@ -354,7 +355,18 @@ class Perfil_Usuario extends General {
     public function guardarDatosCovid(array $datos) {
         $usuario = $this->usuario->getDatosUsuario();
         $datos['idUsuario'] = $usuario['Id'];
-        
+        $datos['PulmonarAsma'] = '0';
+        $datos['Cardiaco'] = '0';
+        $datos['Diabetes'] = '0';
+        $datos['Renal'] = '0';
+        $datos['Hepatica'] = '0';
+        $datos['VIH'] = '0';
+
+        if ($datos['Diagnostico'] !== 0) {
+            $nombreDiagnostico = $datos['Diagnostico'];
+            $datos[$nombreDiagnostico] = '1';
+        }
+
         try {
             $datosCovid = $this->DBU->consultaTRHCovid($datos);
 
@@ -364,7 +376,7 @@ class Perfil_Usuario extends General {
                 $this->DBU->actualizarTRHCovid($datos);
             }
 
-            return ['code' => 200, 'message' => 'Correcto'];
+            return ['code' => 200, 'message' => 'Se ha guadado lo datos correctamente.'];
         } catch (\Exception $ex) {
             return ['code' => 400, 'message' => $ex->getMessage()];
         }
