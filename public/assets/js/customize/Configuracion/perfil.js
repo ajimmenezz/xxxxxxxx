@@ -61,10 +61,17 @@ $(function () {
             select.cambiarOpcion('#inputActualizarTallaCamisaUsuario', respuesta.datosUsuario.TallaCamisa);
             select.cambiarOpcion('#inputActualizarTallaZapatosUsuario', respuesta.datosUsuario.TallaZapatos);
             select.cambiarOpcion('#inputActualizarTallaPantalonUsuario', respuesta.datosUsuario.TallaPantalon);
+
             $('input[type=radio][name=radioPersonas][value="' + respuesta.datosCovid[0].ViveConMayores + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioTransplante][value="' + respuesta.datosCovid[0].Transplantes+ '"]').attr("checked", "checked");
             $('input[type=radio][name=radioCancer][value="' + respuesta.datosCovid[0].TratamientoCancer + '"]').attr("checked", "checked");
             $('input[type=radio][name=radioFumador][value="' + respuesta.datosCovid[0].Fumador + '"]').attr("checked", "checked");
-            $('input[type=radio][name=radioTransplante][value="' + respuesta.datosCovid[0].Transplantes + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioPulmonar][value="' + respuesta.datosCovid[0].PulmonarAsma + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioCardiaco][value="' + respuesta.datosCovid[0].Cardiaco + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioDiabetes][value="' + respuesta.datosCovid[0].Diabetes + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioHepatica][value="' + respuesta.datosCovid[0].Hepatica + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioRenal][value="' + respuesta.datosCovid[0].Renal + '"]').attr("checked", "checked");
+            $('input[type=radio][name=radioVIH][value="' + respuesta.datosCovid[0].VIH + '"]').attr("checked", "checked");
 
             recargandoTablaAcademicos(respuesta.datosAcademicos);
             recargandoTablaIdiomas(respuesta.datosIdiomas);
