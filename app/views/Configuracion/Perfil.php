@@ -360,7 +360,7 @@
                         <br>
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <h5>¿Vives con personas mayores a 65 años?</h5>
+                                <h3>¿Vives con personas mayores a 65 años?</h3>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
@@ -378,7 +378,7 @@
                         <br>
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <h5>¿Haz tenido algún tratamiento contra el cáncer?</h5>
+                                <h3>¿Haz tenido algún tratamiento contra el cáncer?</h3>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
@@ -396,7 +396,7 @@
                         <br>
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <h5>¿Te han trasplantado algún órgano o médula espinal?</h5>
+                                <h3>¿Te han trasplantado algún órgano o médula espinal?</h3>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
@@ -414,7 +414,7 @@
                         <br>
                         <div class="row m-t-12">
                             <div class="col-md-12">
-                                <h5>¿Eres fumador(a)?</h5>
+                                <h3>¿Eres fumador(a)?</h3>
                                 <div class="col-md-12">
                                     <div class="radio">
                                         <label>
