@@ -50,7 +50,7 @@ class Censos extends General
         $arraySobrantes = [];
         $arrayFaltantes = [];
         foreach ($services as $ks => $vs) {
-            if ($cont <= 5) {
+            // if ($cont <= 5) {
                 $inventoryInfo = $this->getDataForInventory($vs['Id']);
                 foreach ($inventoryInfo['actual'] as $key => $value) {
                     array_push($arrayCenso, $value);
@@ -87,7 +87,7 @@ class Censos extends General
                         }
                     }
                 }
-            }
+            // }
             $cont++;
         }
 
