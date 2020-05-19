@@ -245,78 +245,114 @@
                     <form id="formSalud" class="form-horizontal">
 
                         <div class="row m-t-12">
-                            <div class="col-md-4">
-                                <label>¿Presentas cualquiera de los siguientes diagnósticos?</label>
-                                <select id="selectDiagnostico" class="form-control" style="width: 100%" data-parsley-required="true">
-                                    <option value="">Seleccionar...</option>
-                                    <option value="PulmonarAsma">Enfermedad pulmonar crónica o asma moderada a grave</option>
-                                    <option value="Cardiaco">Afección cardiaca grave</option>
-                                    <option value="Diabetes">Diabetes</option>
-                                    <option value="Renal">Enfermedad Renal Crónica o en tratamiento de diálisis</option>
-                                    <option value="Hepatica">Enfermedad hepática</option>
-                                    <option value="VIH">VIH (Sida)</option>
-                                    <option value="0">Ninguno</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="control-label col-md-6">¿Vives con personas mayores a 65 años?</label>
-                                <div class="col-md-6">
+                            <div class="col-md-12">
+                                <h4>¿Presentas cualquiera de los siguientes diagnósticos?</h4>
+                                <div class="col-md-12">
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="radioPersonas" value="1"/> Si
+                                            <input type="radio" name="radioDiagnostico" value="PulmonarAsma"/> Enfermedad pulmonar crónica o asma moderada a grave
                                         </label>
                                     </div>
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="radioPersonas" value="0" data-parsley-required="true"/> No
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="control-label col-md-6">¿Haz tenido algún tratamiento contra el cáncer?</label>
-                                <div class="col-md-6">
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio" name="radioCancer" value="1"/> Si
+                                            <input type="radio" name="radioDiagnostico" value="Cardiaco"/> Afección cardiaca grave
                                         </label>
                                     </div>
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="radioCancer" value="0" data-parsley-required="true"/> No
+                                            <input type="radio" name="radioDiagnostico" value="Diabetes"/> Diabetes
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioDiagnostico" value="Renal"/> Enfermedad Renal Crónica o en tratamiento de diálisis
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioDiagnostico" value="Hepatica"/> Enfermedad hepática
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioDiagnostico" value="VIH"/> VIH (Sida)
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioDiagnostico" value="0" data-parsley-required="true" checked/> Ninguno
                                         </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="row m-t-10">
-                            <div class="col-md-4">
-                                <label class="control-label col-md-6">¿Eres fumador(a)?</label>
-                                <div class="col-md-6">
+                        <br>
+                        <div class="row m-t-12">
+                            <div class="col-md-12">
+                                <label class="col-md-12">¿Vives con personas mayores a 65 años?</label>
+                                <div class="col-md-12">
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="radioFumador" value="1"/> Si
+                                            <input type="radio" name="radioPersonas" value="1" checked/> Si
                                         </label>
                                     </div>
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="radioFumador" value="0" data-parsley-required="true"/> No
+                                            <input type="radio" name="radioPersonas" value="0"/> No
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="control-label col-md-6">¿Te han trasplantado algún órgano o médula espinal?</label>
-                                <div class="col-md-6">
+                        </div>
+                        <br>
+                        <div class="row m-t-12">
+                            <div class="col-md-12">
+                                <label class="col-md-12">¿Haz tenido algún tratamiento contra el cáncer?</label>
+                                <div class="col-md-12">
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="radioTransplante" value="1"/> Si
+                                            <input type="radio" name="radioCancer" value="1" checked/> Si
                                         </label>
                                     </div>
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="radioTransplante" value="0" data-parsley-required="true"/> No
+                                            <input type="radio" name="radioCancer" value="0"/> No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row m-t-12">
+                            <div class="col-md-12">
+                                <label class="col-md-12">¿Te han trasplantado algún órgano o médula espinal?</label>
+                                <div class="col-md-12">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioTransplante" value="1" checked/> Si
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioTransplante" value="0"/> No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row m-t-12">
+                            <div class="col-md-12">
+                                <label class="col-md-12">¿Eres fumador(a)?</label>
+                                <div class="col-md-12">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioFumador" value="1" checked/> Si
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioFumador" value="0"/> No
                                         </label>
                                     </div>
                                 </div>
