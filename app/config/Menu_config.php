@@ -383,9 +383,9 @@ $config['Configuracion'] = array(
         'icono' => '',
         'Url' => '',
         'css' => array('Configuracion/perfil'),
-        'pluginsCss' => array('DrawingBoard/css/drawingboard.min'),
+        'pluginsCss' => array('DrawingBoard/css/drawingboard.min','parsley/src/parsley'),
         'js' => array('Base/Base', 'Base/Socket', 'Configuracion/perfil'),
-        'pluginsJs' => array('DrawingBoard/js/drawingboard.min'),
+        'pluginsJs' => array('DrawingBoard/js/drawingboard.min','parsley/dist/parsley','parsley/src/i18n/es'),
         'Permiso' => 'VCPE'
     )
 );

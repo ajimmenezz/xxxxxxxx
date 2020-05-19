@@ -107,6 +107,9 @@ class Controller_Perfil extends Base {
             case 'ActualizarFirmaUsuario':
                 $resultado = $this->perfil->actualizarFirmaUsuario($this->input->post());
                 break;
+            case 'GuardarDatosCovid':
+                $resultado = $this->perfilUsuario->guardarDatosCovid($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;
