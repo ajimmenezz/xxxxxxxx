@@ -689,6 +689,25 @@ $(function () {
             ocultarCargaPaginaInformacionUsuario('#dependientesEconomicos');
         }
     });
+    
+    $('#btnGuardarInfoSalud').on('click', function () {
+        if(evento.validarFormulario('#formSalud')){
+            let envioData = {
+                ViveConMayores: $('input[name="radioPersonas"]:checked').val(),
+                TratamientoCancer: $('input[name="radioCancer"]:checked').val(),
+                Fumador: $('input[name="radioFumador"]:checked').val(),
+                Transplantes: $('input[name="radioTransplante"]:checked').val(),
+                Diagnostico: $('#selectDiagnostico').val()
+            }
+            evento.enviarEvento('PerfilUsuario/', envioData, '#cargandoInformacionUsuario', function (respuesta) {
+                if (respuesta.code == 200) {
+                    evento.mostrarMensaje('.errorGuardarInfoSalud', true, respuesta.message, 3000);
+                } else {
+                    evento.mostrarMensaje('.errorGuardarInfoSalud', false, respuesta.message, 3000);
+                }
+            });
+        }
+    });
 
     var botonActualizarAcademico = function () {
         $('#data-table-datos-academicos tbody').off('click', '.btn-actualizar-academico');

@@ -214,7 +214,8 @@
             <div class="tab-overflow">
                 <ul class="nav nav-tabs nav-tabs-inverse">
                     <li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>
-                    <li class="active"><a href="#personales" data-toggle="tab">Personales</a></li>
+                    <li class="active"><a href="#covid" data-toggle="tab">COVID</a></li>
+                    <li class=""><a href="#personales" data-toggle="tab">Personales</a></li>
                     <li class=""><a href="#academicos" data-toggle="tab">Academicos</a></li>
                     <li class=""><a href="#idiomas" data-toggle="tab">Idiomas</a></li>
                     <li class=""><a href="#computacionales" data-toggle="tab">Computacionales</a></li>
@@ -234,8 +235,116 @@
                     width="200"
                     src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
             </div>
+            <!--Empezando con datos covid-->
+            <div class="tab-pane fade active in" id="covid">
+                <h3 class="m-t-10 text-center">Información de tu Salud</h3>
+
+                <div class="separatorBorder"></div>
+                <div class="panel-body">
+                    <!--comienza formulario de salud-->
+                    <form id="formSalud" class="form-horizontal">
+
+                        <div class="row m-t-12">
+                            <div class="col-md-4">
+                                <label>¿Presentas cualquiera de los siguientes diagnósticos?</label>
+                                <select id="selectDiagnostico" class="form-control" style="width: 100%" data-parsley-required="true">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="PulmonarAsma">Enfermedad pulmonar crónica o asma moderada a grave</option>
+                                    <option value="Cardiaco">Afección cardiaca grave</option>
+                                    <option value="Diabetes">Diabetes</option>
+                                    <option value="Renal">Enfermedad Renal Crónica o en tratamiento de diálisis</option>
+                                    <option value="Hepatica">Enfermedad hepática</option>
+                                    <option value="VIH">VIH (Sida)</option>
+                                    <option value="0">Ninguno</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label col-md-6">¿Vives con personas mayores a 65 años?</label>
+                                <div class="col-md-6">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioPersonas" value="1"/> Si
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioPersonas" value="0" data-parsley-required="true"/> No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label col-md-6">¿Haz tenido algún tratamiento contra el cáncer?</label>
+                                <div class="col-md-6">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioCancer" value="1"/> Si
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioCancer" value="0" data-parsley-required="true"/> No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row m-t-10">
+                            <div class="col-md-4">
+                                <label class="control-label col-md-6">¿Eres fumador(a)?</label>
+                                <div class="col-md-6">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioFumador" value="1"/> Si
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioFumador" value="0" data-parsley-required="true"/> No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label col-md-6">¿Te han trasplantado algún órgano o médula espinal?</label>
+                                <div class="col-md-6">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioTransplante" value="1"/> Si
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="radioTransplante" value="0" data-parsley-required="true"/> No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row m-t-10">
+                            <!--Empezando error--> 
+                            <div class="col-md-12">
+                                <div class="errorGuardarInfoSalud"></div>
+                            </div>
+                            <!--Finalizando Error-->
+                        </div>   
+                        <div class="row m-t-10">
+                            <div class="col-md-12">
+                                <div class="form-group text-center">
+                                    <br>
+                                    <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarInfoSalud"><i class="fa fa-save"></i> Guardar</a>
+                                </div>
+                            </div>
+                        </div>  
+                    </form>
+                    <!--termina formulario de salud-->
+                </div>
+            </div>
+            <!--Finalizando datos covid-->
             <!--Empezando con datos personales-->
-            <div class="tab-pane fade active in" id="personales">
+            <div class="tab-pane fade" id="personales">
                 <h3 class="m-t-10 text-center">Datos Personales</h3>
 
                 <div class="separatorBorder"></div>
