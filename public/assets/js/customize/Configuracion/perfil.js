@@ -702,7 +702,7 @@ $(function () {
                 Transplantes: $('input[name="radioTransplante"]:checked').val(),
                 Diagnostico: $('#selectDiagnostico').val()
             }
-            evento.enviarEvento('PerfilUsuario/', envioData, '#cargandoInformacionUsuario', function (respuesta) {
+            evento.enviarEvento('PerfilUsuario/GuardarDatosCovid', envioData, '#cargandoInformacionUsuario', function (respuesta) {
                 if (respuesta.code == 200) {
                     evento.mostrarMensaje('.errorGuardarInfoSalud', true, respuesta.message, 3000);
                 } else {
