@@ -704,7 +704,7 @@ $(function () {
                 TratamientoCancer: $('input[name="radioCancer"]:checked').val(),
                 Fumador: $('input[name="radioFumador"]:checked').val(),
                 Transplantes: $('input[name="radioTransplante"]:checked').val(),
-                Diagnostico: $('#selectDiagnostico').val()
+                Diagnostico: $('input[name="radioDiagnostico"]:checked').val()
             }
             evento.enviarEvento('PerfilUsuario/GuardarDatosCovid', envioData, '#cargandoInformacionUsuario', function (respuesta) {
                 if (respuesta.code == 200) {
