@@ -704,7 +704,12 @@ $(function () {
                 TratamientoCancer: $('input[name="radioCancer"]:checked').val(),
                 Fumador: $('input[name="radioFumador"]:checked').val(),
                 Transplantes: $('input[name="radioTransplante"]:checked').val(),
-                Diagnostico: $('input[name="radioDiagnostico"]:checked').val()
+                VIH: $('input[name="radioVIH"]:checked').val(),
+                Renal: $('input[name="radioRenal"]:checked').val(),
+                Hepatica: $('input[name="radioHepatica"]:checked').val(),
+                Diabetes: $('input[name="radioDiabetes"]:checked').val(),
+                Cardiaco: $('input[name="radioCardiaco"]:checked').val(),
+                PulmonarAsma: $('input[name="radioPulmonar"]:checked').val()
             }
             evento.enviarEvento('PerfilUsuario/GuardarDatosCovid', envioData, '#cargandoInformacionUsuario', function (respuesta) {
                 if (respuesta.code == 200) {
