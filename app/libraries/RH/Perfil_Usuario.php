@@ -166,7 +166,7 @@ class Perfil_Usuario extends General {
             $usuario = $this->usuario->getDatosUsuario();
             $datos['idUsuario'] = $usuario['Id'];
         }
-        
+
         $consulta = $this->DBU->getPersonal('SELECT * FROM t_rh_conduccion WHERE IdUsuario = "' . $datos['idUsuario'] . '"');
 
         if (empty($consulta)) {
@@ -343,12 +343,30 @@ class Perfil_Usuario extends General {
                 $datosArray = $this->DBU->consultaTRHDependientes(array('IdUsuario' => $datos['idUsuario']));
                 break;
         }
-//        var_dump($datosArray);
 
         if (!empty($resultado)) {
             return $datosArray;
         } else {
             return FALSE;
+        }
+    }
+
+    public function guardarDatosCovid(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+        $datos['idUsuario'] = $usuario['Id'];
+        
+        try {
+            $datosCovid = $this->DBU->consultaTRHCovid($datos);
+
+            if (empty($datosCovid)) {
+                $this->DBU->insertarTRHCovid($datos);
+            } else {
+                $this->DBU->actualizarTRHCovid($datos);
+            }
+
+            return ['code' => 200, 'message' => 'Correcto'];
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
         }
     }
 

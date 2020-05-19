@@ -386,11 +386,9 @@
                                     <option value="49">49</option>
                                     <option value="50">50</option>
                                 </select>
-                                <!--<input type="text" class="form-control" id="inputActualizarTallaPantalonUsuario" style="width: 100%" value="<?php echo $datosUsuario['TallaPantalon'] ?>"/>-->
                             </div>
                             <div class="col-md-4">
                                 <label for="inputActualizarTallaCamisaPantalonUsuario">Talla de camisa</label>
-                                <!--<input type="text" class="form-control" id="inputActualizarTallaCamisaUsuario" style="width: 100%" value="<?php echo $datosUsuario['TallaCamisa'] ?>"/>-->
                                 <select id="inputActualizarTallaCamisaUsuario" class="form-control" style="width: 100%" data-parsley-required="true">
                                     <option value="">Seleccionar...</option>
                                     <option value="XS">XS</option>
@@ -427,7 +425,6 @@
                                     <option value="34">34</option>
                                     <option value="35">35</option>
                                 </select>
-                                <!--<input type="text" class="form-control" id="inputActualizarTallaZapatosUsuario" style="width: 100%" value="<?php echo $datosUsuario['TallaZapatos'] ?>"/>-->
                             </div>
                         </div>
 
