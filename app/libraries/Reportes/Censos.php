@@ -51,41 +51,44 @@ class Censos extends General
         $arrayFaltantes = [];
         foreach ($services as $ks => $vs) {
             // if ($cont <= 5) {
-                $inventoryInfo = $this->getDataForInventory($vs['Id']);
-                foreach ($inventoryInfo['actual'] as $key => $value) {
-                    array_push($arrayCenso, $value);
+                $dataInventory = $this->Poliza->getCensoDetailsForExport($vs['Id']);
+                foreach ($dataInventory['inventario'] as $kinv => $vinv) {
+                    array_push($arrayCenso, [
+                        'Fecha' => $vinv['Fecha'],
+                        'Sucursal' => $vinv['Sucursal'],
+                        'Zona' => $vinv['Zona'],
+                        'Area' => $vinv['Area'],
+                        'Punto' => $vinv['Punto'],
+                        'Linea' => $vinv['Linea'],
+                        'Sublinea' => $vinv['Sublinea'],
+                        'Marca' => $vinv['Marca'],
+                        'Modelo' => $vinv['Modelo'],
+                        'Serie' => $vinv['Serie']
+                    ]);
                 }
-                foreach ($inventoryInfo['d']['faltantes'] as $kArea => $vArea) {
-                    foreach ($vArea as $kPunto => $vPunto) {
-                        foreach ($vPunto as $k => $v) {
-                            array_push($arrayFaltantes, [
-                                'Sucursal' => $vs['Sucursal'],
-                                'Zona' => $vs['Zona'],
-                                'Area' => $v['Area'],
-                                'Punto' => str_replace("P", "", $kPunto),
-                                'Linea' => $v['Linea'],
-                                'Sublinea' => $v['Sublinea'],
-                                'Cantidad' => $v['Cantidad']
-                            ]);
-                        }
-                    }
+                foreach ($dataInventory['faltantes'] as $kinv => $v) {
+                    array_push($arrayFaltantes, [
+                        'Sucursal' => $vs['Sucursal'],
+                        'Zona' => $vs['Zona'],
+                        'Area' => $v['Area'],
+                        'Punto' => $v['Punto'],
+                        'Linea' => $v['Linea'],
+                        'Sublinea' => $v['Sublinea'],
+                        'Cantidad' => $v['Cantidad']
+                    ]);
                 }
-                foreach ($inventoryInfo['d']['sobrantes'] as $kArea => $vArea) {
-                    foreach ($vArea as $kPunto => $vPunto) {
-                        foreach ($vPunto as $k => $v) {
-                            array_push($arraySobrantes, [
-                                'Sucursal' => $vs['Sucursal'],
-                                'Zona' => $vs['Zona'],
-                                'Area' => $v['Area'],
-                                'Punto' => $v['Punto'],
-                                'Linea' => $v['Linea'],
-                                'Sublinea' => $v['Sublinea'],
-                                'Marca' => $v['Marca'],
-                                'Modelo' => $v['Modelo'],
-                                'Serie' => $v['Serie']
-                            ]);
-                        }
-                    }
+                foreach ($dataInventory['sobrantes'] as $kinv => $v) {
+                    array_push($arraySobrantes, [
+                        'Sucursal' => $vs['Sucursal'],
+                        'Zona' => $vs['Zona'],
+                        'Area' => $v['Area'],
+                        'Punto' => $v['Punto'],
+                        'Linea' => $v['Linea'],
+                        'Sublinea' => $v['Sublinea'],
+                        'Marca' => $v['Marca'],
+                        'Modelo' => $v['Modelo'],
+                        'Serie' => $v['Serie']
+                    ]);
                 }
             // }
             $cont++;

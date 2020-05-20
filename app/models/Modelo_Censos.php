@@ -863,7 +863,7 @@ class Modelo_Censos extends Modelo_Base
         where tc.IdServicio = '" . $idServicio . "'
         and tc.Existe = 1
         and tc.IdEstatus in (0,17)
-        and tc.Forced in (0,1)");
+        and (tc.Forced in (0,1) or (tc.Forced = 2 && Serie = 'ILEGIBLE'))");
     }
 
     public function getLastCensoForCompare($idServicio)
