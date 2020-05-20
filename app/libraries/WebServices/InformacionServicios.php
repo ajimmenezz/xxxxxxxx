@@ -2789,27 +2789,15 @@ class InformacionServicios extends General {
         $this->setCoordinates(169, $this->y - 5);
         $this->setCellValue(31, 5, 'Total Diferencia', 'C', true);
 
-        if ($datosExtra['totales']['faltantes'] > 0) {
-            $signoFaltantes = '-';
-        } else {
-            $signoFaltantes = '';
-        }
-
-        if ($datosExtra['totales']['sobrantes'] > 0) {
-            $signoSobrantes = '+';
-        } else {
-            $signoSobrantes = '';
-        }
-
         $this->setCoordinates(10);
         $this->setStyleSubtitle();
         $this->setCellValue(43, 5, $datosExtra['totales']['censados'], 'C');
         $this->setCoordinates(53, $this->y - 5);
         $this->setCellValue(55, 5, $datosExtra['totales']['kit'], 'C');
         $this->setCoordinates(108, $this->y - 5);
-        $this->setCellValue(31, 5, $signoSobrantes . $datosExtra['totales']['faltantes'], 'C');
+        $this->setCellValue(31, 5, ($datosExtra['totales']['faltantes'] > 0 ? '-' : '') . $datosExtra['totales']['faltantes'], 'C');
         $this->setCoordinates(139, $this->y - 5);
-        $this->setCellValue(31, 5, $signoSobrantes . $datosExtra['totales']['sobrantes'], 'C');
+        $this->setCellValue(31, 5, ($datosExtra['totales']['sobrantes'] > 0 ? '+' : '') . $datosExtra['totales']['sobrantes'], 'C');
         $this->setCoordinates(169, $this->y - 5);
         $this->setCellValue(31, 5, (int) $datosExtra['totales']['sobrantes'] - (int) $datosExtra['totales']['faltantes'], 'C');
     }
