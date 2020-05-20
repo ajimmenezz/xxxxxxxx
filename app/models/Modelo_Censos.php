@@ -1012,7 +1012,6 @@ class Modelo_Censos extends Modelo_Base
 
     public function getCensosServicesId(array $data = [])
     {
-
         return $this->consulta("
         select 
         MAX(tst.Id) as Id,
