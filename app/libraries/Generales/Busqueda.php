@@ -794,7 +794,6 @@ class Busqueda extends General {
     }
     
     public function exportarCenso(array $datos = null){
-        $listaCenso = $this->DBB->getinfoEqiposCenso($datos['servicio']);
         $detallesDiferenciaCenso = $this->SeguimientoPoliza->getDataForCensoCompare($datos['servicio']);
         $host = $_SERVER['SERVER_NAME'];
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
@@ -803,17 +802,15 @@ class Busqueda extends General {
             $liga = 'http://' . $host;
         }
 
-        if($listaCenso){
+        if($detallesDiferenciaCenso){
             
-            $this->contenidoCenso($listaCenso);
-            $this->EncabezadoDiferenciasConteos($detallesDiferenciaCenso['generales'], count($detallesDiferenciaCenso['ultimo']), count($detallesDiferenciaCenso['actual']), $detallesDiferenciaCenso['diferenciaAreas']);
-            $this->diferenciasConteos($detallesDiferenciaCenso, $detallesDiferenciaCenso['diferenciaAreas']);
-            $this->faltantes($detallesDiferenciaCenso['diferenciasKit']['faltantes']);
-            $this->sobrantes($detallesDiferenciaCenso['diferenciasKit']['sobrantes']);
-//            $this->diferenciasSeries($detallesDiferenciaCenso['diferenciasActual'], $detallesDiferenciaCenso['diferenciasUltimo'], $detallesDiferenciaCenso['generales']);
-//            $this->cambiosSeries($detallesDiferenciaCenso['cambiosSerie']);
+            $this->contenidoCenso($detallesDiferenciaCenso['actual']);
+            $this->EncabezadoDiferenciasConteos($detallesDiferenciaCenso['diferenciasFull']['totales'], $detallesDiferenciaCenso['actual'][0]['Sucursal']);
+            $this->diferenciasConteos($detallesDiferenciaCenso['diferenciasFull']['censados']);
+            $this->faltantes($detallesDiferenciaCenso['diferenciasFull']['faltantes']);
+            $this->sobrantes($detallesDiferenciaCenso['diferenciasFull']['sobrantes']);
                         
-            $nombreArchivo = 'Censo-'.$listaCenso[0]['Sucursal'] .'_'. $datos['servicio'] . '.xlsx';
+            $nombreArchivo = 'Censo-'.$detallesDiferenciaCenso['actual'][0]['Sucursal'] .'_'. $datos['servicio'] . '.xlsx';
             $nombreArchivo = trim($nombreArchivo);
             $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
 
@@ -830,188 +827,8 @@ class Busqueda extends General {
     }
     
     public function contenidoCenso($listaCenso) {
-        $this->Excel->createSheet('Censo', 0);
-        $this->Excel->setActiveSheet(0);
-        $arrayTitulos = [
-                'Sucursal',
-                'Área de Atención',
-                'Punto',
-                'Línea de Equipo',
-                'Sublínea de Equipo',
-                'Marca',
-                'Modelo',
-                'Serie',
-                'Terminal'];
-            $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
-            $arrayWidth = [30, 15, 8, 20, 20, 20, 30, 30, 20];
-            $this->Excel->setColumnsWidth('A', $arrayWidth);
-            $arrayAlign = ['justify', 'center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
-
-            $this->Excel->setTableContent('A', 1, $listaCenso, true, $arrayAlign);
-    }
-    
-    public function totalesExcel($diferenciaAreas) {
-        $totales = [
-            'area' => 'TOTALES',
-            'puntos' => 0,
-            'debenExistir' => 0,
-            'censados' => 0,
-            'faltantes' => 0,
-            'sobrantes' => 0
-        ];
-        if (isset($diferenciaAreas) && count($diferenciaAreas) > 0) {
-            foreach ($diferenciaAreas as $k => $v) {
-                $totales['puntos'] += $v['Puntos'];
-                $totales['debenExistir'] += ($v['Puntos'] * $v['EquiposxPunto']);
-                $totales['censados'] += $v['TotalCensado'];
-                $totales['faltantes'] += $v['Faltantes'];
-                $totales['sobrantes'] += $v['Sobrantes'];
-            }
-        }
-        
-        return $totales;
-    }
-    
-    public function EncabezadoDiferenciasConteos($informacionGeneralCenso, $ultimo, $actual, $diferenciaAreas) {
-        $totales = $this->totalesExcel($diferenciaAreas);
-        $this->Excel->createSheet('Diferencias(Conteos)', 1);
+        $this->Excel->createSheet('Censo', 1);
         $this->Excel->setActiveSheet(1);
-        $this->Excel->setTableTitle('A1', 'J1', $informacionGeneralCenso["Sucursal"], ['center']);
-        $this->Excel->setTableTitle('A2', 'B2', 'Total de Equipos censados');
-        $this->Excel->setTableTitle('A3', 'B3', $totales['censados'], ['center']);
-        $this->Excel->setTableTitle('C2', 'D2', 'Total de equipos que deben existir (basado en el estandar)');
-        $this->Excel->setTableTitle('C3', 'D3', $totales['debenExistir'], ['center']);
-        $this->Excel->setTableTitle('E2', 'G2', 'Total Faltantes', ['center']);
-        $this->Excel->setTableTitle('E3', 'G3', $totales['faltantes'], ['center']);
-        $this->Excel->setTableTitle('H2', 'J2', 'Total Sobrantes', ['center']);
-        $this->Excel->setTableTitle('H3', 'J3', $totales['sobrantes'], ['center']);
-    }
-    
-    public function diferenciasConteos($detallesGeneralesCenso, $diferenciaAreas) {
-        $totales = $this->totalesExcel($diferenciaAreas);
-        $this->Excel->setActiveSheet(1);
-        $this->Excel->setTableTitle('A5', 'C5', 'Diferencia de Sublíneas');
-//        $this->Excel->setTableTitle('D5', 'E5', 'Diferencia de Puntos por Área');
-//        $this->Excel->setTableTitle('G5', 'H5', 'Diferencia de Líneas');
-//        $this->Excel->setTableTitle('J5', 'K5', 'Diferencia de Modelos');
-        $this->Excel->setTableTitle('E5', 'J5', 'Diferencia de Equipos en Áreas');
-        
-        $titulosSublineas = [
-                'SubLíneas',
-                'Faltantes',
-                'Sobrantes'];
-        $this->Excel->setTableSubtitles('A', 6, $titulosSublineas);
-//        $titulosArea = [
-//                'Área',
-//                'Total de Puntos'];
-//        $this->Excel->setTableSubtitles('D', 6, $titulosArea);
-//        $titulosLinea = [
-//                'Línea',
-//                'Total de Equipos'];
-//        $this->Excel->setTableSubtitles('G', 6, $titulosLinea);
-//        $titulosModelos = [
-//                'Modelos',
-//                'Total de Equipos'];
-//        $this->Excel->setTableSubtitles('J', 6, $titulosModelos);
-        $titulosEquiposArea = [
-                'Área',
-                'Número de Puntos',
-                'Equipos que deben existir (según el estandar)',
-                'Equipos censados',
-                'Faltantes (según el estandar)',
-                'Sobrantes (según el estandar)'
-            ];
-        $this->Excel->setTableSubtitles('E', 6, $titulosEquiposArea);
-        $arrayWidth = [20, 20, 20, 20, 20, 20];
-        $this->Excel->setColumnsWidth('A', $arrayWidth);
-//        $this->Excel->setColumnsWidth('D', $arrayWidth);
-//        $this->Excel->setColumnsWidth('G', $arrayWidth);
-//        $this->Excel->setColumnsWidth('J', $arrayWidth);
-        $this->Excel->setColumnsWidth('E', $arrayWidth);
-        $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center'];
-        
-        $listaSubLineas = array();
-//        $listaAreas = array();
-//        $listaLineas = array();
-//        $listaModelos = array();
-        $listaEquiposArea = array();
-        
-        foreach ($detallesGeneralesCenso['diferenciaSublineas'] as $k => $v) {
-            if($v != 0){
-                $listaSubLineas[$k]['Sublinea'] = $k;
-                $listaSubLineas[$k]['faltantes'] = $v["faltantes"];
-                $listaSubLineas[$k]['sobrantes'] = $v["sobrantes"];
-            }
-        }
-        unset($listaSubLineas["conteo"]);
-        $listaSubLineas['Totales'] = array($totales['area'], $totales['faltantes'], $totales['sobrantes']);
-        
-//        foreach ($detallesGeneralesCenso['diferenciaAreas'] as $k => $v) {
-//            if($v != 0){
-//                $listaAreas[$k]['Area'] = $k;
-//                $listaAreas[$k]['Valor'] = $v;
-//            }
-//        }
-        
-//        foreach ($detallesGeneralesCenso['diferenciaLineas'] as $k => $v) {
-//            if($v != 0){
-//                $listaLineas[$k]['Area'] = $k;
-//                $listaLineas[$k]['Valor'] = $v;
-//            }
-//        }
-        
-//        foreach ($detallesGeneralesCenso['diferenciaModelos'] as $k => $v) {
-//            if($v != 0){
-//                $listaModelos[$k]['Area'] = $k;
-//                $listaModelos[$k]['Valor'] = $v;
-//            }
-//        }
-        foreach ($detallesGeneralesCenso['diferenciaAreas'] as $k => $v) {
-            if($v != 0){
-                $listaEquiposArea[$k]['Area'] = $k;
-                $listaEquiposArea[$k]['EquiposxPunto'] = $v["Puntos"];
-                $listaEquiposArea[$k]['TextoKit'] = $v['Puntos'] * $v['EquiposxPunto'];
-                $listaEquiposArea[$k]['TotalCensado'] = $v["TotalCensado"];
-                $listaEquiposArea[$k]['Faltantes'] = $v["Faltantes"];
-                $listaEquiposArea[$k]['Sobrantes'] = $v["Sobrantes"];
-            }
-        }
-        array_push($listaEquiposArea, $totales);
-        
-        if(count($listaSubLineas) > 0){
-            $this->Excel->setTableContent('A', 6, $listaSubLineas, true, $arrayAlign);
-        } else {
-            $this->Excel->setTableTitle('A7', 'B7', 'No existen registros', ['center']);
-        }
-//        if(count($listaAreas) > 0){
-//            $this->Excel->setTableContent('D', 6, $listaAreas, true, $arrayAlign);
-//        } else {
-//            $this->Excel->setTableTitle('D7', 'E7', 'No existen registros', ['center']);
-//        }
-//        if(count($listaLineas) > 0){
-//            $this->Excel->setTableContent('G', 6, $listaLineas, true, $arrayAlign);
-//        } else {
-//            $this->Excel->setTableTitle('G7', 'H7', 'No existen registros', ['center']);
-//        }
-//        if(count($listaModelos) > 0){
-//            $this->Excel->setTableContent('J', 6, $listaModelos, true, $arrayAlign);
-//        } else {
-//            $this->Excel->setTableTitle('J7', 'K7', 'No existen registros', ['center']);
-//        }
-        if(count($listaEquiposArea) > 0){
-            $this->Excel->setTableContent('E', 6, $listaEquiposArea, true, $arrayAlign);
-        } else {
-            $this->Excel->setTableTitle('E6', 'J6', 'No existen registros', ['center']);
-        }
-    }
-    
-    public function diferenciasSeries($diferenciasActual, $diferenciasUltimo, $fechas) {
-        $listaDiferenciasActual = array();
-        $listaDiferenciasUltimo = array();
-        $this->Excel->createSheet('Diferencias(Series)', 4);
-        $this->Excel->setActiveSheet(4);
-        $this->Excel->setTableTitle('A1', 'G1', 'Equipos que no existen en el censo de ' . $fechas["Fecha"]);
-        $this->Excel->setTableTitle('I1', 'O1', 'Equipos que no existen en el censo de ' . $fechas["FechaUltimo"] . ' (Actual)');
         $arrayTitulos = [
                 'Área',
                 'Punto',
@@ -1020,84 +837,165 @@ class Busqueda extends General {
                 'Marca',
                 'Modelo',
                 'Serie'];
-        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
-        $this->Excel->setTableSubtitles('I', 2, $arrayTitulos);
-        $arrayWidth = [15, 8, 20, 20, 20, 30, 30];
-        $this->Excel->setColumnsWidth('A', $arrayWidth);
-        $this->Excel->setColumnsWidth('I', $arrayWidth);
-        $arrayAlign = ['center', 'center', 'justify', 'justify', 'justify', 'justify', 'center'];
+            $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+            $arrayWidth = [15, 10, 20, 20, 20, 30, 30];
+            $this->Excel->setColumnsWidth('A', $arrayWidth);
+            $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center'];
+            
+         $lista = array();
         
-        foreach ($diferenciasActual as $k => $v) {
-            $listaDiferenciasActual[$k]['Area'] = $v['Area'];
-            $listaDiferenciasActual[$k]['Punto'] = $v['Punto'];
-            $listaDiferenciasActual[$k]['Linea'] = $v['Linea'];
-            $listaDiferenciasActual[$k]['Sublinea'] = $v['Sublinea'];
-            $listaDiferenciasActual[$k]['Marca'] = $v['Marca'];
-            $listaDiferenciasActual[$k]['Modelo'] = $v['Modelo'];
-            $listaDiferenciasActual[$k]['SerieAnt'] = $v['Serie'];
+        foreach ($listaCenso as $k => $v) {
+            if($v != 0){
+                $lista[$k]['Area'] = $v["Area"];
+                $lista[$k]['Punto'] = $v["Punto"];
+                $lista[$k]['Linea'] = $v["Linea"];
+                $lista[$k]['Sublinea'] = $v["Sublinea"];
+                $lista[$k]['Marca'] = $v["Marca"];
+                $lista[$k]['Modelo'] = $v["Modelo"];
+                $lista[$k]['Serie'] = $v["Serie"];
+            }
         }
-        foreach ($diferenciasUltimo as $k => $v) {
-            $listaDiferenciasUltimo[$k]['Area'] = $v['Area'];
-            $listaDiferenciasUltimo[$k]['Punto'] = $v['Punto'];
-            $listaDiferenciasUltimo[$k]['Linea'] = $v['Linea'];
-            $listaDiferenciasUltimo[$k]['Sublinea'] = $v['Sublinea'];
-            $listaDiferenciasUltimo[$k]['Marca'] = $v['Marca'];
-            $listaDiferenciasUltimo[$k]['Modelo'] = $v['Modelo'];
-            $listaDiferenciasUltimo[$k]['SerieAnt'] = $v['Serie'];
+
+            $this->Excel->setTableContent('A', 1, $lista, true, $arrayAlign);
+    }
+    
+    public function EncabezadoDiferenciasConteos($informacionGeneralCenso, $sucursal) {
+        $this->Excel->createSheet('Diferencias(Conteos)', 2);
+        $this->Excel->setActiveSheet(2);
+        $this->Excel->setTableTitle('A1', 'J1', $sucursal, ['center']);
+        $this->Excel->setTableTitle('A2', 'B2', 'Total de Equipos censados');
+        $this->Excel->setTableTitle('A3', 'B3', $informacionGeneralCenso['censados'], ['center']);
+        $this->Excel->setTableTitle('C2', 'D2', 'Total de equipos que deben existir');
+        $this->Excel->setTableTitle('C3', 'D3', $informacionGeneralCenso['kit'], ['center']);
+        $this->Excel->setTableTitle('E2', 'F2', 'Total Faltantes', ['center']);
+        $this->Excel->setTableTitle('E3', 'F3', $informacionGeneralCenso['faltantes'], ['center']);
+        $this->Excel->setTableTitle('G2', 'H2', 'Total Sobrantes', ['center']);
+        $this->Excel->setTableTitle('G3', 'H3', $informacionGeneralCenso['sobrantes'], ['center']);
+        $this->Excel->setTableTitle('I2', 'J2', 'Diferencia', ['center']);
+        $this->Excel->setTableTitle('I3', 'J3', $informacionGeneralCenso['sobrantes'] - $informacionGeneralCenso['faltantes'], ['center']);
+    }
+    
+    public function diferenciasConteos($detallesGeneralesCenso) {
+        $totalesSublineas = $this->totalesExcel($detallesGeneralesCenso['sublineas']);
+        $totalesAreas = $this->totalesExcelAreas($detallesGeneralesCenso['areas']);
+        $this->Excel->setActiveSheet(2);
+        $this->Excel->setTableTitle('A5', 'F5', 'Diferencia de Sublíneas');
+        $this->Excel->setTableTitle('H5', 'N5', 'Diferencia de Equipos en Áreas');
+        
+        $titulosSublineas = [
+                'SubLíneas',
+                'Equipos que deben existir (basado el estandar)',
+                'Equipos Censados',
+                'Faltantes (basado en el estandar)',
+                'Sobrantes (basado en el estandar)',
+                'Diferencia'];
+        $this->Excel->setTableSubtitles('A', 6, $titulosSublineas);
+        
+        $titulosEquiposArea = [
+                'Área',
+                'Número de Puntos',
+                'Equipos que deben existir (según el estandar)',
+                'Equipos censados',
+                'Faltantes (según el estandar)',
+                'Sobrantes (según el estandar)',
+                'Diferencia'
+            ];
+        $this->Excel->setTableSubtitles('H', 6, $titulosEquiposArea);
+        $arrayWidth = [25, 25, 25, 25, 25, 25, 25];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $this->Excel->setColumnsWidth('H', $arrayWidth);
+        $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center'];
+        
+        $listaSubLineas = array();
+        $listaEquiposArea = array();
+        
+        foreach ($detallesGeneralesCenso['sublineas'] as $k => $v) {
+            if($v != 0){
+                $listaSubLineas[$k]['Sublinea'] = $k;
+                $listaSubLineas[$k]['kit'] = $v["kit"];
+                $listaSubLineas[$k]['censados'] = $v["censados"];
+                $listaSubLineas[$k]['faltantes'] = $v["faltantes"];
+                $listaSubLineas[$k]['sobrantes'] = $v["sobrantes"];
+                $listaSubLineas[$k]['diferencia'] = $v["faltantes"] - $v["sobrantes"];
+            }
         }
-        if(count($listaDiferenciasActual) > 0){
-            $this->Excel->setTableContent('A', 2, $listaDiferenciasActual, true, $arrayAlign);
+        array_push($listaSubLineas, $totalesSublineas);
+
+        foreach ($detallesGeneralesCenso['areas'] as $k => $v) {
+            if($v != 0){
+                $listaEquiposArea[$k]['Area'] = $k;
+                $listaEquiposArea[$k]['puntos'] = $v["puntos"];
+                $listaEquiposArea[$k]['kit'] = $v['puntos'] * $v['kit'];
+                $listaEquiposArea[$k]['censados'] = $v["censados"];
+                $listaEquiposArea[$k]['faltantes'] = $v["faltantes"];
+                $listaEquiposArea[$k]['sobrantes'] = $v["sobrantes"];
+                $listaEquiposArea[$k]['diferencia'] = $v["faltantes"] - $v["sobrantes"];
+            }
+        }
+        array_push($listaEquiposArea, $totalesAreas);
+        
+        if(count($listaSubLineas) > 0){
+            $this->Excel->setTableContent('A', 6, $listaSubLineas, true, $arrayAlign);
         } else {
-            $this->Excel->setTableTitle('A3', 'G3', 'No existen registros', ['center']);
+            $this->Excel->setTableTitle('A7', 'B7', 'No existen registros', ['center']);
         }
-        if(count($listaDiferenciasUltimo) > 0){
-            $this->Excel->setTableContent('I', 2, $listaDiferenciasUltimo, true, $arrayAlign);
+        
+        if(count($listaEquiposArea) > 0){
+            $this->Excel->setTableContent('H', 6, $listaEquiposArea, true, $arrayAlign);
         } else {
-            $this->Excel->setTableTitle('I3', 'O3', 'No existen registros', ['center']);
+            $this->Excel->setTableTitle('H6', 'N6', 'No existen registros', ['center']);
         }
     }
     
-    public function cambiosSeries($cambiosSerie) {
-        $listaCambiosSerie = array();
-        $this->Excel->createSheet('Cambios Serie', 5);
-        $this->Excel->setActiveSheet(5);
-        $this->Excel->setTableTitle('A1', 'H1', 'Equipos que posiblemente cambiaron de tener Serie a ser ILEGIBLE');
-        $arrayTitulos = [
-                'Área',
-                'Punto',
-                'Línea',
-                'Sublínea',
-                'Marca',
-                'Modelo',
-                'Serie Anterior',
-                'Serie Actual'];
-        $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
-        $arrayWidth = [15, 8, 20, 20, 20, 30, 30, 30];
-        $this->Excel->setColumnsWidth('A', $arrayWidth);
-        $arrayAlign = ['center', 'center', 'justify', 'justify', 'justify', 'justify', 'center', 'center'];
-
-        foreach ($cambiosSerie as $k => $v) {
-            $listaCambiosSerie[$k]['Area'] = $v['Area'];
-            $listaCambiosSerie[$k]['Punto'] = $v['Punto'];
-            $listaCambiosSerie[$k]['Linea'] = $v['Linea'];
-            $listaCambiosSerie[$k]['Sublinea'] = $v['Sublinea'];
-            $listaCambiosSerie[$k]['Marca'] = $v['Marca'];
-            $listaCambiosSerie[$k]['Modelo'] = $v['Modelo'];
-            $listaCambiosSerie[$k]['SerieAnt'] = $v['Serie'];
-            $listaCambiosSerie[$k]['SerieAct'] = 'ILEGIBLE';
+    public function totalesExcel($diferenciaSublineas) {
+        $totales = [
+            'area' => 'TOTALES',
+            'kit' => 0,
+            'censados' => 0,
+            'faltantes' => 0,
+            'sobrantes' => 0,
+            'diferencias' => 0
+        ];
+        if (isset($diferenciaSublineas) && count($diferenciaSublineas) > 0) {
+            foreach ($diferenciaSublineas as $k => $v) {
+                $totales['kit'] += $v['kit'];
+                $totales['censados'] += $v['censados'];
+                $totales['faltantes'] += $v['faltantes'];
+                $totales['sobrantes'] += $v['sobrantes'];
+                $totales['diferencias'] += $v['sobrantes'] - $v['faltantes'];
+            }
         }
-
-        if(count($listaCambiosSerie) > 0){
-            $this->Excel->setTableContent('A', 2, $listaCambiosSerie, true, $arrayAlign);
-        } else {
-            $this->Excel->setTableTitle('A3', 'H3', 'No existen registros', ['center']);
+        
+        return $totales;
+    }
+    public function totalesExcelAreas($diferenciaAreas) {
+        $totales = [
+            'area' => 'TOTALES',
+            'puntos' => 0,
+            'kit' => 0,
+            'censados' => 0,
+            'faltantes' => 0,
+            'sobrantes' => 0,
+            'diferencias' => 0
+        ];
+        if (isset($diferenciaAreas) && count($diferenciaAreas) > 0) {
+            foreach ($diferenciaAreas as $k => $v) {
+                $totales['puntos'] += $v['puntos'];
+                $totales['kit'] += $v['puntos'] * $v['kit'];
+                $totales['censados'] += $v['censados'];
+                $totales['faltantes'] += $v['faltantes'];
+                $totales['sobrantes'] += $v['sobrantes'];
+                $totales['diferencias'] += $v['sobrantes'] - $v['faltantes'];
+            }
         }
+        
+        return $totales;
     }
     
     public function faltantes($diferenciasKitFaltantes) {
         $listaFaltantes = array();
-        $this->Excel->createSheet('Faltantes', 2);
-        $this->Excel->setActiveSheet(2);
+        $this->Excel->createSheet('Faltantes', 3);
+        $this->Excel->setActiveSheet(3);
         $this->Excel->setTableTitle('A1', 'E1', 'Equipos que faltan basado en el Kit Estandar de Área');
         $arrayTitulos = [
                 'Área',
@@ -1110,18 +1008,12 @@ class Busqueda extends General {
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $arrayAlign = ['justify', 'center', 'justify', 'justify', 'justify'];
         
-        $i = 0;
-        foreach ($diferenciasKitFaltantes as $kArea => $vArea) {
-            foreach ($vArea as $kPunto => $vPunto) {
-                foreach ($vPunto as $k => $v) {
-                    $listaFaltantes[$i]["Area"] = $diferenciasKitFaltantes[$kArea][$kPunto][$k]['Area'];
-                    $listaFaltantes[$i]["Punto"] = str_replace("P", "", $kPunto);
-                    $listaFaltantes[$i]["Linea"] = $diferenciasKitFaltantes[$kArea][$kPunto][$k]['Linea'];
-                    $listaFaltantes[$i]["Sublinea"] = $diferenciasKitFaltantes[$kArea][$kPunto][$k]['Sublinea'];
-                    $listaFaltantes[$i]["Cantidad"] = $diferenciasKitFaltantes[$kArea][$kPunto][$k]['Cantidad'];
-                    $i++;
-                }
-            }
+        foreach ($diferenciasKitFaltantes as $key => $value) {
+            $listaFaltantes[$key]["Area"] = $value['Area'];
+            $listaFaltantes[$key]["Punto"] = $value['Punto'];
+            $listaFaltantes[$key]["Linea"] = $value['Linea'];
+            $listaFaltantes[$key]["Sublinea"] = $value['Sublinea'];
+            $listaFaltantes[$key]["Cantidad"] = $value['Cantidad'];
         }
         
         if(count($listaFaltantes) > 0){
@@ -1133,9 +1025,8 @@ class Busqueda extends General {
     
     public function sobrantes($diferenciasKitSobrantes) {
         $listaSobrantes = array();
-        $lista = array();
-        $this->Excel->createSheet('Sobrantes', 3);
-        $this->Excel->setActiveSheet(3);
+        $this->Excel->createSheet('Sobrantes', 4);
+        $this->Excel->setActiveSheet(4);
         $this->Excel->setTableTitle('A1', 'G1', 'Equipos que sobran basado en el Kit Estandar de Área');
         $arrayTitulos = [
                 'Área',
@@ -1146,33 +1037,23 @@ class Busqueda extends General {
                 'Modelo',
                 'Serie'];
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
-        $arrayWidth = [30, 8, 20, 20, 20, 30, 30];
+        $arrayWidth = [30, 10, 20, 20, 20, 30, 30];
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $arrayAlign = ['justify', 'center', 'justify', 'justify', 'justify', 'justify', 'center'];
         
         $i = 0;
-        foreach ($diferenciasKitSobrantes as $kArea => $vArea) {
-            foreach ($vArea as $kPunto => $vPunto) {
-                foreach ($vPunto as $k => $v) {
-                    $listaSobrantes[$kPunto][$k]["Area"] = $v['Area'];
-                    $listaSobrantes[$kPunto][$k]["Punto"] = $v['Punto'];
-                    $listaSobrantes[$kPunto][$k]["Linea"] = $v['Linea'];
-                    $listaSobrantes[$kPunto][$k]["Sublinea"] = $v['Sublinea'];
-                    $listaSobrantes[$kPunto][$k]["Marca"] = $v['Marca'];
-                    $listaSobrantes[$kPunto][$k]["Modelo"] = $v['Modelo'];
-                    $listaSobrantes[$kPunto][$k]["Serie"] = $v['Serie'];
-                }
-            }
-        }
-        foreach ($listaSobrantes as $k => $v) {
-            foreach ($v as $key => $value) {
-                $lista[$i] = $value;
-                $i++;
-            }
+        foreach ($diferenciasKitSobrantes as $key => $value) {
+            $listaSobrantes[$key]["Area"] = $value['Area'];
+            $listaSobrantes[$key]["Punto"] = $value['Punto'];
+            $listaSobrantes[$key]["Linea"] = $value['Linea'];
+            $listaSobrantes[$key]["Sublinea"] = $value['Sublinea'];
+            $listaSobrantes[$key]["Marca"] = $value['Marca'];
+            $listaSobrantes[$key]["Modelo"] = $value['Modelo'];
+            $listaSobrantes[$key]["Serie"] = $value['Serie'];
         }
         
-        if(count($lista) > 0){
-            $this->Excel->setTableContent('A', 2, $lista, true, $arrayAlign);
+        if(count($listaSobrantes) > 0){
+            $this->Excel->setTableContent('A', 2, $listaSobrantes, true, $arrayAlign);
         } else {
             $this->Excel->setTableTitle('A3', 'G3', 'No existen registros', ['center']);
         }
