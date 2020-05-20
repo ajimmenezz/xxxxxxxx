@@ -41,7 +41,7 @@
             <li><a href="#cambiosSeries" data-toggle="tab">Cambios Serie</a></li>
             <li><a href="#difFaltantes" data-toggle="tab">Faltantes</a></li>
             <li><a href="#difSobrantes" data-toggle="tab">Sobrantes</a></li>
-            <li><a href="#Pruebas" data-toggle="tab">Pruebas</a></li>
+            <!-- <li><a href="#Pruebas" data-toggle="tab">Pruebas</a></li> -->
         </ul>
 
         <div class="tab-content">
@@ -463,13 +463,13 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="Pruebas">
+            <!-- <div class="tab-pane fade" id="Pruebas">
                 <pre>
                 <?php
-                var_dump($diferenciasFull['censados']['sublineas']);
+                //var_dump($diferenciasFull['censados']['sublineas']);
                 ?>
                 </pre>
-            </div>
+            </div> -->
         </div>
 
     </div>
