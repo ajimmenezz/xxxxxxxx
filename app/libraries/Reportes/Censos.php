@@ -28,6 +28,7 @@ class Censos extends General
         $this->Excel->setActiveSheet(0);
         $arrayTitulos = [
             'Fecha',
+            'Estado',
             'Sucursal',
             'Zona',
             'Unidad de Negocio',
@@ -37,7 +38,8 @@ class Censos extends General
             'Sublinea',
             'Marca',
             'Modelo',
-            'Serie'
+            'Serie',
+            'Cantidad'
         ];
 
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
@@ -56,6 +58,7 @@ class Censos extends General
                 foreach ($dataInventory['inventario'] as $kinv => $vinv) {
                     array_push($arrayCenso, [
                         'Fecha' => $vinv['Fecha'],
+                        'Estado' => $vinv['Estado'],
                         'Sucursal' => $vinv['Sucursal'],
                         'Zona' => $vinv['Zona'],
                         'UnidadNegocio' => $vinv['UnidadNegocio'], 
@@ -65,7 +68,8 @@ class Censos extends General
                         'Sublinea' => $vinv['Sublinea'],
                         'Marca' => $vinv['Marca'],
                         'Modelo' => $vinv['Modelo'],
-                        'Serie' => $vinv['Serie']
+                        'Serie' => $vinv['Serie'],
+                        'Cantidad' => 1
                     ]);
                 }
                 foreach ($dataInventory['faltantes'] as $kinv => $v) {
