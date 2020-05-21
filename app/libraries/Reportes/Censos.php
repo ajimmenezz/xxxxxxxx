@@ -30,8 +30,9 @@ class Censos extends General
             'Fecha',
             'Sucursal',
             'Zona',
+            'Unidad de Negocio',
             'Área de Atención',
-            'Punto',
+            'Equipo',
             'Línea',
             'Sublinea',
             'Marca',
@@ -40,7 +41,7 @@ class Censos extends General
         ];
 
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
-        $arrayWidth = [20, 35, 30, 35, 15, 25, 25, 25, 30, 30];
+        $arrayWidth = [20, 35, 30, 25, 35, 15, 25, 25, 25, 30, 30];
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $arrayAlign = ['center', '', '', '', 'center', '', '', '', '', ''];
 
@@ -57,8 +58,9 @@ class Censos extends General
                         'Fecha' => $vinv['Fecha'],
                         'Sucursal' => $vinv['Sucursal'],
                         'Zona' => $vinv['Zona'],
+                        'UnidadNegocio' => $vinv['UnidadNegocio'], 
                         'Area' => $vinv['Area'],
-                        'Punto' => $vinv['Punto'],
+                        'Punto' => $vinv['Dominio'],
                         'Linea' => $vinv['Linea'],
                         'Sublinea' => $vinv['Sublinea'],
                         'Marca' => $vinv['Marca'],
