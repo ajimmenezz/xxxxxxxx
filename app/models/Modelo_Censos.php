@@ -853,7 +853,7 @@ class Modelo_Censos extends Modelo_Base
         unidadNegocioByServicio(tc.IdServicio) as UnidadNegocio,
         estadoBySucursal(cs.Id) as Estado,
         cs.Nombre as Sucursal,
-        regionBySucursal(cs.Id) as Region,
+        regionBySucursal(cs.Id) as Zona,
         caa.Nombre as Area,
         linea(lineaByModelo(IdModelo)) as Linea,
         sublinea(sublineaByModelo(IdModelo)) as Sublinea,
