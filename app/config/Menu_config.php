@@ -840,6 +840,21 @@ $config['Proyectos'] = array(
 );
 
 $config['Poliza'] = array(
+    'SLA' => array(
+        'liga' => 'SLA`s',
+        'icono' => '',
+        'Url' => '/Poliza/SLA',
+        'css' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+        ),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Poliza/poliza'),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+        ),
+        'Permiso' => 'VSLA'
+    ),
     'Seguimiento-Poliza' => array(
         'liga' => 'Seguimiento',
         'icono' => '',
