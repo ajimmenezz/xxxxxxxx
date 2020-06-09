@@ -849,17 +849,22 @@ class Modelo_Censos extends Modelo_Base
         sublineaByModelo(IdModelo) as IdSublinea,
         cme.Marca as IdMarca,
         IdModelo,
-        sucursalByServicio('" . $idServicio . "') as Sucursal,
-        regionBySucursal((select IdSucursal from t_servicios_ticket where Id = '" . $idServicio . "')) as Zona,
-        areaAtencion(IdArea) as Area,
+        concat(cs.Dominio,caa.ClaveCorta,LPAD(tc.Punto,2,'0')) as Dominio,
+        unidadNegocioByServicio(tc.IdServicio) as UnidadNegocio,
+        estadoBySucursal(cs.Id) as Estado,
+        cs.Nombre as Sucursal,
+        regionBySucursal(cs.Id) as Zona,
+        caa.Nombre as Area,
         linea(lineaByModelo(IdModelo)) as Linea,
         sublinea(sublineaByModelo(IdModelo)) as Sublinea,
         marca(cme.Marca) as Marca,
         cme.Nombre as Modelo,
         tc.Serie,
-        date_format((select FechaInicio from t_servicios_ticket where Id = '" . $idServicio . "'),'%d-%m-%Y') as Fecha
+        date_format((select FechaInicio from t_servicios_ticket where Id = tc.IdServicio),'%d-%m-%Y') as Fecha
         from t_censos tc
         inner join cat_v3_modelos_equipo cme on tc.IdModelo = cme.Id
+        inner join cat_v3_areas_atencion caa on tc.IdArea = caa.Id
+        inner join cat_v3_sucursales cs on cs.Id = (select IdSucursal from t_servicios_ticket where Id = tc.IdServicio)
         where tc.IdServicio = '" . $idServicio . "'
         and tc.Existe = 1
         and tc.IdEstatus in (0,17)

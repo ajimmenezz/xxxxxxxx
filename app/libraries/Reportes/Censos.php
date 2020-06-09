@@ -28,19 +28,22 @@ class Censos extends General
         $this->Excel->setActiveSheet(0);
         $arrayTitulos = [
             'Fecha',
+            'Estado',
             'Sucursal',
             'Zona',
+            'Unidad de Negocio',
             'Área de Atención',
-            'Punto',
+            'Equipo',
             'Línea',
             'Sublinea',
             'Marca',
             'Modelo',
-            'Serie'
+            'Serie',
+            'Cantidad'
         ];
 
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
-        $arrayWidth = [20, 35, 30, 35, 15, 25, 25, 25, 30, 30];
+        $arrayWidth = [20, 35, 30, 25, 35, 15, 25, 25, 25, 30, 30];
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $arrayAlign = ['center', '', '', '', 'center', '', '', '', '', ''];
 
@@ -55,15 +58,18 @@ class Censos extends General
                 foreach ($dataInventory['inventario'] as $kinv => $vinv) {
                     array_push($arrayCenso, [
                         'Fecha' => $vinv['Fecha'],
+                        'Estado' => $vinv['Estado'],
                         'Sucursal' => $vinv['Sucursal'],
                         'Zona' => $vinv['Zona'],
+                        'UnidadNegocio' => $vinv['UnidadNegocio'], 
                         'Area' => $vinv['Area'],
-                        'Punto' => $vinv['Punto'],
+                        'Punto' => $vinv['Dominio'],
                         'Linea' => $vinv['Linea'],
                         'Sublinea' => $vinv['Sublinea'],
                         'Marca' => $vinv['Marca'],
                         'Modelo' => $vinv['Modelo'],
-                        'Serie' => $vinv['Serie']
+                        'Serie' => $vinv['Serie'],
+                        'Cantidad' => 1
                     ]);
                 }
                 foreach ($dataInventory['faltantes'] as $kinv => $v) {
