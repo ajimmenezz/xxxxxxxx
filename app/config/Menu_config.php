@@ -374,6 +374,19 @@ $config['Generales'] = array(
             'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min'
         ),
         'Permiso' => 'VRHPV'
+    ),
+    'Cursos-Asignados-RH' => array(
+        'liga' => 'Cursos Asignados',
+        'icono' => 'fa fa-newspaper-o',
+        'Url' => '/Generales/Cursos_Asignados',
+        'css' => array(),
+        'pluginsCss' => array(),
+        'js' => array(
+            'Base/Base', 
+            'RH/Cursos_Asignados'
+            ),
+        'pluginsJs' => array(),
+        'Permiso' => 'VGENCA'
     )
 );
 
@@ -1805,6 +1818,18 @@ $config['RH'] = array(
             'masked-input/masked-input.min'
         ),
         'Permiso' => 'VAPARH'
+    ),
+    'Cursos-RH' => array(
+        'liga' => 'Cursos',
+        'icono' => '',
+        'Url' => '/RH/Administracion_Cursos',
+        'css' => array(),
+        'pluginsCss' => array(),
+        'js' => array(
+            'Base/Base',
+            'RH/Administracion_Cursos'),
+        'pluginsJs' => array(),
+        'Permiso' => 'VRHCU'
     )
 );
 

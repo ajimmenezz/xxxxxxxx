@@ -29,7 +29,8 @@ $config['Secciones'] = array(
         'Archivo_Nuevo' => 'Archivo_Nuevo',
         'Archivo_Resumen' => 'Archivo_Resumen',
         'Dashboard_Gapsi' => 'Dashboard_Gapsi', 
-        'Tester' => 'Tester'
+        'Tester' => 'Tester',
+        'Cursos-Asignados-RH' => 'Cursos_Asignados'
     ),
     'Administrador' => array(
         'Dashboard-Administrador' => 'Dashboard',
@@ -73,7 +74,8 @@ $config['Secciones'] = array(
         'Permisosvacaciones-RH' => 'Permisos_vacaciones',
         'Catalogo-Permisos-RH' => 'Catalogos_Permisos',
         'AutorizarPermisos-RH' => 'Autorizar_permisos',
-        'CalendarioPermisos' => 'CalendarioPermisos'
+        'CalendarioPermisos' => 'CalendarioPermisos',
+        'Cursos-RH' => 'Administracion_Cursos'        
     ),
     'Capacitacion' => array(
         'Capacitacion-Videos' => 'Videos'

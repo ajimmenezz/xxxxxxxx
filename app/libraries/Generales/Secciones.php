@@ -608,6 +608,12 @@ class Secciones extends General {
             case 'Poliza/SLA':
                 $datos['folios'] = $this->Solicitud->sla();
                 break;
+            case '/RH/Administracion_Cursos':
+                $datos['data'] = "";
+                break;
+            case '/RH/Cursos_Asignados':
+                $datos['data'] = "";
+                break;
             default:
                 break;
         }
