@@ -1,5 +1,5 @@
 <!-- Empezando #contenido -->
-<div id="listaServicio" class="content">
+<div class="content">
     <p>
         Cursos Asignados
     </p>

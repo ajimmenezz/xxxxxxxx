@@ -173,6 +173,7 @@ class Secciones extends General {
      */
 
     public function getDatosPagina(string $url) {
+ 
         $datos = array();
         $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
@@ -608,10 +609,14 @@ class Secciones extends General {
             case 'Poliza/SLA':
                 $datos['folios'] = $this->Solicitud->sla();
                 break;
-            case '/RH/Administracion_Cursos':
-                $datos['data'] = "";
+            case 'RH/Administracion_Cursos':
+                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
+                $datos['filas'] = [
+                    array('Diseño','Hace algo','20','Activo',''),
+                    array('Redes','Interesante','4','Activo','')
+                ];
                 break;
-            case '/RH/Cursos_Asignados':
+            case 'RH/Cursos_Asignados':
                 $datos['data'] = "";
                 break;
             default:

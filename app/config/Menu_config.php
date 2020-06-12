@@ -1824,11 +1824,29 @@ $config['RH'] = array(
         'icono' => '',
         'Url' => '/RH/Administracion_Cursos',
         'css' => array(),
-        'pluginsCss' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min'
+        ),
         'js' => array(
             'Base/Base',
+            'Base/Select',
+            'Componentes/Socket',
+            'Componentes/Modal/ModalBase',
+            'Componentes/Modal/Alertas',
+            'Componentes/Modal/Modal',
+            'Componentes/Selects/ISelect',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Selects/SelectMultiple',
+            'Componentes/Pagina',
+            'Componentes/Tablas/ITabla',
+            'Componentes/Tablas/TablaBasica',
             'RH/Administracion_Cursos'),
-        'pluginsJs' => array(),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min'
+        ),
         'Permiso' => 'VRHCU'
     )
 );
