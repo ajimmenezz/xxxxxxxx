@@ -507,7 +507,7 @@ class Busqueda extends General {
                         'datos' => $this->DBB->getGeneralesServicio11($servicio)[0],
                         /* Detalles del censo */
                         'detalles' => $this->DBB->getDetalllesServicio11($servicio),
-                        'diferencias' => $this->SeguimientoPoliza->cargaDiferenciasCenso(['servicio' => $servicio,'mostrarCenso' => true])
+                        'diferencias' => $this->SeguimientoPoliza->cargaDiferenciasCenso(['servicio' => $servicio, 'mostrarCenso' => true])
                     ];
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_11", $data, TRUE);
                     break;
@@ -552,10 +552,12 @@ class Busqueda extends General {
                         /* Datos solciones del servicio correctivo */
                         'correctivoSoluciones' => $this->DBB->getCorrectivosSoluciones($servicio),
                     ];
-                    
-                    if ($data['diagnosticoEquipo'][0]['IdTipoDiagnostico']) {
-                        $bitacoraObservaciones = $this->InformacionServicios->getHistorialReporteEnFalso($servicio);
-                        $data['diagnosticoEquipo'][0]['BitacoraObservaciones'] = $bitacoraObservaciones;
+
+                    if (!empty($data['diagnosticoEquipo'])) {
+                        if ($data['diagnosticoEquipo'][0]['IdTipoDiagnostico']) {
+                            $bitacoraObservaciones = $this->InformacionServicios->getHistorialReporteEnFalso($servicio);
+                            $data['diagnosticoEquipo'][0]['BitacoraObservaciones'] = $bitacoraObservaciones;
+                        }
                     }
 
                     return parent::getCI()->load->view("Generales/Modal/detallesServicio_20", $data, TRUE);
@@ -792,8 +794,8 @@ class Busqueda extends General {
         ];
         return parent::getCI()->load->view("Generales/Modal/tablaServicios", $data, TRUE);
     }
-    
-    public function exportarCenso(array $datos = null){
+
+    public function exportarCenso(array $datos = null) {
         $detallesDiferenciaCenso = $this->SeguimientoPoliza->getDataForCensoCompare($datos['servicio']);
         $host = $_SERVER['SERVER_NAME'];
         if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
@@ -802,15 +804,15 @@ class Busqueda extends General {
             $liga = 'http://' . $host;
         }
 
-        if($detallesDiferenciaCenso){
-            
+        if ($detallesDiferenciaCenso) {
+
             $this->contenidoCenso($detallesDiferenciaCenso['actual']);
             $this->EncabezadoDiferenciasConteos($detallesDiferenciaCenso['diferenciasFull']['totales'], $detallesDiferenciaCenso['actual'][0]['Sucursal']);
             $this->diferenciasConteos($detallesDiferenciaCenso['diferenciasFull']['censados']);
             $this->faltantes($detallesDiferenciaCenso['diferenciasFull']['faltantes']);
             $this->sobrantes($detallesDiferenciaCenso['diferenciasFull']['sobrantes']);
-                        
-            $nombreArchivo = 'Censo-'.$detallesDiferenciaCenso['actual'][0]['Sucursal'] .'_'. $datos['servicio'] . '.xlsx';
+
+            $nombreArchivo = 'Censo-' . $detallesDiferenciaCenso['actual'][0]['Sucursal'] . '_' . $datos['servicio'] . '.xlsx';
             $nombreArchivo = trim($nombreArchivo);
             $ruta = '../public/storage/Archivos/Reportes/' . $nombreArchivo;
 
@@ -825,27 +827,27 @@ class Busqueda extends General {
             return ['ruta' => 500, 'mensaje' => 'No hay Registros en el censo'];
         }
     }
-    
+
     public function contenidoCenso($listaCenso) {
         $this->Excel->createSheet('Censo', 1);
         $this->Excel->setActiveSheet(1);
         $arrayTitulos = [
-                'Área',
-                'Punto',
-                'Línea',
-                'Sublínea',
-                'Marca',
-                'Modelo',
-                'Serie'];
-            $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
-            $arrayWidth = [15, 10, 20, 20, 20, 30, 30];
-            $this->Excel->setColumnsWidth('A', $arrayWidth);
-            $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center'];
-            
-         $lista = array();
-        
+            'Área',
+            'Punto',
+            'Línea',
+            'Sublínea',
+            'Marca',
+            'Modelo',
+            'Serie'];
+        $this->Excel->setTableSubtitles('A', 1, $arrayTitulos);
+        $arrayWidth = [15, 10, 20, 20, 20, 30, 30];
+        $this->Excel->setColumnsWidth('A', $arrayWidth);
+        $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center'];
+
+        $lista = array();
+
         foreach ($listaCenso as $k => $v) {
-            if($v != 0){
+            if ($v != 0) {
                 $lista[$k]['Area'] = $v["Area"];
                 $lista[$k]['Punto'] = $v["Punto"];
                 $lista[$k]['Linea'] = $v["Linea"];
@@ -856,9 +858,9 @@ class Busqueda extends General {
             }
         }
 
-            $this->Excel->setTableContent('A', 1, $lista, true, $arrayAlign);
+        $this->Excel->setTableContent('A', 1, $lista, true, $arrayAlign);
     }
-    
+
     public function EncabezadoDiferenciasConteos($informacionGeneralCenso, $sucursal) {
         $this->Excel->createSheet('Diferencias(Conteos)', 2);
         $this->Excel->setActiveSheet(2);
@@ -874,43 +876,43 @@ class Busqueda extends General {
         $this->Excel->setTableTitle('I2', 'J2', 'Diferencia', ['center']);
         $this->Excel->setTableTitle('I3', 'J3', $informacionGeneralCenso['sobrantes'] - $informacionGeneralCenso['faltantes'], ['center']);
     }
-    
+
     public function diferenciasConteos($detallesGeneralesCenso) {
         $totalesSublineas = $this->totalesExcel($detallesGeneralesCenso['sublineas']);
         $totalesAreas = $this->totalesExcelAreas($detallesGeneralesCenso['areas']);
         $this->Excel->setActiveSheet(2);
         $this->Excel->setTableTitle('A5', 'F5', 'Diferencia de Sublíneas');
         $this->Excel->setTableTitle('H5', 'N5', 'Diferencia de Equipos en Áreas');
-        
+
         $titulosSublineas = [
-                'SubLíneas',
-                'Equipos que deben existir (basado el estandar)',
-                'Equipos Censados',
-                'Faltantes (basado en el estandar)',
-                'Sobrantes (basado en el estandar)',
-                'Diferencia'];
+            'SubLíneas',
+            'Equipos que deben existir (basado el estandar)',
+            'Equipos Censados',
+            'Faltantes (basado en el estandar)',
+            'Sobrantes (basado en el estandar)',
+            'Diferencia'];
         $this->Excel->setTableSubtitles('A', 6, $titulosSublineas);
-        
+
         $titulosEquiposArea = [
-                'Área',
-                'Número de Puntos',
-                'Equipos que deben existir (según el estandar)',
-                'Equipos censados',
-                'Faltantes (según el estandar)',
-                'Sobrantes (según el estandar)',
-                'Diferencia'
-            ];
+            'Área',
+            'Número de Puntos',
+            'Equipos que deben existir (según el estandar)',
+            'Equipos censados',
+            'Faltantes (según el estandar)',
+            'Sobrantes (según el estandar)',
+            'Diferencia'
+        ];
         $this->Excel->setTableSubtitles('H', 6, $titulosEquiposArea);
         $arrayWidth = [25, 25, 25, 25, 25, 25, 25];
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $this->Excel->setColumnsWidth('H', $arrayWidth);
         $arrayAlign = ['center', 'center', 'center', 'center', 'center', 'center', 'center'];
-        
+
         $listaSubLineas = array();
         $listaEquiposArea = array();
-        
+
         foreach ($detallesGeneralesCenso['sublineas'] as $k => $v) {
-            if($v != 0){
+            if ($v != 0) {
                 $listaSubLineas[$k]['Sublinea'] = $k;
                 $listaSubLineas[$k]['kit'] = $v["kit"];
                 $listaSubLineas[$k]['censados'] = $v["censados"];
@@ -922,7 +924,7 @@ class Busqueda extends General {
         array_push($listaSubLineas, $totalesSublineas);
 
         foreach ($detallesGeneralesCenso['areas'] as $k => $v) {
-            if($v != 0){
+            if ($v != 0) {
                 $listaEquiposArea[$k]['Area'] = $k;
                 $listaEquiposArea[$k]['puntos'] = $v["puntos"];
                 $listaEquiposArea[$k]['kit'] = $v['puntos'] * $v['kit'];
@@ -933,20 +935,20 @@ class Busqueda extends General {
             }
         }
         array_push($listaEquiposArea, $totalesAreas);
-        
-        if(count($listaSubLineas) > 0){
+
+        if (count($listaSubLineas) > 0) {
             $this->Excel->setTableContent('A', 6, $listaSubLineas, true, $arrayAlign);
         } else {
             $this->Excel->setTableTitle('A7', 'B7', 'No existen registros', ['center']);
         }
-        
-        if(count($listaEquiposArea) > 0){
+
+        if (count($listaEquiposArea) > 0) {
             $this->Excel->setTableContent('H', 6, $listaEquiposArea, true, $arrayAlign);
         } else {
             $this->Excel->setTableTitle('H6', 'N6', 'No existen registros', ['center']);
         }
     }
-    
+
     public function totalesExcel($diferenciaSublineas) {
         $totales = [
             'area' => 'TOTALES',
@@ -965,9 +967,10 @@ class Busqueda extends General {
                 $totales['diferencias'] += $v['sobrantes'] - $v['faltantes'];
             }
         }
-        
+
         return $totales;
     }
+
     public function totalesExcelAreas($diferenciaAreas) {
         $totales = [
             'area' => 'TOTALES',
@@ -988,26 +991,26 @@ class Busqueda extends General {
                 $totales['diferencias'] += $v['sobrantes'] - $v['faltantes'];
             }
         }
-        
+
         return $totales;
     }
-    
+
     public function faltantes($diferenciasKitFaltantes) {
         $listaFaltantes = array();
         $this->Excel->createSheet('Faltantes', 3);
         $this->Excel->setActiveSheet(3);
         $this->Excel->setTableTitle('A1', 'E1', 'Equipos que faltan basado en el Kit Estandar de Área');
         $arrayTitulos = [
-                'Área',
-                'Punto',
-                'Línea',
-                'Sublínea',
-                'Cantidad'];
+            'Área',
+            'Punto',
+            'Línea',
+            'Sublínea',
+            'Cantidad'];
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
         $arrayWidth = [30, 8, 20, 20, 20];
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $arrayAlign = ['justify', 'center', 'justify', 'justify', 'justify'];
-        
+
         foreach ($diferenciasKitFaltantes as $key => $value) {
             $listaFaltantes[$key]["Area"] = $value['Area'];
             $listaFaltantes[$key]["Punto"] = $value['Punto'];
@@ -1015,32 +1018,32 @@ class Busqueda extends General {
             $listaFaltantes[$key]["Sublinea"] = $value['Sublinea'];
             $listaFaltantes[$key]["Cantidad"] = $value['Cantidad'];
         }
-        
-        if(count($listaFaltantes) > 0){
+
+        if (count($listaFaltantes) > 0) {
             $this->Excel->setTableContent('A', 2, $listaFaltantes, true, $arrayAlign);
         } else {
             $this->Excel->setTableTitle('A3', 'E3', 'No existen registros', ['center']);
-        }        
+        }
     }
-    
+
     public function sobrantes($diferenciasKitSobrantes) {
         $listaSobrantes = array();
         $this->Excel->createSheet('Sobrantes', 4);
         $this->Excel->setActiveSheet(4);
         $this->Excel->setTableTitle('A1', 'G1', 'Equipos que sobran basado en el Kit Estandar de Área');
         $arrayTitulos = [
-                'Área',
-                'Punto',
-                'Línea',
-                'Sublínea',
-                'Marca',
-                'Modelo',
-                'Serie'];
+            'Área',
+            'Punto',
+            'Línea',
+            'Sublínea',
+            'Marca',
+            'Modelo',
+            'Serie'];
         $this->Excel->setTableSubtitles('A', 2, $arrayTitulos);
         $arrayWidth = [30, 10, 20, 20, 20, 30, 30];
         $this->Excel->setColumnsWidth('A', $arrayWidth);
         $arrayAlign = ['justify', 'center', 'justify', 'justify', 'justify', 'justify', 'center'];
-        
+
         $i = 0;
         foreach ($diferenciasKitSobrantes as $key => $value) {
             $listaSobrantes[$key]["Area"] = $value['Area'];
@@ -1051,11 +1054,12 @@ class Busqueda extends General {
             $listaSobrantes[$key]["Modelo"] = $value['Modelo'];
             $listaSobrantes[$key]["Serie"] = $value['Serie'];
         }
-        
-        if(count($listaSobrantes) > 0){
+
+        if (count($listaSobrantes) > 0) {
             $this->Excel->setTableContent('A', 2, $listaSobrantes, true, $arrayAlign);
         } else {
             $this->Excel->setTableTitle('A3', 'G3', 'No existen registros', ['center']);
         }
     }
+
 }
