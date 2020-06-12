@@ -445,4 +445,84 @@ class Modelo_Solicitud extends Modelo_Base {
         return $consulta;
     }
 
+    public function getFoliosCreacionInicio() {
+        $consulta = $this->consulta("SELECT * FROM (SELECT 
+                                        T.FechaInicio, ts.FechaCreacion, ts.Folio
+                                    FROM
+                                        (SELECT 
+                                            FechaInicio, IdSolicitud
+                                        FROM
+                                            (SELECT 
+                                            tst.FechaInicio, tst.IdSolicitud
+                                        FROM
+                                            t_servicios_ticket tst
+                                        WHERE
+                                            tst.FechaInicio IS NOT NULL
+                                        ORDER BY tst.IdSolicitud , FechaInicio ASC) AS Tabla
+                                        GROUP BY IdSolicitud) AS T
+                                            INNER JOIN
+                                        t_solicitudes ts ON T.IdSolicitud = ts.Id
+                                    WHERE
+                                        ts.Folio IS NOT NULL AND ts.Folio <> 0
+                                            AND ts.FechaCreacion BETWEEN '2020-01-01 00:00:00' AND NOW()
+                                            ORDER BY ts.Folio, FechaCreacion ASC) AS TABLAFINAL
+                                            GROUP BY Folio");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return '';
+        }
+    }
+
+    public function sla() {
+        $consulta = $this->consulta("SELECT * FROM (SELECT 
+                                        TIME_TO_SEC(TIME(tct.TiempoTranscurrido)) AS SegundosTiempoTranscurrido,
+                                        tct.TiempoTranscurrido,
+                                        ts.Id AS IdSolicitud,
+                                        T.FechaInicio, ts.FechaCreacion, ts.Folio, T.Tecnico, ts.IdPrioridad, IF(ts.IdSucursal = 0, sucursal(T.IdSucursalServicio), sucursal(ts.IdSucursal )) AS Sucursal,
+                                        IF(ts.IdSucursal = 0, T.IdSucursalServicio, ts.IdSucursal ) AS IdSucursal
+                                    FROM
+                                        (SELECT 
+                                            FechaInicio, IdSolicitud, Tecnico, IdSucursalServicio
+                                        FROM
+                                            (SELECT 
+                                            tst.FechaInicio, tst.IdSolicitud, nombreUsuario(tst.Atiende) AS Tecnico, tst.IdSucursal AS IdSucursalServicio
+                                        FROM
+                                            t_servicios_ticket tst
+                                        WHERE
+                                            tst.FechaInicio IS NOT NULL
+                                        ORDER BY tst.IdSolicitud , FechaInicio ASC) AS Tabla
+                                        GROUP BY IdSolicitud) AS T
+                                            INNER JOIN
+                                        t_solicitudes ts ON T.IdSolicitud = ts.Id
+                                        INNER JOIN t_cheking_ticket tct
+                                        ON tct.Folio = ts.Folio
+                                    WHERE
+                                        ts.Folio IS NOT NULL AND ts.Folio <> 0
+                                        AND ts.FechaCreacion BETWEEN '2020-01-01 00:00:00' AND NOW()
+                                            ORDER BY ts.Folio, FechaCreacion ASC) AS TABLAFINAL
+                                            GROUP BY Folio;");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return '';
+        }
+    }
+
+    public function getCheking_Ticket(string $folio) {
+        $consulta = $this->consulta("SELECT * FROM t_cheking_ticket WHERE Folio = " . $folio);
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return '';
+        }
+    }
+
+    public function setCheking_Ticket(array $datos) {
+        $this->insertar("t_cheking_ticket", $datos);
+    }
+
 }

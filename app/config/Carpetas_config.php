@@ -92,6 +92,7 @@ $config['Secciones'] = array(
     'Poliza' => array(
         'Dashboard-Poliza' => 'Dashboard',
         'Seguimiento-Poliza' => 'Seguimiento',
+        'SLA' => 'SLA',
         'Solicitudes-Multimedia' => 'Solicitudes_Multimedia',
         'Catalogo-Regiones-Cliente' => 'Regiones_Cliente',
         'Catalogo-Fallas-Poliza' => 'Catalogo_Fallas',
