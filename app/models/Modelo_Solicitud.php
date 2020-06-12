@@ -480,14 +480,17 @@ class Modelo_Solicitud extends Modelo_Base {
                                         TIME_TO_SEC(TIME(tct.TiempoTranscurrido)) AS SegundosTiempoTranscurrido,
                                         tct.TiempoTranscurrido,
                                         ts.Id AS IdSolicitud,
-                                        T.FechaInicio, ts.FechaCreacion, ts.Folio, T.Tecnico, ts.IdPrioridad, IF(ts.IdSucursal = 0, sucursal(T.IdSucursalServicio), sucursal(ts.IdSucursal )) AS Sucursal,
-                                        IF(ts.IdSucursal = 0, T.IdSucursalServicio, ts.IdSucursal ) AS IdSucursal
+                                        T.FechaInicio,  ts.Folio, T.Tecnico, ts.IdPrioridad, IF(ts.IdSucursal = 0, sucursal(T.IdSucursalServicio), sucursal(ts.IdSucursal )) AS Sucursal,
+                                        IF(ts.IdSucursal = 0, T.IdSucursalServicio, ts.IdSucursal ) AS IdSucursal,
+                                        nombreUsuario(ts.Atiende) AS AtiendeSolicitud,
+                                        IF(ts.CreatedTime IS NULL, ts.FechaCreacion,  ts.CreatedTime) AS FechaCreacion,
+                                        T.FechaCreacionServicio
                                     FROM
                                         (SELECT 
-                                            FechaInicio, IdSolicitud, Tecnico, IdSucursalServicio
+                                            FechaInicio, IdSolicitud, Tecnico, IdSucursalServicio, FechaCreacion AS FechaCreacionServicio
                                         FROM
                                             (SELECT 
-                                            tst.FechaInicio, tst.IdSolicitud, nombreUsuario(tst.Atiende) AS Tecnico, tst.IdSucursal AS IdSucursalServicio
+                                            tst.FechaInicio, tst.IdSolicitud, nombreUsuario(tst.Atiende) AS Tecnico, tst.IdSucursal AS IdSucursalServicio, tst.FechaCreacion
                                         FROM
                                             t_servicios_ticket tst
                                         WHERE
@@ -502,7 +505,7 @@ class Modelo_Solicitud extends Modelo_Base {
                                         ts.Folio IS NOT NULL AND ts.Folio <> 0
                                         AND ts.FechaCreacion BETWEEN '2020-01-01 00:00:00' AND NOW()
                                             ORDER BY ts.Folio, FechaCreacion ASC) AS TABLAFINAL
-                                            GROUP BY Folio;");
+                                            GROUP BY Folio");
 
         if (!empty($consulta)) {
             return $consulta;

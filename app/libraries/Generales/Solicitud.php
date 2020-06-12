@@ -2026,6 +2026,7 @@ class Solicitud extends General {
 
         foreach ($sla as $key => $value) {
             if ($value["IdSucursal"] != '') {
+//                $this->tiempoEntreSolicitudTicket(array('FechaCreacionSolicitud' => $value['FechaCreacion'], 'FechaCreacionServicio' => $value['FechaCreacionServicio']));
                 $arrayFolios[$key]['Folio'] = $value['Folio'];
                 $arrayFolios[$key]['Sucursal'] = $value['Sucursal'];
                 $arrayFolios[$key]['FechaCreacion'] = $value['FechaCreacion'];
@@ -2077,6 +2078,17 @@ class Solicitud extends General {
             }
         }
         return $arrayFolios;
+    }
+
+    public function tiempoEntreSolicitudTicket(array $datos) {
+        $fechaConvertidaCreacionSolicitud = strtotime($datos['FechaCreacionSolicitud']);
+        $fechaConvertidaCreacionServicio = strtotime($datos['FechaCreacionServicio']);
+        $creacionSolicitud = date('Y-m-d', $fechaConvertidaCreacionSolicitud);
+        $creacionServicio = date('Y-m-d', $fechaConvertidaCreacionServicio);
+        $fechaDateTimeCreacionSolicitud = new \DateTime($creacionSolicitud);
+        $fechaDateTimeCreacionServicio = new \DateTime($creacionServicio);
+        $totalDias = $fechaDateTimeCreacionSolicitud->diff($fechaDateTimeCreacionServicio);
+        var_dump($totalDias->days);
     }
 
     public function setTiempoAtencionFolio() {
