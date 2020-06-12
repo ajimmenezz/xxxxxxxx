@@ -12,6 +12,7 @@ $config['Secciones'] = array(
     'Acceso' => array('Login', 'Recuperar_Acceso', 'Nuevo_Password'),
     'Configuracion' => array('Perfil-Configuracion' => 'Perfil'),
     'Generales' => array(
+        'Agenda' => 'Agenda',
         'Dashboard-Generico' => 'Dashboard_Generico',
         'Dashboard-Siccob' => 'Dashboard',
         'Disp-Moviles' => 'Dispositivos-Moviles',

@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
   | -------------------------------------------------------------------------
@@ -324,6 +324,8 @@ $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 $route['Reportes/Lexmark/(:any)'] = 'Reportes/Controller_PrinterLexmark/manejarEvento/$1';
 $route['Reportes/Censos/(:any)'] = 'Reportes/Controller_CensoReports/manejarEvento/$1';
 $route['Reportes/SD/(:any)'] = 'Reportes/Controller_Servicedesk/manejarEvento/$1';
+
+$route['Agenda/(:any)'] = 'Generales/Controller_Agenda/manejarEvento/$1';
 
 $route['P/(:any)'] = 'Pruebas/Controller_Pruebas/manejarEvento/$1';
 
