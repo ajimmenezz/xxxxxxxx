@@ -1,8 +1,20 @@
 <div id="listaPoliza" class="content">
-    <h1 class="page-header">SLA's</h1>
-
+    <div class="row">
+        <div class="col-md-6 col-xs-6">
+            <h1 class="page-header">SLA's</h1>
+        </div>
+        <div class="col-md-6 col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Acciones <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a id="reporteExcel" href="javascript:;"><i class="fa fa-file-excel-o"></i> Excel</a></li>                
+                </ul>
+            </div>
+        </div>
+    </div>
     <div id="panelSLA" class="panel panel-inverse">
-
         <div class="panel-heading">
             <div class="panel-heading-btn">
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>                            
@@ -52,7 +64,10 @@
                         <tr>
                             <th class="all">Folio</th>
                             <th class="all">Sucursal</th>
+                            <th class="all">Solicitud asignada a</th>
                             <th class="all">Técnico</th>
+                            <th class="all">Creación Ticket</th>
+                            <th class="all">Intervalo de Creación de Folio y Ticket</th>
                             <th class="all">Creación Folio</th>
                             <th class="all">Inicio Folio</th>
                             <th class="all">Tiempo Transcurrido</th>
@@ -69,7 +84,10 @@
                                 echo '<tr>';
                                 echo '<td>' . $value['Folio'] . '</td>';
                                 echo '<td>' . $value['Sucursal'] . '</td>';
+                                echo '<td>' . $value['AtiendeSolicitud'] . '</td>';
                                 echo '<td>' . $value['Tecnico'] . '</td>';
+                                echo '<td>' . $value['FechaCreacionServicio'] . '</td>';
+                                echo '<td>' . $value['IntervaloSolicitudServicioCreacion'] . '</td>';
                                 echo '<td>' . $value['FechaCreacion'] . '</td>';
                                 echo '<td>' . $value['FechaInicio'] . '</td>';
                                 echo '<td>' . $value['TiempoTranscurrido'] . '</td>';
@@ -86,5 +104,21 @@
             </div>
         </div>
     </div>
+</div>
 
+<div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <div id="error-in-modal"></div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
+                <button type="button" id="btnAceptar" class="btn btn-primary"><i class="fa fa-check"></i> Aceptar</button>
+            </div>
+            <div id="errorModal"></div>
+        </div>
+    </div>
 </div>

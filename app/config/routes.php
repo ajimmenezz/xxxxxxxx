@@ -108,6 +108,7 @@ $route['Poliza/EventoCatalogoUnidadNegocio/(:any)'] = 'Poliza/Controller_Unidade
 $route['Poliza/EventoCatalogoUnidadNegocioArea/(:any)'] = 'Poliza/Controller_UnidadesNegocioArea/manejarEvento/$1';
 $route['Poliza/EventoCatalogoSublineasArea/(:any)'] = 'Poliza/Controller_SublineasArea/manejarEvento/$1';
 $route['Poliza/EventoCatalogoModelosArea/(:any)'] = 'Poliza/Controller_ModelosArea/manejarEvento/$1';
+$route['Poliza/SLA/(:any)'] = 'Poliza/Controller_SLA/manejarEvento/$1';
 
 
 /* Routers para el manejo nuevo de Proyectos */
