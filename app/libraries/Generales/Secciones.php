@@ -607,7 +607,6 @@ class Secciones extends General {
                 $datos['ListaUnidadeNegocio'] = $this->Catalogo->CatUnidadesNegocio("3");
                 break;
             case 'Poliza/SLA':
-                $this->sla->setTiempoAtencionFolio();
                 $datos['folios'] = $this->sla->getSla();
                 break;
             default:

@@ -30,11 +30,11 @@ $(function () {
     $('#reporteExcel').on('click', function () {
         var datosTabla = [];
         var datosTablaSLA = $("#data-table-SLA").DataTable().rows().data();
-        
+
         for (var i = 0; i < datosTablaSLA.length; i++) {
             datosTabla.push(datosTablaSLA[i]);
         }
-        
+
         var data = {datosSLA: datosTabla};
 
         evento.enviarEvento('SLA/ReporteExcel', data, '#panelSLA', function (respuesta) {
@@ -51,14 +51,10 @@ $(function () {
         var hasta = $("#txtHastaSLA").val();
 
         if (desde !== '') {
-            if (hasta !== '') {
-                var data = {desde: desde, hasta: hasta};
-                evento.enviarEvento('SLA/Filtro', data, '#panelSLA', function (respuesta) {
-                    recargandoTablaSLA(respuesta);
-                });
-            } else {
-                evento.mostrarMensaje('#errorFiltroSLA', false, 'Debe llenar el campo Hasta.', 3000);
-            }
+            var data = {desde: desde, hasta: hasta};
+            evento.enviarEvento('SLA/Filtro', data, '#panelSLA', function (respuesta) {
+                recargandoTablaSLA(respuesta);
+            });
         } else {
             evento.mostrarMensaje('#errorFiltroSLA', false, 'Debe llenar el campo Desde.', 3000);
         }

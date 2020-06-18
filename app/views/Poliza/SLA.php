@@ -66,7 +66,7 @@
                 </div>                                                        
                 <div class="col-md-5 col-xs-5">
                     <div class="form-group">
-                        <label>Hasta *</label>
+                        <label>Hasta</label>
                         <div class='input-group date' id='hastaSLA'>
                             <input type='text' id="txtHastaSLA" class="form-control" value="" />
                             <span class="input-group-addon">
@@ -75,7 +75,7 @@
                         </div>
                     </div>                
                 </div>
-                <div class="col-md-2 col-xs-5 text-center m-t-20">
+                <div class="col-md-2 col-xs-2 m-t-20 text-center">
                     <button type="button" id="btnBuscarSLA" class="btn btn-success"><i class="fa fa-search"></i> Buscar</button>
                 </div>
             </div>
@@ -85,7 +85,6 @@
                     <div id="errorFiltroSLA"></div>
                 </div>
             </div>
-
 
             <div class="row">
                 <div class="col-md-12">
