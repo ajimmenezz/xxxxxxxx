@@ -21,5 +21,10 @@ $(function () {
             console.log(respuesta);
         });
     });
+
+
+    FormWizardValidation.init();
+
+    
     
 });

@@ -1826,7 +1826,9 @@ $config['RH'] = array(
         'css' => array(),
         'pluginsCss' => array(
             'DataTables/css/data-table',
-            'select2/dist/css/select2.min'
+            'select2/dist/css/select2.min',
+            'bootstrap-wizard/css/bwizard.min.css',
+            
         ),
         'js' => array(
             'Base/Base',
@@ -1841,11 +1843,22 @@ $config['RH'] = array(
             'Componentes/Pagina',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
-            'RH/Administracion_Cursos'),
+            'RH/Administracion_Cursos',
+            'RH/form-wizards.demo.min.js',
+            'RH/form-wizards-validation.demo.min.js'
+           
+            
+        ),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
-            'select2/dist/js/select2.min'
+            'select2/dist/js/select2.min',
+            'pace/pace.min.js',
+            'bootstrap-wizard/js/bwizard.js',
+            'parsley/src/parsley.css',
+            'parsley/dist/parsley.js'
+            
+            
         ),
         'Permiso' => 'VRHCU'
     )
