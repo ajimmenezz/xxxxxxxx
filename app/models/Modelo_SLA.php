@@ -29,16 +29,13 @@ class Modelo_SLA extends Base {
                                         T.FechaInicio, ts.FechaCreacion, ts.Folio
                                     FROM
                                         (SELECT 
-                                            FechaInicio, IdSolicitud
-                                        FROM
-                                            (SELECT 
                                             tst.FechaInicio, tst.IdSolicitud
                                         FROM
                                             t_servicios_ticket tst
                                         WHERE
                                             tst.FechaInicio IS NOT NULL
-                                        ORDER BY tst.IdSolicitud , FechaInicio ASC) AS Tabla
-                                        GROUP BY IdSolicitud) AS T
+                                        GROUP BY IdSolicitud
+                                        ORDER BY tst.IdSolicitud , FechaInicio ASC) AS T
                                             INNER JOIN
                                         t_solicitudes ts ON T.IdSolicitud = ts.Id
                                     WHERE
@@ -61,36 +58,31 @@ class Modelo_SLA extends Base {
             $filtroFecha = " AND ts.FechaCreacion BETWEEN '" . $datos['desde'] . " 00:00:00' AND '" . $datos['hasta'] . " 23:59:59' ";
         }
         
-        $consulta = $this->consulta("SELECT * FROM (SELECT 
+        $consulta = $this->consulta("SELECT * FROM(SELECT 
                                         TIME_TO_SEC(TIME(tct.TiempoTranscurrido)) AS SegundosTiempoTranscurrido,
                                         tct.TiempoTranscurrido,
                                         ts.Id AS IdSolicitud,
-                                        T.FechaInicio,  ts.Folio, T.Tecnico, ts.IdPrioridad, IF(ts.IdSucursal = 0, sucursal(T.IdSucursalServicio), sucursal(ts.IdSucursal )) AS Sucursal,
-                                        IF(ts.IdSucursal = 0, T.IdSucursalServicio, ts.IdSucursal ) AS IdSucursal,
+                                        TServicio.FechaInicio,  ts.Folio, TServicio.Tecnico, ts.IdPrioridad, IF(ts.IdSucursal = 0, sucursal(TServicio.IdSucursalServicio), sucursal(ts.IdSucursal )) AS Sucursal,
+                                        IF(ts.IdSucursal = 0, TServicio.IdSucursalServicio, ts.IdSucursal ) AS IdSucursal,
                                         nombreUsuario(ts.Atiende) AS AtiendeSolicitud,
                                         ts.FechaCreacion,
-                                        T.FechaCreacionServicio
-                                    FROM
-                                        (SELECT 
-                                            FechaInicio, IdSolicitud, Tecnico, IdSucursalServicio, FechaCreacion AS FechaCreacionServicio
-                                        FROM
-                                            (SELECT 
-                                            tst.FechaInicio, tst.IdSolicitud, nombreUsuario(tst.Atiende) AS Tecnico, tst.IdSucursal AS IdSucursalServicio, tst.FechaCreacion
-                                        FROM
-                                            t_servicios_ticket tst
-                                        WHERE
-                                            tst.FechaInicio IS NOT NULL
-                                        ORDER BY tst.IdSolicitud , FechaInicio ASC) AS Tabla
-                                        GROUP BY IdSolicitud) AS T
-                                            INNER JOIN
-                                        t_solicitudes ts ON T.IdSolicitud = ts.Id
+                                        TServicio.FechaCreacion AS FechaCreacionServicio
+                                        FROM (SELECT  tst.FechaInicio, tst.IdSolicitud, nombreUsuario(tst.Atiende) AS Tecnico, tst.IdSucursal AS IdSucursalServicio, tst.FechaCreacion 
+                                                                        FROM t_servicios_ticket AS tst
+                                                                        WHERE
+                                                                                tst.FechaInicio IS NOT NULL
+                                                                        GROUP BY IdSolicitud
+                                                                        ORDER BY tst.IdSolicitud , FechaInicio ASC) 
+                                        AS TServicio
+                                        INNER JOIN
+                                                t_solicitudes ts ON TServicio.IdSolicitud = ts.Id
                                         INNER JOIN t_cheking_ticket tct
                                         ON tct.Folio = ts.Folio
-                                    WHERE
-                                        ts.Folio IS NOT NULL AND ts.Folio <> 0
-                                            " . $filtroFecha . "
-                                            ORDER BY ts.Folio, FechaCreacion ASC) AS TABLAFINAL
-                                            GROUP BY Folio");
+                                        WHERE
+                                                ts.Folio IS NOT NULL AND ts.Folio <> 0
+                                        " . $filtroFecha . "
+                                        ORDER BY ts.Folio, ts.FechaCreacion ASC) AS TABLAFINAL
+                                        GROUP BY Folio");
 
         if (!empty($consulta)) {
             return $consulta;

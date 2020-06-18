@@ -23,63 +23,65 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
+    fecha.rangoFechas('#desdeSLA', '#hastaSLA');
+
+
     $('#reporteExcel').off('click');
     $('#reporteExcel').on('click', function () {
-        evento.iniciarModal('#modalEdit', 'Generar Excel', htmlFormularioExcel);
-        fecha.rangoFechas('#desdeSLA', '#hastaSLA');
+        var datosTabla = [];
+        var datosTablaSLA = $("#data-table-SLA").DataTable().rows().data();
+        
+        for (var i = 0; i < datosTablaSLA.length; i++) {
+            datosTabla.push(datosTablaSLA[i]);
+        }
+        
+        var data = {datosSLA: datosTabla};
 
-        $('#reporteExcel').off('click');
-        $('#btnAceptar').on('click', function () {
-            var desde = $("#txtDesdeSLA").val();
-            var hasta = $("#txtHastaSLA").val();
-
-            if (desde !== '') {
-                if (hasta !== '') {
-                    var data = {desde: desde, hasta: hasta};
-                    evento.enviarEvento('SLA/ReporteExcel', data, '#modalEdit', function (respuesta) {
-                        if (respuesta) {
-                            window.open(respuesta.ruta, '_blank');
-                            evento.terminarModal("#modalEdit");
-                        }
-                    });
-                } else {
-                    evento.mostrarMensaje('#errorModal', false, 'Debe llenar el campo Hasta.', 3000);
-                }
-            } else {
-                evento.mostrarMensaje('#errorModal', false, 'Debe llenar el campo Desde.', 3000);
+        evento.enviarEvento('SLA/ReporteExcel', data, '#panelSLA', function (respuesta) {
+            if (respuesta) {
+                window.open(respuesta.ruta, '_blank');
+                evento.terminarModal("#modalEdit");
             }
         });
-
     });
 
-    var htmlFormularioExcel = function () {
-        let html = `<div class="row">                                          
-                        <div class="col-md-6 col-xs-6">
-                            <div class="form-group">
-                                <label>Desde *</label>
-                                <div class='input-group date' id='desdeSLA'>
-                                    <input type='text' id="txtDesdeSLA" class="form-control" value="" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>                
-                        </div>                                                        
-                        <div class="col-md-6 col-xs-6">
-                            <div class="form-group">
-                                <label>Hasta *</label>
-                                <div class='input-group date' id='hastaSLA'>
-                                    <input type='text' id="txtHastaSLA" class="form-control" value="" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>                
-                        </div>
-                    </div>`;
+    $('#btnBuscarSLA').off('click');
+    $('#btnBuscarSLA').on('click', function () {
+        var desde = $("#txtDesdeSLA").val();
+        var hasta = $("#txtHastaSLA").val();
 
-        return html;
+        if (desde !== '') {
+            if (hasta !== '') {
+                var data = {desde: desde, hasta: hasta};
+                evento.enviarEvento('SLA/Filtro', data, '#panelSLA', function (respuesta) {
+                    recargandoTablaSLA(respuesta);
+                });
+            } else {
+                evento.mostrarMensaje('#errorFiltroSLA', false, 'Debe llenar el campo Hasta.', 3000);
+            }
+        } else {
+            evento.mostrarMensaje('#errorFiltroSLA', false, 'Debe llenar el campo Desde.', 3000);
+        }
+    });
+
+    var recargandoTablaSLA = function (sla) {
+        tabla.limpiarTabla("#data-table-SLA");
+        $.each(sla, function (key, item) {
+            tabla.agregarFila("#data-table-SLA", [
+                item.Folio,
+                item.Sucursal,
+                item.AtiendeSolicitud,
+                item.Tecnico,
+                item.FechaCreacionServicio,
+                item.IntervaloSolicitudServicioCreacion,
+                item.FechaCreacion,
+                item.FechaInicio,
+                item.TiempoTranscurrido,
+                item.TiempoPrioridad,
+                item.Prioridad,
+                item.LocalForaneo,
+                item.SLA
+            ]);
+        });
     }
-
-
 });

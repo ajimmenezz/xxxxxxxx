@@ -52,6 +52,41 @@
                 </div>
             </div>
 
+            <div class="row">                                          
+                <div class="col-md-5 col-xs-5">
+                    <div class="form-group">
+                        <label>Desde *</label>
+                        <div class='input-group date' id='desdeSLA'>
+                            <input type='text' id="txtDesdeSLA" class="form-control" value="" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>                
+                </div>                                                        
+                <div class="col-md-5 col-xs-5">
+                    <div class="form-group">
+                        <label>Hasta *</label>
+                        <div class='input-group date' id='hastaSLA'>
+                            <input type='text' id="txtHastaSLA" class="form-control" value="" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>                
+                </div>
+                <div class="col-md-2 col-xs-5 text-center m-t-20">
+                    <button type="button" id="btnBuscarSLA" class="btn btn-success"><i class="fa fa-search"></i> Buscar</button>
+                </div>
+            </div>
+
+            <div class="row m-t-10">
+                <div class="col-md-12">
+                    <div id="errorFiltroSLA"></div>
+                </div>
+            </div>
+
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="underline m-b-15 m-t-15"></div>

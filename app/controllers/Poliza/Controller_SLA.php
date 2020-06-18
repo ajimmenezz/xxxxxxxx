@@ -28,6 +28,9 @@ class Controller_SLA extends Base {
             case 'ReporteExcel':
                 $resultado = $this->sla->getExcel($this->input->post());
                 break;
+            case 'Filtro':
+                $resultado = $this->sla->getSla($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

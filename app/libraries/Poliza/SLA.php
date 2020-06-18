@@ -4,6 +4,9 @@ namespace Librerias\Poliza;
 
 use Controladores\Controller_Datos_Usuario as General;
 
+ini_set('memory_limit', '4096M');
+set_time_limit('1800');
+
 class SLA extends General {
 
     private $db;
@@ -77,7 +80,7 @@ class SLA extends General {
                 }
             }
         }
-        
+
         return $arrayFolios;
     }
 
@@ -246,25 +249,6 @@ class SLA extends General {
     }
 
     public function getExcel(array $datos) {
-        $foliosAdist = array();
-        $datosSLA = $this->getSla($datos);
-
-        foreach ($datosSLA as $key => $value) {
-            $foliosAdist[$key]['Folio'] = $value['Folio'];
-            $foliosAdist[$key]['Sucursal'] = $value['Sucursal'];
-            $foliosAdist[$key]['SolicitudAsignadaA'] = $value['AtiendeSolicitud'];
-            $foliosAdist[$key]['Tecnico'] = $value['Tecnico'];
-            $foliosAdist[$key]['CreacionTicket'] = $value['FechaCreacionServicio'];
-            $foliosAdist[$key]['IntervaloFolioTicket'] = $value['IntervaloSolicitudServicioCreacion'];
-            $foliosAdist[$key]['CreacionFolio'] = $value['FechaCreacion'];
-            $foliosAdist[$key]['Inicio Folio'] = $value['FechaInicio'];
-            $foliosAdist[$key]['TiempoTranscurrido'] = $value['TiempoTranscurrido'];
-            $foliosAdist[$key]['TiempoLimite'] = $value['TiempoPrioridad'];
-            $foliosAdist[$key]['Prioridad'] = $value['Prioridad'];
-            $foliosAdist[$key]['LocalForaneo'] = $value['LocalForaneo'];
-            $foliosAdist[$key]['SLA'] = $value['SLA'];
-        }
-
         $arrayTitulos = [
             'Folio',
             'Sucursal',
@@ -281,7 +265,7 @@ class SLA extends General {
             'SLA'
         ];
 
-        return $this->setExcel($foliosAdist, $arrayTitulos, 'Reporte_SLA.xlsx');
+        return $this->setExcel($datos['datosSLA'], $arrayTitulos, 'Reporte_SLA.xlsx');
     }
 
     public function setExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
