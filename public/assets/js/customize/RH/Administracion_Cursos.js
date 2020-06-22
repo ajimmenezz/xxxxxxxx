@@ -23,7 +23,7 @@ $(function () {
     });
 
 
-    FormWizardValidation.init();
+    // FormWizardValidation.init();
 
     
     

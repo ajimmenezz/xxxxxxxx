@@ -92,5 +92,21 @@
             <!-- end tabla cursos -->
         </div>
     </div>
+
+    <!--SandBox SmartResponse--->
+    <div class="panel panel-inverse" data-sortable-id="ui-widget-1">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                    <button id="btn-demo-smartresponse" type="button" class="btn btn-info m-r-5 m-b-5">Demo SmartResponse</button>
+                    <button id="btn-demo-smartresponse-error" type="button" class="btn btn-info m-r-5 m-b-5">Demo SmartResponse Error</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                <div id="sandbox-result" class="col-md-12"></div>
+                </div>
+            </div>
+    </div>
 </div>
 <!-- Finalizando #contenido -->

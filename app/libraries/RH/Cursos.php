@@ -17,4 +17,18 @@ class Cursos extends General{
         
         return array($this->DBS->getUsuarios(),$datos);
     }
+
+    public function smartResponseTest(array $data = null){
+        //Your code... BD.. etc... 
+        //return 1 value or an object if necessary
+
+        $response = new \StdClass();
+        $response->name = "Noe";
+        $response->creationTime = 123456;
+        $response->status = 1;
+        $response->age = 28;
+        $response->courses[] = array("foo", "bar", "hello", "world"); 
+
+        return $response;
+    }
 }
