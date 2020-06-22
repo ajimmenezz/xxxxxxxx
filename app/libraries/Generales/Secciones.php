@@ -104,6 +104,7 @@ class Secciones extends General {
         $this->seccionCE = new \Librerias\V2\PaquetesTicket\GestorServicios();
         $this->inventarios = \Librerias\Poliza\Inventario::factory();
         $this->rehabilitacion = \Librerias\Laboratorio\Rehabilitacion::factory();
+        $this->sla = \Librerias\Poliza\SLA::factory();
 
         $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
@@ -606,7 +607,7 @@ class Secciones extends General {
                 $datos['ListaUnidadeNegocio'] = $this->Catalogo->CatUnidadesNegocio("3");
                 break;
             case 'Poliza/SLA':
-                $datos['folios'] = $this->Solicitud->sla();
+                $datos['folios'] = $this->sla->getSla();
                 break;
             default:
                 break;

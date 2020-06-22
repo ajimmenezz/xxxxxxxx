@@ -870,11 +870,16 @@ $config['Poliza'] = array(
         'css' => array(),
         'pluginsCss' => array(
             'DataTables/css/data-table',
+            'bootstrap-eonasdan-datetimepicker/build/css/bootstrap-datetimepicker.min'
         ),
-        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Poliza/poliza'),
+        'js' => array('Base/Base', 'Base/Socket', 'Base/Tabla', 'Base/Fecha', 'Poliza/sla'),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
+            'bootstrap-datepicker/js/locales/bootstrap-datepicker.es',
+            'moment/moment-locales.min',
+            'moment/es',
+            'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
         ),
         'Permiso' => 'VSLA'
     ),

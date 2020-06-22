@@ -1,5 +1,5 @@
 <?php
-if (!empty($datosValidacion)) {
+if (!empty($datosValidacion) && $datosValidacion[0] !== "sinDatos") {
     foreach ($datosValidacion as $value) {
         if ($value['IdEstatus'] === '39' || $value['IdEstatus'] === '34' || $value['IdEstatus'] === '30' || $value['IdEstatus'] === '35' || $value['IdEstatus'] === '12' || $value['IdEstatus'] === '36' || $value['IdEstatus'] === '48' || $value['IdEstatus'] === '49') {
             $datosCloncluirRevision = "hidden";
