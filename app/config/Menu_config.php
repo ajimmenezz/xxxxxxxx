@@ -380,12 +380,31 @@ $config['Generales'] = array(
         'icono' => 'fa fa-newspaper-o',
         'Url' => '/Generales/Cursos_Asignados',
         'css' => array(),
-        'pluginsCss' => array(),
+        'pluginsCss' => array(
+            'DataTables/css/data-table',
+            'select2/dist/css/select2.min',
+        ),
         'js' => array(
             'Base/Base', 
-            'RH/Cursos_Asignados'
+            'RH/Cursos_Asignados',
+            'Base/Select',
+            'Componentes/Socket',
+            'Componentes/Modal/ModalBase',
+            'Componentes/Modal/Alertas',
+            'Componentes/Modal/Modal',
+            'Componentes/Selects/ISelect',
+            'Componentes/Selects/SelectBasico',
+            'Componentes/Selects/SelectMultiple',
+            'Componentes/Pagina',
+            'Componentes/Tablas/ITabla',
+            'Componentes/Tablas/TablaBasica',
             ),
-        'pluginsJs' => array(),
+        'pluginsJs' => array(
+            'DataTables/js/jquery.dataTables',
+            'DataTables/js/dataTables.responsive',
+            'select2/dist/js/select2.min',
+            'pace/pace.min',
+        ),
         'Permiso' => 'VGENCA'
     )
 );
@@ -1827,7 +1846,8 @@ $config['RH'] = array(
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
-            'bootstrap-wizard/css/bwizard.min.css',
+            'bootstrap-wizard/css/bwizard.min',
+            'parsley/src/parsley',
             
         ),
         'js' => array(
@@ -1843,9 +1863,7 @@ $config['RH'] = array(
             'Componentes/Pagina',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
-            'RH/Administracion_Cursos',
-            'RH/form-wizards.demo.min.js',
-            'RH/form-wizards-validation.demo.min.js'
+            'RH/Administracion_Cursos'
            
             
         ),
@@ -1854,9 +1872,10 @@ $config['RH'] = array(
             'DataTables/js/dataTables.responsive',
             'select2/dist/js/select2.min',
             'pace/pace.min.js',
-            'bootstrap-wizard/js/bwizard.js',
-            'parsley/src/parsley.css',
-            'parsley/dist/parsley.js'
+            'parsley/dist/parsley',
+            'bootstrap-wizard/js/bwizard',
+            
+            
             
             
         ),

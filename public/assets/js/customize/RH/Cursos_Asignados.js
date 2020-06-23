@@ -10,5 +10,24 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
+
+    
+    let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
+    tablaCursosAsignados.iniciarTabla();
+
+    
+    
+
+
+
+    // $("#btn-agregar-nuevo-temario").on('click',function(e){
+    //     //modalSubirTemarios
+    //     console.log("btn-agregar-nuevo-temario")
+    //   $('#modalValidateTemario').modal('show')
+    // });
+
+    
+
+
 });
 

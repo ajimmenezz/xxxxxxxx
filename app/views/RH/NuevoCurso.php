@@ -1,5 +1,5 @@
 <!-- Empezando #contenido -->
-<div id="administracion-cursos" class="content">
+<div id="administracion-cursos_nuevoCurso" class="content">
     <!-- begin page-header -->
     <h1 class="page-header">Administración de Cursos</h1>
     <!-- end page-header -->
@@ -144,7 +144,7 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
-                                                    <table id="tabla-cursos" class="table table-striped table-bordered">
+                                                    <table id="tabla-cursos-temario" class="table table-striped table-bordered">
                                                         <thead>
                                                             <tr>
                                                             <td>Temario</td>
@@ -217,7 +217,7 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
-                                                    <table id="tabla-cursos" class="table table-striped table-bordered">
+                                                    <table id="tabla-cursos-participantes" class="table table-striped table-bordered">
                                                         <thead>
                                                             <tr>
                                                             <td>Puesto</td>

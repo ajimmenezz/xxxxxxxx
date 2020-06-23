@@ -611,13 +611,25 @@ class Secciones extends General {
                 break;
             case 'RH/Administracion_Cursos':
                 $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
-                $datos['filas'] = [
-                    array('Diseño','Hace algo','20','Activo',''),
+                $datos['filas'] = [ 
+                    array('Diseño','Hace algo','20','Activo','
+                    <div style="text-align: center;"><i class="fa fa-eye" style="font-size: 17px; color: #348fe2;" @click="view(device.id)"></i>
+                    <i class="fa fa-pencil" style="font-size: 17px; color: orange;" @click="view(device.id)"></i>
+                    <i class="fa fa-trash" style="font-size: 17px; color: red;" @click="view(device.id)"></i></div>
+                    '),
                     array('Redes','Interesante','4','Activo','')
                 ];
                 break;
-            case 'RH/Cursos_Asignados':
-                $datos['data'] = "";
+            case 'Generales/Cursos_Asignados':
+                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
+                $datos['filas'] = [
+                    array('Diseño','Hace algo','20','Activo','
+                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Completado</span>
+                    <span><i class="fa  fa-fast-forward" @click="view(device.id)"></i>Continuar</span>
+                    <span><i class="fa fa-certificate" "></i><i class="class="fa fa-youtube-play"" @click="view(device.id)"></i>Comenzar</span>
+                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Suspendido</span>'),
+                    array('Redes','Interesante','4','Activo','')
+                ];
                 break;
             default:
                 break;

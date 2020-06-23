@@ -16,7 +16,9 @@ class Controller_Administracion_Cursos extends Base{
         switch ($evento) {
             case 'Nuevo-Curso':                
                 $resultado = $this->curso->prueba($this->input->post());
-                break;
+                // $this->load->view('RH/NuevoCurso');
+              
+            break;
         }
         echo json_encode($resultado);
     }

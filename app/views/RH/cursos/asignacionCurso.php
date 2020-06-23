@@ -14,37 +14,37 @@
                     <div class="row">
                         <div class="col-sm-4">
                                 <div class="widget widget-stats bg-green">
-                                    <div class="stats-icon"></div>
+                                    <div class="stats-icon"><i class="fa fa-desktop"></i></div>
                                     <div class="stats-info">
                                         <h4>Avence total</h4>
                                         <p>3,291,922</p>	
                                     </div>
                                     <div class="stats-link">
-                                        <a href="javascript:;"></a>
+                                        <!-- <a href="javascript:;">View Detail <i class="fa fa-arrow-circle-o-right"></i></a> -->
                                     </div>
                                 </div>
                         </div>
                         <div class="col-sm-4">
                                 <div class="widget widget-stats bg-red">
-                                    <div class="stats-icon"></div>
+                                    <div class="stats-icon"><i class="fa fa-desktop"></i></div>
                                     <div class="stats-info">
                                         <h4>Faltante total</h4>
                                         <p>3,291,922</p>	
                                     </div>
                                     <div class="stats-link">
-                                        <a href="javascript:;"></a>
+                                        <!-- <a href="javascript:;">View Detail <i class="fa fa-arrow-circle-o-right"></i></a> -->
                                     </div>
                                 </div>
                         </div>
                         <div class="col-sm-4">
                                 <div class="widget widget-stats bg-blue">
-                                    <div class="stats-icon"></div>
+                                    <div class="stats-icon"><i class="fa fa-desktop"></i></div>
                                     <div class="stats-info">
                                         <h4>Total de cursos</h4>
                                         <p>3,291,922</p>	
                                     </div>
                                     <div class="stats-link">
-                                        <a href="javascript:;"></a>
+                                        <!-- <a href="javascript:;">View Detail <i class="fa fa-arrow-circle-o-right"></i></a> -->
                                     </div>
                                 </div>
                         </div>
@@ -94,3 +94,50 @@
     </div>
 </div>
 <!-- Finalizando #contenido -->
+
+
+
+
+<!-- Empezando #contenido MODALS-->
+
+<!-- subir cursos -->
+<div id="modalSubircursos" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered " role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalCenterTitle" >Subir cursos</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+              <div class="modal-body ">
+
+                <div class="container">
+                  <div class="row">
+                   
+                    <div class="col-11">
+                         Para poder subir los cursos a través de un archivo de Excel es necesario seguir los siguientes pasos: <br><br>
+                                1.- Debes descargar la plantilla de Excel en el botón descargar plantilla.<br>
+                                2.- LLenar la plantilla con los datos solicitados.<br>
+                                3.- Subir la platilla con el botón archivo (solo formato Excel).<br>
+                                4.- Una vez cargado el archivo solo dar clic en subir archivo.<br><br>
+                    </div>
+                   
+                  </div>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-white m-r-5 " id="cerrar" data-dismiss="modal" aria-label="Close"> Cerrar</a>
+                    <a href="javascript:;" class="btn btn-primary m-r-5 " id="desPlantilla">Descargar plantilla</a>
+                    <a href="javascript:;" class="btn btn-success m-r-5 " id="save"> Subir plantilla</a>
+              </div>
+              <div id="alertasGeocercas"></div>
+
+          </div>
+      </div>
+    </div>
+
+<!-- fin subir cursos -->
+
+
+<!-- fin #contenido MODALS-->
+

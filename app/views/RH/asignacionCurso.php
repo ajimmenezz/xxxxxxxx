@@ -14,37 +14,37 @@
                     <div class="row">
                         <div class="col-sm-4">
                                 <div class="widget widget-stats bg-green">
-                                    <div class="stats-icon"></div>
+                                    <div class="stats-icon"><i class="fa fa-desktop"></i></div>
                                     <div class="stats-info">
                                         <h4>Avence total</h4>
                                         <p>3,291,922</p>	
                                     </div>
                                     <div class="stats-link">
-                                        <a href="javascript:;"></a>
+                                        <!-- <a href="javascript:;">View Detail <i class="fa fa-arrow-circle-o-right"></i></a> -->
                                     </div>
                                 </div>
                         </div>
                         <div class="col-sm-4">
                                 <div class="widget widget-stats bg-red">
-                                    <div class="stats-icon"></div>
+                                    <div class="stats-icon"><i class="fa fa-desktop"></i></div>
                                     <div class="stats-info">
                                         <h4>Faltante total</h4>
                                         <p>3,291,922</p>	
                                     </div>
                                     <div class="stats-link">
-                                        <a href="javascript:;"></a>
+                                        <!-- <a href="javascript:;">View Detail <i class="fa fa-arrow-circle-o-right"></i></a> -->
                                     </div>
                                 </div>
                         </div>
                         <div class="col-sm-4">
                                 <div class="widget widget-stats bg-blue">
-                                    <div class="stats-icon"></div>
+                                    <div class="stats-icon"><i class="fa fa-desktop"></i></div>
                                     <div class="stats-info">
                                         <h4>Total de cursos</h4>
                                         <p>3,291,922</p>	
                                     </div>
                                     <div class="stats-link">
-                                        <a href="javascript:;"></a>
+                                        <!-- <a href="javascript:;">View Detail <i class="fa fa-arrow-circle-o-right"></i></a> -->
                                     </div>
                                 </div>
                         </div>
@@ -64,7 +64,7 @@
             <div class="row" style="margin-top:50px;">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
+                        <table id="tabla-cursos" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                   <td>Curso</td>
