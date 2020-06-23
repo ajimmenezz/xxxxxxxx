@@ -92,6 +92,7 @@ $("#btn-save-curso").on('click',function(e){
 
    
   
+    // FormWizardValidation.init();
 
     
     
