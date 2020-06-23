@@ -40,14 +40,38 @@
                             </thead>
                             <tbody>
                                 <?php
-                                var_dump($datos['cursos']);
+                                //var_dump($datos['cursos']);
+                                
                                 foreach ($datos['cursos'] as $value) {
-                                    echo '<tr>';
-                                    foreach ($value as $dato) {
-                                        echo '<td>' . $dato . '</td>';
-                                    }
-                                    echo '</tr>';
+                                    echo "<tr>";
+                                        echo "<td>".$value["nombre"]."</td>";
+                                        echo "<td>".$value["descripcion"]."</td>";
+                                        
+                                        echo "<td>0</td>";
+                                        $estado="Activo";
+                                        if($value["estatus"]==0){
+                                            $estado="Inactivo";
+                                        }
+                                        echo "<td>".$estado."</td>";
+                                        echo "<td> 
+                                                <div style='text-align: center;'>
+                                                <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;' id='btn-adminVerCurso'></i>
+                                                <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;'' id='btn-adminEditarCurso' ></i>
+                                                <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' id='btn-adminEliminarCurso'></i>
+                                                </div>
+                                            </td>";
+                                    echo "</tr>";
                                 }
+
+                               
+
+                                // foreach ($datos['cursos'] as $value) {
+                                //     echo '<tr>';
+                                //     foreach ($value as $dato) {
+                                //         echo '<td>' . $dato . '</td>';
+                                //     }
+                                //     echo '</tr>';
+                                // }
                                 ?>
                             </tbody>
                         </table>

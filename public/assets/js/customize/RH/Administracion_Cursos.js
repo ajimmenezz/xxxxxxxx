@@ -29,6 +29,21 @@ $(function () {
     });
 
 
+    $('#btn-adminVerCurso').on('click',function(e){
+     alert("VER CURSO");
+    });
+  
+    $('#btn-adminEditarCurso').on('click',function(e){
+     alert("EDITAR CURSO");
+    });
+
+    $('#btn-adminEliminarCurso').on('click',function(e){
+     alert("ELIMINAR CURSO");
+    });
+  
+  
+
+
     $(".btn-cancel_wizard").on('click',function(e){
         //modalSubirTemarios
         console.log("cancelar wizard")
@@ -43,7 +58,7 @@ $(function () {
   
 
 
-    $('#btn-agregar-nuevo-temario').on('click',function(e){
+$('#btn-agregar-nuevo-temario').on('click',function(e){
         //modalSubirTemarios
         console.log("btn-agregar-nuevo-temario")
       //$('#modalSubirTemarios').modal('show')
