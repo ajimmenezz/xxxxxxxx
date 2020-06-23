@@ -632,6 +632,8 @@ class Secciones extends General {
         return $datos;
     }
 
+
+
     /*
      * Regresa la seccion alcance segun el perfil del usuario
      * 

@@ -515,7 +515,8 @@ class Catalogo extends General {
                         'IdUnidadNegocio' => $datos['unidadNegocio'],
                         'Alias' => $datos["alias"],
                         'CentroCostos' => $datos["centroCostos"],
-                        'Dominio' => $datos["dominio"]
+                        'Dominio' => $datos["dominio"],
+                        'Local' => $datos["localForaneo"]
                     ));
                     if (!empty($consulta)) {
                         return $this->catSucursales('3');
@@ -554,7 +555,8 @@ class Catalogo extends General {
                         'IdUnidadNegocio' => $datos['unidadNegocio'],
                         'Alias' => $datos["alias"],
                         'CentroCostos' => $datos["centroCostos"],
-                        'Dominio' => $datos["dominio"]
+                        'Dominio' => $datos["dominio"],
+                        'Local' => $datos["localForaneo"]
                             ), array('Id' => $datos['id'])
                     );
                     if (!empty($consulta)) {

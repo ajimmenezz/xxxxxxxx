@@ -250,6 +250,7 @@ $(function () {
             var alias = $('#inputAlias').val();
             var centroCostos = $('#inputCentroCostos').val();
             var dominio = $('#inputActualizarDominio').val();
+            var localForaneo = $('#selectActualizarLocalForaneoSucursales').val();
             var activacion;
 
             if (operacion === '2') {
@@ -258,7 +259,29 @@ $(function () {
                 var estatus = '';
             }
             if (evento.validarFormulario('#formActualizarSucursales')) {
-                var data = {id: id, nombre: nombre, cinemex: cinemex, responsable: responsable, cliente: cliente, region: region, unidadNegocio: unidadNegocio, pais: pais, estado: estado, municipio: municipio, colonia: colonia, calle: calle, ext: ext, int: int, telefono1: telefono1, telefono2: telefono2, estatus: estatus, operacion: operacion, alias: alias, centroCostos: centroCostos, dominio: dominio};
+                var data = {
+                    id: id, 
+                    nombre: nombre, 
+                    cinemex: cinemex, 
+                    responsable: responsable, 
+                    cliente: cliente, 
+                    region: region, 
+                    unidadNegocio: unidadNegocio, 
+                    pais: pais, 
+                    estado: estado, 
+                    municipio: municipio, 
+                    colonia: colonia, 
+                    calle: calle, 
+                    ext: ext, 
+                    int: int, 
+                    telefono1: telefono1, 
+                    telefono2: telefono2, 
+                    estatus: estatus, 
+                    operacion: operacion, 
+                    alias: alias, 
+                    centroCostos: centroCostos, 
+                    dominio: dominio,
+                    localForaneo: localForaneo};
                 evento.enviarEvento('EventoCatalogoSucursales/Actualizar_Sucursal', data, '#seccionSucursales', function (respuesta) {
                     if (respuesta instanceof Array) {
                         tabla.limpiarTabla('#data-table-sucursales');

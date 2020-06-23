@@ -86,9 +86,11 @@ class Administrador extends General {
                                                                         ON a.IdResponsable = g.Id 
                                                                 WHERE a.Id = "' . $datos['sucursal'] . '"');
             $data['flag'] = $this->catalogo->catConsultaGeneral('SELECT Flag FROM cat_v3_sucursales WHERE Id = ' . $datos['sucursal']);
+            $data['localForaneo'] = $this->catalogo->catConsultaGeneral('SELECT Local FROM cat_v3_sucursales WHERE Id = ' . $datos['sucursal']);
         } else {
             $data['ids'] = null;
             $data['flag'] = null;
+            $data['localForaneo'] = null;
         }
         return array('formulario' => parent::getCI()->load->view('Administrador/Modal/FormularioSucursal', $data, TRUE), 'datos' => $data);
     }
