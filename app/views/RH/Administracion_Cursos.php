@@ -76,7 +76,8 @@
                             </thead>
                             <tbody>
                                 <?php
-                                foreach ($datos['filas'] as $value) {
+                                var_dump($datos['cursos']);
+                                foreach ($datos['cursos'] as $value) {
                                     echo '<tr>';
                                     foreach ($value as $dato) {
                                         echo '<td>' . $dato . '</td>';

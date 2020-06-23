@@ -13,9 +13,8 @@ class Cursos extends General{
         $this->DBS = \Modelos\Modelo_Cursos::factory();
     }
     
-    public function prueba(array $datos) {
-        
-        return array($this->DBS->getUsuarios(),$datos);
+    public function getCourses() {
+        return $this->DBS->getAllCourses();
     }
 
     public function smartResponseTest(array $data = null){
