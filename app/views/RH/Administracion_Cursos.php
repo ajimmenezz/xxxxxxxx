@@ -41,6 +41,8 @@
                             <tbody>
                                 <?php
                             var_dump($datos['cursos']);
+
+                            
                                 
                                 foreach ($datos['cursos'] as $value) {
                                     echo "<tr>";
@@ -301,9 +303,20 @@
                                         <div class="row">
                                             <div class="col-md-9">
                                                 <div class="form-group">
+                                               
                                                     <label for="puesto">Puesto </label>
                                                     <select id="puesto" class="form-control" style="width: 100%" data-parsley-required="true">
                                                         <option value="">Seleccionar</option>
+                                                        <?php
+                                                            var_dump($datos['perfiles']);
+                                                            foreach ($datos['perfiles'] as $value) {
+                                                                echo '<tr>';
+                                                               
+                                                                    echo '<option value="'.$value['Id'].'">'.$value['Nombre'].'</option>';
+                                                                
+                                                                echo '</tr>';
+                                                            }
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
