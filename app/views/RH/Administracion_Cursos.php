@@ -9,7 +9,7 @@
             <h4 class="panel-title">Cursos</h4>
         </div>
         <div class="panel-body">
-            <div class="row">
+            <div class="row" style="margin-top: 20px;">
                 <div class="col-md-9">
                    Este modulo tiene el objetivo de administrar los cursos en linea que tomará el personal de la empresa.<br>
                    Aquí se cuenta con las funcionalidades para la creación, edición y eliminación de un curso, de igual forma, 
@@ -147,7 +147,15 @@
                                 </div>
                         
                                 <div class="row">
-                                    <div class="col-xs-4">img</div>
+                                    <div class="col-xs-4">img 
+                                    <span class="btn btn-primary btn-file" style="position: absolute; margin-right: -45px;">
+                                        <i class="" style="position: absolute; padding-top: 12px;  margin-left: -18px;">
+                                            <!-- <input type="file" id="imgLogo" name="imgLogo" @change="subirLogo()"> -->
+                                            <input id="idInpinputfile" @change="onSelectedFiles" ref="file" type="file" name="files" style="display: none">
+                                        </i>
+
+                                    </span>
+                              </div>
                                     <div class="col-xs-8">
                                        
                                         <!-- begin row -->

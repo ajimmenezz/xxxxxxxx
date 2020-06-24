@@ -614,6 +614,18 @@ class Secciones extends General {
             case 'RH/Administracion_Cursos':
             
                 $datos['cursos'] = $this->administracionCursos->getCourses();
+
+                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
+                $datos['filas'] = [ 
+                    array('Diseño','Hace algo','
+                    <div style="text-align: center;"><i class="fa fa-eye" style="font-size: 17px; color: #348fe2;" @click="view(device.id)"></i>
+                    <i class="fa fa-pencil" style="font-size: 17px; color: orange;" @click="view(device.id)"></i>
+                    <i class="fa fa-trash" style="font-size: 17px; color: red;" @click="view(device.id)"></i></div>
+                    '),
+                    array('Redes','Interesante','4','Activo','')
+                ];
+
+
                 break;
             case 'Generales/Cursos_Asignados':
                 $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
