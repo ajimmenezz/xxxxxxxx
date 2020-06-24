@@ -19,9 +19,8 @@ class Controller_Administracion_Cursos extends Base{
         $response = new SmartResponse();
 
         switch ($evento) {
-            case 'Nuevo-Curso': 
-                $resultado = array();               
-                $resultado = $this->curso->prueba($this->input->post());
+            case 'Nuevo-Curso':               
+                $resultado = $this->curso->newCourse($this->input->post());
                 
                 echo json_encode($resultado);
                 break;
