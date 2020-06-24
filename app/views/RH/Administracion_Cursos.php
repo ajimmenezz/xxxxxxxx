@@ -40,7 +40,7 @@
                             </thead>
                             <tbody>
                                 <?php
-                                //var_dump($datos['cursos']);
+                            var_dump($datos['cursos']);
                                 
                                 foreach ($datos['cursos'] as $value) {
                                     echo "<tr>";
