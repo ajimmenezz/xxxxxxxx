@@ -16,6 +16,14 @@ class Cursos extends General{
     public function getCourses() {
         return $this->DBS->getAllCourses();
     }
+    
+    public function getProfile() {
+        return $this->DBS->getAllProfile();
+    }
+    
+    public function newCourse($infoCourse) {
+        
+    }
 
     public function smartResponseTest(array $data = null){
         //Your code... BD.. etc... 

@@ -614,6 +614,7 @@ class Secciones extends General {
             case 'RH/Administracion_Cursos':
             
                 $datos['cursos'] = $this->administracionCursos->getCourses();
+                $datos['perfiles'] = $this->administracionCursos->getProfile();
 
                 $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
                 $datos['filas'] = [ 
