@@ -541,9 +541,9 @@ class Controller_SegundoPlano extends \CI_Controller {
             $tiempoTerceraNotificacion = $tiempo - $datosPrioridades[0]['segundosTerceraNotificacion'];
             $correoTecnico = $this->DB->consulta("SELECT EmailCorporativo FROM cat_v3_usuarios where ID = '" . $value['Atiende'] . "'");
 
-            var_dump($correoTecnico);
-
-            var_dump($datosSupervisor);
+//            var_dump($correoTecnico);
+//
+//            var_dump($datosSupervisor);
 
             if ($value['TiempoTranscurrido'] >= $datosPrioridades[0]['segundosPrimeraNotificacion'] && empty($value['NumeroNotificacion'])) {
                 $SLA = "Notificacion Tecnico";
