@@ -522,10 +522,6 @@ class Controller_SegundoPlano extends \CI_Controller {
         $datosTicket = $this->DB->getTicketValidacion();
 
         foreach ($datosTicket as $key => $value) {
-            $SLA = '';
-            echo '<pre>';
-            var_dump($value);
-
             if ($value['LocalForaneo'] === 'SLALocal') {
                 $localForaneo = 'Local';
             } else {
@@ -540,40 +536,54 @@ class Controller_SegundoPlano extends \CI_Controller {
             $tiempoSegundaNotificacion = $tiempo - $datosPrioridades[0]['segundosSegundaNotificacion'];
             $tiempoTerceraNotificacion = $tiempo - $datosPrioridades[0]['segundosTerceraNotificacion'];
             $correoTecnico = $this->DB->consulta("SELECT EmailCorporativo FROM cat_v3_usuarios where ID = '" . $value['Atiende'] . "'");
-
-//            var_dump($correoTecnico);
-//
-//            var_dump($datosSupervisor);
+            $datosSupervisor = $this->DB->consulta('SELECT 
+                                                (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = cvrc.IdResponsableInterno) AS CorreoSupervisor,
+                                                usuario(cvrc.IdResponsableInterno) NombreSupervisor
+                                            FROM 
+                                                cat_v3_sucursales cvs
+                                            INNER JOIN cat_v3_regiones_cliente cvrc
+                                                ON cvrc.Id = cvs.IdRegionCliente
+                                            WHERE cvs.Id = "' . $value['IdSucursal'] . '"');
 
             if ($value['TiempoTranscurrido'] >= $datosPrioridades[0]['segundosPrimeraNotificacion'] && empty($value['NumeroNotificacion'])) {
-                $SLA = "Notificacion Tecnico";
-
-//                $this->DB->setTChekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 2));
+                $numeroNotificacion = 'Notificación num. 1';
+                $this->DB->setTChekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 2));
             } elseif ($value['TiempoTranscurrido'] >= $tiempoSegundaNotificacion && $value['NumeroNotificacion'] === '2') {
-                $SLA = "Notificacion Supervisor";
-                $datosSupervisor = $this->DB->consulta('SELECT 
-                                                                (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = cvrc.IdResponsableInterno) AS CorreoSupervisor,
-                                                                usuario(cvrc.IdResponsableInterno) NombreSupervisor
-                                                            FROM 
-                                                                cat_v3_sucursales cvs
-                                                            INNER JOIN cat_v3_regiones_cliente cvrc
-                                                                ON cvrc.Id = cvs.IdRegionCliente
-                                                            WHERE cvs.Id = "' . $value['IdSucursal'] . '"');
-//                $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 3));
+                $numeroNotificacion = 'Notificación num. 2';
+                $textoSupervisor = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $value['Folio'] . '</strong>.</p>
+                    <p><strong>Asunto:</strong> ' . $numeroNotificacion . '  </p>
+                    <p><strong>Descripción:</strong>Se le informa qu el Folio: ' . $value['Folio'] . ' todavía no se ha tendido. </p>
+                    <br><br>';
+                    $mensaje = $this->mail->mensajeCorreo('Seguimiento Folio ' . $value['Folio'], $textoSupervisor);
+                    $this->mail->enviarCorreo('notificaciones@siccob.solutions', [$datosSupervisor[0]['CorreoSupervisor']], 'Seguimiento Folio ' . $value['Folio'], $mensaje);
+                $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 3));
             } elseif ($value['TiempoTranscurrido'] >= $tiempoTerceraNotificacion && $value['NumeroNotificacion'] === '3') {
-                $correosCoordinadores = $this->DB->consulta("SELECT * FROM cat_v3_usuarios WHERE IdPerfil = 46");
-                $SLA = "Notificacion Coordinador";
+                $arrayCorreos = array();
+                $numeroNotificacion = 'Notificación num. 3';
+                $correosCoordinadores = $this->DB->consulta("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 46");
+                
+                if (!empty($correosCoordinadores)) {
+                    foreach ($correosCoordinadores as $k => $v) {
+                        array_push($arrayCorreos, $v['EmailCorporativo']);
+                    }
+                }
+                
+                array_push($arrayCorreos, $datosSupervisor[0]['CorreoSupervisor']);
+                
+                $textoCoordinador = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $value['Folio'] . '</strong>.</p>
+                    <p><strong>Asunto:</strong> ' . $numeroNotificacion . '  </p>
+                    <p><strong>Descripción:</strong>Se le informa que el Folio: ' . $value['Folio'] . ' todavía no se ha tendido. </p>
+                    <br><br>';
+                $mensaje = $this->mail->mensajeCorreo('Seguimiento Folio ' . $value['Folio'], $textoCoordinador);
+                $this->mail->enviarCorreo('notificaciones@siccob.solutions', $arrayCorreos, 'Seguimiento Folio ' . $value['Folio'], $mensaje);
             }
 
-            $textoTecnico = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $value['Folio'] . '</strong>.</p>'
-                    . '<p><strong>Solicitante:</strong> ' . $value['Folio'] . ' </p>'
-                    . '<p><strong>Asunto:</strong>   </p>'
-                    . '<p><strong>Descripción:</strong> Favor te de atender el Folio ' . $value['Folio'] . ' </p>'
-                    . '<br><br>';
+            $textoTecnico = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $value['Folio'] . '</strong>.</p>
+                    <p><strong>Asunto:</strong> ' . $numeroNotificacion . '  </p>
+                    <p><strong>Descripción:</strong> Favor te de atender el Folio ' . $value['Folio'] . '. </p>
+                    <br><br>';
             $mensaje = $this->mail->mensajeCorreo('Seguimiento Folio ' . $value['Folio'], $textoTecnico);
-            $this->mail->enviarCorreo('notificaciones@siccob.solutions', ['abarcenas@siccob.com.mx'], 'Nueva Solicitud por Folio ' . $value['Folio'], $mensaje);
-            var_dump($SLA);
-            echo "</pre>";
+            $this->mail->enviarCorreo('notificaciones@siccob.solutions', [$correoTecnico[0]['EmailCorporativo']], 'Seguimiento Folio ' . $value['Folio'], $mensaje);
         }
     }
 
