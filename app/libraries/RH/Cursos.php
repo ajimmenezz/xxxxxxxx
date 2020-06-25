@@ -21,8 +21,25 @@ class Cursos extends General{
         return $this->DBS->getAllProfile();
     }
     
+    public function getCertificate() {
+        return $this->DBS->getAllCertificate();
+    }
+    
     public function newCourse($infoCourse) {
         
+        if(isset($infoCourse['curso'])){
+            $this->DBS->insertCourse($infoCourse['curso']);
+        }
+        
+        if(isset($infoCourse['temario'])){
+            var_dump($infoCourse['temario']);
+        }
+        
+        if(isset($infoCourse['participantes'])){
+            var_dump($infoCourse['participantes']);
+        }
+        
+        return $infoCourse['curso'];
     }
 
     public function smartResponseTest(array $data = null){
