@@ -615,6 +615,8 @@ class Secciones extends General {
             
                 $datos['cursos'] = $this->administracionCursos->getCourses();
                 $datos['perfiles'] = $this->administracionCursos->getProfile();
+                $datos['certificados'] = $this->administracionCursos->getCertificate();
+                $datos['tipoCursos'] = $this->administracionCursos->gettypeCourses();
 
                 $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
                 $datos['filas'] = [ 
