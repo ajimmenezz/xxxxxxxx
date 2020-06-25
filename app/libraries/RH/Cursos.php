@@ -25,6 +25,10 @@ class Cursos extends General{
         return $this->DBS->getAllCertificate();
     }
     
+    public function getTypeCourses() {
+        return $this->DBS->getTypeCourses();
+    }
+    
     public function newCourse($infoCourse) {
         
         if(isset($infoCourse['curso'])){

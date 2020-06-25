@@ -34,7 +34,7 @@ class Modelo_Cursos extends Modelo_Base {
         return $this->consulta("SELECT id, nombre from cat_curso_tipo_certificado where estatus = 1");
     }
     
-    public function gettypeCourses() {
+    public function getTypeCourses() {
         return $this->consulta("SELECT id, nombre from cat_curso_tipo where estatus = 1");
     }
 
