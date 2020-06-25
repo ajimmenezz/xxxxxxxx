@@ -46,12 +46,12 @@
                                 
                                 foreach ($datos['cursos'] as $value) {
                                     echo "<tr>";
-                                        echo "<td>".$value["nombre"]."</td>";
-                                        echo "<td>".$value["descripcion"]."</td>";
+                                        echo "<td>".$value["Nombre"]."</td>";
+                                        echo "<td>".$value["Descripcion"]."</td>";
                                         
-                                        echo "<td>0</td>";
+                                        echo "<td>".$value["Participantes"]."</td>";
                                         $estado="Activo";
-                                        if($value["estatus"]==0){
+                                        if($value["Estatus"]==0){
                                             $estado="Inactivo";
                                         }
                                         echo "<td>".$estado."</td>";
@@ -117,18 +117,18 @@
             
             <div class="row">
 
-                <form action="/" method="POST" data-parsley-validate="true" name="form-wizard">
+                
                     <div id="wizard">
                         <ol>
-                            <li>
+                            <li  id="showContent_1">
                                 Datos del curso
                                 <small>Establece la Información del curso.</small>
                             </li>
-                            <li>
+                            <li  id="showContent_2">
                                 Temario
                                 <small>Establece los temas que se estarán evaluando en el curso.</small>
                             </li>
-                            <li>
+                            <li  id="showContent_3">
                                 Participantes
                                 <small>Indican los puestos que tendrán que tomar el curso.</small>
                             </li>
@@ -136,79 +136,81 @@
                         </ol>
                         <!-- begin wizard step-1 -->
                         <div>
-                            <fieldset>
-
-                                <div class="row">
-                                    <div class=" col-xs-12 col-md-8">
-                                        <h4 class="pull-left width-full">Datos curso</h4>
-                                    </div>
-                                    <div class=" col-xs-12 col-md-4">
-                                        <button id="btn-cancel_nuevo-curso" type="button" class="btn btn-danger m-r-5 m-b-5 btn-cancel_wizard" style="float: right;">Cancelar</button>
-                                    </div>
-                                    <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
-                                </div>
                         
-                                <div class="row">
-                                    <div class="col-xs-4">img 
-                                    <span class="btn btn-primary btn-file" style="position: absolute; margin-right: -45px;">
-                                        <i class="" style="position: absolute; padding-top: 12px;  margin-left: -18px;">
-                                            <!-- <input type="file" id="imgLogo" name="imgLogo" @change="subirLogo()"> -->
-                                            <input id="idInpinputfile" @change="onSelectedFiles" ref="file" type="file" name="files" style="display: none">
-                                        </i>
-
-                                    </span>
-                              </div>
-                                    <div class="col-xs-8">
-                                       
-                                        <!-- begin row -->
-                                        <div class="row">
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Nombre del curso *</label>
-                                                    <input type="text" name="Nombre" placeholder="Nombre" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Url *</label>
-                                                    <input type="text" name="url" placeholder="http://" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="nuevoArchivo">Descripción *</label>
-                                                    <textarea id="textareaDescripcionArchivo" class="form-control" name="descripcionArchivo" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="nuevoArchivo">Certificado </label>
-                                                    <select id="selectTiposArchivos" class="form-control" style="width: 100%" data-parsley-required="true">
-                                                        <option value="1">Sin certificado</option>
-                                                        <option value="1">Con certificado</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Costo </label>
-                                                    <input type="text" name="costo" placeholder="$00.00" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
+                            <fieldset>
+                                <form id="formDatosNewCurso" data-parsley-validate="true" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class=" col-xs-12 col-md-8">
+                                            <h4 class="pull-left width-full">Datos curso</h4>
                                         </div>
-                                        <!-- end row -->
+                                        <div class=" col-xs-12 col-md-4">
+                                            <button id="btn-cancel_nuevo-curso" type="button" class="btn btn-danger m-r-5 m-b-5 btn-cancel_wizard" style="float: right;">Cancelar</button>
+                                        </div>
+                                        <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
                                     </div>
-                                </div>
+                            
+                                    <div class="row">
+                                        <div class="col-xs-4">img 
+                                            <span class="btn btn-primary btn-file" style="position: absolute; margin-right: -45px;">
+                                                <i class="" style="position: absolute; padding-top: 12px;  margin-left: -18px;">
+                                                    <!-- <input type="file" id="imgLogo" name="imgLogo" @change="subirLogo()"> -->
+                                                    <input id="idInpinputfile" @change="onSelectedFiles" ref="file" type="file" name="files" style="display: none">
+                                                </i>
+
+                                            </span>
+                                        </div>
+                                        <div class="col-xs-8">
+                                        
+                                            <!-- begin row -->
+                                            <div class="row">
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Nombre del curso *</label>
+                                                        <input type="text" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Url *</label>
+                                                        <input type="text" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="nuevoArchivo">Descripción *</label>
+                                                        <textarea id="textareaDescripcionArchivo" class="form-control" name="descripcionArchivo" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="nuevoArchivo">Certificado </label>
+                                                        <select id="selectTiposArchivos" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                            <option value="1">Sin certificado</option>
+                                                            <option value="1">Con certificado</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Costo </label>
+                                                        <input type="text" name="costo" placeholder="$00.00" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                            </div>
+                                            <!-- end row -->
+                                        </div>
+                                    </div>
+                                </form>
                             </fieldset>
                         </div>
                         <!-- end wizard step-1 -->
@@ -262,7 +264,7 @@
                                                             <tr>
                                                             <td>Temario</td>
                                                             <td>Porcentaje</td>
-                                                            <td>Nombre</td>
+                                                            <td>Acciones</td>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -370,7 +372,7 @@
                         <!-- end wizard step-3 -->
                         
                     </div>
-                </form>
+               
 
 
             </div>
