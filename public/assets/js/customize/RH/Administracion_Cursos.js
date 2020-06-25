@@ -40,6 +40,48 @@ $(function () {
     $('#btn-adminEliminarCurso').on('click',function(e){
      alert("ELIMINAR CURSO");
     });
+
+    let tablaTemarios = null;
+    tablaTemarios = new TablaBasica('tabla-cursos-temario');
+    
+    $("#wizard").bwizard({ validating: function (e, ui) {
+      alert("VALIDATE");
+      console.log(e,ui.index,ui.nextIndex);
+      // $("#wizard").bwizard("abort");
+      // $("#wizard").bwizard("back");
+      //let infoTabla = tablaTemarios.validarNumeroFilas();
+     // tablaTemarios.datosTabla()
+     if(ui.nextIndex==1){
+       alert("paso1-2");
+     if (evento.validarFormulario('#formDatosNewCurso') ) { //&& infoTabla == true
+     }
+    }
+    if(ui.nextIndex==2){
+      alert("paso2-3");
+    }
+    
+     } });
+
+     
+
+     
+
+    
+
+    // $("#wizard").bwizard({ activeIndexChanged: function (e, ui) { 
+    
+    //   console.log(ui.index);
+    //   //$("#wizard").bwizard("abort");
+    //   $("#wizard").bwizard("back");
+    //   alert("ABORT");
+    //   //showContentWizard(ui.index)
+    // } });
+
+    function showContentWizard(index) {
+      
+    }
+
+
   
   
 
