@@ -197,7 +197,8 @@ class Modelo_SegundoPlano extends Base {
                                                         tst.IdSucursal)) = 0,
                                             'SLALocal',
                                             'SLAForaneo') LocalForaneo,
-                                            (SELECT NumeroNotificacion FROM t_cheking_ticket WHERE Folio = ts.Folio) AS NumeroNotificacion
+                                            (SELECT NumeroNotificacion FROM t_cheking_ticket WHERE Folio = ts.Folio) AS NumeroNotificacion,
+                                            (SELECT TIMESTAMPDIFF(SECOND,FechaNotificacion,NOW()) FROM t_cheking_ticket WHERE Folio = ts.Folio) TiempoTranscurridoNotificacion
                                     FROM
                                         t_solicitudes ts
                                             INNER JOIN
@@ -243,8 +244,7 @@ class Modelo_SegundoPlano extends Base {
                                         TIME_TO_SEC(TIME(" . $datos['LocalForaneo'] . ")) AS tiempo,
                                         " . $datos['LocalForaneo'] . " AS SLA,
                                         TIME_TO_SEC(TIME(TiempoPrimeraNotificacion" . $datos['TextoLocalForaneo'] . ")) AS segundosPrimeraNotificacion,
-                                        TIME_TO_SEC(TIME(TiempoSegundaNotificacion" . $datos['TextoLocalForaneo'] . ")) AS segundosSegundaNotificacion,
-                                        TIME_TO_SEC(TIME(TiempoTerceraNotificacion" . $datos['TextoLocalForaneo'] . ")) AS segundosTerceraNotificacion
+                                        TIME_TO_SEC(TIME(TiempoSegundaNotificacion" . $datos['TextoLocalForaneo'] . ")) AS segundosSegundaNotificacion
                                     FROM cat_v3_prioridades 
                                     WHERE Id = " . $datos['IdPrioridad']);
 
@@ -260,7 +260,7 @@ class Modelo_SegundoPlano extends Base {
     }
     
     public function updateTCkekingTicket(array $datos){
-        $this->actualizar('t_cheking_ticket', array('NumeroNotificacion' => $datos['NumeroNotificacion']), array('Folio' => $datos['Folio']));
+        $this->actualizar('t_cheking_ticket', $datos, array('Folio' => $datos['Folio']));
     }
 
 }
