@@ -100,28 +100,86 @@ $(function () {
   
 
 
-$('#btn-agregar-nuevo-temario').on('click',function(e){
-        //modalSubirTemarios
-        console.log("btn-agregar-nuevo-temario")
-      //$('#modalSubirTemarios').modal('show')
-  });
 
-  $("#btn-agregar-nuevo-temario").on('click',function(e){
+let listTemario=[]
+  $('#btn-agregar-nuevo-temario').on('click',function(e){
     //modalSubirTemarios
     console.log("btn-agregar-nuevo-temario")
   $('#modalValidateTemario').modal('show')
+//   tablaTemarios.evento(function () {
+//     let numItemsTemario = tablaTemarios.datosTabla();
+//     $filas_num=numItemsTemario.length;
+//     let datos = tablaTemarios.datosFila(this);
+//   });
+
+//   console.log("DATOS TABLA TEMARIOS", numItemsTemario,$filas_num,datos);
+//   tablaTemarios.agregarDatosFila([
+//     $("#nombreTemario").val(),
+//     10,
+//    no
+// ]);
+$long=listTemario.length+1;
+$porcentaje=100/$long;
+$nombreTemario=$("#nombreTemario").val();
+console.log($nombreTemario,$porcentaje,"DATOS tEMARIO1",listTemario)
+listTemario.push({'nombre':$nombreTemario,'porcentaje':$porcentaje});
+
+listTemario.forEach(element => {
+  element.porcentaje=$porcentaje;
+});
+
+//$datos['temario']=listTemario;
+
+$("#arrayTemario").html("es");
+console.log($nombreTemario,$porcentaje,"DATOS tEMARIO2",listTemario)
 });
 
 
+$("#file-upload-button").addClass("btn btn-success m-r-5 ");
+let listPuesto=[];
 $("#btn-nuevo-puestoParticipante").on('click',function(e){
     //modalSubirTemarios
     console.log("btn-nuevo-puestoParticipante")
+
+     $nombrePuesto=$("#puesto").val();
+   
+     console.log($nombrePuesto,"DATOS tEMARIO1",listPuesto)
+     listPuesto.push($nombrePuesto);
+     
+     
+     //$datos['temario']=listPuesto;
+     
+   
+     console.log($nombrePuesto,"DATOS tEMARIO2",listPuesto)
+
   $('#modalValidateParticipantes').modal('show')
+     
 });
 
 $("#btn-save-curso").on('click',function(e){
     //modalSubirTemarios
     console.log("btn-save-curso")
+
+    $json={
+      'curso':{
+        img:"ruta img",
+        nombre:$("#nombreCurso").val(),
+        url:$("#urlCurso").val(),
+        descripcion:$("#textareaDescripcionCurso").val(),
+        certificado:$("#certificadoCurso").val(),
+        costo:$("#costoCurso").val(),
+        },
+        'temario':{
+        temario:'string',
+        porcentaje:0
+        },
+        'participantes':{
+        puesto:'string'
+        }
+        
+    }
+
+    console.log("DATOS_SAVE",$json);
   $('#modalresponseSave').modal('show')
 });
 

@@ -150,14 +150,20 @@
                                     </div>
                             
                                     <div class="row">
-                                        <div class="col-xs-4">img 
-                                            <span class="btn btn-primary btn-file" style="position: absolute; margin-right: -45px;">
-                                                <i class="" style="position: absolute; padding-top: 12px;  margin-left: -18px;">
-                                                    <!-- <input type="file" id="imgLogo" name="imgLogo" @change="subirLogo()"> -->
-                                                    <input id="idInpinputfile" @change="onSelectedFiles" ref="file" type="file" name="files" style="display: none">
-                                                </i>
+                                        <div class="col-xs-4">
+                                             <div class="col-xs-12">
+                                                <img class="img-fluid" style="width:90%; margin-left:12px;"   src="/assets/img/user-12.jpg" alt="img-curso">
+                                             </div>
+                                             <div class="col-xs-12" style="text-align: center;  margin-top: 10px;">
+                                                
 
-                                            </span>
+
+                                                <label for="file-upload" class="subir btn" style="width:100%">
+                                                    <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                                                </label>
+                                                <input id="file-upload" onchange='cambiar()' type="file" style='display: none;'/>
+                                                <div id="info"></div>
+                                            </div>
                                         </div>
                                         <div class="col-xs-8">
                                         
@@ -167,7 +173,7 @@
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Nombre del curso *</label>
-                                                        <input type="text" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
+                                                        <input type="text" id="nombreCurso" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
                                                     </div>
                                                 </div>
                                                 <!-- end col-4 -->
@@ -175,7 +181,7 @@
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Url *</label>
-                                                        <input type="text" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
+                                                        <input type="text" id="urlCurso" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
                                                     </div>
                                                 </div>
                                                 <!-- end col-4 -->
@@ -183,17 +189,31 @@
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="nuevoArchivo">Descripción *</label>
-                                                        <textarea id="textareaDescripcionArchivo" class="form-control" name="descripcionArchivo" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
+                                                        <textarea id="textareaDescripcionCurso" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
                                                     </div>
                                                 </div>
                                                 <!-- end col-4 -->
                                                 <!-- begin col-4 -->
                                                 <div class=" col-xs-12 col-md-6">
+                                                <?php
+
+                                                // var_dump($datos['certificados']);
+                                                // var_dump($datos['tipoCursos']);
+                                                
+
+                                                ?>
                                                     <div class="form-group">
                                                         <label for="nuevoArchivo">Certificado </label>
-                                                        <select id="selectTiposArchivos" class="form-control" style="width: 100%" data-parsley-required="true">
-                                                            <option value="1">Sin certificado</option>
-                                                            <option value="1">Con certificado</option>
+                                                        <select id="certificadoCurso" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                            
+                                                            <?php
+                                                            var_dump($datos['certificados']);
+                                                            foreach ($datos['certificados'] as $value) {
+                                                               
+                                                                    echo '<option value="'.$value['id'].'">'.$value['nombre'].'</option>';
+                                                                
+                                                            }
+                                                        ?>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -202,7 +222,7 @@
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Costo </label>
-                                                        <input type="text" name="costo" placeholder="$00.00" class="form-control" />
+                                                        <input type="text" id="costoCurso" name="costo" placeholder="$00.00" class="form-control" />
                                                     </div>
                                                 </div>
                                                 <!-- end col-4 -->
@@ -233,7 +253,7 @@
                                             <div class="col-xs-9">
                                                 <div class="form-group">
                                                     <label>Nombre del curso *</label>
-                                                    <input type="text" name="Nombre" placeholder="Nombre" class="form-control" />
+                                                    <input type="text" id="nombreTemario" name="Nombre" placeholder="Nombre" class="form-control" />
                                                 </div>
                                             </div>
                                             <div class="col-xs-3">
@@ -259,7 +279,7 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
-                                                    <table id="tabla-cursos-temario" class="table table-striped table-bordered">
+                                                    <table id="tabla-cursos-temario" class="table table-bordered">
                                                         <thead>
                                                             <tr>
                                                             <td>Temario</td>
@@ -268,15 +288,24 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                        <div id="arrayTemario" style="display:none;"></div>
                                                             <?php
-                                                            foreach ($datos['filas'] as $value) {
-                                                                echo '<tr>';
-                                                                foreach ($value as $dato) {
-                                                                    echo '<td>' . $dato . '</td>';
-                                                                }
-                                                                echo '</tr>';
-                                                            }
+                                                            //  echo "welcome ".$_COOKIE['temarios'];
+                                                            //  print_r($_COOKIE['temarios']);
+                                                            
+                                                            // foreach ($datos['temario'] as $value) {
+                                                            //     echo '<tr>';
+                                                            //     foreach ($value as $dato) {
+                                                            //         echo '<td>' . $dato . '</td>';
+                                                            //     }
+                                                            //     echo '</tr>';
+                                                            // }
                                                             ?>
+                                                            <tr>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -285,6 +314,8 @@
                                     </div>
                                 </div>
                             </fieldset>
+
+
                         </div>
                         <!-- end wizard step-2 -->
                         <!-- begin wizard step-3 -->
@@ -312,11 +343,9 @@
                                                         <?php
                                                             var_dump($datos['perfiles']);
                                                             foreach ($datos['perfiles'] as $value) {
-                                                                echo '<tr>';
                                                                
                                                                     echo '<option value="'.$value['Id'].'">'.$value['Nombre'].'</option>';
                                                                 
-                                                                echo '</tr>';
                                                             }
                                                         ?>
                                                     </select>
@@ -343,7 +372,7 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
-                                                    <table id="tabla-cursos-participantes" class="table table-striped table-bordered">
+                                                    <table id="tabla-cursos-participantes" class="table  table-bordered">
                                                         <thead>
                                                             <tr>
                                                             <td>Puesto</td>
@@ -352,14 +381,18 @@
                                                         </thead>
                                                         <tbody>
                                                             <?php
-                                                            foreach ($datos['filas'] as $value) {
-                                                                echo '<tr>';
-                                                                foreach ($value as $dato) {
-                                                                    echo '<td>' . $dato . '</td>';
-                                                                }
-                                                                echo '</tr>';
-                                                            }
+                                                            // foreach ($datos['filas'] as $value) {
+                                                            //     echo '<tr>';
+                                                            //     foreach ($value as $dato) {
+                                                            //         echo '<td>' . $dato . '</td>';
+                                                            //     }
+                                                            //     echo '</tr>';
+                                                            // }
                                                             ?>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -406,6 +439,13 @@
                                 3.- Subir la platilla con el botón archivo (solo formato Excel).<br>
                                 4.- Una vez cargado el archivo solo dar clic en subir archivo.<br><br>
                     </div>
+
+                    <div class="col-12">
+                        <form action="#" method="post" enctype="multipart/form-data">
+
+                            <input type="file" name="archivossubidos[]" >
+
+                    </div>
                    
                   </div>
                 </div>
@@ -414,8 +454,9 @@
               <div class="modal-footer">
                     <a href="javascript:;" class="btn btn-white m-r-5 " id="cerrar" data-dismiss="modal" aria-label="Close"> Cerrar</a>
                     <a href="javascript:;" class="btn btn-primary m-r-5 " id="desPlantilla">Descargar plantilla</a>
-                    <a href="javascript:;" class="btn btn-success m-r-5 " id="save"> Subir plantilla</a>
+                    <input type="submit"  class="btn btn-success m-r-5 " id="save" value="Subir plantilla">
               </div>
+              </form>
               <div id="alertasGeocercas"></div>
 
           </div>
@@ -522,4 +563,27 @@
 <!-- fin guardar curso-->
 
 <!-- FIN #contenido MODALS-->
+
+<script>
+function cambiar(){
+    var pdrs = document.getElementById('file-upload').files[0].name;
+    document.getElementById('info').innerHTML = pdrs;
+    alert(pdrs)
+}
+</script>
+
+<style>
+.subir{
+    padding: 5px 10px;
+    background: #ffa500;
+    color:#fff;
+    border:0px solid #fff;
+}
+ 
+.subir:hover{
+    color:#fff;
+    background: #d8900c;
+}
+
+</style>
 
