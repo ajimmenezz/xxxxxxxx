@@ -5,8 +5,10 @@ namespace Librerias\V2\PaquetesTicket\Redes;
 use Librerias\V2\PaquetesTicket\Interfaces\Servicio as Servicio;
 use Librerias\V2\PaquetesTicket\Redes\GestorNodosRedes as GestorNodo;
 use Librerias\V2\PaquetesGenerales\Utilerias\PDF as PDF;
+use Librerias\V2\PaquetesTicket\Utilerias\Solicitud as Solicitud;
 use Modelos\Modelo_ServicioCableado as Modelo;
 use Modelos\Modelo_ServicioTicket as ModeloServicioTicket;
+use Modelos\Modelo_ServicioTicketV2 as ModeloServicioTicketV2;
 use Librerias\Generales\Correo as Correo;
 
 class ServicioCableado implements Servicio {
@@ -26,11 +28,14 @@ class ServicioCableado implements Servicio {
     private $DBServicioTicket;
     private $gestorNodos;
     private $correoAtiende;
+    private $DBServicioTicketV2;
+    private $pdf;
 
     public function __construct(string $idServicio) {
         $this->id = $idServicio;
         $this->DBServiciosGeneralRedes = new Modelo();
         $this->DBServicioTicket = new ModeloServicioTicket();
+        $this->DBServicioTicketV2 = new ModeloServicioTicketV2();
         $this->gestorNodos = new GestorNodo($this->id);
         $this->setDatos();
     }
@@ -82,11 +87,19 @@ class ServicioCableado implements Servicio {
         );
     }
 
-    public function setFolioServiceDesk(string $folio) {
-        $this->DBServiciosGeneralRedes->empezarTransaccion();
-        $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
-        $this->setDatos();
-        $this->DBServiciosGeneralRedes->finalizarTransaccion();
+    public function setFolioServiceDesk(string $folio = NULL) {
+        $solicitud = new solicitud($this->idSolicitud);
+        $folioSolicitudes = $solicitud->folioSolicitudes(array('folio' => $folio));
+
+        if (empty($folioSolicitudes)) {
+            $this->DBServiciosGeneralRedes->empezarTransaccion();
+            $this->DBServiciosGeneralRedes->setFolioServiceDesk($this->idSolicitud, $folio);
+            $this->setDatos();
+            $this->DBServiciosGeneralRedes->finalizarTransaccion();
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 
     public function getCliente() {
@@ -172,6 +185,9 @@ class ServicioCableado implements Servicio {
     }
 
     public function setSolucion(array $datos) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+        $datos['fecha'] = $fecha;
+
         $this->DBServiciosGeneralRedes->empezarTransaccion();
         $consulta = $this->DBServiciosGeneralRedes->getEvidencias($this->id);
 
@@ -185,12 +201,12 @@ class ServicioCableado implements Servicio {
             $datos['archivos'] .= ',' . $consulta[0]['Archivos'];
         }
 
-        $consulta = $this->DBServiciosGeneralRedes->getDatosServicio($this->id);
+        $existenDatos = $this->DBServiciosGeneralRedes->getDatosSolucion($this->id);
 
-        if (empty($consulta)) {
+        if (empty($existenDatos)) {
             $this->DBServiciosGeneralRedes->setServicio($this->id, $datos);
         } else {
-            $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
+            $consulta = $this->DBServiciosGeneralRedes->updateServicio($this->id, $datos);
         }
 
         $this->DBServiciosGeneralRedes->setSucursal($this->id, $datos['idSucursal']);
@@ -222,6 +238,11 @@ class ServicioCableado implements Servicio {
         return $evidencias;
     }
 
+    public function deleteFolio() {
+        $datos = $this->getDatos();
+        $this->DBServiciosGeneralRedes->setFolioServiceDesk($datos['idSolicitud']);
+    }
+
     public function getFirmas(string $idServicio) {
         $consulta = $this->DBServiciosGeneralRedes->getFirmas($idServicio);
         return $consulta[0]['firmas'];
@@ -229,20 +250,59 @@ class ServicioCableado implements Servicio {
 
     public function getPDF(array $datos) {
         $informacionServicio = $this->DBServiciosGeneralRedes->getDatosSolucionPDF($datos);
+        if ($this->folioSolicitud == null) {
+            $this->folioSolicitud = '';
+        }
         $pdf = new PDF($this->folioSolicitud);
         $pdf->AddPage();
-        $pdf->tituloTabla('#1 Información General');
+        $pdf->tituloTabla('Información General');
         $pdf->tabla(array(), $informacionServicio['infoGeneral']);
         $pdf->tituloTabla('Solución del Servicio');
         $pdf->tabla(array(), $informacionServicio['infoNodos']);
-        $evidencias = explode(',', $informacionServicio['evidencias'][0]['Archivos']);
-        $pdf->tablaImagenes($evidencias);
+        if (!empty($informacionServicio['evidencias'])) {
+            $evidencias = explode(',', $informacionServicio['evidencias'][0]['Archivos']);
+            $pdf->tablaImagenes($evidencias);
+            $pdf->tituloTabla('Material');
+            $pdf->tabla(array('Tipo', 'Producto', 'Cantidad'), $informacionServicio['totalMaterial']);
+        } else {
+            $evidencias = explode(',', $informacionServicio['evidenciasGenerales'][0]['Archivos']);
+            $pdf->tablaImagenes($evidencias);
+        }
         $pdf->tituloTabla('Firmas del Servicio');
         $pdf->firma($informacionServicio['infoFirmas'][0]);
         $carpeta = $pdf->definirArchivo('Servicios/Servicio-' . $this->id . '/PDF', 'PruebaPDF');
         $pdf->Output('F', $carpeta, true);
         $archivo = substr($carpeta, 1);
         return $archivo;
+    }
+
+    function FancyTable($header, $data) {
+        // Colors, line width and bold font
+        $this->pdf->SetFillColor(31, 56, 100);
+        $this->pdf->SetTextColor(255);
+        $this->pdf->SetLineWidth(.3);
+        $this->pdf->SetFont('', 'B');
+        // Header
+        $w = array(95, 95);
+        for ($i = 0; $i < count($header); $i++)
+            $this->pdf->Cell($w[$i], 7, $header[$i], 1, 0, 'C', true);
+        $this->pdf->Ln();
+        // Color and font restoration
+        $this->pdf->SetFillColor(224, 235, 255);
+        $this->pdf->SetTextColor(0);
+        $this->pdf->SetFont('');
+        // Data
+        $fill = false;
+
+        foreach ($data as $row) {
+            $this->pdf->Cell($w[0], 6, $row[0], 'LR', 0, 'L', $fill);
+            $this->pdf->Cell($w[1], 6, $row[1], 'LR', 0, 'L', $fill);
+            $this->pdf->Ln();
+            $fill = !$fill;
+        }
+        // Closing line
+        $this->pdf->Cell(array_sum($w), 0, '', 'T');
+        $this->pdf->Ln(10);
     }
 
     public function enviarServicioConcluido(array $datos) {
@@ -262,6 +322,10 @@ class ServicioCableado implements Servicio {
         $mensajeFirma = $correo->mensajeCorreo($titulo, $textoCorreo);
 
         $correo->enviarCorreo('notificaciones@siccob.solutions', array($this->correoAtiende), $titulo, $mensajeFirma);
+    }
+
+    public function getAvanceProblema() {
+        return $this->DBServicioTicketV2->getAvanceProblema($this->id);
     }
 
 }

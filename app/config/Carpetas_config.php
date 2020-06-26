@@ -12,6 +12,7 @@ $config['Secciones'] = array(
     'Acceso' => array('Login', 'Recuperar_Acceso', 'Nuevo_Password'),
     'Configuracion' => array('Perfil-Configuracion' => 'Perfil'),
     'Generales' => array(
+        'Agenda' => 'Agenda',
         'Dashboard-Generico' => 'Dashboard_Generico',
         'Dashboard-Siccob' => 'Dashboard',
         'Disp-Moviles' => 'Dispositivos-Moviles',
@@ -91,6 +92,7 @@ $config['Secciones'] = array(
     'Poliza' => array(
         'Dashboard-Poliza' => 'Dashboard',
         'Seguimiento-Poliza' => 'Seguimiento',
+        'SLA' => 'SLA',
         'Solicitudes-Multimedia' => 'Solicitudes_Multimedia',
         'Catalogo-Regiones-Cliente' => 'Regiones_Cliente',
         'Catalogo-Fallas-Poliza' => 'Catalogo_Fallas',
@@ -100,12 +102,17 @@ $config['Secciones'] = array(
         'Resumen-Vueltas-Asocidaos' => 'Resumen_Vueltas_Asociados',
         'Catalogo-Checklist' => 'Catalogo_Checklist',
         'Seguimiento-Equipos' => 'Seguimiento_Equipos',
-        'Reporte-Inventario' => 'Inventarios'
+        'Reporte-Inventario' => 'Inventarios',
+        'Catalogo-Unidades-Negocio' => 'Unidades_Negocio',
+        'Catalogo-Sublineas-Area' => 'UnidadesNegocioSublineasArea',
+        'Catalogo-Modelos-Area' => 'UnidadesNegocioModelosArea',
+        'Catalogo-Unidades-Area' => 'UnidadesNegocioArea'
     ),
     'Redes' => array(
         'Dashboard-Redes' => 'Dashboard',
         'Seguimiento-Redes' => 'Seguimiento',
-        'Seguimiento-GeneralRedes' => 'SeguimientoCE'
+        'Seguimiento-GeneralRedes' => 'SeguimientoCE',
+        'CatalogoSwitchRedes' => 'CatalogoSwitch'
     ),
     'Salas4D' => array(
         'Dashboard-Salas4D' => 'Dashboard',

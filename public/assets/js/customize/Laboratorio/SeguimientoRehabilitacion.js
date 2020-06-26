@@ -41,6 +41,7 @@ $(function () {
                     agregarContenidoComentarios(respuesta.datos.infoBitacora.comentarios);
                     agregarContenidoRefacciones(respuesta.datos.infoBitacora.refacciones);
                     agregarContenidoDeshuesar(respuesta.datos.infoBitacora.deshuesar, respuesta.datos.infoBitacora.estatusDeshuesar);
+                    initCambiarEstatusProductos();
                     $('.cambioVistas').removeClass('hidden');
                     $('#panelRehabilitacionEquiposTabla').addClass('hidden');
                 } else {
@@ -50,6 +51,14 @@ $(function () {
             });
         }
     });
+
+    function initCambiarEstatusProductos() {
+        $(".btnMarcarEstatusAll").off("click");
+        $(".btnMarcarEstatusAll").on("click", function () {
+            var estatus = $(this).attr("data-id");
+            $(".listEstatus").val(estatus);
+        });
+    }
 
     function cargaInformacionEquipo(infoEquipo) {
         $('#cargaModelo').val(infoEquipo.modelo);
@@ -189,6 +198,9 @@ $(function () {
         $('#nuevaTabla').empty();
         let htmDeshueso = '';
         let htmlSelect = '<option value="">Seleccionar</option>';
+
+        agregarSeleccionTotal(estatusDeshuesar);
+
         if (deshuesar.length > 0) {
             tablaDeshuesar.limpiartabla();
             $.each(deshuesar, function (key, value) {
@@ -203,29 +215,45 @@ $(function () {
             });
 
             $.each(deshuesar, function (key, value) {
-                htmDeshueso += '<div class="col-sm-4 col-md-4 col-lg-4">\n\
-                                <div class="form-group">\n\
-                                    <label>Refaccion</label>\n\
-                                    <input id="cargaRefaccion' + key + '" type="text" class="form-control" value="' + value.Nombre + '" data-key="' + value.Id + '" style="width: 100%" disabled/>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4 col-lg-4">\n\
-                                <div class="form-group">\n\
-                                    <label>Estatus</label>\n\
-                                    <select id="selectDeshuesar' + key + '" class="form-control" style="width: 100%">\n\
-                                        ' + htmlSelect + '\n\
-                                    </select>\n\
-                                </div>\n\
-                            </div>\n\
-                            <div class="col-sm-4 col-md-4 col-lg-4">\n\
-                                <div class="form-group">\n\
-                                    <label>Serie</label>\n\
-                                    <input id="inputDeshuesar' + key + '" type="text" class="form-control" style="width: 100%" placeholder="ILEGIBLE"/>\n\
-                                </div>\n\
-                            </div>';
+                htmDeshueso += '<div class="row">\n\
+                                    <div class="col-sm-4 col-md-4 col-lg-4">\n\
+                                        <div class="form-group">\n\
+                                            <label>Refaccion</label>\n\
+                                            <input id="cargaRefaccion' + key + '" type="text" class="form-control" value="' + value.Nombre + '" data-key="' + value.Id + '" style="width: 100%" disabled/>\n\
+                                        </div>\n\
+                                    </div>\n\
+                                    <div class="col-sm-4 col-md-4 col-lg-4">\n\
+                                        <div class="form-group">\n\
+                                            <label>Estatus</label>\n\
+                                            <select id="selectDeshuesar' + key + '" class="form-control listEstatus" style="width: 100%">\n\
+                                                ' + htmlSelect + '\n\
+                                            </select>\n\
+                                        </div>\n\
+                                    </div>\n\
+                                    <div class="col-sm-4 col-md-4 col-lg-4">\n\
+                                        <div class="form-group">\n\
+                                            <label>Serie</label>\n\
+                                            <input id="inputDeshuesar' + key + '" type="text" class="form-control" style="width: 100%" placeholder="ILEGIBLE"/>\n\
+                                        </div>\n\
+                                    </div>\n\
+                                </div>';
             });
             $('#nuevaTabla').append(htmDeshueso);
         }
+    }
+
+    function agregarSeleccionTotal(estatusDeshuesar) {
+        let seleccion = '';
+
+        $.each(estatusDeshuesar, function (key, value) {
+            seleccion += `<a role="button" data-id="${value.Id}" class="btnMarcarEstatusAll m-r-10 f-w-600">${value.Nombre}</a>`;
+        });
+
+        let html = (`<div class="col-md-12">
+                        ${seleccion}
+                    </div>`);
+
+        $('#seleccionTotal').empty().append(html);
     }
 
     $('#btnAceptarComentario').on('click', function () {
@@ -242,7 +270,7 @@ $(function () {
                 sendComment.operacion = 'agregar';
             }
             if ($('#agregarEvidencia').val() !== '') {
-                evidenciasComentarios.enviarPeticionServidor('#modalAgregarComentario', sendComment, function (respuesta) {
+                evidenciasComentarios.enviarPeticionServidor('modalAgregarComentario', sendComment, function (respuesta) {
                     if (respuesta.response === 200) {
                         limpiarCamposComentarios();
                         agregarContenidoComentarios(respuesta.datos);

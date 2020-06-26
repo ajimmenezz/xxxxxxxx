@@ -1049,8 +1049,8 @@ class Seguimientos extends General {
                         $this->DBS->actualizarSeguimiento('t_servicios_ticket', array(
                             'IdEstatus' => '2'
                                 ), array('Id' => $datos['servicio']));
-//                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
-//                        $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
+                        //                        $this->cambiarEstatusServiceDesk($datos['servicio'], 'En Atención');
+                        //                        $this->ServiceDesk->cambiarReporteFalsoServiceDesk($key, $folio, 'NO');
 
                         if ($archivos) {
                             $archivos = implode(',', $archivos);
@@ -1286,9 +1286,9 @@ class Seguimientos extends General {
                             }
 
                             $key = $this->InformacionServicios->getApiKeyByUser($usuario['Id']);
-                            if($key == null){
+                            if ($key == null) {
                                 return "ApiKey";
-                            }else{
+                            } else {
                                 $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $datos['atiende'], $key);
 
                                 $this->InformacionServicios->setHTMLService($datos);
@@ -2223,12 +2223,12 @@ class Seguimientos extends General {
             //                         Extra,
             //                         1,
             //                         0,
-			// 	    17,
-			// 	    IdSistemaOperativo,
-			// 	    MAC,
+            // 	    17,
+            // 	    IdSistemaOperativo,
+            // 	    MAC,
             //                         NombreRed,
             //                         IdEstatusSoftwareRQ,
-			// 	    Forced
+            // 	    Forced
             //                         from t_censos 
             //                         where IdServicio = (
             //                                         select IdServicio 
@@ -4295,7 +4295,7 @@ class Seguimientos extends General {
                     'formularioValidacion' => $this->vistaValidacion($datos),
                     'formularioGuia' => [],
                     'formularioEnvioAlmacen' => [],
-                    'formularioRecepcionAlmacen' => $this->recepcionAlmacen($datos),
+                    'formularioRecepcionAlmacen' => [],
                     'formularioRecepcionAlmacenRegreso' => [],
                     'formularioRecepcionLab' => $this->recepcionLaboratorio($datos),
                     'formularioHistorialRefaccion' => [],
@@ -4722,7 +4722,20 @@ class Seguimientos extends General {
     public function vistaValidacion($datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $dataValidacion['ticketTecnico'] = $this->DBP->consultaTicketsUsuario(array('usuario' => $usuario['Id'], 'estatus' => '3'));
-        $dataValidacion['datosValidacion'] = $this->DBP->consultaDatosValidacion($datos);
+
+        if (!empty($datos['idServicio'])) {
+            $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
+            $datosValidacion = $this->DBP->consultaDatosValidacion($datos);
+            
+            if (!empty($datosAllab) && $datosValidacion) {
+                $dataValidacion['datosValidacion'] = $this->DBP->consultaDatosValidacion($datos);
+            } else {
+                $dataValidacion['datosValidacion'] = array('sinDatos');
+            }
+        } else {
+            $dataValidacion['datosValidacion'] = $this->DBP->consultaDatosValidacion($datos);
+        }
+
         $dataValidacion['tipoPerfiles'] = $this->DBP->mostrarTipoPersonaValida();
         $dataValidacion['listaEquipo'] = $this->DBP->mostrarEquipo();
 
@@ -6105,13 +6118,399 @@ class Seguimientos extends General {
         $puntosRevisados = $this->DBCensos->getPuntosCensoRevisados($datos['servicio']);
         $data = [
             'areasPuntos' => $areasPuntos,
-            'puntosRevisados' => $puntosRevisados
+            'puntosRevisados' => $puntosRevisados,
+            'unidadNegocio' => $this->DBCensos->getUnidadNegocioByServicio($datos['servicio'])
         ];
         return ['html' => parent::getCI()->load->view('Poliza/Modal/CensoEquiposPuntoGroupArea', $data, TRUE)];
     }
 
+    public function cargaDiferenciasCenso(array $datos) {
+        $dataDiff = $this->getDataForCensoCompare($datos['servicio']);
+        if (isset($datos['mostrarCenso']) && $datos['mostrarCenso']) {
+            $dataDiff['mostrarCenso'] = true;
+        }
+        return ['html' => parent::getCI()->load->view('Poliza/Modal/DiferenciaCensos', $dataDiff, TRUE)];
+    }
+
+    public function getDataForCensoCompare($servicio) {
+        $actual = $this->DBCensos->getCensoForCompare($servicio);
+        $ultimo = $this->DBCensos->getLastCensoForCompare($servicio);
+        $generales = $this->DBCensos->getGeneralesForCompare($servicio);
+        $diferenciaSeries = $this->getPossibleSeriesChange($this->getCensoDiferenciasSeries($actual, $ultimo), $this->getCensoDiferenciasSeries($ultimo, $actual));
+        $unidadNegocio = $this->DBCensos->getUnidadNegocioByServicio($servicio);
+        $kitArea = $this->DBCensos->getKitAreas($unidadNegocio);
+        return [
+            'conteo' => count($actual) - count($ultimo),
+            'actual' => $actual,
+            'ultimo' => $ultimo,
+            'generales' => $generales,
+            'cambiosSerie' => $diferenciaSeries['cambiosSerie'],
+            'diferenciasActual' => $diferenciaSeries['diferenciasActual'],
+            'diferenciasUltimo' => $diferenciaSeries['diferenciasUltimo'],
+            'diferenciasFull' => $this->getCensoDiferenciaKitFull($actual, $unidadNegocio),
+            'areas' => $this->DBCensos->getFullDataAreas(),
+            'lineas' => $this->DBCensos->getFullDataLineas(),
+            'sublineas' => $this->DBCensos->getFullDataSublineas(),
+            'modelos' => $this->DBCensos->getFullDataModelos(),
+            'kitAreas' => $kitArea
+        ];
+    }
+
+    private function getPossibleSeriesChange($actual, $ultimo) {
+        $cambiosSerie = [];
+        foreach ($ultimo as $ku => $vu) {
+            foreach ($actual as $ka => $va) {
+                if (
+                        $vu['IdArea'] == $va['IdArea'] &&
+                        $vu['Punto'] == $va['Punto'] &&
+                        $vu['IdLinea'] == $va['IdLinea'] &&
+                        $vu['IdSublinea'] == $va['IdSublinea'] &&
+                        $vu['IdMarca'] == $va['IdMarca'] &&
+                        $vu['IdModelo'] == $va['IdModelo'] &&
+                        $vu['Serie'] != 'ILEGIBLE' && $va['Serie'] == 'ILEGIBLE'
+                ) {
+                    array_push($cambiosSerie, $vu);
+                    unset($ultimo[$ku]);
+                    unset($actual[$ka]);
+                }
+            }
+        }
+
+        return ['cambiosSerie' => $cambiosSerie, 'diferenciasActual' => $actual, 'diferenciasUltimo' => $ultimo];
+    }
+
+    public function getCensoDetailsForExport($serviceId) {
+        $actual = $this->DBCensos->getCensoForCompare($serviceId);
+        $unidadNegocio = $this->DBCensos->getUnidadNegocioByServicio($serviceId);
+        return $this->getCensoDiferenciaKitFull($actual, $unidadNegocio);
+    }
+
+    private function getCensoDiferenciaKitFull($inventario, $unidadNegocio) {
+        $kit = $this->createArrayKitSublineaForCompare($unidadNegocio);
+        $kitsCenso = $this->getKitsPuntos($inventario, $kit);
+        $kitsCensoAux = $kitsCenso;
+        $inventarioAux = $inventario;
+
+        $censados = [
+            'sublineas' => [],
+            'areas' => []
+        ];
+        $totales = [
+            'censados' => 0,
+            'kit' => 0,
+            'faltantes' => 0,
+            'sobrantes' => 0
+        ];
+        $faltantes = [];
+        $sobrantes = [];
+
+        foreach ($inventarioAux as $kinventario => $vinventario) {
+            $totales['censados'] ++;
+            if (!isset($censados['sublineas'][$vinventario['Sublinea']])) {
+                $censados['sublineas'][$vinventario['Sublinea']] = [
+                    'censados' => 0,
+                    'faltantes' => 0,
+                    'sobrantes' => 0,
+                    'kit' => 0
+                ];
+            }
+
+            if (!isset($censados['areas'][$vinventario['Area']])) {
+                $censados['areas'][$vinventario['Area']] = [
+                    'censados' => 0,
+                    'faltantes' => 0,
+                    'sobrantes' => 0,
+                    'puntos' => 0,
+                    'kit' => 0
+                ];
+            }
+
+            $censados['sublineas'][$vinventario['Sublinea']]['censados'] ++;
+            $censados['areas'][$vinventario['Area']]['censados'] ++;
+
+            if ($censados['areas'][$vinventario['Area']]['puntos'] < $vinventario['Punto']) {
+                $censados['areas'][$vinventario['Area']]['puntos'] = $vinventario['Punto'];
+            }
+
+            if (isset($kitsCenso[$vinventario['Area']][$vinventario['Punto']])) {
+                $countKit = 0;
+                foreach ($kitsCenso[$vinventario['Area']][$vinventario['Punto']] as $kaux => $vaux) {
+                    $countKit += (int) $vaux['Cantidad'];
+                }
+                $censados['areas'][$vinventario['Area']]['kit'] = $countKit;
+            }
+
+            if (isset($kitsCensoAux[$vinventario['Area']][$vinventario['Punto']])) {
+                $remove = false;
+                foreach ($kitsCensoAux[$vinventario['Area']][$vinventario['Punto']] as $kkit => $vkit) {
+                    if ($vinventario['IdSublinea'] == $vkit['IdSublinea']) {
+                        $remove = true;
+                        $kitsCensoAux[$vinventario['Area']][$vinventario['Punto']][$kkit]['Cantidad'] --;
+                        if ($kitsCensoAux[$vinventario['Area']][$vinventario['Punto']][$kkit]['Cantidad'] == 0) {
+                            unset($kitsCensoAux[$vinventario['Area']][$vinventario['Punto']][$kkit]);
+                        }
+                        break;
+                    }
+                }
+                if ($remove) {
+                    unset($inventarioAux[$kinventario]);
+                }
+            }
+        }
+
+        foreach ($kitsCenso as $karea => $varea) {
+            foreach ($varea as $kpunto => $vpunto) {
+                foreach ($vpunto as $kequipo => $vequipo) {
+                    if (!isset($censados['sublineas'][$vequipo['Sublinea']])) {
+                        $censados['sublineas'][$vequipo['Sublinea']] = [
+                            'censados' => 0,
+                            'faltantes' => 0,
+                            'sobrantes' => 0,
+                            'kit' => 0
+                        ];
+                    }
+                    $censados['sublineas'][$vequipo['Sublinea']]['kit'] += $vequipo['Cantidad'];
+                    $totales['kit'] += $vequipo['Cantidad'];
+                }
+            }
+        }
+
+        foreach ($kitsCensoAux as $karea => $varea) {
+            foreach ($varea as $kpunto => $vpunto) {
+                foreach ($vpunto as $kequipo => $vequipo) {
+                    $censados['sublineas'][$vequipo['Sublinea']]['faltantes'] += $vequipo['Cantidad'];
+                    $censados['areas'][$vequipo['Area']]['faltantes'] += $vequipo['Cantidad'];
+                    $vequipo['Punto'] = $kpunto;
+                    $totales['faltantes'] += $vequipo['Cantidad'];
+                    array_push($faltantes, $vequipo);
+                }
+            }
+        }
+
+        foreach ($inventarioAux as $kinventario => $vinventario) {
+            $censados['sublineas'][$vinventario['Sublinea']]['sobrantes'] ++;
+            $censados['areas'][$vinventario['Area']]['sobrantes'] ++;
+            $totales['sobrantes'] ++;
+            array_push($sobrantes, $vinventario);
+        }
+
+
+        return [
+            'censados' => $censados,
+            'faltantes' => $faltantes,
+            'sobrantes' => $sobrantes,
+            'inventario' => $inventario,
+            'totales' => $totales
+        ];
+    }
+
+    private function getKitsPuntos($inventario, $kit) {
+        $kitsCenso = [];
+        foreach ($inventario as $kinventario => $vinventario) {
+            if (!isset($kitsCenso[$vinventario['Area']])) {
+                $kitsCenso[$vinventario['Area']] = [];
+            }
+            if (!isset($kitsCenso[$vinventario['Area']][$vinventario['Punto']])) {
+                $kitsCenso[$vinventario['Area']][$vinventario['Punto']] = isset($kit[$vinventario['Area']]) ? $kit[$vinventario['Area']] : [];
+            }
+        }
+        return $kitsCenso;
+    }
+
+    private function createInventoryArrayByPoint($inventario) {
+        $arrayReturn = [];
+        foreach ($inventario as $k => $v) {
+            if (!isset($arrayReturn[$v['Area']])) {
+                $arrayReturn[$v['Area']] = [];
+            }
+
+            if (!isset($arrayReturn[$v['Area']]['P' . $v['Punto']])) {
+                $arrayReturn[$v['Area']]['P' . $v['Punto']] = [];
+            }
+            array_push($arrayReturn[$v['Area']]['P' . $v['Punto']], $v);
+            ;
+        }
+
+        return $arrayReturn;
+    }
+
+    private function createArrayKitSublineaForCompare($unidadNegocio) {
+        $kit = $this->DBCensos->getKitSublineasXArea($unidadNegocio);
+        $kitReturn = [];
+        foreach ($kit as $k => $v) {
+            if (!isset($kitReturn[$v['Area']])) {
+                $kitReturn[$v['Area']] = [];
+            }
+            array_push($kitReturn[$v['Area']], [
+                'Area' => $v['Area'],
+                'Linea' => $v['Linea'],
+                'Sublinea' => $v['Sublinea'],
+                'IdArea' => $v['IdArea'],
+                'IdSublinea' => $v['IdSublinea'],
+                'Cantidad' => $v['Cantidad']
+            ]);
+        }
+
+        return $kitReturn;
+    }
+
+    private function getCensoDiferenciasAreas($actual, $ultimo) {
+        $areasActual = $this->getArrayConteoAreas($actual);
+        $areasUltimo = $this->getArrayConteoAreas($ultimo);
+        $diferencia = [];
+
+        foreach ($areasActual as $k => $v) {
+            if (isset($areasUltimo[$k])) {
+                $diferencia[$k] = $v - $areasUltimo[$k];
+                unset($areasUltimo[$k]);
+            } else {
+                $diferencia[$k] = $v;
+            }
+        }
+
+        foreach ($areasUltimo as $k => $v) {
+            $diferencia[$k] = 0 - $v;
+        }
+
+        return $diferencia;
+    }
+
+    private function getCensoDiferenciasLineas($actual, $ultimo) {
+        $lineasActual = $this->getArrayConteoLineas($actual);
+        $lineasUltimo = $this->getArrayConteoLineas($ultimo);
+        $diferencia = [];
+
+        foreach ($lineasActual as $k => $v) {
+            if (isset($lineasUltimo[$k])) {
+                $diferencia[$k] = $v - $lineasUltimo[$k];
+                unset($lineasUltimo[$k]);
+            } else {
+                $diferencia[$k] = $v;
+            }
+        }
+
+        foreach ($lineasUltimo as $k => $v) {
+            $diferencia[$k] = 0 - $v;
+        }
+
+        return $diferencia;
+    }
+
+    private function getCensoDiferenciasSubineas($actual, $ultimo) {
+        $sublineasActual = $this->getArrayConteoSublineas($actual);
+        $sublineasUltimo = $this->getArrayConteoSublineas($ultimo);
+        $diferencia = [];
+
+        foreach ($sublineasActual as $k => $v) {
+            if (isset($sublineasUltimo[$k])) {
+                $diferencia[$k] = $v - $sublineasUltimo[$k];
+                unset($sublineasUltimo[$k]);
+            } else {
+                $diferencia[$k] = $v;
+            }
+        }
+
+        foreach ($sublineasUltimo as $k => $v) {
+            $diferencia[$k] = 0 - $v;
+        }
+
+        return $diferencia;
+    }
+
+    private function getCensoDiferenciasModelos($actual, $ultimo) {
+        $modelosActual = $this->getArrayConteoModelos($actual);
+        $modelosUltimo = $this->getArrayConteoModelos($ultimo);
+        $diferencia = [];
+
+        foreach ($modelosActual as $k => $v) {
+            if (isset($modelosUltimo[$k])) {
+                $diferencia[$k] = $v - $modelosUltimo[$k];
+                unset($modelosUltimo[$k]);
+            } else {
+                $diferencia[$k] = $v;
+            }
+        }
+
+        foreach ($modelosUltimo as $k => $v) {
+            $diferencia[$k] = 0 - $v;
+        }
+
+        return $diferencia;
+    }
+
+    private function getArrayConteoAreas($inventario) {
+        $areas = [];
+        foreach ($inventario as $k => $v) {
+            if (!array_key_exists($v['Area'], $areas)) {
+                $areas[$v['Area']] = 0;
+            }
+
+            if ($v['Punto'] > $areas[$v['Area']]) {
+                $areas[$v['Area']] = $v['Punto'];
+            }
+        }
+
+        return $areas;
+    }
+
+    private function getArrayConteoLineas($inventario) {
+        $lineas = [];
+        foreach ($inventario as $k => $v) {
+            if (!array_key_exists($v['Linea'], $lineas)) {
+                $lineas[$v['Linea']] = 0;
+            }
+            $lineas[$v['Linea']] += 1;
+        }
+        return $lineas;
+    }
+
+    private function getArrayConteoSublineas($inventario) {
+        $sublineas = [];
+        foreach ($inventario as $k => $v) {
+            if (!array_key_exists($v['Sublinea'], $sublineas)) {
+                $sublineas[$v['Sublinea']] = 0;
+            }
+            $sublineas[$v['Sublinea']] += 1;
+        }
+        return $sublineas;
+    }
+
+    private function getArrayConteoModelos($inventario) {
+        $modelos = [];
+        foreach ($inventario as $k => $v) {
+            if (!array_key_exists($v['Modelo'], $modelos)) {
+                $modelos[$v['Modelo']] = 0;
+            }
+            $modelos[$v['Modelo']] += 1;
+        }
+        return $modelos;
+    }
+
+    private function getCensoDiferenciasSeries($actual, $ultimo) {
+        $diferencias = [];
+        foreach ($actual as $ka => $va) {
+            array_push($diferencias, $va);
+
+            foreach ($ultimo as $ku => $vu) {
+                if (
+                        ($va['IdModelo'] == $vu['IdModelo'] && $this->convertSeries($va['Serie']) == $this->convertSeries($vu['Serie'])) ||
+                        ($this->convertSeries($va['Serie']) == $this->convertSeries($vu['Serie']) && $va['Serie'] != 'ILEGIBLE')
+                ) {
+                    unset($ultimo[$ku]);
+                    array_pop($diferencias);
+                    break;
+                }
+            }
+        }
+        return $diferencias;
+    }
+
+    private function convertSeries($serie) {
+        return strtoupper(str_replace(' ', '', $serie));
+    }
+
     public function cargaFormularioCapturaCenso(array $datos) {
-        $kitStandarArea = $this->DBCensos->getKitStandarArea($datos['area']);
+        $kitStandarArea = $this->DBCensos->getKitStandarArea($datos['area'], $datos['un']);
         $modelosStandar = $this->DBCensos->getModelosStandarByArea($datos['area']);
         $equiposCensados = $this->DBCensos->getEquiposCensoByAreaPunto($datos);
         $nombreArea = $this->DBCensos->getNombreAreaById($datos['area']);

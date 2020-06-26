@@ -1735,7 +1735,7 @@ class Solicitud extends General {
 
                     if (!empty($value['Ticket'])) {
                         $servicios = $this->DBT->getServiciosSolicitud($value['Ticket']);
-                        
+
                         if (!empty($servicios)) {
                             foreach ($servicios as $key => $value) {
                                 if ($value['IdEstatus'] !== '4' && $value['IdEstatus'] !== '6') {
@@ -1932,101 +1932,6 @@ class Solicitud extends General {
         return $this->crearExcel($resultado, $arrayTitulos, 'Reporte_Comparacion_Folios.xlsx');
     }
 
-    public function getFoliosSemanal() {
-        $foliosAdist = $this->DBS->obtenerFoliosAdist();
-        $titulos = $this->cabeceraExcelFolios();
-        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios.xlsx');
-    }
-
-    public function getFoliosAnual() {
-        ini_set('memory_limit', '2048M');
-        set_time_limit('1200');
-        $foliosAdist = $this->DBS->obtenerFoliosAnualAdist();
-        $titulos = [
-            'Año',
-            'Mes',
-            'Semana',
-            'Ticket Service Desk',
-            'Estatus Ticket AdIST',
-            'Servicio AdIST',
-            'Tipo Servicio',
-            'Estatus Servicio',
-            'Departamento',
-            'Tecnico Asignado',
-            'Region',
-            'Sucursal',
-            'Fecha Solicitud',
-            'Solicitante',
-            'Asunto',
-            'Descripcion Solicitud',
-            'Fecha Servicio',
-            'Fecha Inicio Servicio',
-            'Fecha Conclusion Servicio',
-            'Area Atencion',
-            'Punto',
-            'Modelo',
-            'Marca',
-            'Linea',
-            'Sublinea',
-            'Componente',
-            'Tipo Diagnostico',
-            'Tipo Falla',
-            'Falla',
-            'Fecha Diagnostico',
-            'Observaciones Diagnostico',
-            'Tipo Solucion',
-            'Solucion Sin Equipo',
-            'Cambio Equipo',
-            'Cambio Refaccion',
-            'Solucion Servicio Sin Clasificar',
-            'Tiempo Solicitud',
-            'Tiempo Servicio',
-            'Tiempo Transcurrido Entre Solicitud Servicio'
-        ];
-        return $this->crearExcel($foliosAdist, $titulos, 'Lista_Folios_Anual.xlsx');
-    }
-
-    private function cabeceraExcelFolios() {
-        $titulos = [
-            'Mes',
-            'Semana',
-            'Ticket Service Desk',
-            'Estatus Ticket AdIST',
-            'Servicio AdIST',
-            'Tipo Servicio',
-            'Estatus Servicio',
-            'Departamento',
-            'Tecnico Asignado',
-            'Region',
-            'Sucursal',
-            'Fecha Solicitud',
-            'Solicitante',
-            'Asunto',
-            'Descripcion Solicitud',
-            'Fecha Servicio',
-            'Fecha Inicio Servicio',
-            'Fecha Conclusion Servicio',
-            'Area Atencion',
-            'Punto',
-            'Equipo Diagnosticado',
-            'Componente',
-            'Tipo Diagnostico',
-            'Tipo Falla',
-            'Falla',
-            'Fecha Diagnostico',
-            'Observaciones Diagnostico',
-            'Tipo Solucion',
-            'Solucion Sin Equipo',
-            'Cambio Equipo',
-            'Cambio Refaccion',
-            'Solucion Servicio Sin Clasificar',
-            'Tiempo Solicitud',
-            'Tiempo Servicio',
-            'Tiempo Transcurrido Entre Solicitud Servicio'
-        ];
-        return $titulos;
-    }
-
     public function crearExcel($datosFolio, $arrayTitulos, $nombreArchivo) {
         if (count($arrayTitulos) > 25) {
             $letra = 'AA';
@@ -2112,5 +2017,7 @@ class Solicitud extends General {
             return ['code' => 200];
         }
     }
+
+    
 
 }

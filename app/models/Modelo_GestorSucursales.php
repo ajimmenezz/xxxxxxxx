@@ -30,7 +30,8 @@ class Modelo_GestorSucursales extends Modelo {
         try {
             $consulta = $this->consulta('select                    
                                          id, 
-                                         Nombre as text
+                                         Nombre as text,
+                                         IdCliente as cliente 
                                       from 
                                          cat_v3_sucursales where Flag = 1');
         } catch (Exception $ex) {

@@ -41,11 +41,18 @@ class Rehabilitacion extends General {
     public function setRefaccionesRehabilitacion(array $datos) {
         $usuario = $this->Usuario->getDatosUsuario();
         $idsRehabilitacion = $this->inventario->getIdsRehabilitacion($datos['id']);
+        
+        $where = " AND ti.IdAlmacen IN (SELECT 
+                                                Id
+                                            FROM
+                                                cat_v3_almacenes_virtuales
+                                            WHERE
+                                                (IdTipoAlmacen = 1
+                                                    AND IdReferenciaAlmacen = '" . $usuario['Id'] . "')
+                                                    OR (IdTipoAlmacen = 4 AND IdResponsable = '" . $usuario['Id'] . "'))";
 
         if (!empty($idsRehabilitacion)) {
-            $where = 'AND cvav.IdReferenciaAlmacen = "' . $usuario['Id'] . '" AND ti.Id NOT IN(' . $idsRehabilitacion . ')';
-        } else {
-            $where = 'AND cvav.IdReferenciaAlmacen = "' . $usuario['Id'] . '"';
+            $where .= " AND ti.Id NOT IN(" . $idsRehabilitacion . ")";
         }
 
         return $this->inventario->getInventarioRefaccionesUsuario(array('idEquipo' => $datos['idModelo'], 'where' => $where));

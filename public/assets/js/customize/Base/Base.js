@@ -123,7 +123,7 @@ Base.prototype.horaServidor = function (horaServidor) {
 Base.prototype.cerrarSesion = function () {
     var _this = this;
     $('#cerrar-sesion').on('click', function () {
-        var data = {tipoServicio: 'salir'};
+        var data = { tipoServicio: 'salir' };
         _this.enviarEvento('/Api/reportar', data, this, function (respuesta) {
             _this.enviarPagina('/Logout');
         });
@@ -241,6 +241,7 @@ Base.prototype.iniciarModal = function () {
 
 Base.prototype.terminarModal = function () {
     $(arguments[0]).modal('hide');
+    $(arguments[0] + ' .modal-body').empty();
 }
 
 //Metodo para cerrar el modal
@@ -352,14 +353,14 @@ Base.prototype.datosFormulario = function (elementos) {
     $.each(elementos, function (key, value) {
         var etiqueta = $(value)[0].tagName.toLowerCase();
         if (etiqueta !== 'a' && etiqueta !== 'table') {
-            datos.push({name: $(value).attr('name'), valor: $(value).val()});
+            datos.push({ name: $(value).attr('name'), valor: $(value).val() });
         } else if (etiqueta === 'table') {
             var filas = $(value).DataTable().rows().data();
             var datosTabla = [];
             for (var i = 0; i < filas.length; i++) {
                 datosTabla.push(filas[i]);
             }
-            datos.push({datosTabla: datosTabla});
+            datos.push({ datosTabla: datosTabla });
         }
     });
     return datos;
@@ -458,7 +459,7 @@ Base.prototype.plasmarInformacionSD = function () {
             var servicio = $('#inputServicioSD').val();
 
             if (servicio !== '') {
-                var data = {servicio: servicio};
+                var data = { servicio: servicio };
                 _this.enviarEvento('/Generales/ServiceDesk/ValidarServicio', data, '#modal-dialogo', function (respuesta) {
                     if (respuesta === 'noExisteServicio') {
                         _this.mostrarMensaje('#errorServicioSD', false, 'No existe el servicio.', 3000);
@@ -511,7 +512,7 @@ Base.prototype.eventosVueltasMantenimiento = function () {
             var folio = $('#inputFolioVueltaMantenimiento').val();
 
             if (servicio !== '') {
-                var data = {servicio: servicio, folio: folio};
+                var data = { servicio: servicio, folio: folio };
                 _this.enviarEvento('/Generales/Servicio/AgregarVueltaAsociadoMantenimiento', data, '#modal-dialogo', function (respuesta) {
                     _this.mensajeConfirmacion('Se agrego la vuelta correctamente.', 'Correcto');
                 });
@@ -562,7 +563,7 @@ Base.prototype.eventosVueltasMantenimiento = function () {
             var ticket = $('#inputTicketVueltaMantenimiento').val();
 
             if (servicio !== '') {
-                var data = {servicio: servicio, folio: folio, ticket: ticket};
+                var data = { servicio: servicio, folio: folio, ticket: ticket };
                 _this.enviarEvento('/Generales/Servicio/CrearPDFVueltaAsociadoMantenimiento', data, '#modal-dialogo', function (respuesta) {
                     _this.mensajeConfirmacion('Se creo el archivo correctamente.', 'Correcto');
                 });
@@ -594,7 +595,7 @@ Base.prototype.eventosVueltasMantenimiento = function () {
             var servicio = $('#inputServicioVueltaCorrectivo').val();
 
             if (servicio !== '') {
-                var data = {servicio: servicio};
+                var data = { servicio: servicio };
                 _this.enviarEvento('/Generales/Servicio/GuardarVueltaAsociadoSinFirma', data, '#modal-dialogo', function (respuesta) {
                     _this.mensajeConfirmacion('Se agrego la vuelta correctamente.', 'Correcto');
                 });
@@ -604,7 +605,7 @@ Base.prototype.eventosVueltasMantenimiento = function () {
             }
         });
     });
-    
+
     $('#btnAgregarVueltaChecklist').off("click");
     $('#btnAgregarVueltaChecklist').on('click', function () {
         var html = '<div class="row">\n\
@@ -627,7 +628,7 @@ Base.prototype.eventosVueltasMantenimiento = function () {
             var servicio = $('#inputServicioVueltaChecklist').val();
 
             if (servicio !== '') {
-                var data = {servicio: servicio};
+                var data = { servicio: servicio };
                 _this.enviarEvento('/Generales/Servicio/GuardarVueltaAsociadoSinFirma', data, '#modal-dialogo', function (respuesta) {
                     _this.mensajeConfirmacion('Se agrego la vuelta correctamente.', 'Correcto');
                 });

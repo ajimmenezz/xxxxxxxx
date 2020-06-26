@@ -279,7 +279,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-6 divItemCategoria hidden">
+                        <div class="col-md-6 divItemCategorias hidden">
                             <div class="form-group">
                                 <label for="selectSubcategoriaSD">Subcategoria SD</label>
                                 <select id="selectSubcategoriaSD" class="form-control" style="width: 100%" data-parsley-required="true">
@@ -302,7 +302,7 @@
                     </div>
                     
                     <div class="row">
-                        <div class="col-md-6 divItemCategoria hidden">
+                        <div class="col-md-6 divItemCategorias hidden">
                             <div class="form-group">
                                 <label for="selectItemSD">Item SD</label>
                                 <select id="selectItemSD" class="form-control" style="width: 100%" data-parsley-required="true" disabled>

@@ -60,12 +60,6 @@ class Controller_Tester extends Base {
             case 'solicitarFoliosAnterior':
                 $resultado = $this->Solicitud->getFoliosAnterior();
                 break;
-            case 'solicitudSemanal':
-                $resultado = $this->Solicitud->getFoliosSemanal();
-                break;
-            case 'solicitudAnual':
-                $resultado = $this->Solicitud->getFoliosAnual();
-                break;
             case 'solicitarValidacion':
                 $resultado = $this->Tester->actualizarValidadoresSD();
                 break;

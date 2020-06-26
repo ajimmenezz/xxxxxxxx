@@ -1,4 +1,4 @@
-class FileUpload_Basico extends Upload {
+class FileUpload_Basico extends IUpload {
 
     iniciarFileUpload() {
 

@@ -1,12 +1,16 @@
-class Tabla {
+class ITabla {
 
-    constructor(tabla = '', datos = []) {
+    constructor(tabla = '', datos = [], scroll = false) {
 
         this.tabla = tabla;
         this.objetoTabla = $(`#${this.tabla}`);
         this.datos = datos;
 
-        this.iniciarTabla();
+        if (scroll) {
+            this.iniciarTablaScroll();
+        } else {
+            this.iniciarTabla();
+        }
         this.agregarContenidoTabla(datos);
     }
 
@@ -186,8 +190,8 @@ class Tabla {
     objetoDataTable() {
         return $(`#${this.tabla}`).DataTable();
     }
-    
+
     reordenarTabla(column, order) {
-        $(`#${this.tabla}`).DataTable().order( [ column, order ] ).draw();
+        $(`#${this.tabla}`).DataTable().order([column, order]).draw();
     }
 }

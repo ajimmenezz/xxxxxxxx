@@ -114,9 +114,9 @@ class Modelo_Usuario extends Modelo_Base {
                                         *
                                     FROM t_rh_conduccion 
                                     WHERE IdUsuario = "' . $data['IdUsuario'] . '"');
-        if(!empty($consulta)){
+        if (!empty($consulta)) {
             return $consulta[0];
-        }else{
+        } else {
             return array();
         }
     }
@@ -198,7 +198,7 @@ class Modelo_Usuario extends Modelo_Base {
             'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
         return $consulta;
     }
-    
+
     public function actualizarCampoTRHIdiomas(array $datos) {
         $consulta = $this->actualizar('t_rh_idiomas', [
             'Idioma' => $datos['nivelIdioma'],
@@ -208,8 +208,8 @@ class Modelo_Usuario extends Modelo_Base {
             'Comentarios' => $datos['comentarios'],
             'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
         return $consulta;
-    }    
-    
+    }
+
     public function actualizarCampoTRHSoftware(array $datos) {
         $consulta = $this->actualizar('t_rh_software', [
             'IdSoftware' => $datos['nivelSoftware'],
@@ -218,7 +218,7 @@ class Modelo_Usuario extends Modelo_Base {
             'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
         return $consulta;
     }
-    
+
     public function actualizarCampoTRHSistemas(array $datos) {
         $consulta = $this->actualizar('t_rh_sistemas', [
             'IdSistema' => $datos['nivelSistema'],
@@ -227,7 +227,7 @@ class Modelo_Usuario extends Modelo_Base {
             'FechaMod' => $datos['fechaMod']], ['Id' => $datos['id']]);
         return $consulta;
     }
-    
+
     public function actualizarCampoTRHDependientes(array $datos) {
         $consulta = $this->actualizar('t_rh_dependientes', [
             'Nombre' => $datos['nombre'],
@@ -267,7 +267,7 @@ class Modelo_Usuario extends Modelo_Base {
             'InstAfore' => $datos['institutoAfore']], ['IdUsuario' => $datos['id']]);
         return $consulta;
     }
-    
+
     public function actualizarTRHAltaPersonal(array $datos) {
         $consulta = $this->actualizar('t_rh_personal', [
             'FechaNacimiento' => $datos['fechaNacimiento'],
@@ -366,7 +366,7 @@ class Modelo_Usuario extends Modelo_Base {
             'Flag' => '1']);
         return $consulta;
     }
-    
+
     public function eliminarTRH(array $datos) {
         $consulta = $this->actualizar($datos['tablaNombre'], [
             'Flag' => '0',
@@ -381,13 +381,51 @@ class Modelo_Usuario extends Modelo_Base {
             'IdEstatus' => '47',
             'Fecha' => $datos['Fecha'],
             'FechaEstatus' => $datos['FechaEstatus']
-        ]);       
+        ]);
         return $consulta;
     }
-    
+
     public function actualizarFirmaUsuario(array $datos) {
         $consulta = $this->actualizar('cat_v3_usuarios', [
             $datos['campo'] => $datos['firma']], ['Id' => $datos['id']]);
         return $consulta;
     }
+
+    public function actualizarTRHCovid(array $datos) {
+        $this->actualizar('t_rh_personal_covid', [
+            'ViveConMayores' => $datos['ViveConMayores'],
+            'PulmonarAsma' => $datos['PulmonarAsma'],
+            'Cardiaco' => $datos['Cardiaco'],
+            'Diabetes' => $datos['Diabetes'],
+            'Renal' => $datos['Renal'],
+            'Hepatica' => $datos['Hepatica'],
+            'TratamientoCancer' => $datos['TratamientoCancer'],
+            'Fumador' => $datos['Fumador'],
+            'Transplantes' => $datos['Transplantes'],
+            'VIH' => $datos['VIH']], ['IdUsuario' => $datos['idUsuario']]);
+    }
+
+    public function insertarTRHCovid(array $datos) {
+        $this->insertar('t_rh_personal_covid', [
+            'IdUsuario' => $datos['idUsuario'],
+            'PulmonarAsma' => $datos['PulmonarAsma'],
+            'Cardiaco' => $datos['Cardiaco'],
+            'Diabetes' => $datos['Diabetes'],
+            'Renal' => $datos['Renal'],
+            'Hepatica' => $datos['Hepatica'],
+            'TratamientoCancer' => $datos['TratamientoCancer'],
+            'Fumador' => $datos['Fumador'],
+            'Renal' => $datos['Renal'],
+            'Transplantes' => $datos['Transplantes'],
+            'VIH' => $datos['VIH']]);
+    }
+
+    public function consultaTRHCovid(array $datos) {
+        $consulta = $this->consulta('SELECT
+                                        * 
+                                    FROM t_rh_personal_covid
+                                    WHERE IdUsuario = "' . $datos['idUsuario'] . '"');
+        return $consulta;
+    }
+
 }

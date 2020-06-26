@@ -62,10 +62,23 @@ Tabla.prototype.reordenarTabla = function (elemento, order) {
 Tabla.prototype.filtrarColumna = function (elemento, col, valor) {
     if ($(elemento).DataTable().column(col).search() !== valor) {
         $(elemento).DataTable()
-                .column(col)
-                .search(valor)
-                .draw();
+            .column(col)
+            .search(valor)
+            .draw();
     }
+}
+
+Tabla.prototype.buscarEnTabla = function (elemento, valor, exacto) {
+    if (exacto) {
+        $(elemento).DataTable()
+            .search('^\\s' + valor +'\\s*$', true, false, true)
+            .draw();
+    } else {
+        $(elemento).DataTable()
+            .search(valor)
+            .draw();
+    }
+
 }
 
 //Se encarga de limpiar la tabla
@@ -217,7 +230,7 @@ Tabla.prototype.bloquearTabla = function () {
 Tabla.prototype.getTableData = function () {
     var filtered = (typeof arguments[1] !== 'undefined' && arguments[1] !== null) ? arguments[1] : false;
     if (filtered) {
-        var datos = $(arguments[0]).DataTable().rows({filter: 'applied'}).data();
+        var datos = $(arguments[0]).DataTable().rows({ filter: 'applied' }).data();
     } else {
         var datos = $(arguments[0]).DataTable().rows().data();
     }

@@ -1,8 +1,6 @@
 class Utileria {
 
     constructor() {
-        this.evento = new Base();
-        //this.alerta = new Alertas('modal-alerta-error');
     }
 
     //Evento de petición
@@ -20,7 +18,7 @@ class Utileria {
                 }
             }
         }).done(function (data) {
-            _this.errorServidor(data);
+//            _this.errorServidor(data);
             _this.quitarPantallaCargando(objeto);
             if (callback !== null) {
                 callback(data);
@@ -44,16 +42,7 @@ class Utileria {
                     throw 'Sin atrapar el Error: ' + jqXHR.responseText;
                 }
             } catch (exception) {
-                $('#btnModalConfirmar').addClass('hidden');
-                _this.evento.mostrarModal('Error en el Servidor', '<div id="modal-dialogo" class="col-md-12">\n\
-                    <div class="col-md-3" style="text-align: right;">\n\
-                        <i class="fa fa-exclamation-triangle fa-4x text-danger"></i>\n\
-                    </div>\n\
-                    <div class="col-md-9">\n\
-                        <h4>No Existe la información que solicita. Contacte con el administrador</h4>\n\
-                    </div>\n\
-                </div>');
-                console.log('Error', `Surgio un problema de comunicación con el servidor`);
+                callback(undefined);
             }
         });
     }
@@ -140,7 +129,13 @@ class Utileria {
             elemento.addClass('hidden');
     }
     }
-    mostrarMensaje(objeto, tipo, mensaje, duración) {
+
+    insertarContenido(objeto = null, contenido = '') {
+        let elemento = $(`#${objeto}`);
+        elemento.empty().append(contenido);
+    }
+    ;
+            mostrarMensaje(objeto, tipo, mensaje, duración) {
         switch (tipo) {
             case false:
                 var error = '<div class="alert alert-danger fade in m-b-15" id="mensajeError">\n\
@@ -154,7 +149,7 @@ class Utileria {
                     });
                 }, duración);
                 break;
-                
+
             case true:
                 var exito = '<div class="alert alert-success fade in m-b-15" id="mensajeExito">\n\
                                 <strong>Éxito: </strong>\n\

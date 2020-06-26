@@ -159,7 +159,7 @@ class ServiciosTicket extends General
             }
 
             $query = '
-            select 
+            SELECT * FROM(select 
                 tst.Id,
                 tst.Ticket,
                 tipoServicio(tst.IdTipoServicio) as Servicio,
@@ -181,7 +181,9 @@ class ServiciosTicket extends General
             ' . $whereFolio . '
             and (concat(",",csd.IdDepartamentos,",") like "%,' . $departamento . ',%" or tst.IdTipoServicio = 9) 
             group by tst.Id desc '
-                . $queryUnion;
+                . $queryUnion . 
+            ') AS tabla GROUP BY Id DESC';     
+            
             return $this->DBST->getServicios($query);
         }
     }
@@ -1437,10 +1439,10 @@ class ServiciosTicket extends General
             $data['botonAgregarVuelta'] = '';
         }
 
-        if ($datosServicio['TipoServicio'] === 'Cotización') {
-            $data['catalogoSubcategoriaSD'] = $this->DBST->catalogoSubcategoriaSD();
-            $data['catalogoItemSD'] = $this->DBST->catalogoItemSD();
-        }
+        // if ($datosServicio['TipoServicio'] === 'Cotización') {
+        //     $data['catalogoSubcategoriaSD'] = $this->DBST->catalogoSubcategoriaSD();
+        //     $data['catalogoItemSD'] = $this->DBST->catalogoItemSD();
+        // }
 
         $data['formulario'] = parent::getCI()->load->view('Generales/Modal/formularioSeguimientoServicioSinClasificar', $data, TRUE);
         return $data;

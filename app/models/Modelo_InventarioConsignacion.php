@@ -103,6 +103,11 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
         return $consulta;
     }
 
+    public function getEstatusProductoWhere(string $where) {
+        $consulta = $this->consulta("select * from cat_v3_estatus " . $where . " order by Nombre");
+        return $consulta;
+    }
+
     public function getComponentesPoliza($modelo) {
         $consulta = $this->consulta("select * from cat_v3_componentes_equipo where IdModelo = '" . $modelo . "' and Flag = 1 order by Nombre;");
         return $consulta;
@@ -738,15 +743,16 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
             $this->actualizar("t_inventario", ['IdEstatus' => 50], ['Id' => $inventario[0]['Id']]);
 
             foreach ($data as $key => $value) {
-                $this->insertar("t_inventario", [
-                    "IdAlmacen" => $value['IdAlmacen'],
-                    "IdTipoProducto" => $value['IdTipoProducto'],
-                    "IdProducto" => $value['IdProducto'],
-                    "IdEstatus" => $value['IdEstatus'],
-                    "Cantidad" => $value['Cantidad'],
-                    "Serie" => $value['Serie'],
-                    "IdEquipoDeshuesado" => $inventario[0]['Id']
-                ]);
+                if ($value['IdEstatus'] === '17') {
+                    $this->insertar("t_inventario", [
+                        "IdAlmacen" => $value['IdAlmacen'],
+                        "IdTipoProducto" => $value['IdTipoProducto'],
+                        "IdProducto" => $value['IdProducto'],
+                        "IdEstatus" => $value['IdEstatus'],
+                        "Cantidad" => $value['Cantidad'],
+                        "Serie" => $value['Serie']
+                    ]);
+                }
 
                 $this->insertar('t_movimientos_inventario', [
                     "IdTipoMovimiento" => 7,
@@ -955,7 +961,6 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
             $inventario = $this->consulta("select * from t_inventario where Id = '" . $registroInventario . "'");
 
             if (!empty($inventario)) {
-                $this->actualizar("t_inventario", ['IdEstatus' => 17, 'Bloqueado' => 0], ['Id' => $registroInventario]);
                 $this->insertar('t_movimientos_inventario', [
                     "IdTipoMovimiento" => 8,
                     "IdAlmacen" => $inventario[0]['IdAlmacen'],
@@ -1029,10 +1034,10 @@ class Modelo_InventarioConsignacion extends Modelo_Base {
                                             INNER JOIN
                                         cat_v3_marcas_equipo cvm ON cvm.Id = cvme.Marca
                                             LEFT JOIN
-                                        cat_v3_almacenes_virtuales cvav ON cvav.Id = ti.IdAlmacen
-                                            LEFT JOIN
                                         t_inventario_rehabilitacion_refaccion AS tirr ON  tirr.IdInventarioRefaccion = ti.Id
                                     WHERE
+                                        ti.IdEstatus = 17
+                                        AND
                                         ti.IdTipoProducto = 2
                                             AND cvm.Sublinea = (SELECT 
                                                 SUBLINEABYMODELO(Id)

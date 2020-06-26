@@ -214,6 +214,17 @@ class ServiceDesk extends General
         return $datosSD;
     }
 
+    public function getServiceDeskTechnicians()
+    {
+        $key = $this->modeloServiceDesck->apiKeyUsuario(2);
+        $Url2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/technician";
+        $input_data = '{"operation":{"details":{"accountname":"0"}}}';
+        $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
+        $datosSD = $this->getDatosSD($Url2 . '/?' . $this->FIELDS);
+        $this->validarError($datosSD);
+        return $datosSD;
+    }
+
     /*
      * Encargado de reasingar el folio en SD
      * 
@@ -463,11 +474,8 @@ class ServiceDesk extends General
         return $returnArray;
     }
 
-    public function consultarValidadoresTI(string $key = '')
+    public function consultarValidadoresTI(string $key)
     {
-        if ($key === '') {
-            $key = $this->modeloServiceDesck->consulta("select SDKey from cat_v3_usuarios where Id = 2")[0]['SDKey'];
-        }
         $input_data = '{"operation":{"details":{"department":""}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->UrlUsers . '?' . $this->FIELDS);
@@ -489,29 +497,6 @@ class ServiceDesk extends General
                 $returnArray[$i]['department'] = $value->department;
                 $i++;
             }
-        }
-
-        return $returnArray;
-    }
-
-    public function consultarValidadoresTII(string $key = '')
-    {
-        if ($key === '') {
-            $key = $this->modeloServiceDesck->consulta("select SDKey from cat_v3_usuarios where Id = 2")[0]['SDKey'];
-        }
-        $input_data = '{"operation":{"details":{"department":""}}}';
-        $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
-        $datosSD = $this->getDatosSD($this->UrlUsers . '?' . $this->FIELDS);
-        $this->validarError($datosSD);
-        $returnArray = [];
-        $i = 0;
-
-        foreach ($datosSD->operation->details as $key => $value) {
-            $returnArray[$i]['userId'] = $value->userid;
-            $returnArray[$i]['userName'] = $value->username;
-            $returnArray[$i]['userEmail'] = $value->emailid;
-            $returnArray[$i]['department'] = $value->department;
-            $i++;
         }
 
         return $returnArray;
@@ -606,23 +591,23 @@ class ServiceDesk extends General
         return $datosSD;
     }
 
-    public function cambiarReporteFalsoServiceDesk(string $key, string $folio, string $reporteFalso) {
+    public function cambiarReporteFalsoServiceDesk(string $key, string $folio, string $reporteFalso)
+    {
         $URL2 = "http://mesadeayuda.cinemex.net:8080/sdpapi/request/" . $folio;
         $input_data = ''
-                . '{'
-                . ' "operation": {'
-                . '     "details": {'
-                . '             "Reporte en Falso": "' . $reporteFalso . '"
+            . '{'
+            . ' "operation": {'
+            . '     "details": {'
+            . '             "Reporte en Falso": "' . $reporteFalso . '"
                     }'
-                . ' }'
-                . '}';
+            . ' }'
+            . '}';
         $FIELDS = "format=json&"
-                . "OPERATION_NAME=EDIT_REQUEST&"
-                . "INPUT_DATA=" . urlencode($input_data) . "&"
-                . "TECHNICIAN_KEY=" . $key;
+            . "OPERATION_NAME=EDIT_REQUEST&"
+            . "INPUT_DATA=" . urlencode($input_data) . "&"
+            . "TECHNICIAN_KEY=" . $key;
 
         $datosSD = $this->getDatosSD($URL2 . '?' . $FIELDS);
         return $datosSD;
     }
-
 }

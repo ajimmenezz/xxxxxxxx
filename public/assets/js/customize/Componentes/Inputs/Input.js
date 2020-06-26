@@ -32,6 +32,10 @@ class Input {
     definirValor(valor = '') {
         this.objetoInput.val(valor);
     }
+    
+    insertarContenido(valor = ''){
+        this.objetoInput.append(valor);
+    }
 
     iniciarPlugin() {
         this.objetoInput = $(`#${this.input}`);
