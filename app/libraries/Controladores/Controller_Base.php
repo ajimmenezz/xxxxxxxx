@@ -63,7 +63,7 @@ abstract class Controller_Base extends CI_Controller
                                     $data['librerias'] = $llave;
                                 }
                             }
-                            if ($this->usuario->validarAccesoPagina($data['librerias'])) {
+                            if ($this->usuario->validarAccesoPagina($data['librerias'])) { 
                                 $data['title'] = strtoupper($page);
                                 $data['menu'] = $this->SECCIONES->getSecciones($usuario);
                                 $data['notificaciones'] = $this->SECCIONES->getNotificaciones($usuario['Id']);

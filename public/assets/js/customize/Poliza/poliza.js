@@ -6,6 +6,7 @@ $(function () {
     
     //Creando tabla proyectos sin iniciar
     tabla.generaTablaPersonal('#data-table-sinIniciar', null, null, {details: false});
+    tabla.generaTablaPersonal('#data-table-SLA', null, null, {details: false});
     
     //Evento que maneja las peticiones del socket
     websocket.socketMensaje();

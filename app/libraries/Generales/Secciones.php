@@ -53,6 +53,7 @@ class Secciones extends General {
     private $gestorDashboard;
     private $inventarios;
     private $rehabilitacion;
+    private $administracionCursos;
 
     public function __construct() {
         parent::__construct();
@@ -104,7 +105,6 @@ class Secciones extends General {
         $this->seccionCE = new \Librerias\V2\PaquetesTicket\GestorServicios();
         $this->inventarios = \Librerias\Poliza\Inventario::factory();
         $this->rehabilitacion = \Librerias\Laboratorio\Rehabilitacion::factory();
-        $this->sla = \Librerias\Poliza\SLA::factory();
 
         $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
@@ -112,6 +112,7 @@ class Secciones extends General {
         $this->CatalogoCancelacionPermiso = $this->factoryCatalogos->getCatalogo('CatalogoCancelarPermisos');
 
         $this->gestorDashboard = new \Librerias\V2\PaquetesDashboard\GestorDashboard();
+        $this->administracionCursos = \Librerias\RH\Cursos::factory();
     }
 
     /*
@@ -174,6 +175,7 @@ class Secciones extends General {
      */
 
     public function getDatosPagina(string $url) {
+ 
         $datos = array();
         $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
@@ -607,13 +609,46 @@ class Secciones extends General {
                 $datos['ListaUnidadeNegocio'] = $this->Catalogo->CatUnidadesNegocio("3");
                 break;
             case 'Poliza/SLA':
-                $datos['folios'] = $this->sla->getSla();
+                $datos['folios'] = $this->Solicitud->sla();
+                break;
+            case 'RH/Administracion_Cursos':
+            
+                $datos['cursos'] = $this->administracionCursos->getCourses();
+                $datos['perfiles'] = $this->administracionCursos->getProfile();
+                $datos['certificados'] = $this->administracionCursos->getCertificate();
+                $datos['tipoCursos'] = $this->administracionCursos->getTypeCourses();
+                $datos['temario'] = [];
+                
+                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
+                $datos['filas'] = [ 
+                    array('Diseño','Hace algo','
+                    <div style="text-align: center;"><i class="fa fa-eye" style="font-size: 17px; color: #348fe2;" @click="view(device.id)"></i>
+                    <i class="fa fa-pencil" style="font-size: 17px; color: orange;" @click="view(device.id)"></i>
+                    <i class="fa fa-trash" style="font-size: 17px; color: red;" @click="view(device.id)"></i></div>
+                    '),
+                    array('Redes','Interesante','4','Activo','')
+                ];
+
+
+                break;
+            case 'Generales/Cursos_Asignados':
+                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
+                $datos['filas'] = [
+                    array('Diseño','Hace algo','20','Activo','
+                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Completado</span>
+                    <span><i class="fa  fa-fast-forward" @click="view(device.id)"></i>Continuar</span>
+                    <span><i class="fa fa-certificate" "></i><i class="class="fa fa-youtube-play"" @click="view(device.id)"></i>Comenzar</span>
+                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Suspendido</span>'),
+                    array('Redes','Interesante','4','Activo','')
+                ];
                 break;
             default:
                 break;
         }
         return $datos;
     }
+
+
 
     /*
      * Regresa la seccion alcance segun el perfil del usuario

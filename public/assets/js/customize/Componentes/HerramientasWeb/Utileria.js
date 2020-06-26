@@ -127,7 +127,7 @@ class Utileria {
 
         if (!elemento.hasClass('hidden')) {
             elemento.addClass('hidden');
-    }
+        }
     }
 
     insertarContenido(objeto = null, contenido = '') {
