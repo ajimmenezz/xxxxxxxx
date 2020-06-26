@@ -13,40 +13,40 @@
                 <div class="col-sm-12 col-md-6">
                     <div class="row">
                         <div class="col-sm-4">
-                                <div class="widget widget-stats bg-green">
-                                    <div class="stats-icon"></div>
-                                    <div class="stats-info">
-                                        <h4>Avence total</h4>
-                                        <p>3,291,922</p>	
-                                    </div>
-                                    <div class="stats-link">
-                                        <a href="javascript:;"></a>
-                                    </div>
+                            <div class="widget widget-stats bg-green">
+                                <div class="stats-icon"></div>
+                                <div class="stats-info">
+                                    <h4>Avence total</h4>
+                                    <p>3,291,922</p>	
                                 </div>
+                                <div class="stats-link">
+                                    <a href="javascript:;"></a>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-sm-4">
-                                <div class="widget widget-stats bg-red">
-                                    <div class="stats-icon"></div>
-                                    <div class="stats-info">
-                                        <h4>Faltante total</h4>
-                                        <p>3,291,922</p>	
-                                    </div>
-                                    <div class="stats-link">
-                                        <a href="javascript:;"></a>
-                                    </div>
+                            <div class="widget widget-stats bg-red">
+                                <div class="stats-icon"></div>
+                                <div class="stats-info">
+                                    <h4>Faltante total</h4>
+                                    <p>3,291,922</p>	
                                 </div>
+                                <div class="stats-link">
+                                    <a href="javascript:;"></a>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-sm-4">
-                                <div class="widget widget-stats bg-blue">
-                                    <div class="stats-icon"></div>
-                                    <div class="stats-info">
-                                        <h4>Total de cursos</h4>
-                                        <p>3,291,922</p>	
-                                    </div>
-                                    <div class="stats-link">
-                                        <a href="javascript:;"></a>
-                                    </div>
+                            <div class="widget widget-stats bg-blue">
+                                <div class="stats-icon"></div>
+                                <div class="stats-info">
+                                    <h4>Total de cursos</h4>
+                                    <p>3,291,922</p>	
                                 </div>
+                                <div class="stats-link">
+                                    <a href="javascript:;"></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
 
                     <b>Nota Es importante mencionar que el área de Capacitación estará al pendiente de progreso que lleves.</b><br>
                 </div>
-              
+
             </div>
 
             <!-- begin tabla cursos -->
@@ -67,21 +67,34 @@
                         <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                  <td>Curso</td>
-                                  <td>Avance</td>
-                                  <td>Fecha de asignación</td>
-                                  <td>Estatus</td>
-                                  <td>Acciones</td>
+                                    <th class="never">Id</th>
+                                    <td class="all">Curso</td>
+                                    <td class="all">Avance</td>
+                                    <td class="all">Fecha de asignación</td>
+                                    <td class="all">Estatus</td>
+                                    <td class="all">Acciones</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                foreach ($datos['filas'] as $value) {
-                                    echo '<tr>';
-                                    foreach ($value as $dato) {
-                                        echo '<td>' . $dato . '</td>';
+//                                foreach ($datos['filas'] as $value) {
+//                                    echo '<tr>';
+//                                    foreach ($value as $dato) {
+//                                        echo '<td>' . $dato . '</td>';
+//                                    }
+//                                    echo '</tr>';
+//                                }
+                                if (!empty($datos['filas'])) {
+                                    foreach ($datos['filas'] as $key => $value) {
+                                        echo '<tr>';
+                                        echo '<td>' . $value['Id'] . '</td>';
+                                        echo '<td>' . $value['Curso'] . '</td>';
+                                        echo '<td>' . $value['Avance'] . '</td>';
+                                        echo '<td>' . $value['FechaAsignacion'] . '</td>';
+                                        echo '<td>' . $value['Estatus'] . '</td>';
+                                        echo '<td class="text-center">' . $value['Acciones'] . '</td>';
+                                        echo '</tr>';
                                     }
-                                    echo '</tr>';
                                 }
                                 ?>
                             </tbody>
@@ -94,3 +107,20 @@
     </div>
 </div>
 <!-- Finalizando #contenido -->
+
+<div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <div id="error-in-modal"></div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
+                <button type="button" id="btnAceptar" class="btn btn-primary"><i class="fa fa-check"></i> Comenzar</button>
+            </div>
+            <div id="errorModal"></div>
+        </div>
+    </div>
+</div>

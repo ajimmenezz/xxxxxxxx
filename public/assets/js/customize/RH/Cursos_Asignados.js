@@ -15,7 +15,9 @@ $(function () {
     let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
     tablaCursosAsignados.iniciarTabla();
 
-    
+    $(".btn-acciones").on('click',function(e){
+        evento.iniciarModal("#modalEdit", "Comenzar Cursa", 'Quieres Comenzar el curso');
+    });
     
 
 

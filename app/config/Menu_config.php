@@ -3983,3 +3983,4 @@ $config['Prime'] = array(
         'Permiso' => 'VINVPR'
     )
 );
+>>>>>>> origin/Modulo_RH_Capacitaciones
