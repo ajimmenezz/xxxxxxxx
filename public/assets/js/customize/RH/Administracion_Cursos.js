@@ -169,13 +169,12 @@ $("#btn-save-curso").on('click',function(e){
         certificado:$("#certificadoCurso").val(),
         costo:$("#costoCurso").val(),
         },
-        'temario':{
-        temario:'string',
-        porcentaje:0
-        },
-        'participantes':{
-        puesto:'string'
-        }
+        'temario':[
+          {temario:'string',porcentaje:0},
+          {temario:'string',porcentaje:0}
+          
+        ],
+        'participantes':[3,9]
         
     }
 

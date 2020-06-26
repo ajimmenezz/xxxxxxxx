@@ -20,9 +20,7 @@ class Cursos extends General{
     public function getProfile() {
         return $this->DBS->getAllProfile();
     }
-    public function gettypeCourses() {
-        return $this->DBS->gettypeCourses();
-    }
+
     
     public function getCertificate() {
         return $this->DBS->getAllCertificate();
