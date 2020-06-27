@@ -33,7 +33,7 @@ class Modelo_Cursos extends Modelo_Base {
     public function getAllCertificate() {
         return $this->consulta("SELECT id, nombre from cat_curso_tipo_certificado where estatus = 1");
     }
-    
+
     public function getTypeCourses() {
         return $this->consulta("SELECT id, nombre from cat_curso_tipo where estatus = 1");
     }
@@ -45,9 +45,9 @@ class Modelo_Cursos extends Modelo_Base {
             'nombre' => $datos['nombre'],
             'descripcion' => $datos['descripcion']
         ]);
-        
+
         $ultimo = $this->consulta("select last_insert_id() as Id");
-        
+
         $this->insertar('t_curso_online', [
             'idCurso' => $ultimo[0]["Id"],
             'idTipoCertificado' => $datos['certificado'],
@@ -65,8 +65,24 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
 
-    public function getUsuarios() {
-        return array('usuario' => 'Sara', 'edad' => '26');
+    public function deleteCourse($idCurso) {
+        $this->iniciaTransaccion();
+        
+        $this->actualizar('t_curso', array(
+            'estatus' => 0
+                ), array('id' => $idCurso));
+        $this->actualizar('t_curso_online', array(
+            'estatus' => 0
+                ), array('idCurso' => $idCurso));
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
     }
 
 }
