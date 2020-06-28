@@ -15,6 +15,14 @@ $(function () {
     let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
     tablaCursosAsignados.iniciarTabla();
 
+    $("#cursoTablaContinuar").on('click',function(e){
+        console.log("continuar");
+        $("#tablaAsigCursos").css('display', 'none')
+        $("#asigCursoContinuar").css('display', 'block')
+    });
+
+    
+
     
     
 
