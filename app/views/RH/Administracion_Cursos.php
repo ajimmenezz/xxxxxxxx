@@ -18,11 +18,13 @@
                 </div>
                 <div class="col-md-3">
                     <button id="btn-nuevo-curso" type="button" class="btn btn-primary m-r-5 m-b-5" style="float: right;">Nuevo Curso</button>
-                    <button id="btn-subir-cursos" type="button" class="btn btn-info m-r-5 m-b-5" style="float: right;">Subir Cursos</button>
+                    <button id="btn-loadExcel-temario" type="button" class="btn btn-info m-r-5 m-b-5" style="float: right;">Subir Cursos</button>
                    
                 </div>
               
             </div>
+
+            <div class="col-12 messageAcciones"></div>
 
             <!-- begin tabla cursos -->
             <div class="row" style="margin-top:50px;">
@@ -57,15 +59,16 @@
                                         echo "<td>".$estado."</td>";
                                         echo "<td> 
                                                 <div style='text-align: center;'>
+                                                <input type='hidden' id='idElementSeleccionAccion'>
                                                 <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;' id='btn-adminVerCurso'></i>
                                                 <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;'' id='btn-adminEditarCurso' ></i>
-                                                <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' id='btn-adminEliminarCurso'></i>
+                                                <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(".$value["Id"].")' id='btn-adminEliminarCurso'></i>
                                                 </div>
                                             </td>";
                                     echo "</tr>";
                                 }
 
-                               
+                            
 
                                 // foreach ($datos['cursos'] as $value) {
                                 //     echo '<tr>';
@@ -76,6 +79,7 @@
                                 // }
                                 ?>
                             </tbody>
+                            
                         </table>
                     </div>
                 </div>
@@ -570,6 +574,13 @@ function cambiar(){
     document.getElementById('info').innerHTML = pdrs;
     alert(pdrs)
 }
+
+function btnAdminEliminarCurso(id) {
+      alert("ELLIMNAR",id);
+      console.debug("ELLIMNAR",id);
+      $("#idElementSeleccionAccion").val(id)
+      $("#modalDeletoCursoAdmin").modal('show')
+    }
 </script>
 
 <style>
@@ -586,4 +597,151 @@ function cambiar(){
 }
 
 </style>
+
+
+<!-- ver cursos -->
+
+<div id="administracion-cursos-ver" class="content" style="display:none;">
+    <!-- begin page-header -->
+    <h1 class="page-header">Administración de Cursos</h1>
+    <!-- end page-header -->
+    <div class="panel panel-inverse" data-sortable-id="ui-widget-1" id="tablaAsigCursos">
+            <div class="panel-heading">
+                <h4 class="panel-title">Cursos</h4>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                    <div class="widget widget-stats bg-green">
+                                        <div class="stats-icon"></div>
+                                        <div class="stats-info">
+                                            <h4>Avance total</h4>
+                                            <p>3,291</p>	
+                                        </div>
+                                        <div class="stats-link">
+                                            <a href="javascript:;"></a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-4">
+                                    <div class="widget widget-stats bg-red">
+                                        <div class="stats-icon"></div>
+                                        <div class="stats-info">
+                                            <h4>Faltante total</h4>
+                                            <p>3,291</p>	
+                                        </div>
+                                        <div class="stats-link">
+                                            <a href="javascript:;"></a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="col-sm-4">
+                                    <div class="widget widget-stats bg-blue">
+                                        <div class="stats-icon"></div>
+                                        <div class="stats-info">
+                                            <h4>Total de cursos</h4>
+                                            <p>3,278</p>	
+                                        </div>
+                                        <div class="stats-link">
+                                            <a href="javascript:;"></a>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        En esta sección encontraras una serie de cursos en línea que se te han asignado a tu perfil, los cuales tiene 
+                        como finalidad crear un aporte profecional en tu formación. Por lo tanto esta 
+                        herramienta web te permite ir registrando el progreso de cada uno de los cursos que vas tomando. <br><br>
+
+                        <b>Nota Es importante mencionar que el área de Capacitación estará al pendiente de progreso que lleves.</b><br>
+                    </div>
+                
+                </div>
+
+                <!-- begin tabla cursos -->
+                <div class="row" style="margin-top:50px;">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                    <td>Curso</td>
+                                    <td>Avance</td>
+                                    <td>Fecha de asignación</td>
+                                    <td>Estatus</td>
+                                    <td>Acciones</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    foreach ($datos['filas'] as $value) {
+                                        echo '<tr>';
+                                        foreach ($value as $dato) {
+                                            echo '<td>' . $dato . '</td>';
+                                        }
+                                        echo '</tr>';
+                                    }
+
+                                
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- end tabla cursos -->
+            </div>
+    </div>
+</div>
+<!--  fin ver cursos -->
+
+
+<!-- mdals eliminar cursos -->
+
+
+<div id="modalDeletoCursoAdmin" class="modal fade " >
+      <div class="modal-dialog " >
+          <div class="modal-content">
+              <div class="modal-header">
+                 <div class="row">
+                    <div class="col-sm-11" style="text-align: center;">
+                        <span style="font-size: 16px;" class="modal-title" id="exampleModalCenterTitle" >
+                        <i class='fa fa-exclamation-circle' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' ></i> Eliminar curso</span>
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="button" class="close btn-cancel_wizard" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                 </div>
+              </div>
+              <div class="modal-body ">
+
+               
+                  <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-10" style="text-align: center;">
+                        Al eliminar curso se borrara toda la información  de los participantes y los datos  del mismo, por lo que no se podrá recuperar.<br>
+                        <b>¿Esta seguro de eliminar el curso?</b>
+                    </div>
+                    <div class="col-sm-1"></div>
+
+                  
+                   
+                  </div>
+                            
+
+              </div>
+              <div class="modal-footer">
+                    <a href="javascript:;" class="btn btn-white m-r-5 btn-cancel_wizard " id="cerrar" data-dismiss="modal" aria-label="Close">Cancelar</a>
+                    <a href="javascript:;" class="btn btn-danger m-r-5" id="EliminarCursoAdminConfirm" data-dismiss="modal" aria-label="Close">Eliminar</a>
+              </div>
+              
+
+          </div>
+      </div>
+</div>
+
+<!-- modals fin modal cursos -->
 

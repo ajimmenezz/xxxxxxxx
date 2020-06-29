@@ -164,8 +164,14 @@
                                     <tbody>
                                     <tr>
                                         <td></td>
-                                        <td><span id="temarioTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-                                        <td><span id="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
+                                        <td></td>
+                                        <td><span class="temarioTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
+                                       
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                       <td></td>
+                                        <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -270,8 +276,14 @@
                                     <tbody>
                                     <tr>
                                         <td></td>
-                                        <td><span id="temarioContentTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-                                        <td><span id="temarioContentTablaComenzar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
+                                        <td></td>
+                                        <td><span class="temarioTablaCompletado"  style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
+                                       
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                       <td></td>
+                                        <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
                                     </tr>
                                     </tbody>
                                 </table>

@@ -23,7 +23,7 @@ $(function () {
         $("#asigCursoContinuar").css('display', 'block')
     });
 
-    $("#temarioTablaCompletado").on('click',function(e){
+    $(".temarioTablaCompletado").on('click',function(e){
         console.log("temarioTablaCompletado");
         $("#tablaAsigCursos").css('display', 'none')
         $("#asigCursoContinuar").css('display', 'none')
@@ -32,7 +32,7 @@ $(function () {
       
     });
 
-    $("#temarioTablaTerminar").on('click',function(e){
+    $(".temarioTablaTerminar").on('click',function(e){
         console.log("temarioTablaTerminar");
         $("#tablaAsigCursos").css('display', 'none')
         $("#asigCursoContinuar").css('display', 'none')
