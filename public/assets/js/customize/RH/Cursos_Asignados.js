@@ -11,14 +11,21 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-    
-    let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
-    tablaCursosAsignados.iniciarTabla();
 
-    $(".btn-acciones").on('click',function(e){
-        evento.iniciarModal("#modalEdit", "Comenzar Cursa", 'Quieres Comenzar el curso');
+    let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
+
+    $(".btn-acciones").off("click");
+    $(".btn-acciones").on('click', function (e) {
+        evento.iniciarModal("#modalEdit", "<strong>Comenzar Curso</strong>", '<p class="text-center"><strong>¿Quieres Comenzar el curso?</strong></p>');
+
+        $("#btnAceptar").off("click");
+        $("#btnAceptar").on('click', function (e) {
+            evento.terminarModal("#modalEdit");
+            $('#administracion-cursos').addClass('hidden');
+        });
+
     });
-    
+
 
 
 
@@ -28,7 +35,7 @@ $(function () {
     //   $('#modalValidateTemario').modal('show')
     // });
 
-    
+
 
 
 });

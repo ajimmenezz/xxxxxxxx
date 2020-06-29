@@ -17,7 +17,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Avence total</h4>
-                                    <p>3,291,922</p>	
+                                    <p>65.33%</p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -29,7 +29,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Faltante total</h4>
-                                    <p>3,291,922</p>	
+                                    <p>33.77%</p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -41,7 +41,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Total de cursos</h4>
-                                    <p>3,291,922</p>	
+                                    <p>90</p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -64,7 +64,7 @@
             <div class="row" style="margin-top:50px;">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
+                        <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
                                     <th class="never">Id</th>
@@ -77,13 +77,6 @@
                             </thead>
                             <tbody>
                                 <?php
-//                                foreach ($datos['filas'] as $value) {
-//                                    echo '<tr>';
-//                                    foreach ($value as $dato) {
-//                                        echo '<td>' . $dato . '</td>';
-//                                    }
-//                                    echo '</tr>';
-//                                }
                                 if (!empty($datos['filas'])) {
                                     foreach ($datos['filas'] as $key => $value) {
                                         echo '<tr>';
@@ -117,8 +110,8 @@
             <div class="modal-body"></div>
             <div class="modal-footer">
                 <div id="error-in-modal"></div>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Cerrar</button>
-                <button type="button" id="btnAceptar" class="btn btn-primary"><i class="fa fa-check"></i> Comenzar</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnAceptar" class="btn btn-success">Comenzar</button>
             </div>
             <div id="errorModal"></div>
         </div>
