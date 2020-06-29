@@ -60,10 +60,13 @@
                                         echo "<td> 
                                                 <div style='text-align: center;'>
                                                 <input type='hidden' id='idElementSeleccionAccion'>
-                                                <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;' id='btn-adminVerCurso'></i>
-                                                <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;'' id='btn-adminEditarCurso' ></i>
-                                                <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(".$value["Id"].")' id='btn-adminEliminarCurso'></i>
-                                                </div>
+                                                <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;' id='btn-adminVerCurso'></i>";
+                                               // if($value["Estatus"]!=0){
+                                                    echo "  <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;'' id='btn-adminEditarCurso' ></i>
+                                                    <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(".$value["Id"].")' id='btn-adminEliminarCurso'></i>";
+                                            //    }
+                                              
+                                     echo "           </div>
                                             </td>";
                                     echo "</tr>";
                                 }
@@ -424,8 +427,8 @@
 <!-- Empezando #contenido MODALS-->
 
 <!-- subir temarios -->
-<div id="modalSubirTemarios" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered " role="document">
+<div id="modalSubirTemarios" class="modal fade" >
+      <div class="modal-dialog " role="document">
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalCenterTitle" >Subir temarios</h5>
@@ -470,8 +473,8 @@
 <!-- fin subir temarios -->
 
 <!--  temarios por lo menos 1 -->
-<div id="modalValidateTemario" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered " role="document">
+<div id="modalValidateTemario" class="modal fade ">
+      <div class="modal-dialog ">
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalCenterTitle" >Temarios</h5>
@@ -503,8 +506,8 @@
 
 
 <!--  participantes por lo menos 1 -->
-<div id="modalValidateParticipantes" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog-sm modal-dialog-centered " role="document">
+<div id="modalValidateParticipantes" class="modal fade ">
+      <div class="modal-dialog" >
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalCenterTitle" >Participantes</h5>
@@ -535,8 +538,8 @@
 <!-- fin participantes 1-->
 
 <!--  guardar curso  -->
-<div id="modalresponseSave" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog-sm modal-dialog-centered " role="document">
+<div id="modalresponseSave" class="modal fade ">
+      <div class="modal-dialog" >
           <div class="modal-content">
               <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalCenterTitle" >Nuevo curso</h5>
