@@ -18,7 +18,27 @@ $(function () {
     $("#cursoTablaContinuar").on('click',function(e){
         console.log("continuar");
         $("#tablaAsigCursos").css('display', 'none')
+        $("#temarioComenzarCurso").css('display', 'none')
+        $("#temarioTerminarCurso").css('display', 'none')
         $("#asigCursoContinuar").css('display', 'block')
+    });
+
+    $("#temarioTablaCompletado").on('click',function(e){
+        console.log("temarioTablaCompletado");
+        $("#tablaAsigCursos").css('display', 'none')
+        $("#asigCursoContinuar").css('display', 'none')
+        $("#temarioComenzarCurso").css('display', 'block')
+        $("#temarioTerminarCurso").css('display', 'none')
+      
+    });
+
+    $("#temarioTablaTerminar").on('click',function(e){
+        console.log("temarioTablaTerminar");
+        $("#tablaAsigCursos").css('display', 'none')
+        $("#asigCursoContinuar").css('display', 'none')
+        $("#temarioComenzarCurso").css('display', 'none')
+        $("#temarioTerminarCurso").css('display', 'block')
+      
     });
 
     
