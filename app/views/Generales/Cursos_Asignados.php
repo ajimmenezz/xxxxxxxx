@@ -133,9 +133,44 @@
                                     <h4>Avance total</h4>
                                     <p>0%</p>	
                                 </div>
-                                <div class="stats-link">
-                                    <a href="javascript:;"></a>
-                                </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            
+            <div class="row">
+                <div clas="col-sm-12 col-md-6" style="float:left;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                           
+                            <h4>Temario</h4>
+                            <hr>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                        <td>Modulo</td>
+                                        <td>Avance</td>
+                                        <td>Acciones</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td><span class="temarioTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
+                                       
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                       <td></td>
+                                        <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -249,11 +284,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td></td>
-                                            <td><span id="temarioContentTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-                                            <td><span id="temarioContentTablaComenzar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                        </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td><span class="temarioTablaCompletado"  style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
+                                       
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                       <td></td>
+                                        <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
