@@ -4,7 +4,7 @@
     <h1 class="page-header">Cursos asignados</h1>
     <!-- end page-header -->
 
-    <div id="tablaAsigCursos" class="panel panel-inverse" data-sortable-id="ui-widget-1">
+    <div id="tablaAsigCursos" class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:block;">
         <div class="panel-heading">
             <h4 class="panel-title">Cursos</h4>
         </div>
@@ -63,7 +63,7 @@
             <div class="row" style="margin-top:50px;">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <table class="tabla-cursosAsignados table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
                                     <th class="never">Id</th>
@@ -99,7 +99,7 @@
     </div>
 
     <!-- inicio contenido continuar curso -->
-    <div id="asigCursoContinuar" class="panel panel-inverse hidden" data-sortable-id="ui-widget-1">
+    <div id="asigCursoContinuar" class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:none;">
         <div class="panel-heading">
             <h4 class="panel-title">Cursos</h4>
         </div>
@@ -133,51 +133,16 @@
                                     <h4>Avance total</h4>
                                     <p>0%</p>	
                                 </div>
-                        </div>
-                    </div>
-                </div>
-            
-            </div>
-            
-            <div class="row">
-                <div clas="col-sm-12 col-md-6" style="float:left;">
-                    <div class="row">
-                        <div class="col-sm-12">
-                           
-                            <h4>Temario</h4>
-                            <hr>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="table-responsive">
-                                <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                        <td>Modulo</td>
-                                        <td>Avance</td>
-                                        <td>Acciones</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td><span class="temarioTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-                                       
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                       <td></td>
-                                        <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                <div class="stats-link">
+                                    <a href="javascript:;"></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <h4>Temario</h4>
                     <div class="underline m-b-15 m-t-15"></div>
                     <div class="table-responsive">
@@ -192,8 +157,8 @@
                             <tbody>
                                 <tr>
                                     <td></td>
-                                    <td><span id="temarioTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-                                    <td><span id="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
+                                    <td><span class="temarioTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
+                                    <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -234,14 +199,15 @@
 
                 </div>
 
-                <div class="col-sm-12 col-md-6" style="float-right">
+                <div class="col-sm-12 col-md-6">
                     <div class="row">
+                        <div class="col-sm-4"></div>
                         <div class="col-sm-4">
                             <div class="widget widget-stats bg-green">
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Faltante total</h4>
-                                    <p>3,291</p>	
+                                    <p>80%</p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -253,7 +219,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Avance total</h4>
-                                    <p>3,291</p>	
+                                    <p>20%</p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -262,84 +228,62 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
             <div class="row">
-                <div clas="col-sm-12 col-md-6" style="float:left;">
-                    <div class="row">
-                        <div class="col-sm-12">
+                <div class="col-md-5">
+                    <h4>Temario</h4>
+                    <div class="underline m-b-15 m-t-15"></div>
+                    <div class="table-responsive">
+                        <table class="tabla-cursosAsignados table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>Modulo</td>
+                                    <td>Avance</td>
+                                    <td>Acciones</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="temarioTablaCompletado"  style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
 
-                            <h4>Temario</h4>
-                            <hr>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="table-responsive">
-                                <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <td>Modulo</td>
-                                            <td>Avance</td>
-                                            <td>Acciones</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td><span class="temarioTablaCompletado"  style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-                                       
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                       <td></td>
-                                        <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <h4>Avances</h4>
+                    <div class="underline m-b-15 m-t-15"></div>
+                    Comentarios <br>
+                    <textarea class="form-control" placeholder="Comentarios" rows="5"></textarea>
+                    <div id="gallery" class="gallery">
+                        <div class="image gallery-group-1">
+                            <div class="image-inner">
+                                <a href="assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
+                                    <img src="http://localhost/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
+                                </a>
+                            </div>
+                            <div class="image-info">
+                                <h5>Fecha</h5>
+                                <h5 class="title">Comentarios</h5>
+                                <div class="desc">
+                                    Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div clas="col-sm-12 col-md-6" style="float:right;">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4>Avances</h4>
-                            <hr>
-                        </div>
-                        <div class="col-md-12">
-                            Comentarios <br>
-                            <textarea class="form-control" placeholder="Comentarios" rows="5"></textarea>
-                        </div>
-
-                        <div class="col-sm-12">
-                            <div class="image gallery-group-1">
-                                <div class="image-inner">
-                                    <a href="assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
-                                        <img src="assets/img/gallery/gallery-1.jpg" alt="" />
-                                    </a>
-
-                                </div>
-                                <div class="image-info">
-                                    <h5 class="title">Lorem ipsum dolor sit amet</h5>
-
-                                    <div class="desc">
-                                        Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col-sm-12" style="margin-top:30px;">
-                            <button id="btn-cancel_terminarCurso" type="button" class="btn btn-white m-r-5 m-b-5 " style="float: right;">Cancelar</button>
-                        </div>
+                    <div class="text-right">
+                        <button type="button" id="btnCerrarCompletarAvanceCurso" class="btn btn-white text-right" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     </div>  
     <!-- fin contenido continuar, continuar curso evidencias-->
@@ -397,7 +341,7 @@
                     <h4>Temario</h4>
                     <div class="underline m-b-15 m-t-15"></div>
                     <div class="table-responsive">
-                        <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
+                        <table class="tabla-cursosAsignados table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <td>Modulo</td>
@@ -424,13 +368,18 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <p>Comentarios</p>
-                                    <textarea class="form-control" placeholder="Comentarios" rows="5"></textarea>
+                                    <textarea id="cometariosAvanceCurso" class="form-control" placeholder="Comentarios" rows="5"></textarea>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-md-12 m-t-10">
+                                    <div id="errorCometariosAvanceCurso"></div>
                                 </div>
                             </div>
                             <div class="row m-t-15">
                                 <div class="col-md-12 text-center">
-                                    <button id="btn-cancel_terminarCurso" type="button" class="btn btn-white m-r-5 m-b-5 btn-sm">Cancelar avance</button>
-                                    <button id="btn-cancel_terminarCurso" type="button" class="btn btn-success m-r-5 m-b-5 btn-sm">Registrar avance</button>
+                                    <button id="btn-cancel-avance" type="button" class="btn btn-white m-r-5 m-b-5 btn-sm">Cancelar avance</button>
+                                    <button id="btn-registrar-avance" type="button" class="btn btn-success m-r-5 m-b-5 btn-sm">Registrar avance</button>
                                 </div>
                             </div>
                         </div>
@@ -465,7 +414,7 @@
             <div class="modal-body"></div>
             <div class="modal-footer">
                 <div id="error-in-modal"></div>
-                <button type="button" class="btn btn-white" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnCancelar" class="btn btn-white" data-dismiss="modal">Cancelar</button>
                 <button type="button" id="btnAceptar" class="btn btn-success">Comenzar</button>
             </div>
             <div id="errorModal"></div>
