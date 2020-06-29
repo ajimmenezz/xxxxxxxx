@@ -136,6 +136,7 @@ console.log($nombreTemario,$porcentaje,"DATOS tEMARIO2",listTemario)
 
 
 $("#file-upload-button").addClass("btn btn-success m-r-5 ");
+
 let listPuesto=[];
 $("#btn-nuevo-puestoParticipante").on('click',function(e){
     //modalSubirTemarios
