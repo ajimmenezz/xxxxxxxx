@@ -142,7 +142,7 @@ $db['adist2'] = array(
     'save_queries' => TRUE
 );
 
-if ($posicion !== FALSE) {
+if ($isSandbox !== FALSE) {
     $database = 'adistv3_sandbox';
 } else {
     $database = 'adist3_prod';
