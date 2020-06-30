@@ -39,7 +39,7 @@ $(function () {
 
     $('#btn-adminEliminarCurso').on('click',function(e){
      alert("ELIMINAR CURSO");
-    });
+        });
 
     let tablaTemarios = null;
     tablaTemarios = new TablaBasica('tabla-cursos-temario');
@@ -180,7 +180,7 @@ $("#btn-save-curso").on('click',function(e){
 
     console.log("DATOS_SAVE",$json);
   $('#modalresponseSave').modal('show')
-});
+        });
 
 
   
