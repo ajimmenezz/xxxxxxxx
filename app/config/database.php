@@ -74,6 +74,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $active_group = 'adist3';
 $query_builder = TRUE;
 
+$isSandbox = strpos($_SERVER['SERVER_NAME'], 'sandbox.siccob.solutions');
+
 $db['adist3'] = array(
     'dsn' => '',
     'hostname' => 'siccob.com.mx',
@@ -140,12 +142,18 @@ $db['adist2'] = array(
     'save_queries' => TRUE
 );
 
+if ($posicion !== FALSE) {
+    $database = 'adistv3_sandbox';
+} else {
+    $database = 'adist3_prod';
+}
+
 $db['pruebas'] = array(
     'dsn' => '',
     'hostname' => 'localhost',
     'username' => 'prod3_usr',
     'password' => 'S1cc0bS.',
-    'database' => 'adist3_prod',
+    'database' => $database,
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
@@ -208,12 +216,12 @@ $db['SAE7'] = array(
     'save_queries' => TRUE
 );
 
-$posicion = strpos($_SERVER['SERVER_NAME'], 'siccob.solutions');
+
 
 //if ($posicion !== FALSE) {
-    $hostNameGapsi = '192.168.0.30, 50742'; 
-    $userNameGapsi = 'sa';
-    $pwdGapsi = 'S1cc0b';    
+$hostNameGapsi = '192.168.0.30, 50742';
+$userNameGapsi = 'sa';
+$pwdGapsi = 'S1cc0b';
 //} else {
 //    $hostNameGapsi = '127.0.0.1, 50742';    
 //    $userNameGapsi = 'salocal';
