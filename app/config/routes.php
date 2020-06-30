@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
   | -------------------------------------------------------------------------
@@ -108,6 +108,7 @@ $route['Poliza/EventoCatalogoUnidadNegocio/(:any)'] = 'Poliza/Controller_Unidade
 $route['Poliza/EventoCatalogoUnidadNegocioArea/(:any)'] = 'Poliza/Controller_UnidadesNegocioArea/manejarEvento/$1';
 $route['Poliza/EventoCatalogoSublineasArea/(:any)'] = 'Poliza/Controller_SublineasArea/manejarEvento/$1';
 $route['Poliza/EventoCatalogoModelosArea/(:any)'] = 'Poliza/Controller_ModelosArea/manejarEvento/$1';
+$route['Poliza/SLA/(:any)'] = 'Poliza/Controller_SLA/manejarEvento/$1';
 
 
 /* Routers para el manejo nuevo de Proyectos */
@@ -171,8 +172,6 @@ $route['RH/EventoPermisosVacaciones/(:any)'] = 'RH/Controller_PermisosVacaciones
 $route['RH/Catalogos_Permisos/Nuevo_Registro/(:any)'] = 'V2/Controller_Catalogos/nuevoRegistro/$1';
 $route['RH/Catalogos_Permisos/Actualizar_Registro/(:any)'] = 'V2/Controller_Catalogos/actualizarRegistro/$1';
 $route['RH/CalendarioPermisos/(:any)'] = 'Calendar/Controller_Calendar/manejarEvento/$1';
-$route['RH/Cursos_Asignados/(:any)'] = 'RH/Controller_Cursos_Asignados/manejarEvento/$1';
-$route['RH/Administracion_Cursos/(:any)'] = 'RH/Controller_Administracion_Cursos/manejarEvento/$1';
 
 /* Routers para el manejo de la seccion Capacitacion */
 $route['Capacitacion/(:any)'] = 'Capacitacion/Controller_Capacitacion/desplegarPantalla/$1';
@@ -326,6 +325,8 @@ $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
 $route['Reportes/Lexmark/(:any)'] = 'Reportes/Controller_PrinterLexmark/manejarEvento/$1';
 $route['Reportes/Censos/(:any)'] = 'Reportes/Controller_CensoReports/manejarEvento/$1';
 $route['Reportes/SD/(:any)'] = 'Reportes/Controller_Servicedesk/manejarEvento/$1';
+
+$route['Agenda/(:any)'] = 'Generales/Controller_Agenda/manejarEvento/$1';
 
 $route['P/(:any)'] = 'Pruebas/Controller_Pruebas/manejarEvento/$1';
 

@@ -46,6 +46,7 @@ class Modelo_SLA extends Base {
                                     ts.IdPrioridad,
                                     if(ts.IdSucursal = 0, sucursal(tst.IdSucursal), sucursal(ts.IdSucursal)) as Sucursal,
                                     if(ts.IdSucursal = 0, tst.IdSucursal, ts.IdSucursal) as IdSucursal,
+                                    if(ts.IdSucursal = 0, (SELECT zona(IdRegionCliente) FROM cat_v3_sucursales WHERE Id = tst.IdSucursal), (SELECT zona(IdRegionCliente) FROM cat_v3_sucursales WHERE Id = ts.IdSucursal)) as Zona,
                                     nombreUsuario(ts.Atiende) as AtiendeSolicitud,
                                     ts.FechaCreacion,
                                     tst.FechaCreacion as FechaCreacionServicio

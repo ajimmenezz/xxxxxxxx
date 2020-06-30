@@ -618,13 +618,13 @@ class Secciones extends General {
                 $datos['certificados'] = $this->administracionCursos->getCertificate();
                 $datos['tipoCursos'] = $this->administracionCursos->getTypeCourses();
                 $datos['temario'] = [];
-                
+
                 $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
                 $datos['filas'] = [ 
                     array('Diseño','Hace algo','
-                    <div style="text-align: center;"><i class="fa fa-eye" style="font-size: 17px; color: #348fe2;" @click="view(device.id)"></i>
-                    <i class="fa fa-pencil" style="font-size: 17px; color: orange;" @click="view(device.id)"></i>
-                    <i class="fa fa-trash" style="font-size: 17px; color: red;" @click="view(device.id)"></i></div>
+                    <div style="text-align: center;"><i class="fa fa-eye" style="font-size: 17px; color: #348fe2;" ></i>
+                    <i class="fa fa-pencil" style="font-size: 17px; color: orange;" ></i>
+                    <i class="fa fa-trash" style="font-size: 17px; color: red;" ></i></div>
                     '),
                     array('Redes','Interesante','4','Activo','')
                 ];
@@ -632,15 +632,21 @@ class Secciones extends General {
 
                 break;
             case 'Generales/Cursos_Asignados':
-                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
-                $datos['filas'] = [
-                    array('Diseño','Hace algo','20','Activo','
-                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Completado</span>
-                    <span><i class="fa  fa-fast-forward" @click="view(device.id)"></i>Continuar</span>
-                    <span><i class="fa fa-certificate" "></i><i class="class="fa fa-youtube-play"" @click="view(device.id)"></i>Comenzar</span>
-                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Suspendido</span>'),
-                    array('Redes','Interesante','4','Activo','')
-                ];
+//                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
+                $datos['filas'] = [0 => array(
+                    'Id' => '1',
+                    'Curso' => 'Diseño',
+                    'Avance' => 'Hace algo',
+                    'FechaAsignacion' => '20',
+                    'Estatus' => 'Activo',
+                    'Acciones' => '<a href="javascript:;" class="btn btn-link btn-xs btn-acciones" data-accion="1"><span> <i class="fa fa-edit"></i>Completado</span></a>')];
+                        
+
+//                    <span><i class="fa  fa-fast-forward" @click="view(device.id)"></i>Continuar</span>
+//                    <span><i class="fa fa-certificate" "></i><i class="class="fa fa-youtube-play"" @click="view(device.id)"></i>Comenzar</span>
+//                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Suspendido</span>');
+//                    array('Redes','Interesante','4','Activo','')
+//                ];
                 break;
             default:
                 break;

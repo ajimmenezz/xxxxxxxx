@@ -31,15 +31,38 @@ $(function () {
 
     $('#btn-adminVerCurso').on('click',function(e){
      alert("VER CURSO");
+     $('#modalSubirTemarios').modal('hide')
+     $('#modalValidateTemario').modal('hide')
+     $("#modalValidateParticipantes").modal('hide');
+     $("#modalDeletoCursoAdmin").modal('hide')
+
+     $("#administracion-cursos").css('display', 'none')
+     $("#administracion-cursos_nuevoCurso").css('display', 'none')
+
+     $("#administracion-cursos-ver").css('display', 'block')
     });
   
     $('#btn-adminEditarCurso').on('click',function(e){
      alert("EDITAR CURSO");
     });
 
-    $('#btn-adminEliminarCurso').on('click',function(e){
-     alert("ELIMINAR CURSO");
-        });
+    // $('#btn-adminEliminarCurso').on('click',function(e){
+    //  alert("ELIMINAR CURSO");
+    //  $("#modalDeletoCursoAdmin").modal('show')
+    // });
+
+    $("#EliminarCursoAdminConfirm").on('click',function (e) {
+      console.log('clic en boton elimnar curso confirmacion');
+      var curso=$("#idElementSeleccionAccion").val();
+      let datos = { idCurso : curso};
+      eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Eliminar-Curso',datos,function(respuesta){
+          console.log(respuesta);
+          evento.mostrarMensaje('.messageAcciones', true, 'Se ha eliminado el curso.', 5000);
+       //   location.reload();
+      });
+    });
+
+   
 
     let tablaTemarios = null;
     tablaTemarios = new TablaBasica('tabla-cursos-temario');
@@ -136,6 +159,7 @@ console.log($nombreTemario,$porcentaje,"DATOS tEMARIO2",listTemario)
 
 
 $("#file-upload-button").addClass("btn btn-success m-r-5 ");
+
 let listPuesto=[];
 $("#btn-nuevo-puestoParticipante").on('click',function(e){
     //modalSubirTemarios
