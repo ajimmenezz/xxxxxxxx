@@ -404,7 +404,6 @@ $config['Generales'] = array(
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
             'Componentes/FileUpload/IUpload',
-            'Componentes/FileUpload/IFileUpload',
             'Componentes/FileUpload/FileUpload_Basico',
         ),
         'pluginsJs' => array(

@@ -5,6 +5,7 @@
     <!-- end page-header -->
 
     <div id="tablaAsigCursos" class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:block;">
+        <input id="valorIdUsuario" class="hidden" value="<?php echo $datos['idUsuario']; ?>" />
         <div class="panel-heading">
             <h4 class="panel-title">Cursos</h4>
         </div>
@@ -76,15 +77,25 @@
                             </thead>
                             <tbody>
                                 <?php
-                                if (!empty($datos['filas'])) {
-                                    foreach ($datos['filas'] as $key => $value) {
+                                if (!empty($datos['cursos'])) {
+                                    foreach ($datos['cursos'] as $key => $value) {
+                                        if ($value['estatus'] === '17' && $value['Porcentaje'] === '100') {
+                                            $accion = '<span style="color: blue;"> <i class="fa fa-check-square"></i> Completado</span>';
+                                        } elseif ($value['estatus'] === '17' && $value['Porcentaje'] < '100' && $value['Porcentaje'] > '0') {
+                                            $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-continuar-curso" data-id="' . $value['id'] . '"><strong style="color: gold;"> <i class="fa fa-fast-forward"></i> Continuar</strong></a>';
+                                        } elseif ($value['estatus'] === '17' && $value['Porcentaje'] === '0') {
+                                            $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-comenzar-curso" data-id="' . $value['id'] . '"><strong style="color: forestgreen;"> <i class="fa fa-youtube-play"></i> Comenzar</strong></a>';
+                                        } else {
+                                            $accion = '<strong><i class="fa fa-ban"></i> Suspendido</strong>';
+                                        }
+
                                         echo '<tr>';
-                                        echo '<td>' . $value['Id'] . '</td>';
-                                        echo '<td>' . $value['Curso'] . '</td>';
-                                        echo '<td>' . $value['Avance'] . '</td>';
-                                        echo '<td>' . $value['FechaAsignacion'] . '</td>';
-                                        echo '<td>' . $value['Estatus'] . '</td>';
-                                        echo '<td class="text-center">' . $value['Acciones'] . '</td>';
+                                        echo '<td>' . $value['id'] . '</td>';
+                                        echo '<td>' . $value['Nombre'] . '</td>';
+                                        echo '<td>' . $value['Porcentaje'] . '</td>';
+                                        echo '<td>' . $value['fechaAsignacion'] . '</td>';
+                                        echo '<td>' . $value['EstatusNombre'] . '</td>';
+                                        echo '<td>' . $accion . '</td>';
                                         echo '</tr>';
                                     }
                                 }
@@ -402,14 +413,14 @@
                                         </div>
 
                                     </div>
-<!--                                    <div class="row">
-                                        <div class="col-md-12 fileupload-progress fade">
-                                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                                                <div class="progress-bar progress-bar-success" style="width:0%;"></div>
-                                            </div>
-                                            <div class="progress-extended">&nbsp;</div>
-                                        </div>
-                                    </div>-->
+                                    <!--                                    <div class="row">
+                                                                            <div class="col-md-12 fileupload-progress fade">
+                                                                                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                                                                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                                                                                </div>
+                                                                                <div class="progress-extended">&nbsp;</div>
+                                                                            </div>
+                                                                        </div>-->
                                     <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
                                 </form>
                             </div>

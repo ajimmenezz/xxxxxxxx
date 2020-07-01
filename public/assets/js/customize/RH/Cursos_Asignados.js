@@ -12,9 +12,7 @@ $(function () {
 
     let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
     let tablaTemario = new TablaBasica('tabla-temario');
-//    let evidenciasComentarios = new FileUpload_Basico('agregarEvidencia', {url: 'SeguimientoRehabilitacion/SetComentario', extensiones: []});
-//    evidenciasComentarios.iniciarFileUpload();
-    let file = new IFileUpload();
+    let idUsuario = $('#valorIdUsuario').val();
 
     $("#cursoTablaContinuar").on('click', function (e) {
         console.log("continuar");
@@ -42,18 +40,28 @@ $(function () {
 
     });
 
-
-    $(".btn-acciones").off("click");
-    $(".btn-acciones").on('click', function (e) {
+    $(".btn-comenzar-curso").off("click");
+    $(".btn-comenzar-curso").on('click', function (e) {
         evento.iniciarModal("#modalEdit", "<strong>Comenzar Curso</strong>", '<p class="text-center"><strong>¿Quieres Comenzar el curso?</strong></p>');
 
         $("#btnAceptar").off("click");
         $("#btnAceptar").on('click', function (e) {
-            evento.terminarModal("#modalEdit");
-            $('#tablaAsigCursos').css('display', 'none');
-            $('#asigCursoContinuar').css('display', 'block');
+            let id = $(this).data('id');
+            let data = {'idCurso': id, 'idUsuario': idUsuario}
+            evento.enviarEvento('Cursos_Asignados/Comenzar-Curso', data, '#modalEdit', function (respuesta) {
+                evento.terminarModal("#modalEdit");
+                cargarTemarioUsuario();
+            });
         });
+    });
 
+    $(".btn-continuar-curso").off("click");
+    $(".btn-continuar-curso").on('click', function (e) {
+        let id = $(this).data('id');
+        let data = {'idCurso': id, 'idUsuario': idUsuario}
+        evento.enviarEvento('Cursos_Asignados/Continuar-Curso', data, '#tablaAsigCursos', function (respuesta) {
+            cargarTemarioUsuario();
+        });
     });
 
     $("#btn-cancel-avance").off("click");
@@ -96,8 +104,9 @@ $(function () {
     //   $('#modalValidateTemario').modal('show')
     // });
 
-
-
+    function cargarTemarioUsuario() {
+        $('#tablaAsigCursos').css('display', 'none');
+        $('#asigCursoContinuar').css('display', 'block');
+    }
 
 });
-
