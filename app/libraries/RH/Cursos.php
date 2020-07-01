@@ -115,16 +115,16 @@ class Cursos extends General {
     public function startCourse($infoUsuario) {
         $resultQuery = $this->DBS->insertStartCourse($infoUsuario);
         if ($resultQuery['code'] == 200) {
-            return $this->continueCourse($infoUsuario['idCurso']);
+            return $this->continueCourse($infoUsuario);
         } else {
             return false;
         }
     }
     
     public function continueCourse($idCurso) {
-        $resultQuery = $this->DBS->getTemaryById($idCurso['id']);
+        $resultQuery = $this->DBS->getTemaryById($idCurso['idCurso']);
         if ($resultQuery) {
-            return $temasCurso;
+            return $resultQuery;
         } else {
             return false;
         }
