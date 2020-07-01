@@ -12,6 +12,9 @@ $(function () {
 
     let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
     let tablaTemario = new TablaBasica('tabla-temario');
+//    let evidenciasComentarios = new FileUpload_Basico('agregarEvidencia', {url: 'SeguimientoRehabilitacion/SetComentario', extensiones: []});
+//    evidenciasComentarios.iniciarFileUpload();
+    let file = new IFileUpload();
 
     $("#cursoTablaContinuar").on('click', function (e) {
         console.log("continuar");

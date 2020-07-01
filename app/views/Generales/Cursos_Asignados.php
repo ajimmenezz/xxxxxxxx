@@ -385,15 +385,50 @@
                         </div>
                         <div class="col-md-7">
                             <div class="row">
-                                <button id="btn-cancel_terminarCurso" type="button" class="btn btn-success m-r-5 m-b-5 btn-sm">Agregar archivos</button>
-                                <button id="btn-cancel_terminarCurso" type="button" class="btn btn-primary m-r-5 m-b-5 btn-sm">Subir evidencias</button>
-                                <button id="btn-cancel_terminarCurso" type="button" class="btn btn-danger m-r-5 m-b-5 btn-sm">Borrar</button>
-                                <div> <button id="btn-cancel_terminarCurso" type="button" class="btn btn-white m-r-5 m-b-5 " style="float: right;">Cancelar</button></div>
+                                <form id="fileupload" action="assets/global/plugins/jquery-file-upload/server/php/" enctype="multipart/form-data">
+                                    <div class="row fileupload-buttonbar">
+                                        <div class="col-md-12">
+                                            <span class="btn btn-success btn-sm fileinput-button">
+                                                <span>Agregar archivos</span>
+                                                <input type="file" name="files[]" multiple>
+                                            </span>
+                                            <button type="button" class="btn btn-primary btn-sm start">
+                                                <span>Subir evidencias</span>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm delete">
+                                                <span>Borrar</span>
+                                            </button>
+                                            <span class="fileupload-process"></span>
+                                        </div>
+
+                                    </div>
+<!--                                    <div class="row">
+                                        <div class="col-md-12 fileupload-progress fade">
+                                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                                <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                                            </div>
+                                            <div class="progress-extended">&nbsp;</div>
+                                        </div>
+                                    </div>-->
+                                    <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
+                <div class="slides"></div>
+                <h3 class="title"></h3>
+                <a class="prev">‹</a>
+                <a class="next">›</a>
+                <a class="close">×</a>
+                <a class="play-pause"></a>
+                <ol class="indicator"></ol>
+            </div>
+
+
         </div>
     </div>
 </div>  
@@ -421,3 +456,71 @@
         </div>
     </div>
 </div>
+
+<script id="template-upload" type="text/x-tmpl">
+    {% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-upload fade">
+    <td class="col-md-1">
+    <span class="preview"></span>
+    </td>
+    <td>
+    <p class="name">{%=file.name%}</p>
+    <strong class="error text-danger"></strong>
+    </td>
+    <td>
+    <p class="size">Processing...</p>
+    </td>
+    <td>
+    {% if (!i) { %}
+    <button class="btn btn-white btn-sm cancel">
+    <span>Cancel</span>
+    </button>
+    {% } %}
+    </td>
+    </tr>
+    {% } %}
+</script>
+<!-- The template to display files available for download -->
+<script id="template-download" type="text/x-tmpl">
+    {% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-download fade">
+    <td>
+    <span class="preview">
+    {% if (file.thumbnailUrl) { %}
+    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+    {% } %}
+    </span>
+    </td>
+    <td>
+    <p class="name">
+    {% if (file.url) { %}
+    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+    {% } else { %}
+    <span>{%=file.name%}</span>
+    {% } %}
+    </p>
+    {% if (file.error) { %}
+    <div><span class="label label-danger">Error</span> {%=file.error%}</div>
+    {% } %}
+    </td>
+    <td>
+    <span class="size">{%=o.formatFileSize(file.size)%}</span>
+    </td>
+    <td>
+    {% if (file.deleteUrl) { %}
+    <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+    <i class="glyphicon glyphicon-trash"></i>
+    <span>Delete</span>
+    </button>
+    <input type="checkbox" name="delete" value="1" class="toggle">
+    {% } else { %}
+    <button class="btn btn-warning cancel">
+    <i class="glyphicon glyphicon-ban-circle"></i>
+    <span>Cancel</span>
+    </button>
+    {% } %}
+    </td>
+    </tr>
+    {% } %}
+</script>
+
