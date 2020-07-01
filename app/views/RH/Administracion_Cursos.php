@@ -92,7 +92,7 @@
     </div>
 
     <!--SandBox SmartResponse--->
-    <div class="panel panel-inverse" data-sortable-id="ui-widget-1">
+    <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:none;">
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -295,7 +295,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <div id="arrayTemario" style="display:none;"></div>
+                                                     
                                                             <?php
                                                             //  echo "welcome ".$_COOKIE['temarios'];
                                                             //  print_r($_COOKIE['temarios']);
@@ -308,11 +308,7 @@
                                                             //     echo '</tr>';
                                                             // }
                                                             ?>
-                                                            <tr>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                            </tr>
+                                                            
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -343,7 +339,7 @@
                                         <div class="row">
                                             <div class="col-md-9">
                                                 <div class="form-group">
-                                               
+                                               <!-- <input id="perfiles" type="hidden" value="<?php echo $datos['perfiles']; ?>"> -->
                                                     <label for="puesto">Puesto </label>
                                                     <select id="puesto" class="form-control" style="width: 100%" data-parsley-required="true">
                                                         <option value="">Seleccionar</option>
@@ -396,10 +392,7 @@
                                                             //     echo '</tr>';
                                                             // }
                                                             ?>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
+                                                             
                                                         </tbody>
                                                     </table>
                                                 </div>

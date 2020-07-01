@@ -19,9 +19,12 @@ class Controller_Administracion_Cursos extends Base {
 
         switch ($evento) {
             case 'Nuevo-Curso':
-                $resultado = $this->curso->newCourse($this->input->post());
 
-                echo json_encode($resultado);
+              //  echo $this->input->post();
+              
+                // $resultado = $this->curso->newCourse($this->input->post());
+
+                // echo json_encode($resultado);
                 break;
             case 'Eliminar-Curso':
                 $resultado = $this->curso->deleteCourse($this->input->post());
