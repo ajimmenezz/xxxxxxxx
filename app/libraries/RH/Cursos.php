@@ -16,6 +16,10 @@ class Cursos extends General {
     public function getCourses() {
         return $this->DBS->getAllCourses();
     }
+    
+    public function getMyCourses($perfil) {
+        return $this->DBS->getMyCourses($perfil);
+    }
 
     public function getProfile() {
         return $this->DBS->getAllProfile();
@@ -103,6 +107,24 @@ class Cursos extends General {
         
         if ($resultQuery['code'] == 200) {
             return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public function startCourse($infoUsuario) {
+        $resultQuery = $this->DBS->insertStartCourse($infoUsuario);
+        if ($resultQuery['code'] == 200) {
+            return $this->continueCourse($infoUsuario);
+        } else {
+            return false;
+        }
+    }
+    
+    public function continueCourse($idCurso) {
+        $resultQuery = $this->DBS->getTemaryById($idCurso['idCurso']);
+        if ($resultQuery) {
+            return $resultQuery;
         } else {
             return false;
         }
