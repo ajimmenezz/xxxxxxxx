@@ -79,31 +79,33 @@ class Modelo_Cursos extends Modelo_Base {
         return $this->consulta("SELECT * FROM t_curso_relacion_perfil WHERE idCurso = " . $idCurso . " AND estatus = 1");
     }
 
-    public function insertCourse($infoCurso) {
-        $this->iniciaTransaccion();
-        $this->insertar('t_curso', [
-            'idTipoCurso' => $infoCurso['certificado'],
-            'nombre' => $infoCurso['nombre'],
-            'descripcion' => $infoCurso['descripcion']
-        ]);
-
-        $ultimoCurso = $this->consulta("select last_insert_id() as Id");
-
-        $this->insertar('t_curso_online', [
-            'idCurso' => $ultimoCurso[0]["Id"],
-            'idTipoCertificado' => $infoCurso['certificado'],
-            'url' => $infoCurso['url'],
-            'costo' => $infoCurso['costo']
-        ]);
-
-        $this->terminaTransaccion();
-        if ($this->estatusTransaccion() === false) {
-            $this->roolbackTransaccion();
-            return ['code' => 400, 'id' => 0];
-        } else {
-            $this->commitTransaccion();
-            return ['code' => 200, 'id' => $ultimoCurso[0]["Id"]];
-        }
+    public function insertCourse($infoCurso, $rutaImagen = null) {
+        var_dump($infoCurso);
+//        $this->iniciaTransaccion();
+//        $this->insertar('t_curso', [
+//            'idTipoCurso' => $infoCurso['certificado'],
+//            'nombre' => $infoCurso['nombre'],
+//            'descripcion' => $infoCurso['descripcion'],
+//            'imagen' => $rutaImagen
+//        ]);
+//
+//        $ultimoCurso = $this->consulta("select last_insert_id() as Id");
+//
+//        $this->insertar('t_curso_online', [
+//            'idCurso' => $ultimoCurso[0]["Id"],
+//            'idTipoCertificado' => $infoCurso['certificado'],
+//            'url' => $infoCurso['url'],
+//            'costo' => $infoCurso['costo']
+//        ]);
+//
+//        $this->terminaTransaccion();
+//        if ($this->estatusTransaccion() === false) {
+//            $this->roolbackTransaccion();
+//            return ['code' => 400, 'id' => 0];
+//        } else {
+//            $this->commitTransaccion();
+//            return ['code' => 200, 'id' => $ultimoCurso[0]["Id"]];
+//        }
     }
 
     public function updateCourse($infoCurso) {
@@ -205,7 +207,22 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
     
-    public function insertStartCourse($infoUsuario) {
+    public function getDetailCourse($idCurso){
+        return $this->consulta("SELECT 
+                                usuarios.Id,
+                                nombreUsuario(usuarios.Id),
+                                perfiles.Nombre,
+                                (select sum(tema.porcentaje) from t_curso_tema as tema
+                                    left join t_curso_tema_relacion_avance_usuario as relacion on relacion.idTema = tema.id
+                                    where relacion.fechaModificacion is not null and relacion.idUsuario = usuarios.Id
+                                ) as Porcentaje
+                            FROM t_curso_relacion_perfil AS avance
+                            LEFT JOIN cat_perfiles AS perfiles ON perfiles.Id = avance.idPerfil
+                            INNER JOIN cat_v3_usuarios AS usuarios ON usuarios.IdPerfil = perfiles.Id
+                            WHERE avance.idCurso = " . $idCurso . " AND usuarios.Flag = 1");
+    }
+
+        public function insertStartCourse($infoUsuario) {
         $this->iniciaTransaccion();
 
         $this->insertar('t_curso_relacion_avance_usuario', [
