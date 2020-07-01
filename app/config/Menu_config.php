@@ -1854,6 +1854,7 @@ $config['RH'] = array(
             'select2/dist/css/select2.min',
             'bootstrap-wizard/css/bwizard.min',
             'parsley/src/parsley',
+            'jquery-fileUpload/css/fileinput.min',
             
         ),
         'js' => array(
@@ -1872,7 +1873,8 @@ $config['RH'] = array(
             'RH/Administracion_Cursos',
             'RH/form-wizards.demo.min',
             'RH/form-wizards-validation.demo.min',
-            'RH/Cursos/test'
+            'RH/Cursos/test',
+            'Base/fileUpload'
            
             
         ),
@@ -1883,7 +1885,8 @@ $config['RH'] = array(
             'pace/pace.min.js',
             'parsley/dist/parsley',
             'bootstrap-wizard/js/bwizard',
-            
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
             
             
             
