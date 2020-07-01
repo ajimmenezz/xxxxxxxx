@@ -33,6 +33,7 @@ class SLA extends General {
                     $arrayFolios[$key]['Tecnico'] = $value['Tecnico'];
                     $arrayFolios[$key]['AtiendeSolicitud'] = $value['AtiendeSolicitud'];
                     $arrayFolios[$key]['IntervaloSolicitudServicioCreacion'] = $value['IntervaloSolicitudServicioCreacion'];
+                    $arrayFolios[$key]['Zona'] = $value['Zona'];
                     $datosSucursal = $this->db->consultaGral("SELECT Local FROM cat_v3_sucursales WHERE Id =  " . $value["IdSucursal"]);
                     $datosSolicitud = $this->db->consultaGral("SELECT IdPrioridad FROM t_solicitudes WHERE Id =  " . $value["IdSolicitud"]);
 
@@ -87,6 +88,7 @@ class SLA extends General {
         $arrayTitulos = [
             'Folio',
             'Sucursal',
+            'Zona',
             'Solicitud asignada a',
             'Técnico',
             'Creación Ticket',

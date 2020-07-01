@@ -30,33 +30,45 @@ class Cursos extends General {
     }
 
     public function newCourse($infoCourse) {
-
         if (isset($infoCourse['curso'])) {
-//            $this->DBS->insertCourse($infoCourse['curso']);
-            echo '<pre>';
-            var_dump($infoCourse['curso']);
-            echo '</pre>';
+            $insertQuery = $this->DBS->insertCourse($infoCourse['curso']);
         }
 
-        if (isset($infoCourse['temario'])) {
-            if ($infoCourse['temario']['archivo']) {
-                var_dump("importar excel");
-            } else {
-                echo '<pre>';
-                var_dump($infoCourse['temario']['infoTabla']);
-                echo '</pre>';
+        if ($insertQuery['code'] == 200) {
+            if ($infoCourse['curso']['img'] == "true") {
+                var_dump("guardar imagen curso");
             }
-        }
+            foreach ($infoCourse['temario']['infoTabla'] as $value) {
+                $this->DBS->insertTemaryCourse($value, $insertQuery['id']);
+            }
 
-        if (isset($infoCourse['participantes'])) {
-            echo '<pre>';
             foreach ($infoCourse['participantes'] as $value) {
-                var_dump($value['idPerfil']);
+                $this->DBS->insertParticipantsCourse($value[0], $insertQuery['id']);
             }
-            echo '</pre>';
+        } else {
+            return ['response' => false, 'code' => 400];
         }
 
-        return $infoCourse['curso'];
+        return ['response' => true, 'code' => 200];
+    }
+
+    public function getCourse($idCurso) {
+        $curso = $this->DBS->getCourseById($idCurso['idCurso']);
+        $temasCurso = $this->DBS->getTemaryById($idCurso['idCurso']);
+        $perfilesCurso = $this->DBS->getPerfilById($idCurso['idCurso']);
+        
+        $infoCurso['curso'] = $curso[0];
+        $infoCurso['temas'] = $temasCurso;
+        $infoCurso['perfiles'] = $perfilesCurso;
+        
+        return $infoCurso;
+    }
+
+    public function editCourse($infoCourse) {
+        if (isset($infoCourse['curso'])) {
+            $updateQuery = $this->DBS->updateCourse($infoCourse['curso']);
+        }
+        return ['response' => true, 'code' => 200];
     }
 
     public function deleteCourse($datos) {
@@ -67,19 +79,33 @@ class Cursos extends General {
             return false;
         }
     }
-
-    public function smartResponseTest(array $data = null) {
-        //Your code... BD.. etc... 
-        //return 1 value or an object if necessary
-
-        $response = new \StdClass();
-        $response->name = "Noe";
-        $response->creationTime = 123456;
-        $response->status = 1;
-        $response->age = 28;
-        $response->courses[] = array("foo", "bar", "hello", "world");
-
-        return $response;
+    
+    public function deleteElementCourse($datos) {
+        if($datos['tipoDato'] == 1){
+            $tabla = 't_curso_tema';
+        } else {
+            $tabla = 't_curso_relacion_perfil';
+        }
+        $resultQuery = $this->DBS->deleteElementById($datos['idCurso'], $tabla);
+        if ($resultQuery['code'] == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public function addElementCourse($datos) {
+        if($datos['tipoDato'] == 1){
+            $resultQuery = $this->DBS->insertTemaryCourse($datos, $datos['idCurso']);
+        } else {
+            $resultQuery = $this->DBS->insertParticipantsCourse($datos, $datos['idCurso']);
+        }
+        
+        if ($resultQuery['code'] == 200) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

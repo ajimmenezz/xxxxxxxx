@@ -178,4 +178,89 @@ class Modelo_SegundoPlano extends Base {
         }
     }
 
+    public function getTicketValidacion() {
+        $consulta = $this->consulta("SELECT 
+                                        ts.Ticket,
+                                        ts.Folio,
+                                        ts.IdSucursal,
+                                        ts.IdPrioridad,
+                                        WORKINGHOURS(ts.FechaCreacion, NOW()) AS TiempoTranscurrido,
+                                        tst.Atiende,
+                                        IF((SELECT 
+                                                    Local
+                                                FROM
+                                                    cat_v3_sucursales
+                                                WHERE
+                                                    Id = IF(ts.IdSucursal IS NOT NULL
+                                                            && ts.IdSucursal <> 0,
+                                                        ts.IdSucursal,
+                                                        tst.IdSucursal)) = 0,
+                                            'SLALocal',
+                                            'SLAForaneo') LocalForaneo,
+                                            (SELECT NumeroNotificacion FROM t_cheking_ticket WHERE Folio = ts.Folio) AS NumeroNotificacion,
+                                            (SELECT TIMESTAMPDIFF(SECOND,FechaNotificacion,NOW()) FROM t_cheking_ticket WHERE Folio = ts.Folio) TiempoTranscurridoNotificacion
+                                    FROM
+                                        t_solicitudes ts
+                                            INNER JOIN
+                                        (SELECT 
+                                            *
+                                        FROM
+                                            (SELECT 
+                                            Ticket,
+                                                IF(FechaInicio IS NULL && COUNT(Ticket) = 1, 1, 0) AS Validacion,
+                                                Atiende,
+                                                IdSucursal
+                                        FROM
+                                            t_servicios_ticket
+                                        GROUP BY Ticket) AS tabla_servicios
+                                        WHERE
+                                            Validacion = 1) tst ON tst.Ticket = ts.Ticket
+                                    WHERE
+                                        ts.Ticket IN (SELECT 
+                                                tabla_servicios.Ticket
+                                            FROM
+                                                (SELECT 
+                                                    Ticket,
+                                                        IF(FechaInicio IS NULL && COUNT(Ticket) = 1, 1, 0) AS Validacion
+                                                FROM
+                                                    t_servicios_ticket
+                                                GROUP BY Ticket) AS tabla_servicios
+                                            WHERE
+                                                Validacion = 1)
+                                            AND ts.FechaCreacion >= '2019-01-01 00:00:00'
+                                            AND ts.Folio IS NOT NULL
+                                            AND ts.Folio <> 0
+                                    GROUP BY Folio");
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return '';
+        }
+    }
+
+    public function catalogo_Prioridades(array $datos) {
+        $consulta = $this->consulta("SELECT
+                                        TIME_TO_SEC(TIME(" . $datos['LocalForaneo'] . ")) AS tiempo,
+                                        " . $datos['LocalForaneo'] . " AS SLA,
+                                        TIME_TO_SEC(TIME(TiempoPrimeraNotificacion" . $datos['TextoLocalForaneo'] . ")) AS segundosPrimeraNotificacion,
+                                        TIME_TO_SEC(TIME(TiempoSegundaNotificacion" . $datos['TextoLocalForaneo'] . ")) AS segundosSegundaNotificacion
+                                    FROM cat_v3_prioridades 
+                                    WHERE Id = " . $datos['IdPrioridad']);
+
+        if (!empty($consulta)) {
+            return $consulta;
+        } else {
+            return '';
+        }
+    }
+    
+    public function setTChekingTicket(array $datos){
+        $this->insertar("t_cheking_ticket", $datos);
+    }
+    
+    public function updateTCkekingTicket(array $datos){
+        $this->actualizar('t_cheking_ticket', $datos, array('Folio' => $datos['Folio']));
+    }
+
 }

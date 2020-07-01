@@ -328,21 +328,18 @@ $("#btn-save-curso").on('click',function(e){
         
     }
 
-    
-  
+    console.log("DATOS_SAVE",$json);
+      
 
-    console.log("DATOS_SAVE",json, formData);
-
-    
-    eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Nuevo-Curso',formData,function(respuesta){
+      eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Nuevo-Curso',formData,function(respuesta){
         console.log(respuesta);
         if (!respuesta.success) {
           return;
       }
       $('#modalresponseSave').modal('show')
+
     });
-  
-});
+  });
 
 
   

@@ -98,6 +98,7 @@
                         <tr>
                             <th class="all">Folio</th>
                             <th class="all">Sucursal</th>
+                            <th class="all">Zona</th>
                             <th class="all">Solicitud asignada a</th>
                             <th class="all">Técnico</th>
                             <th class="all">Creación Ticket</th>
@@ -118,6 +119,7 @@
                                 echo '<tr>';
                                 echo '<td>' . $value['Folio'] . '</td>';
                                 echo '<td>' . $value['Sucursal'] . '</td>';
+                                echo '<td>' . $value['Zona'] . '</td>';
                                 echo '<td>' . $value['AtiendeSolicitud'] . '</td>';
                                 echo '<td>' . $value['Tecnico'] . '</td>';
                                 echo '<td>' . $value['FechaCreacionServicio'] . '</td>';

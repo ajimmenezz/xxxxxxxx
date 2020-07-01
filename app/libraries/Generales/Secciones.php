@@ -632,17 +632,21 @@ class Secciones extends General {
 
                 break;
             case 'Generales/Cursos_Asignados':
-                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
-                $datos['filas'] = [
-                    array('Diseño','Hace algo','20','Activo','
-                    <div style="text-align: center;">
-                        <span id="cursoTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span><br>
-                        <span id="cursoTablaContinuar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: orange; "><i class="fa  fa-fast-forward"></i>Continuar</span><br>
-                        <span id="cursoTablaComenzar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-certificate" style="color: red !important; float: left;"></i><i class="fa fa-youtube-play" ></i>Comenzar</span><br>
-                        <span id="cursoTablaSuspendido" style="cursor: pointer; margin: 5px; font-size: 13px; color:black;"><i class="fa fa-edit"></i>Suspendido</span><br>
-                    </div>'),
-                    array('Redes','Interesante','4','Activo','')
-                ];
+//                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
+                $datos['filas'] = [0 => array(
+                    'Id' => '1',
+                    'Curso' => 'Diseño',
+                    'Avance' => 'Hace algo',
+                    'FechaAsignacion' => '20',
+                    'Estatus' => 'Activo',
+                    'Acciones' => '<a href="javascript:;" class="btn btn-link btn-xs btn-acciones" data-accion="1"><span> <i class="fa fa-edit"></i>Completado</span></a>')];
+                        
+
+//                    <span><i class="fa  fa-fast-forward" @click="view(device.id)"></i>Continuar</span>
+//                    <span><i class="fa fa-certificate" "></i><i class="class="fa fa-youtube-play"" @click="view(device.id)"></i>Comenzar</span>
+//                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Suspendido</span>');
+//                    array('Redes','Interesante','4','Activo','')
+//                ];
                 break;
             default:
                 break;
