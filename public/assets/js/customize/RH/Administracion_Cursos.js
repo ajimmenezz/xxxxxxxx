@@ -126,40 +126,41 @@ let listTemario=[]
   $('#btn-agregar-nuevo-temario').on('click',function(e){
     //modalSubirTemarios
     console.log("btn-agregar-nuevo-temario")
-  $('#modalValidateTemario').modal('show')
-
-  //tablaTemarios.limpiarTabla();
-  
+    $nombreTemario=$("#nombreTemario").val();
+  if($nombreTemario!==""){
+    
     let numItemsTemario = tablaTemarios.datosTabla();
     $filas_num=numItemsTemario.length;
     let datos = tablaTemarios.datosFila(this);
-  
-
-  console.debug(datos,"DATOS TABLA TEMARIOS", numItemsTemario,$filas_num,datos);
- 
-  $long=listTemario.length+1;
-  $porcentaje=(100/$long).toFixed(2);
-  $nombreTemario=$("#nombreTemario").val();
-  console.debug($nombreTemario,$porcentaje,"DATOS tEMARIO1",listTemario)
-  listTemario.push({'nombre':$nombreTemario,'porcentaje':$porcentaje});
-  
-
-  tablaTemarios.limpiartabla();
-
-  listTemario.forEach(element => {
-    element.porcentaje=$porcentaje;
-    tablaTemarios.agregarDatosFila([
-      element.nombre,
-      element.porcentaje+'%',
-      "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
-    
-    ]);
-});
 
 
+    console.debug(datos,"DATOS TABLA TEMARIOS", numItemsTemario,$filas_num,datos);
+
+    $long=listTemario.length+1;
+    $porcentaje=(100/$long).toFixed(2);
+
+    console.debug($nombreTemario,$porcentaje,"DATOS tEMARIO1",listTemario)
+    listTemario.push({'nombre':$nombreTemario,'porcentaje':$porcentaje});
 
 
-  console.debug($nombreTemario,$porcentaje,"DATOS tEMARIO2",listTemario)
+    tablaTemarios.limpiartabla();
+
+    listTemario.forEach(element => {
+      element.porcentaje=$porcentaje;
+      tablaTemarios.agregarDatosFila([
+        element.nombre,
+        element.porcentaje+'%',
+        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+      
+      ]);
+    });
+
+
+
+
+    console.debug($nombreTemario,$porcentaje,"DATOS tEMARIO2",listTemario)
+    $("#nombreTemario").val("");
+  }
 });
 
 tablaTemarios.evento(function () {
@@ -223,20 +224,9 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
     //modalSubirTemarios
     console.log("btn-nuevo-puestoParticipante")
 
-    //  $nombrePuesto=$("#puesto").val();
-   
-    //  console.log($nombrePuesto,"DATOS tEMARIO1",listPuesto)
-    //  listPuesto.push($nombrePuesto);
-     
-     
-     //$datos['temario']=listPuesto;
-     
-   
-
-  $('#modalValidateParticipantes').modal('show')
-
-
-    let numItemsTemario = tablaParticipantes.datosTabla();
+    $nombrePuesto=$("#puesto").val();
+    if($nombrePuesto!==""){
+      let numItemsTemario = tablaParticipantes.datosTabla();
     $filas_num=numItemsTemario.length;
     let datos = tablaParticipantes.datosFila(this);
 
@@ -246,7 +236,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
     console.debug('per',perfiles,'files',datos,"DATOS TABLA TEMARIOS", numItemsTemario,$filas_num,datos);
 
     
-    $nombrePuesto=$("#puesto").val();
+   
     console.debug($nombrePuesto,"DATOS tEMARIO1",listPuesto)
     listPuesto.push({'nombre':$nombrePuesto});
 
@@ -265,6 +255,8 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
     console.debug($nombrePuesto,"DATOS tEMARIO2",listPuesto)
+    $("#puesto").val("");
+    }
      
 });
 
@@ -323,23 +315,19 @@ $("#btn-save-curso").on('click',function(e){
       return false;
     }
     
-    // let json={
-    //   'curso':{
-    //     img:$("#file-upload").val(),
-    //     nombre:$("#nombreCurso").val(),
-    //     url:$("#urlCurso").val(),
-    //     descripcion:$("#textareaDescripcionCurso").val(),
-    //     certificado:$("#certificadoCurso").val(),
-    //     costo:$("#costoCurso").val(),
-    //     },
-    //     'temario':[
-    //       {temario:'string',porcentaje:0},
-    //       {temario:'string',porcentaje:0}
-          
-    //     ],
-    //     'participantes':[3,9]
-        
-    // }
+    let datosTabla = tablaTemarios.datosTabla();
+    let datosTabla2 = tablaParticipantes.datosTabla();
+
+    if(datosTabla.length<=0){
+      $('#modalValidateTemario').modal('show')
+      return false;
+    }
+
+    if(datosTabla2.length<=0){
+      $('#modalValidateParticipantes').modal('show')
+      return false;
+    }
+    
 
     var json={
       curso:{
@@ -360,7 +348,7 @@ $("#btn-save-curso").on('click',function(e){
 
 
     var temas=[]
-    let datosTabla = tablaTemarios.datosTabla();
+    
     for (let index = 0; index < datosTabla.length; index++) {
       const element = datosTabla[index];
       console.debug("DATOS",element,element[0])
@@ -374,7 +362,8 @@ $("#btn-save-curso").on('click',function(e){
     json.temario.infoTabla=temas;
 
     var part=[]
-    let datosTabla2 = tablaParticipantes.datosTabla();
+   
+
     for (let index = 0; index < datosTabla2.length; index++) {
       const element = datosTabla2[index];
       console.debug("DATOS_PART",element,element[0])
@@ -387,13 +376,14 @@ $("#btn-save-curso").on('click',function(e){
     json.participantes=part;
 
 
-   
+   $("#nameCurso").text($("#nombreCurso").val());
 
     console.debug("DATOS_SAVE",json);
       
 
     if ($('#inputImgCurso').val() !== '') {
       file.enviarArchivos('#inputImgCurso', 'Administracion_Cursos/Nuevo-Curso', '', json, function (respuesta) {
+        console.log(respuesta);
         // if (respuesta !== 'otraImagen') {
         //     window.open(respuesta.ruta, '_blank');
         //     location.reload();
@@ -401,23 +391,30 @@ $("#btn-save-curso").on('click',function(e){
         //     evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
         // }
         if (!respuesta.success) {
+          evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
           return;
       }
+     
       });
     }else{
 
       eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Nuevo-Curso',json,function(respuesta){
         console.log(respuesta);
         if (!respuesta.success) {
+          evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
           return;
       }
-      $('#modalresponseSave').modal('show')
+      
       
 
     });
   }
-  file.limpiar('#inputImgCurso');
-   });
+  evento.mostrarMensaje('.messageAccionesWizard', true, 'Se ha registrado el curso.', 5000);
+      $('#modalresponseSave').modal('show')
+      location.reload();
+      file.limpiar('#inputImgCurso');
+
+});
 
 
   

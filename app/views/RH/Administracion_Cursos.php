@@ -558,7 +558,7 @@
                   <div class="row">
                    
                     <div class="col-11">
-                        Se genero el curso {title} con éxito.
+                        Se genero el curso <b id="nameCurso"></b> con éxito.
                     </div>
                    
                   </div>
@@ -566,7 +566,7 @@
 
               </div>
               <div class="modal-footer">
-                    <a href="javascript:;" class="btn btn-white m-r-5 btn-cancel_wizard" id="cerrar" data-dismiss="modal" aria-label="Close"> Cerrar</a>
+                    <a href="javascript:;" class="btn btn-white m-r-5 " id="cerrar" data-dismiss="modal" aria-label="Close"> Cerrar</a>
               </div>
               
 
