@@ -175,7 +175,7 @@ class Secciones extends General {
      */
 
     public function getDatosPagina(string $url) {
- 
+
         $datos = array();
         $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
@@ -612,7 +612,7 @@ class Secciones extends General {
                 $datos['folios'] = $this->Solicitud->sla();
                 break;
             case 'RH/Administracion_Cursos':
-            
+
                 $datos['cursos'] = $this->administracionCursos->getCourses();
                 $datos['perfiles'] = $this->administracionCursos->getProfile();
                 $datos['certificados'] = $this->administracionCursos->getCertificate();
@@ -622,16 +622,16 @@ class Secciones extends General {
                 $datos['cursos'] = $this->administracionCursos->getMyCourses($usuario['IdPerfil']);
                 break;
             case 'Generales/Cursos_Asignados':
-//                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
-                $datos['filas'] = [0 => array(
-                    'Id' => '1',
-                    'Curso' => 'Diseño',
-                    'Avance' => 'Hace algo',
-                    'FechaAsignacion' => '20',
-                    'Estatus' => 'Activo',
-                    'Acciones' => '<a href="javascript:;" class="btn btn-link btn-xs btn-acciones" data-accion="1"><span> <i class="fa fa-edit"></i>Completado</span></a>')];
-                        
-
+                $datos['cursos'] = $this->administracionCursos->getMyCourses($usuario['IdPerfil']);
+                $datos['idUsuario'] = $usuario['Id'];
+//                $datos['filas'] = [0 => array(
+//                    'Id' => '1',
+//                    'Curso' => 'Diseño',
+//                    'Avance' => 'Hace algo',
+//                    'FechaAsignacion' => '20',
+//                    'Estatus' => 'Activo',
+//                    'Acciones' => '<a href="javascript:;" class="btn btn-link btn-xs btn-acciones" data-accion="1">
+//                    <span> <i class="fa fa-edit"></i>Completado</span></a>')];
 //                    <span><i class="fa  fa-fast-forward" @click="view(device.id)"></i>Continuar</span>
 //                    <span><i class="fa fa-certificate" "></i><i class="class="fa fa-youtube-play"" @click="view(device.id)"></i>Comenzar</span>
 //                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Suspendido</span>');
@@ -643,8 +643,6 @@ class Secciones extends General {
         }
         return $datos;
     }
-
-
 
     /*
      * Regresa la seccion alcance segun el perfil del usuario
