@@ -71,6 +71,7 @@
         <?php
         echo $personalCss;
         ?>
+
         <!-- ================== FINALIZANDO ARCHIVOS CSS DE LA PAGINA ================== -->
 
         <script src="/assets/js/customize/Calendar/catalogo_calendar.js"></script>
@@ -132,7 +133,26 @@
 //            smartlook('init', 'b2ff341c34242150ed3e8ffe2249aa6c666dcc4b');
         </script>
 
-        <!-- ================== FINALIZANDO SMART LOOK ================== -->  
+<!--        <script id="scriptTemplate" type="text/x-tmpl">
+            Hello, #= firstName # #= lastName #
+        </script>-->
+
+        <script>
+//            var scriptTemplate = tmpl($("#scriptTemplate").html());
+//            var scriptData = {firstName: "John", lastName: "Doe"};
+//            console.log(scriptData);
+//            $("#script").html(scriptTemplate(scriptData));
+//
+//
+//            var inlineTemplate = tmpl("Hello, #= firstName # #= lastName #");
+//            var inlineData = {firstName: "John", lastName: "Doe"};
+//            console.log(inlineData);
+
+//            var template-download = tmpl("Hello, #= firstName # #= lastName #");
+//            var inlineData = {firstName: "John", lastName: "Doe"};
+//            console.log(inlineData);
+        </script>
+        <!-- ================== FINALIZANDO SMART LOOK ==================   
 
 
     </head>
@@ -270,11 +290,11 @@
                             <!--se eliminio barra de buquedea ya por el momento no se utiliza-->
                         </li>
                         <!--Finalizando icono de ayuda-->
-                        
+
                         <!--Empezando separador -->
                         <li data-devider="right-sidebar-toggled" class="divider hidden-xs hidden"></li>
                         <!--Finlizando separador -->
-                        
+
                         <!--Empezando boton para ocultar slider derecho -->
                         <li class="hidden-xs">
                             <a href="javascript:;" data-click="right-sidebar-toggled" class="f-s-14 hidden">

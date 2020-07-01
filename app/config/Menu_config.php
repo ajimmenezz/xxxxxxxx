@@ -383,27 +383,50 @@ $config['Generales'] = array(
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
+            'jquery-fileUpload/css/fileinput.min',
+            'jquery-file-upload/blueimp-gallery/blueimp-gallery.min',
+            'jquery-file-upload/css/jquery.fileupload',
+            'jquery-file-upload/css/jquery.fileupload-ui',
         ),
         'js' => array(
-            'Base/Base', 
+            'Base/Base',
             'RH/Cursos_Asignados',
             'Base/Select',
             'Componentes/Socket',
             'Componentes/Modal/ModalBase',
             'Componentes/Modal/Alertas',
             'Componentes/Modal/Modal',
+            'Componentes/HerramientasWeb/Utileria',
             'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
             'Componentes/Selects/SelectMultiple',
             'Componentes/Pagina',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
-            ),
+            'Componentes/FileUpload/IUpload',
+            'Componentes/FileUpload/FileUpload_Basico',
+        ),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
             'select2/dist/js/select2.min',
             'pace/pace.min',
+            'jquery-fileUpload/js/fileinput',
+            'jquery-fileUpload/js/es',
+            'jquery-file-upload/js/vendor/jquery.ui.widget',
+            'jquery-file-upload/js/vendor/canvas-to-blob.min',
+            'jquery-file-upload/js/vendor/load-image.min',
+            'jquery-file-upload/js/vendor/tmpl.min',
+            'jquery-file-upload/js/jquery.iframe-transport',
+            'jquery-file-upload/js/jquery.fileupload',
+            'jquery-file-upload/js/jquery.fileupload-process',
+            'jquery-file-upload/js/jquery.fileupload-image',
+            'jquery-file-upload/js/jquery.fileupload-audio',
+            'jquery-file-upload/js/jquery.fileupload-video',
+            'jquery-file-upload/js/jquery.fileupload-validate',
+            'jquery-file-upload/js/jquery.fileupload-ui',
+            'jquery-file-upload/js/main',
+            'jquery-file-upload/js/cors/jquery.xdr-transport'
         ),
         'Permiso' => 'VGENCA'
     )
@@ -415,9 +438,9 @@ $config['Configuracion'] = array(
         'icono' => '',
         'Url' => '',
         'css' => array('Configuracion/perfil'),
-        'pluginsCss' => array('DrawingBoard/css/drawingboard.min','parsley/src/parsley'),
+        'pluginsCss' => array('DrawingBoard/css/drawingboard.min', 'parsley/src/parsley'),
         'js' => array('Base/Base', 'Base/Socket', 'Configuracion/perfil'),
-        'pluginsJs' => array('DrawingBoard/js/drawingboard.min','parsley/dist/parsley','parsley/src/i18n/es'),
+        'pluginsJs' => array('DrawingBoard/js/drawingboard.min', 'parsley/dist/parsley', 'parsley/src/i18n/es'),
         'Permiso' => 'VCPE'
     )
 );
@@ -890,7 +913,6 @@ $config['Poliza'] = array(
             'moment/es',
             'bootstrap-eonasdan-datetimepicker/build/js/bootstrap-datetimepicker.min',
         ),
-
         'Permiso' => 'VSLA'
     ),
     'Seguimiento-Poliza' => array(
@@ -2576,6 +2598,7 @@ $config['Laboratorio'] = array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
             'DrawingBoard/css/drawingboard.min',
+            'jquery-fileUpload/css/fileinput.min',
             'jquery-fileUpload/css/fileinput.min',
             'parsley/src/parsley'
         ),

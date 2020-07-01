@@ -32,6 +32,7 @@ class Modelo_Cursos extends Modelo_Base {
                                     curso.Nombre,
                                     curso.Descripcion,
                                     curso.estatus,
+                                    estatus(curso.estatus) AS EstatusNombre,
                                     relacion.fechaAsignacion,
                                     (select sum(tema.porcentaje) from t_curso_tema as tema
                                         left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id

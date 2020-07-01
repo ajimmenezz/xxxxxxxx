@@ -149,6 +149,7 @@ $route['Generales/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$
 $route['Generales/Reportes/(:any)'] = 'Generales/Controller_Reportes/manejarEvento/$1';
 $route['Generales/Dashboard_Generico/Mostrar_Graficas'] = 'V2/Controller_Dashboard/getDatosDashboards';
 $route['Generales/Dashboard_Generico/Mostrar_Datos_Actualizados'] = 'V2/Controller_Dashboard/getDatosActualizados';
+$route['Generales/Cursos_Asignados/(:any)'] = 'RH/Controller_Cursos_Asignados/manejarEvento/$1';
 
 /* Routers para el manejo de páginas de PhantomJS */
 $route['Phantom/Servicio/(:any)'] = 'Phantom/Controller_Phantom/servicioPhantom/$1';
@@ -173,7 +174,6 @@ $route['RH/Catalogos_Permisos/Nuevo_Registro/(:any)'] = 'V2/Controller_Catalogos
 $route['RH/Catalogos_Permisos/Actualizar_Registro/(:any)'] = 'V2/Controller_Catalogos/actualizarRegistro/$1';
 $route['RH/CalendarioPermisos/(:any)'] = 'Calendar/Controller_Calendar/manejarEvento/$1';
 $route['RH/Administracion_Cursos/(:any)'] = 'RH/Controller_Administracion_Cursos/manejarEvento/$1';
-$route['RH/Cursos_Asignados/(:any)'] = 'RH/Controller_Cursos_Asignados/manejarEvento/$1';
 
 /* Routers para el manejo de la seccion Capacitacion */
 $route['Capacitacion/(:any)'] = 'Capacitacion/Controller_Capacitacion/desplegarPantalla/$1';
