@@ -42,7 +42,7 @@
                             </thead>
                             <tbody>
                                 <?php
-                            var_dump($datos['cursos']);
+                            // var_dump($datos['cursos']);
 
                             
                                 
@@ -718,6 +718,270 @@ function btnAdminEliminarCurso(id) {
     </div>
 </div>
 <!--  fin ver cursos -->
+
+
+<!--  EDITAR curso -->
+
+
+
+
+
+<div id="administracion-cursos-EDITAR" class="content" style="display:none;">
+    <!-- begin page-header -->
+    <div class="row">
+        <div class="col-sm-8">
+            <h1 class="page-header"> <b>Curso </b> Gestión de proyectos.</h1>
+        </div>
+        <div class="col-sm-4"> pan</div>
+    <!-- end page-header -->
+
+    
+        <div class="col-sm-12">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#default-tab-1" data-toggle="tab">Datos del curso</a></li>
+                <li class=""><a href="#default-tab-2" data-toggle="tab">Temario</a></li>
+                <li class=""><a href="#default-tab-3" data-toggle="tab">Participantes</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade active in" id="default-tab-1">
+                        <form id="formDatosNewCurso" data-parsley-validate="true" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                        <!-- <div class="col-xs-12">
+                                        <img class="img-fluid" style="width:90%; margin-left:12px;"   src="/assets/img/user-12.jpg" alt="img-curso">
+                                        </div> -->
+                                        <div class="col-xs-12" style="text-align: center;  margin-top: 10px;">
+                                        
+
+
+                                        <!-- <label for="file-upload" class="subir btn" style="width:100%">
+                                            <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                                        </label>
+                                        <input id="file-upload" onchange='cambiar()' type="file" style='display: none;'/>
+                                        <div id="info"></div> -->
+
+                                        <div id="archivo" class="form-group" >
+                                            
+                                            <label>Imagen curso</label><br><br>
+                                            <input id="inputImgCursoEdit" name="evidenciasIncapacidad[]" type="file" multiple>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-xs-8">
+                                
+                                    <!-- begin row -->
+                                    <div class="row">
+                                        <!-- begin col-4 -->
+                                        <div class=" col-xs-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Nombre del curso *</label>
+                                                <input type="text" id="nombreCursoEdit" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                        <!-- end col-4 -->
+                                        <!-- begin col-4 -->
+                                        <div class=" col-xs-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Url *</label>
+                                                <input type="text" id="urlCursoEdit" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
+                                            </div>
+                                        </div>
+                                        <!-- end col-4 -->
+                                        <!-- begin col-4 -->
+                                        <div class=" col-xs-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="nuevoArchivo">Descripción *</label>
+                                                <textarea id="textareaDescripcionCursoEdit" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- end col-4 -->
+                                        <!-- begin col-4 -->
+                                        <div class=" col-xs-12 col-md-6">
+                                        <?php
+
+                                        // var_dump($datos['certificados']);
+                                        // var_dump($datos['tipoCursos']);
+                                        
+
+                                        ?>
+                                            <div class="form-group">
+                                                <label for="nuevoArchivo">Certificado </label>
+                                                <select id="certificadoCursoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                    
+                                                    <?php
+                                                    var_dump($datos['certificados']);
+                                                    foreach ($datos['certificados'] as $value) {
+                                                        
+                                                            echo '<option value="'.$value['id'].'">'.$value['nombre'].'</option>';
+                                                        
+                                                    }
+                                                ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- end col-4 -->
+                                        <!-- begin col-4 -->
+                                        <div class=" col-xs-12 col-md-6">
+                                            <div class="form-group">
+                                                <label>Costo </label>
+                                                <input type="text" id="costoCursoEdit" name="costo" placeholder="$00.00" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <!-- end col-4 -->
+                                    </div>
+                                    <!-- end row -->
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <button style="margin-top: 21px;"  id="btn-editarDatosStatus" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;">
+                                     Editar datos</button>
+                                    <button style="margin-top: 21px;"  id="btn-cancelar-cambios" type="button" class="btn btn-white m-r-5 m-b-5" style="float: right;">
+                                    Editar datos</button>
+                                    <button style="margin-top: 21px;"  id="btn-editarDatos" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;">
+                                    <i class="fa fa-save"></i> Editar datos</button>
+                                </div>
+                            </div>
+                        </form>
+                </div>
+                <div class="tab-pane fade" id="default-tab-2">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="row">
+                                    <div class="col-xs-9">
+                                        <div class="form-group">
+                                            <label>Nombre del curso *</label>
+                                            <input type="text" id="nombreTemarioEdit" name="Nombre" placeholder="Nombre" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <button style="margin-top: 21px;" id="btn-agregar-nuevo-temarioEdit" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;"><i class="fa fa-plus"></i> Agregar</button>
+                                    </div>
+
+                                    <div class="col-xs-12">
+                                        Aqui defines el temario que lleva el curso que tomara el personal de la empresa.<br>
+                                        Cada temario que se ingrese tendrá un valor porcentual del 100%, esto quiere 
+                                        decir, que si yo ingreso 10 temas cada uno tendrá un valor del 10%, por lo que es 
+                                        importante que tome esto en consideración al definirlo.
+                                        <br><br>
+                                        <b>Nota: Es importante que se deba definir al menos un temario al curso ya que 
+                                            no se podrá crear.
+                                        </b>
+                                    </div>
+                                    <div class="col-xs-12" style="text-align: center; margin-top:30px;" >
+                                    <button id="btn-loadExcel-temarioEDit" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-file"></i> Subir Excel</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="table-responsive">
+                                            <table id="tabla-cursos-temarioEdit" class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                    <td>Temario</td>
+                                                    <td>Porcentaje</td>
+                                                    <td>Acciones</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                
+                                                    <?php
+                                                    //  echo "welcome ".$_COOKIE['temarios'];
+                                                    //  print_r($_COOKIE['temarios']);
+                                                    
+                                                    // foreach ($datos['temario'] as $value) {
+                                                    //     echo '<tr>';
+                                                    //     foreach ($value as $dato) {
+                                                    //         echo '<td>' . $dato . '</td>';
+                                                    //     }
+                                                    //     echo '</tr>';
+                                                    // }
+                                                    ?>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="tab-pane fade" id="default-tab-3">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="form-group">
+                                        <!-- <input id="perfiles" type="hidden" value="<?php echo $datos['perfiles']; ?>"> -->
+                                            <label for="puesto">Puesto </label>
+                                            <select id="puestoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                <option value="">Seleccionar</option>
+                                                <?php
+                                                    var_dump($datos['perfiles']);
+                                                    foreach ($datos['perfiles'] as $value) {
+                                                        
+                                                            echo '<option value="'.$value['Id'].'">'.$value['Nombre'].'</option>';
+                                                        
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button style="margin-top: 21px;"  id="btn-nuevo-puestoParticipante" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;"><i class="fa fa-plus"></i> Agregar</button>
+                                    </div>
+
+                                    <div class="col-xs-12">
+                                        Indica los puestos que deben tomar el curso.<br>
+                                        Cuando generes el curso el sistema notificará por correo al personal que cubra el 
+                                        puesto que esta asignado en el curso y también le aparecerá en la sección de CURSOS ASIGNADOS.
+                                        
+                                        <br><br>
+                                        <b>Nota: Es importante que se deba definir al menos un puesto. </b>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="table-responsive">
+                                            <table id="tabla-cursos-participantesEdit" class="table  table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                    <td>Puesto</td>
+                                                    <td>Acciones</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    // foreach ($datos['filas'] as $value) {
+                                                    //     echo '<tr>';
+                                                    //     foreach ($value as $dato) {
+                                                    //         echo '<td>' . $dato . '</td>';
+                                                    //     }
+                                                    //     echo '</tr>';
+                                                    // }
+                                                    ?>
+                                                        
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+</div>
+
+<!-- fin EDITAR curso -->
 
 
 <!-- mdals eliminar cursos -->
