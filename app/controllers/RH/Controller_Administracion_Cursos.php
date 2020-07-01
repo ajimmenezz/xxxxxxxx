@@ -79,21 +79,26 @@ class Controller_Administracion_Cursos extends Base {
                 }
                 echo $response->toJsonString();
                 break;
-            case 'SmartResponse':
-                $result = $this->curso->smartResponseTest();
-
-                //Opcion A
-                //enviamos el objeto o valor tal cual nos da la libreria, y le asignamos la llave resultado
-                // $response->addData("resultado", $result);
-                //Opcion B (recommended)
-                //Enviamos una respuesta donde cada dato va con una respectiva llave
-                $response->addData("nameFull", $result->name);
-                $response->addData("age", $result->age);
-                $response->addData("arrCourses", $result->courses);
-
-
-                // $response->onSuccess(); 
-                $response->onSuccess(HttpStatusCode::HTTP_CREATED);
+                
+                 
+            case 'Comenzar-Curso':
+                $resultado = $this->curso->startCourse($this->input->post());
+                if ($resultado) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("temario", $resultado);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
+            case 'Continuar-Curso':
+                $resultado = $this->curso->continueCourse($this->input->post());
+                if ($resultado) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("temario", $resultado);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
                 echo $response->toJsonString();
                 break;
             default:

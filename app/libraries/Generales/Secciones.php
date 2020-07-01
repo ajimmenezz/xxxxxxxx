@@ -617,19 +617,9 @@ class Secciones extends General {
                 $datos['perfiles'] = $this->administracionCursos->getProfile();
                 $datos['certificados'] = $this->administracionCursos->getCertificate();
                 $datos['tipoCursos'] = $this->administracionCursos->getTypeCourses();
-                $datos['temario'] = [];
-
-                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
-                $datos['filas'] = [ 
-                    array('Diseño','Hace algo','
-                    <div style="text-align: center;"><i class="fa fa-eye" style="font-size: 17px; color: #348fe2;" ></i>
-                    <i class="fa fa-pencil" style="font-size: 17px; color: orange;" ></i>
-                    <i class="fa fa-trash" style="font-size: 17px; color: red;" ></i></div>
-                    '),
-                    array('Redes','Interesante','4','Activo','')
-                ];
-
-
+                break;
+            case 'RH/MisCursos':
+                $datos['cursos'] = $this->administracionCursos->getMyCourses($usuario['IdPerfil']);
                 break;
             case 'Generales/Cursos_Asignados':
 //                $datos['columnas'] = ['Nombre','Descripcion','Participantes','Estatus','Acciones'];
