@@ -524,8 +524,9 @@ class Controller_SegundoPlano extends \CI_Controller {
 
         foreach ($datosTicket as $key => $value) {
             echo '<pre>';
+            var_dump($value);
             var_dump($value['Folio']);
-            var_dump($this->conversorSegundosHoras($value['TiempoTranscurrido']));
+//            var_dump($this->conversorSegundosHoras($value['TiempoTranscurrido']));
             if ($value['LocalForaneo'] === 'SLALocal') {
                 $localForaneo = 'Local';
             } else {
@@ -549,7 +550,7 @@ class Controller_SegundoPlano extends \CI_Controller {
                                                 ON cvrc.Id = cvs.IdRegionCliente
                                             WHERE cvs.Id = "' . $value['IdSucursal'] . '"');
 
-            var_dump($this->conversorSegundosHoras($tiempo));
+//            var_dump($this->conversorSegundosHoras($tiempo));
 
             if ($value['TiempoTranscurrido'] <= $tiempo) {
                 if ($value['TiempoTranscurrido'] >= $datosPrioridades[0]['segundosPrimeraNotificacion'] && empty($value['NumeroNotificacion'])) {
@@ -560,9 +561,11 @@ class Controller_SegundoPlano extends \CI_Controller {
                     $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 2, 'FechaNotificacion' => $fecha));
                 }
             } else {
+                $host = $_SERVER['SERVER_NAME'];
 //                var_dump($tiempo);
 //                var_dump($tiempo + 7200);
                 var_dump($this->conversorSegundosHoras($value['TiempoTranscurridoNotificacion']));
+                var_dump($this->conversorSegundosHoras(28800));
                 if ($value['NumeroNotificacion'] === '2') {
                     $numeroNotificacion = 'Notificación num. 3';
                     $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 3, 'FechaNotificacion' => $fecha));
@@ -604,8 +607,9 @@ class Controller_SegundoPlano extends \CI_Controller {
 //                $mensaje = $this->mail->mensajeCorreo('Seguimiento Folio ' . $value['Folio'], $textoCoordinador);
 //                $this->mail->enviarCorreo('notificaciones@siccob.solutions', $arrayCorreos, 'Seguimiento Folio ' . $value['Folio'], $mensaje);
 //            }
-
+            $linkDetenerNotificacionSLA = 'http://' . $host . '/SegundoPlano/setNotificacionesSLA/' . $value['IdCheking'];
             $textoTecnico = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $value['Folio'] . '</strong>.</p>
+                    Si quiere parar la recepción de notificaciones dar click <a href="' . $linkDetenerNotificacionSLA . '" target="_blank">Aquí</a>
                     <p><strong>Asunto:</strong> ' . $numeroNotificacion . '  </p>
                     <p><strong>Descripción:</strong> Favor te de atender el Folio ' . $value['Folio'] . '. </p>
                     <br><br>';
@@ -635,6 +639,12 @@ class Controller_SegundoPlano extends \CI_Controller {
         }
 
         return $horas . ':' . $minutos . ":" . $segundos;
+    }
+
+    public function detenerNotificacionesSLA(string $valor) {
+        $this->DB->updateTCkekingTicket(array('Flag' => 0), array('Id' => $valor));
+        $html = '<input name="button" type="button" onclick="window.close();" value="Cerrar esta ventana" />';
+        echo $html;
     }
 
 }

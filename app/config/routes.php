@@ -321,6 +321,7 @@ $route['Prime/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Prime/Inventario/(:any)'] = 'Prime/Controller_Inventario/manejarEvento/$1';
 
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
+$route['SegundoPlano/setNotificacionesSLA/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/detenerNotificacionesSLA/$1';
 
 $route['Reportes/Lexmark/(:any)'] = 'Reportes/Controller_PrinterLexmark/manejarEvento/$1';
 $route['Reportes/Censos/(:any)'] = 'Reportes/Controller_CensoReports/manejarEvento/$1';

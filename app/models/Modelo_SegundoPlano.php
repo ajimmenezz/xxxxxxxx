@@ -197,6 +197,7 @@ class Modelo_SegundoPlano extends Base {
                                                         tst.IdSucursal)) = 0,
                                             'SLALocal',
                                             'SLAForaneo') LocalForaneo,
+                                            (SELECT Id FROM t_cheking_ticket WHERE Folio = ts.Folio) AS IdCheking,
                                             (SELECT NumeroNotificacion FROM t_cheking_ticket WHERE Folio = ts.Folio) AS NumeroNotificacion,
                                             (SELECT TIMESTAMPDIFF(SECOND,FechaNotificacion,NOW()) FROM t_cheking_ticket WHERE Folio = ts.Folio) TiempoTranscurridoNotificacion
                                     FROM
@@ -259,8 +260,8 @@ class Modelo_SegundoPlano extends Base {
         $this->insertar("t_cheking_ticket", $datos);
     }
     
-    public function updateTCkekingTicket(array $datos){
-        $this->actualizar('t_cheking_ticket', $datos, array('Folio' => $datos['Folio']));
+    public function updateTCkekingTicket(array $datos, array $where){
+        $this->actualizar('t_cheking_ticket', $datos, $where);
     }
 
 }
