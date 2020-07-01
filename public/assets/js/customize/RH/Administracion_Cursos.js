@@ -392,30 +392,30 @@ $("#btn-save-curso").on('click',function(e){
     console.debug("DATOS_SAVE",json);
       
 
-  //   if ($('#inputImgCurso').val() !== '') {
-  //     file.enviarArchivos('#inputImgCurso', 'Administracion_Cursos/Nuevo-Curso', '', json, function (respuesta) {
-  //       // if (respuesta !== 'otraImagen') {
-  //       //     window.open(respuesta.ruta, '_blank');
-  //       //     location.reload();
-  //       // } else {
-  //       //     evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
-  //       // }
-  //       if (!respuesta.success) {
-  //         return;
-  //     }
-  //     });
-  //   }else{
+    if ($('#inputImgCurso').val() !== '') {
+      file.enviarArchivos('#inputImgCurso', 'Administracion_Cursos/Nuevo-Curso', '', json, function (respuesta) {
+        // if (respuesta !== 'otraImagen') {
+        //     window.open(respuesta.ruta, '_blank');
+        //     location.reload();
+        // } else {
+        //     evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+        // }
+        if (!respuesta.success) {
+          return;
+      }
+      });
+    }else{
 
-  //     eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Nuevo-Curso',json,function(respuesta){
-  //       console.log(respuesta);
-  //       if (!respuesta.success) {
-  //         return;
-  //     }
-  //     $('#modalresponseSave').modal('show')
+      eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Nuevo-Curso',json,function(respuesta){
+        console.log(respuesta);
+        if (!respuesta.success) {
+          return;
+      }
+      $('#modalresponseSave').modal('show')
       
 
-  //   });
-  // }
+    });
+  }
   file.limpiar('#inputImgCurso');
    });
 
