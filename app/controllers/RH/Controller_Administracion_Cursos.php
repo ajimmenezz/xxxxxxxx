@@ -20,11 +20,49 @@ class Controller_Administracion_Cursos extends Base {
         switch ($evento) {
             case 'Nuevo-Curso':
                 $resultado = $this->curso->newCourse($this->input->post());
-
-                echo json_encode($resultado);
+                if ($resultado['response']) {
+                    $cursosActualizados = $this->curso->getCourses();
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("cursos", $cursosActualizados);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
+            case 'Obtener-Curso':
+                $resultado = $this->curso->getCourse($this->input->post());
+                if ($resultado) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("infoCurso", $resultado);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
+            case 'Editar-Curso':
+                $resultado = $this->curso->editCourse($this->input->post());
+                if ($resultado['response']) {
+                    $cursosActualizados = $this->curso->getCourses();
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("cursos", $cursosActualizados);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
                 break;
             case 'Eliminar-Curso':
                 $resultado = $this->curso->deleteCourse($this->input->post());
+                if ($resultado) {
+                    $cursosActualizados = $this->curso->getCourses();
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("cursos", $cursosActualizados);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
+            case 'Eliminar-ElementoCurso':
+                $resultado = $this->curso->deleteElementCourse($this->input->post());
                 if ($resultado) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                 } else {
@@ -32,21 +70,13 @@ class Controller_Administracion_Cursos extends Base {
                 }
                 echo $response->toJsonString();
                 break;
-            case 'SmartResponse':
-                $result = $this->curso->smartResponseTest();
-
-                //Opcion A
-                //enviamos el objeto o valor tal cual nos da la libreria, y le asignamos la llave resultado
-                // $response->addData("resultado", $result);
-                //Opcion B (recommended)
-                //Enviamos una respuesta donde cada dato va con una respectiva llave
-                $response->addData("nameFull", $result->name);
-                $response->addData("age", $result->age);
-                $response->addData("arrCourses", $result->courses);
-
-
-                // $response->onSuccess(); 
-                $response->onSuccess(HttpStatusCode::HTTP_CREATED);
+            case 'Agregar-ElementoCurso':
+                $resultado = $this->curso->addElementCourse($this->input->post());
+                if ($resultado) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
                 echo $response->toJsonString();
                 break;
             default:

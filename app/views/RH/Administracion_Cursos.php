@@ -92,7 +92,7 @@
     </div>
 
     <!--SandBox SmartResponse--->
-    <div class="panel panel-inverse" data-sortable-id="ui-widget-1">
+    <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:none;">
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -124,8 +124,11 @@
             
             <div class="row">
 
-                
+            <div class="col-sm-12  messageAccionesWizard"></div>
+
                     <div id="wizard">
+                   
+
                         <ol>
                             <li  id="showContent_1">
                                 Datos del curso
@@ -142,6 +145,8 @@
                            
                         </ol>
                         <!-- begin wizard step-1 -->
+
+                        
                         <div>
                         
                             <fieldset>
@@ -158,18 +163,25 @@
                             
                                     <div class="row">
                                         <div class="col-xs-4">
-                                             <div class="col-xs-12">
+                                             <!-- <div class="col-xs-12">
                                                 <img class="img-fluid" style="width:90%; margin-left:12px;"   src="/assets/img/user-12.jpg" alt="img-curso">
-                                             </div>
+                                             </div> -->
                                              <div class="col-xs-12" style="text-align: center;  margin-top: 10px;">
                                                 
 
 
-                                                <label for="file-upload" class="subir btn" style="width:100%">
+                                                <!-- <label for="file-upload" class="subir btn" style="width:100%">
                                                     <i class="fas fa-cloud-upload-alt"></i> Subir archivo
                                                 </label>
                                                 <input id="file-upload" onchange='cambiar()' type="file" style='display: none;'/>
-                                                <div id="info"></div>
+                                                <div id="info"></div> -->
+
+                                                <div id="archivo" class="form-group" >
+                                                    
+                                                    <label>Imagen curso</label><br><br>
+                                                    <input id="inputImgCurso" name="evidenciasIncapacidad[]" type="file" multiple>
+                                                </div>
+
                                             </div>
                                         </div>
                                         <div class="col-xs-8">
@@ -295,7 +307,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <div id="arrayTemario" style="display:none;"></div>
+                                                     
                                                             <?php
                                                             //  echo "welcome ".$_COOKIE['temarios'];
                                                             //  print_r($_COOKIE['temarios']);
@@ -308,11 +320,7 @@
                                                             //     echo '</tr>';
                                                             // }
                                                             ?>
-                                                            <tr>
-                                                                <td></td>
-                                                                <td></td>
-                                                                <td></td>
-                                                            </tr>
+                                                            
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -343,7 +351,7 @@
                                         <div class="row">
                                             <div class="col-md-9">
                                                 <div class="form-group">
-                                               
+                                               <!-- <input id="perfiles" type="hidden" value="<?php echo $datos['perfiles']; ?>"> -->
                                                     <label for="puesto">Puesto </label>
                                                     <select id="puesto" class="form-control" style="width: 100%" data-parsley-required="true">
                                                         <option value="">Seleccionar</option>
@@ -396,10 +404,7 @@
                                                             //     echo '</tr>';
                                                             // }
                                                             ?>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
+                                                             
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -410,6 +415,8 @@
                             </fieldset>
                         </div>
                         <!-- end wizard step-3 -->
+
+                       
                         
                     </div>
                
@@ -598,6 +605,17 @@ function btnAdminEliminarCurso(id) {
     color:#fff;
     background: #d8900c;
 }
+
+
+/* .file-thumbnail-footer{
+    width: 130px;
+    height: 60px;
+}
+
+.kv-preview-data file-preview-image{
+    width: 130px;
+    height: 100px;
+} */
 
 </style>
 
