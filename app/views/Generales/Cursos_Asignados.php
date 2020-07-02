@@ -16,7 +16,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Avance total</h4>
-                            <p>65.33%</p>	
+                            <p><?php echo $datos['cursos']['avance']?>%</p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -31,7 +31,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Faltante total</h4>
-                            <p>33.77%</p>	
+                            <p><?php echo $datos['cursos']['feltante']?>%</p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -43,7 +43,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Total de cursos</h4>
-                            <p>90</p>	
+                            <p><?php echo $datos['cursos']['totalCursos']?></p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -77,8 +77,8 @@
                             </thead>
                             <tbody>
                                 <?php
-                                if (!empty($datos['cursos'])) {
-                                    foreach ($datos['cursos'] as $key => $value) {
+                                if (!empty($datos['cursos']['cursos'])) {
+                                    foreach ($datos['cursos']['cursos'] as $key => $value) {
                                         if ($value['estatus'] === '1' && $value['Porcentaje'] === '100') {
                                             $accion = '<span style="color: blue;"> <i class="fa fa-check-square"></i> Completado</span>';
                                         } elseif ($value['estatus'] === '1' && $value['Porcentaje'] < '100' && $value['Porcentaje'] > '0') {
