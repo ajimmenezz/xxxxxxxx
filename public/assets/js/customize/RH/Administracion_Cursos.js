@@ -365,11 +365,16 @@ let tablaParticipantes = null;
     
 
 let listPuesto=[];
+let selectPartic= new SelectBasico('puesto')
 $("#btn-nuevo-puestoParticipante").on('click',function(e){
     //modalSubirTemarios
     console.log("btn-nuevo-puestoParticipante")
 
-    $nombrePuesto=$("#puesto").val();
+    $nombrePuesto=selectPartic.obtenerValor()
+    $nombrePuestoString=selectPartic.obtenerTexto()
+    alert("string",$nombrePuestoString)
+    console.debug("stirng",$nombrePuestoString)
+
     if($nombrePuesto!==""){
       let numItemsTemario = tablaParticipantes.datosTabla();
     $filas_num=numItemsTemario.length;
@@ -383,7 +388,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
     
    
     console.debug($nombrePuesto,"DATOS tEMARIO1",listPuesto)
-    listPuesto.push({'nombre':$nombrePuesto});
+    listPuesto.push({'nombre':$nombrePuesto, 'nameString':$nombrePuestoString});
 
 
     tablaParticipantes.limpiartabla();
@@ -391,6 +396,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
     listPuesto.forEach(element => {
       tablaParticipantes.agregarDatosFila([
         element.nombre,
+        element.nameString,
         "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
       
       ]);
@@ -452,11 +458,15 @@ let tablaParticipantesEdit = null;
     
 
 let listPuestoEdit=[];
+let selectPart= new SelectBasico('puestoEdit')
 $("#btn-nuevo-puestoParticipanteEdit").on('click',function(e){
     //modalSubirTemarios
     console.log("btn-nuevo-puestoParticipante")
 
-    $nombrePuesto=$("#puestoEdit").val();
+    $nombrePuesto=selectPart.obtenerValor()
+    $nombrePuestoString=selectPart.obtenerTexto()
+    alert("string",$nombrePuestoString)
+    console.debug("stirng",$nombrePuestoString)
     if($nombrePuesto!==""){
       let datosTabla = tablaParticipantesEdit.datosTabla();
     $filas_num=datosTabla.length;

@@ -298,12 +298,12 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
-                                                    <table id="tabla-cursos-temario" class="table table-bordered">
+                                                    <table id="tabla-cursos-temario" class="table table-hover table-striped table-bordered">
                                                         <thead>
                                                             <tr>
-                                                            <td>Temario</td>
-                                                            <td>Porcentaje</td>
-                                                            <td>Acciones</td>
+                                                                <th>Temario</th>
+                                                                <th>Porcentaje</th>
+                                                                <th>Acciones</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -387,11 +387,12 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
-                                                    <table id="tabla-cursos-participantes" class="table  table-bordered">
+                                                    <table id="tabla-cursos-participantes" class="table table-hover table-striped  table-bordered">
                                                         <thead>
                                                             <tr>
-                                                            <td>Puesto</td>
-                                                            <td>Acciones</td>
+                                                                <th class="all">Puesto</th>
+                                                                <th class="never">PuestoString</th>
+                                                                <th class="all">Acciones</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -823,9 +824,9 @@ function btnAdminEditarCurso(id){
             </ul>
             <div class="tab-content">
                 <div id="eventAccionEditarCurso"></div>
-                <div class="tab-pane fade active in" id="default-tab-1">
+                <div class="tab-pane fade active in" id="default-tab-1" >
                         <form id="formDatosNewCurso" data-parsley-validate="true" enctype="multipart/form-data">
-                            <div class="row">
+                            <div class="row" style="margin-top:40px;">
                                 <div class="col-xs-4">
                                         <!-- <div class="col-xs-12">
                                         <img class="img-fluid" style="width:90%; margin-left:12px;"   src="/assets/img/user-12.jpg" alt="img-curso">
@@ -925,7 +926,7 @@ function btnAdminEditarCurso(id){
                         </form>
                 </div>
                 <div class="tab-pane fade" id="default-tab-2">
-                        <div class="row">
+                        <div class="row" style="margin-top:40px;">
                             <div class="col-xs-12 col-md-6">
                                 <div class="row">
                                     <div class="col-xs-9">
@@ -957,12 +958,12 @@ function btnAdminEditarCurso(id){
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="table-responsive">
-                                            <table id="tabla-cursos-temarioEdit" class="table table-bordered">
+                                            <table id="tabla-cursos-temarioEdit" class="table table-hover table-striped table-bordered">
                                                 <thead>
                                                     <tr>
-                                                    <td>Temario</td>
-                                                    <td>Porcentaje</td>
-                                                    <td>Acciones</td>
+                                                        <th>Temario</th>
+                                                        <th>Porcentaje</th>
+                                                        <th>Acciones</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -989,7 +990,7 @@ function btnAdminEditarCurso(id){
                         </div>
                 </div>
                 <div class="tab-pane fade" id="default-tab-3">
-                        <div class="row">
+                        <div class="row" style="margin-top:40px;">
                             <div class="col-xs-12 col-md-6">
                                 <div class="row">
                                     <div class="col-md-9">
@@ -999,7 +1000,7 @@ function btnAdminEditarCurso(id){
                                             <select id="puestoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
                                                 <option value="">Seleccionar</option>
                                                 <?php
-                                                    var_dump($datos['perfiles']);
+                                                  //  var_dump($datos['perfiles']);
                                                     foreach ($datos['perfiles'] as $value) {
                                                         
                                                             echo '<option value="'.$value['Id'].'">'.$value['Nombre'].'</option>';
@@ -1028,11 +1029,11 @@ function btnAdminEditarCurso(id){
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="table-responsive">
-                                            <table id="tabla-cursos-participantesEdit" class="table  table-bordered">
+                                            <table id="tabla-cursos-participantesEdit" class="table table-hover table-striped  table-bordered">
                                                 <thead>
                                                     <tr>
-                                                    <td>Puesto</td>
-                                                    <td>Acciones</td>
+                                                        <th>Puesto</th>
+                                                        <th>Acciones</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
