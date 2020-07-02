@@ -44,15 +44,7 @@ $(function () {
     });
   
     $('#btn-adminEditarCurso').on('click',function(e){
-     alert("EDITAR CURSO");
-     $('#modalSubirTemarios').modal('hide')
-     $('#modalValidateTemario').modal('hide')
-     $("#modalValidateParticipantes").modal('hide');
-
-     $("#administracion-cursos").css('display', 'none')
-     $("#administracion-cursos_nuevoCurso").css('display', 'none')
-     
-     $("#administracion-cursos-EDITAR").css('display','block')
+    
     });
 
 
@@ -219,15 +211,26 @@ let listTemarioEdit=[]
     $nombreTemario=$("#nombreTemarioEdit").val();
   if($nombreTemario!==""){
     
-    let numItemsTemario = tablaTemariosEdit.datosTabla();
-    $filas_num=numItemsTemario.length;
+    let datosTabla = tablaTemariosEdit.datosTabla();
+    $filas_num=datosTabla.length;
     let datos = tablaTemariosEdit.datosFila(this);
 
 
-    console.debug(datos,"DATOS TABLA TEMARIOS", numItemsTemario,$filas_num,datos);
+    console.debug(datos,"DATOS TABLA TEMARIOS", datosTabla,$filas_num,datos);
 
-    $long=listTemarioEdit.length+1;
+    $long=datosTabla.length+1;
     $porcentaje=(100/$long).toFixed(2);
+
+    listTemarioEdit=[]
+    for (let index = 0; index < datosTabla.length; index++) {
+      const element = datosTabla[index];
+      console.debug("DATOS",element,element[0])
+      
+      listTemarioEdit.push({'nombre':element[0],'porcentaje':$porcentaje});
+      
+    }
+
+   
 
     console.debug($nombreTemario,$porcentaje,"DATOS tEMARIO1",listTemarioEdit)
     listTemarioEdit.push({'nombre':$nombreTemario,'porcentaje':$porcentaje});
@@ -397,20 +400,29 @@ let tablaParticipantesEdit = null;
     
 
 let listPuestoEdit=[];
-$("#btn-nuevo-puestoParticipante").on('click',function(e){
+$("#btn-nuevo-puestoParticipanteEdit").on('click',function(e){
     //modalSubirTemarios
     console.log("btn-nuevo-puestoParticipante")
 
     $nombrePuesto=$("#puestoEdit").val();
     if($nombrePuesto!==""){
-      let numItemsTemario = tablaParticipantesEdit.datosTabla();
-    $filas_num=numItemsTemario.length;
+      let datosTabla = tablaParticipantesEdit.datosTabla();
+    $filas_num=datosTabla.length;
     let datos = tablaParticipantesEdit.datosFila(this);
+
+    let listPuestoEdit=[];
+    for (let index = 0; index < datosTabla.length; index++) {
+      const element = datosTabla[index];
+      console.debug("DATOS",element,element[0])
+      
+      listPuestoEdit.push({'nombre':element[0]});
+      
+    }
 
     
 
     var perfiles=$('#perfiles').val()
-    console.debug('per',perfiles,'files',datos,"DATOS TABLA TEMARIOS", numItemsTemario,$filas_num,datos);
+    console.debug('per',perfiles,'files',datos,"DATOS TABLA TEMARIOS", datosTabla,$filas_num,datos);
 
     
    
@@ -734,11 +746,40 @@ $("#btn-editarDatos").on('click',function(e){
     tablaCursosTemarioEdit.iniciarTabla();
     
 
-    let tablaCursosParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
-    tablaCursosParticipantesEdit.iniciarTabla();
-
-   
   
+
+    $("#btn-editarDatosStatus").on('click',function(e){
+      //modalSubirTemarios
+      console.log("editarDatosStatus")
+      $("#btn-editarDatosStatus").css('display','none')
+      $("#btn-cancelar-cambios").css('display','block')
+      $("#btn-editarDatos").css('display','block')
+
+      $('#inputImgCursoEdit').removeAttr('disabled')
+      $("#nombreCursoEdit").removeAttr('disabled')
+      $("#urlCursoEdit").removeAttr('disabled')
+      $("#textareaDescripcionCursoEdit").removeAttr('disabled')
+      $("#certificadoCursoEdit").removeAttr('disabled')
+      $("#costoCursoEdit").removeAttr('disabled')
+    
+    });
+
+    $("#btn-cancelar-cambios").on('click',function(e){
+      //modalSubirTemarios
+      console.log("editarDatosStatus")
+      $("#btn-editarDatosStatus").css('display','block')
+      $("#btn-cancelar-cambios").css('display','none')
+      $("#btn-editarDatos").css('display','none')
+
+      $('#inputImgCursoEdit').attr('disabled', 'disabled')
+      $("#nombreCursoEdit").attr('disabled', 'disabled')
+      $("#urlCursoEdit").attr('disabled', 'disabled')
+      $("#textareaDescripcionCursoEdit").attr('disabled', 'disabled')
+      $("#certificadoCursoEdit").attr('disabled', 'disabled')
+      $("#costoCursoEdit").attr('disabled', 'disabled')
+    
+    });
+
     // FormWizardValidation.init();
 
     

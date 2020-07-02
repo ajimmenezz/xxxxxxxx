@@ -62,7 +62,7 @@
                                                 <input type='hidden' id='idElementSeleccionAccion'>
                                                 <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;' id='btn-adminVerCurso'></i>";
                                                // if($value["Estatus"]!=0){
-                                                    echo "  <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;'' id='btn-adminEditarCurso' ></i>
+                                                    echo "  <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;'' onclick='btnAdminEditarCurso(".$value["Id"].")' id='btn-adminEditarCurso' ></i>
                                                     <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(".$value["Id"].")' id='btn-adminEliminarCurso'></i>";
                                             //    }
                                               
@@ -579,6 +579,7 @@
 <!-- FIN #contenido MODALS-->
 
 <script>
+     
 function cambiar(){
     var pdrs = document.getElementById('file-upload').files[0].name;
     document.getElementById('info').innerHTML = pdrs;
@@ -591,6 +592,75 @@ function btnAdminEliminarCurso(id) {
       $("#idElementSeleccionAccion").val(id)
       $("#modalDeletoCursoAdmin").modal('show')
     }
+ var eventoPagina = new Pagina();
+function btnAdminEditarCurso(id){
+   
+    alert("EDITAR CURSO");
+    
+    $("#idElementSeleccionAccion").val(id)
+    
+     $('#modalSubirTemarios').modal('hide')
+     $('#modalValidateTemario').modal('hide')
+     $("#modalValidateParticipantes").modal('hide');
+
+     $("#administracion-cursos").css('display', 'none')
+     $("#administracion-cursos_nuevoCurso").css('display', 'none')
+     
+     $("#administracion-cursos-EDITAR").css('display','block')
+     
+     var datos={
+         idCurso:id
+     }
+
+     console.debug("PARAM",datos)
+     eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Obtener-Curso',datos,function(respuesta){
+        console.debug(datos,"DATOS_CURSO",respuesta);
+        alert(datos,"DATOS_CURSO",respuesta);
+        console.debug(respuesta)
+            if (!respuesta.success) {
+                evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido información del curso.', 5000);
+                return;
+            }
+
+            var datosCurso=respuesta.data.infoCurso
+            var cursos=respuesta.data.infoCurso.curso
+            var perfiles=respuesta.data.infoCurso.perfiles
+            var temas=respuesta.data.infoCurso.temas
+
+            $('#inputImgCursoEdit').val(),
+            $("#nombreCursoEdit").val(cursos.nombre),
+            $("#urlCursoEdit").val(cursos.url),
+            $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
+            $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
+            $("#costoCursoEdit").val(cursos.costo)
+
+            let tablaTemariosEdit = null;
+            tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
+
+            temas.forEach(element => {
+                tablaTemariosEdit.agregarDatosFila([
+                    element.nombre,
+                    element.porcentaje+'%',
+                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+                ]);
+            });
+
+
+            let tablaParticipantesEdit = null;
+            tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
+    
+
+
+                perfiles.forEach(element => {
+                    tablaParticipantesEdit.agregarDatosFila([
+                    element.idPerfil,
+                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
+                
+                ]);
+            });
+
+      });
+}
 </script>
 
 <style>
@@ -743,6 +813,7 @@ function btnAdminEliminarCurso(id) {
                 <li class=""><a href="#default-tab-3" data-toggle="tab">Participantes</a></li>
             </ul>
             <div class="tab-content">
+                <div id="eventAccionEditarCurso"></div>
                 <div class="tab-pane fade active in" id="default-tab-1">
                         <form id="formDatosNewCurso" data-parsley-validate="true" enctype="multipart/form-data">
                             <div class="row">
@@ -760,10 +831,10 @@ function btnAdminEliminarCurso(id) {
                                         <input id="file-upload" onchange='cambiar()' type="file" style='display: none;'/>
                                         <div id="info"></div> -->
 
-                                        <div id="archivo" class="form-group" >
+                                        <div id="archivo" class="form-group" disabled>
                                             
                                             <label>Imagen curso</label><br><br>
-                                            <input id="inputImgCursoEdit" name="evidenciasIncapacidad[]" type="file" multiple>
+                                            <input id="inputImgCursoEdit" name="evidenciasIncapacidad[]" type="file" multiple >
                                         </div>
 
                                     </div>
@@ -776,7 +847,7 @@ function btnAdminEliminarCurso(id) {
                                         <div class=" col-xs-12 col-md-6">
                                             <div class="form-group">
                                                 <label>Nombre del curso *</label>
-                                                <input type="text" id="nombreCursoEdit" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
+                                                <input disabled type="text" id="nombreCursoEdit" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
                                             </div>
                                         </div>
                                         <!-- end col-4 -->
@@ -784,7 +855,7 @@ function btnAdminEliminarCurso(id) {
                                         <div class=" col-xs-12 col-md-6">
                                             <div class="form-group">
                                                 <label>Url *</label>
-                                                <input type="text" id="urlCursoEdit" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
+                                                <input disabled type="text" id="urlCursoEdit" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
                                             </div>
                                         </div>
                                         <!-- end col-4 -->
@@ -792,7 +863,7 @@ function btnAdminEliminarCurso(id) {
                                         <div class=" col-xs-12 col-md-6">
                                             <div class="form-group">
                                                 <label for="nuevoArchivo">Descripción *</label>
-                                                <textarea id="textareaDescripcionCursoEdit" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
+                                                <textarea disabled id="textareaDescripcionCursoEdit" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
                                             </div>
                                         </div>
                                         <!-- end col-4 -->
@@ -807,7 +878,7 @@ function btnAdminEliminarCurso(id) {
                                         ?>
                                             <div class="form-group">
                                                 <label for="nuevoArchivo">Certificado </label>
-                                                <select id="certificadoCursoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
+                                                <select disabled id="certificadoCursoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
                                                     
                                                     <?php
                                                     var_dump($datos['certificados']);
@@ -825,7 +896,7 @@ function btnAdminEliminarCurso(id) {
                                         <div class=" col-xs-12 col-md-6">
                                             <div class="form-group">
                                                 <label>Costo </label>
-                                                <input type="text" id="costoCursoEdit" name="costo" placeholder="$00.00" class="form-control" />
+                                                <input disabled type="text" id="costoCursoEdit" name="costo" placeholder="$00.00" class="form-control" />
                                             </div>
                                         </div>
                                         <!-- end col-4 -->
@@ -834,11 +905,11 @@ function btnAdminEliminarCurso(id) {
                                 </div>
 
                                 <div class="col-sm-12">
-                                    <button style="margin-top: 21px;"  id="btn-editarDatosStatus" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;">
+                                    <button style="margin-top: 21px; float: right;"  id="btn-editarDatosStatus" type="button" class="btn btn-success m-r-5 m-b-5" >
                                      Editar datos</button>
-                                    <button style="margin-top: 21px;"  id="btn-cancelar-cambios" type="button" class="btn btn-white m-r-5 m-b-5" style="float: right;">
-                                    Editar datos</button>
-                                    <button style="margin-top: 21px;"  id="btn-editarDatos" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;">
+                                    <button style="margin-top: 21px; float: right; display:none;"  id="btn-cancelar-cambios" type="button" class="btn btn-white m-r-5 m-b-5" >
+                                    Cancelar cambios</button>
+                                    <button style="margin-top: 21px; float: right; display:none;"  id="btn-editarDatos" type="button" class="btn btn-success m-r-5 m-b-5" >
                                     <i class="fa fa-save"></i> Editar datos</button>
                                 </div>
                             </div>
@@ -930,7 +1001,7 @@ function btnAdminEliminarCurso(id) {
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <button style="margin-top: 21px;"  id="btn-nuevo-puestoParticipante" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;"><i class="fa fa-plus"></i> Agregar</button>
+                                        <button style="margin-top: 21px;"  id="btn-nuevo-puestoParticipanteEdit" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;"><i class="fa fa-plus"></i> Agregar</button>
                                     </div>
 
                                     <div class="col-xs-12">
