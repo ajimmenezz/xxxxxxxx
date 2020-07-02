@@ -147,7 +147,7 @@
                         <!-- begin wizard step-1 -->
 
                         
-                        <div>
+                        <div class="wizard-step-1">
                         
                             <fieldset>
                                 <form id="formDatosNewCurso" data-parsley-validate="true" enctype="multipart/form-data">
@@ -192,7 +192,7 @@
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Nombre del curso *</label>
-                                                        <input type="text" id="nombreCurso" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
+                                                        <input type="text" id="nombreCurso" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" data-parsley-group="wizard-step-1" />
                                                     </div>
                                                 </div>
                                                 <!-- end col-4 -->
@@ -802,7 +802,13 @@ function btnAdminEditarCurso(id){
         <div class="col-sm-8">
             <h1 class="page-header"> <b>Curso </b> Gestión de proyectos.</h1>
         </div>
-        <div class="col-sm-4"> pan</div>
+        <div class="col-sm-4">
+            <ol class="breadcrumb pull-right">
+				<li><a class="btn-cancel_wizardEdit" href="javascript:;">Cursos</a></li>
+				<li class="active">Gestión de proyectos</li>
+            </ol>
+            
+        </div>
     <!-- end page-header -->
 
     
@@ -811,6 +817,9 @@ function btnAdminEditarCurso(id){
                 <li class="active"><a href="#default-tab-1" data-toggle="tab">Datos del curso</a></li>
                 <li class=""><a href="#default-tab-2" data-toggle="tab">Temario</a></li>
                 <li class=""><a href="#default-tab-3" data-toggle="tab">Participantes</a></li>
+                <div class=" col-xs-12 col-md-4 " style="float:right;">
+                    <button id="btn-cancel_nuevo-curso" type="button" class="btn btn-primary m-r-5 m-b-5 btn-cancel_wizardEdit" style="float: right;">Regresar a cursos</button>
+                </div>
             </ul>
             <div class="tab-content">
                 <div id="eventAccionEditarCurso"></div>

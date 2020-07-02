@@ -112,6 +112,22 @@ $(function () {
         $("#administracion-cursos_nuevoCurso").css('display', 'none')
       
   });
+
+  $(".btn-cancel_wizardEdit").on('click',function(e){
+    //modalSubirTemarios
+    console.log("cancelar wizardEdit")
+    $('#modalSubirTemarios').modal('hide')
+    $('#modalValidateTemario').modal('hide')
+    $("#modalValidateParticipantes").modal('hide');
+
+    
+    $("#administracion-cursos_nuevoCurso").css('display', 'none')
+    
+    $("#administracion-cursos-EDITAR").css('display','none')
+    $("#administracion-cursos").css('display','block')
+  
+});
+
   
 
 
@@ -715,37 +731,37 @@ $("#btn-editarDatosSave").on('click',function(e){
           infoTabla:{}
           
       },
-    participantes:part
+    participantes:{}
   }
 
 
-  var temas=[]
+  // var temas=[]
   
-  for (let index = 0; index < datosTabla.length; index++) {
-    const element = datosTabla[index];
-    console.debug("DATOS",element,element[0])
+  // for (let index = 0; index < datosTabla.length; index++) {
+  //   const element = datosTabla[index];
+  //   console.debug("DATOS",element,element[0])
     
-    temas.push([element[0],'',parseFloat(element[1])]);
+  //   temas.push([element[0],'',parseFloat(element[1])]);
     
-//array_push(temas,[element[0],'',element[1]])
+  //   //array_push(temas,[element[0],'',element[1]])
     
-  }
-  console.debug("temas",temas)
-  json.temario.infoTabla=temas;
+  // }
+  // console.debug("temas",temas)
+  // json.temario.infoTabla=temas;
 
-  var part=[]
+  // var part=[]
  
 
-  for (let index = 0; index < datosTabla2.length; index++) {
-    const element = datosTabla2[index];
-    console.debug("DATOS_PART",element,element[0])
+  // for (let index = 0; index < datosTabla2.length; index++) {
+  //   const element = datosTabla2[index];
+  //   console.debug("DATOS_PART",element,element[0])
     
-    part.push([element[0]]);
+  //   part.push([element[0]]);
     
-  }
-  console.debug("part",part)
+  // }
+  // console.debug("part",part)
 
-  json.participantes=part;
+  // json.participantes=part;
 
 
  $("#nameCurso").text($("#nombreCursoEdit").val());
@@ -823,7 +839,7 @@ $("#btn-editarDatosSave").on('click',function(e){
       console.log("editarDatosStatus")
       $("#btn-editarDatosStatus").css('display','none')
       $("#btn-cancelar-cambios").css('display','block')
-      $("#btn-editarDatos").css('display','block')
+      $("#btn-editarDatosSave").css('display','block')
 
       $('#inputImgCursoEdit').removeAttr('disabled')
       $("#nombreCursoEdit").removeAttr('disabled')
@@ -839,7 +855,7 @@ $("#btn-editarDatosSave").on('click',function(e){
       console.log("editarDatosStatus")
       $("#btn-editarDatosStatus").css('display','block')
       $("#btn-cancelar-cambios").css('display','none')
-      $("#btn-editarDatos").css('display','none')
+      $("#btn-editarDatosSave").css('display','none')
 
       $('#inputImgCursoEdit').attr('disabled', 'disabled')
       $("#nombreCursoEdit").attr('disabled', 'disabled')
