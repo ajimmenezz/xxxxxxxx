@@ -161,17 +161,11 @@
                                     <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
                                 </div>
 
+
+
                                 <div class="row">
-                                    <div class="col-xs-4">
-                                        <div class="profile-left">
-                                            <div class="profile-image">
-                                                <img src="" alt="" />
-                                                <i class="fa fa-user hide"></i>
-                                            </div>
-                                            <div class="m-b-10">
-                                                <a id="btnSubirFotoCurso" href="javascript:;" class="btn btn-warning btn-block btn-sm">Cambiar Foto</a>
-                                            </div>
-                                        </div>
+                                    <div class="col-xs-4 text-center">
+                                        <input id="imagenCurso" name="imagenCurso[]" type="file" multiple>
                                     </div>
                                     <div class="col-xs-8">
 
@@ -1006,16 +1000,16 @@
                                             <div class="row">
                                                 <div class="col-xs-12">
                                                     <div class="table-responsive">
-                                                            <table id="tabla-cursos-participantesEdit" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                                        <table id="tabla-cursos-participantesEdit" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
 
-                                                                <thead>
-                                                                    <tr>
-                                                                        <td>Puesto</td>
-                                                                        <td>Acciones</td>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <?php
+                                                            <thead>
+                                                                <tr>
+                                                                    <td>Puesto</td>
+                                                                    <td>Acciones</td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php
 // foreach ($datos['filas'] as $value) {
 //     echo '<tr>';
 //     foreach ($value as $dato) {
@@ -1023,10 +1017,10 @@
 //     }
 //     echo '</tr>';
 // }
-                                                                    ?>
+                                                                ?>
 
-                                                                </tbody>
-                                                            </table>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>

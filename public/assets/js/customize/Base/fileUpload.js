@@ -167,6 +167,24 @@ Upload.prototype.crearUpload = function () {
     }
 };
 
+Upload.prototype.crearUploadBoton = function () {
+    var objeto = arguments[0];
+    var url = arguments[1] || '#';
+    var titulo = arguments[2] || 'Examinar';
+
+    $(objeto).fileinput({
+        uploadUrl: url,
+        language: 'es',
+        showUpload: false,
+        showCaption: false,
+        dropZoneEnabled: false,
+        browseClass: "btn btn-warning",
+        browseLabel: titulo,
+        browseIcon: "",
+        removeIcon: " ",
+    });
+};
+
 //Habilita el file input para poder agregar archivos
 Upload.prototype.habilitar = function (objeto) {
     $(objeto).fileinput('enable');
