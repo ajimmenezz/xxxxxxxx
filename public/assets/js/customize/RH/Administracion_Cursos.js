@@ -233,21 +233,39 @@ let listTemarioEdit=[]
    
 
     console.debug($nombreTemario,$porcentaje,"DATOS tEMARIO1",listTemarioEdit)
-    listTemarioEdit.push({'nombre':$nombreTemario,'porcentaje':$porcentaje});
 
 
-    tablaTemariosEdit.limpiartabla();
+    var json={
+      tipoDato:1,
+      id: $("#idElementSeleccionAccion").val(),
+      idCurso: $("#idElementSeleccionAccion").val()
+    }
 
-    listTemarioEdit.forEach(element => {
-      element.porcentaje=$porcentaje;
-      tablaTemariosEdit.agregarDatosFila([
-        element.nombre,
-        element.porcentaje+'%',
-        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
-      
-      ]);
+    eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Agregar-ElementoCurso',json,function(respuesta){
+      console.log(respuesta);
+      if (!respuesta.success) {
+          evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el tema.', 5000);
+          return;
+      }
+
+      listTemarioEdit.push({'nombre':$nombreTemario,'porcentaje':$porcentaje});
+
+
+      tablaTemariosEdit.limpiartabla();
+  
+      listTemarioEdit.forEach(element => {
+        element.porcentaje=$porcentaje;
+        tablaTemariosEdit.agregarDatosFila([
+          element.nombre,
+          element.porcentaje+'%',
+          "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+        
+        ]);
+      });
+  
+
     });
-
+  
 
 
 
@@ -258,10 +276,10 @@ let listTemarioEdit=[]
 
 tablaTemariosEdit.evento(function () {
   let numItemsTemario = tablaTemariosEdit.datosTabla();
-  var elim=tablaTemariosEdit.eliminarFila(this);
+ 
   let datosTabla = tablaTemariosEdit.datosTabla();
   
-  console.debug(numItemsTemario,"eliminar",elim,"resto",datosTabla,tablaTemariosEdit.datosFila(this));
+  console.debug(numItemsTemario,"eliminar","resto",datosTabla,tablaTemariosEdit.datosFila(this));
 
   listTemarioEdit=[]
 
@@ -284,19 +302,37 @@ tablaTemariosEdit.evento(function () {
    }
   }
 
-  tablaTemariosEdit.limpiartabla();
+  var json={
+    tipoDato:1,
+    id: $("#idElementSeleccionAccion").val()
+  }
 
-  listTemarioEdit.forEach(element => {
+
+  eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Eliminar-ElementoCurso',json,function(respuesta){
+    console.log(respuesta);
+    if (!respuesta.success) {
+        evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el tema.', 5000);
+        return;
+    }
+
+    var elim=tablaTemariosEdit.eliminarFila(this);
+
+    tablaTemariosEdit.limpiartabla();
   
-    tablaTemariosEdit.agregarDatosFila([
-      element.nombre,
-      element.porcentaje+'%',
-      "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+    listTemarioEdit.forEach(element => {
     
-    ]);
+      tablaTemariosEdit.agregarDatosFila([
+        element.nombre,
+        element.porcentaje+'%',
+        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+      
+      ]);
+    });
+
   });
 
-  console.debug("FINAL",listTemarioEdit)
+
+  console.debug(elim,"FINAL",listTemarioEdit)
 
 
 });
@@ -424,22 +460,38 @@ $("#btn-nuevo-puestoParticipanteEdit").on('click',function(e){
     var perfiles=$('#perfiles').val()
     console.debug('per',perfiles,'files',datos,"DATOS TABLA TEMARIOS", datosTabla,$filas_num,datos);
 
-    
-   
     console.debug($nombrePuesto,"DATOS tEMARIO1",listPuestoEdit)
-    listPuestoEdit.push({'nombre':$nombrePuesto});
+
+    var json={
+      tipoDato:0,
+      id: $("#idElementSeleccionAccion").val()
+    }
+
+    eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Agregar-ElementoCurso',json,function(respuesta){
+      console.log(respuesta);
+      if (!respuesta.success) {
+          evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el participante.', 5000);
+          return;
+      }
+    
+      listPuestoEdit.push({'nombre':$nombrePuesto});
 
 
-    tablaParticipantesEdit.limpiartabla();
+      tablaParticipantesEdit.limpiartabla();
 
-    listPuestoEdit.forEach(element => {
-      tablaParticipantesEdit.agregarDatosFila([
-        element.nombre,
-        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
-      
-      ]);
-    });
+      listPuestoEdit.forEach(element => {
+        tablaParticipantesEdit.agregarDatosFila([
+          element.nombre,
+          "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
+        
+        ]);
+      });
 
+
+  });
+
+    
+  
 
 
 
@@ -451,10 +503,10 @@ $("#btn-nuevo-puestoParticipanteEdit").on('click',function(e){
 
 tablaParticipantesEdit.evento(function () {
   let numItemsTemario = tablaParticipantesEdit.datosTabla();
-  var elim=tablaParticipantesEdit.eliminarFila(this);
+  
   let datosTabla = tablaParticipantesEdit.datosTabla();
   
-  console.debug(numItemsTemario,"eliminar",elim,"resto",datosTabla,tablaParticipantesEdit.datosFila(this));
+  console.debug(numItemsTemario,"eliminar","resto",datosTabla,tablaParticipantesEdit.datosFila(this));
 
   listPuestoEdit=[]
 
@@ -473,18 +525,36 @@ tablaParticipantesEdit.evento(function () {
    }
   }
 
-  tablaParticipantesEdit.limpiartabla();
+  var json={
+    tipoDato:0,
+    id: $("#idElementSeleccionAccion").val()
+  }
 
-  listPuestoEdit.forEach(element => {
+
+  eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Eliminar-ElementoCurso',json,function(respuesta){
+    console.log(respuesta);
+    if (!respuesta.success) {
+        evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el participante.', 5000);
+        return;
+    }
+
+    var elim=tablaParticipantesEdit.eliminarFila(this);
+    tablaParticipantesEdit.limpiartabla();
   
-    tablaParticipantesEdit.agregarDatosFila([
-      element.nombre,
-      "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
+    listPuestoEdit.forEach(element => {
     
-    ]);
-  });
+      tablaParticipantesEdit.agregarDatosFila([
+        element.nombre,
+        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
+      
+      ]);
+    });
 
-  console.debug("FINAL",listPuestoEdit)
+
+  });
+ 
+
+  console.debug(elim,"FINAL",listPuestoEdit)
 
 
 });
@@ -604,16 +674,16 @@ $("#btn-save-curso").on('click',function(e){
 
 });
 
-$("#btn-editarDatos").on('click',function(e){
+$("#btn-editarDatosSave").on('click',function(e){
   //modalSubirTemarios
-  console.log("btn-editarDatos")
+  console.log("btn-editarDatosSave")
 
   var nombre=$("#nombreCursoEdit").val();
   var url=$("#urlCursoEdit").val();
   var descripcion=$("#textareaDescripcionCursoEdit").val();
 
   if(nombre=='' || url=='' || descripcion==''){
-    evento.mostrarMensaje('.messageAccionesWizard', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
+    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
     return false;
   }
   
@@ -690,10 +760,10 @@ $("#btn-editarDatos").on('click',function(e){
       //     window.open(respuesta.ruta, '_blank');
       //     location.reload();
       // } else {
-      //     evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
+      //     evento.mostrarMensaje('.eventAccionEditarCurso', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
       // }
       if (!respuesta.success) {
-        evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
+        evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el curso.', 5000);
         return;
     }
    
@@ -703,7 +773,7 @@ $("#btn-editarDatos").on('click',function(e){
     eventoPagina.enviarPeticionServidor('administracion-cursos','Administracion_Cursos/Editar-Curso',json,function(respuesta){
       console.log(respuesta);
       if (!respuesta.success) {
-        evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
+        evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el curso.', 5000);
         return;
     }
     
@@ -711,7 +781,7 @@ $("#btn-editarDatos").on('click',function(e){
 
     });
   }
-  evento.mostrarMensaje('.messageAccionesWizard', true, 'Se ha registrado el curso.', 5000);
+  evento.mostrarMensaje('.eventAccionEditarCurso', true, 'Se ha registrado el curso.', 5000);
       $('#modalresponseSave').modal('show')
       location.reload();
       file.limpiar('#inputImgCursoEdit');

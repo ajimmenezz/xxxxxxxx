@@ -641,7 +641,7 @@ function btnAdminEditarCurso(id){
                 tablaTemariosEdit.agregarDatosFila([
                     element.nombre,
                     element.porcentaje+'%',
-                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn-AdminEliminarTemario'></i></spand>"
                 ]);
             });
 
@@ -909,7 +909,7 @@ function btnAdminEditarCurso(id){
                                      Editar datos</button>
                                     <button style="margin-top: 21px; float: right; display:none;"  id="btn-cancelar-cambios" type="button" class="btn btn-white m-r-5 m-b-5" >
                                     Cancelar cambios</button>
-                                    <button style="margin-top: 21px; float: right; display:none;"  id="btn-editarDatos" type="button" class="btn btn-success m-r-5 m-b-5" >
+                                    <button style="margin-top: 21px; float: right; display:none;"  id="btn-editarDatosSave" type="button" class="btn btn-success m-r-5 m-b-5" >
                                     <i class="fa fa-save"></i> Editar datos</button>
                                 </div>
                             </div>
