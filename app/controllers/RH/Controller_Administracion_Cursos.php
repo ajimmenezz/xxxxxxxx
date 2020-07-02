@@ -79,6 +79,16 @@ class Controller_Administracion_Cursos extends Base {
                 }
                 echo $response->toJsonString();
                 break;
+            case 'Ver-Curso':
+                $resultado = $this->curso->showCourse($this->input->post());
+                if ($resultado) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("infoCurso", $resultado);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
             default:
                 $response->onError("NOT_FOUND", 'Solicitud no encontrada', HttpStatusCode::HTTP_NOT_FOUND);
                 echo $response->toJsonString();
