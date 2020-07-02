@@ -12,6 +12,7 @@ $(function () {
 
     let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
     let tablaTemario = new TablaBasica('tabla-temario');
+    tablaTemario.iniciarTablaClass();
     let idUsuario = $('#valorIdUsuario').val();
 
     $("#cursoTablaContinuar").on('click', function (e) {
