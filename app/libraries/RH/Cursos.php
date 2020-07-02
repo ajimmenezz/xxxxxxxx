@@ -18,7 +18,22 @@ class Cursos extends General {
     }
 
     public function getMyCourses($perfil) {
-        return $this->DBS->getMyCourses($perfil);
+        $sumaAvance = 0;
+        
+        $datos['cursos'] =  $this->DBS->getMyCourses($perfil);
+        $datos['totalCursos'] = count($datos['cursos']);
+                
+        $puntosTotales = $datos['totalCursos'] * 100;
+        
+        foreach ($datos['cursos'] as $value) {
+            $sumaAvance += $value['Porcentaje'];
+        }
+        $sumaAvance *= 100;
+        $sumaAvance = $sumaAvance / $puntosTotales;
+        $datos['avance'] = $sumaAvance;
+        $datos['feltante'] = 100 - $sumaAvance;
+        
+        return $datos;
     }
 
     public function getProfile() {

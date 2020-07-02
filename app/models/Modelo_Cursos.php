@@ -45,7 +45,7 @@ class Modelo_Cursos extends Modelo_Base {
                                 left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
                                 inner join t_curso_relacion_perfil as relacion on relacion.idCurso = curso.id
                                 where relacion.idPerfil = " . $perfil . "
-                                group by curso.id;");
+                                group by curso.id");
     }
 
     public function getAllProfile() {
