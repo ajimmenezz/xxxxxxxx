@@ -9,7 +9,7 @@
             <h4 class="panel-title">Nuevo curso</h4>
         </div>
         <div class="panel-body">
-            
+
             <div class="row">
 
                 <form action="/" method="POST" data-parsley-validate="true" name="form-wizard">
@@ -27,7 +27,7 @@
                                 Participantes
                                 <small>Indican los puestos que tendrán que tomar el curso.</small>
                             </li>
-                           
+
                         </ol>
                         <!-- begin wizard step-1 -->
                         <div>
@@ -42,11 +42,13 @@
                                     </div>
                                     <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
                                 </div>
-                        
+
                                 <div class="row">
-                                    <div class="col-xs-4">img</div>
+                                    <div class="col-xs-4 text-center">
+                                        <input id="inputImgCurso" name="inputImgCurso[]" type="file">
+                                    </div>
                                     <div class="col-xs-8">
-                                       
+
                                         <!-- begin row -->
                                         <div class="row">
                                             <!-- begin col-4 -->
@@ -136,7 +138,7 @@
                                                 </b>
                                             </div>
                                             <div class="col-xs-12" style="text-align: center; margin-top:30px;" >
-                                            <button id="btn-cancel_nuevo-curso" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-file"></i> Subir Excel</button>
+                                                <button id="btn-cancel_nuevo-curso" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-file"></i> Subir Excel</button>
                                             </div>
                                         </div>
                                     </div>
@@ -147,9 +149,9 @@
                                                     <table id="tabla-cursos" class="table table-striped table-bordered">
                                                         <thead>
                                                             <tr>
-                                                            <td>Temario</td>
-                                                            <td>Porcentaje</td>
-                                                            <td>Nombre</td>
+                                                                <td>Temario</td>
+                                                                <td>Porcentaje</td>
+                                                                <td>Nombre</td>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -175,7 +177,7 @@
                         <!-- begin wizard step-3 -->
                         <div>
                             <fieldset>
-                            <div class="row">
+                                <div class="row">
                                     <div class=" col-xs-12 col-md-8">
                                         <h4 class="pull-left width-full">Participantes</h4>
                                     </div>
@@ -204,12 +206,12 @@
                                                 Indica los puestos que deben tomar el curso.<br>
                                                 Cuando generes el curso el sistema notificará por correo al personal que cubra el 
                                                 puesto que esta asignado en el curso y también le aparecerá en la sección de CURSOS ASIGNADOS.
-                                                
+
                                                 <br><br>
                                                 <b>Nota: Es importante que se deba definir al menos un puesto. </b>
                                             </div>
                                             <div class="col-xs-12" style="text-align: center; margin-top:30px;">
-                                            <button id="btn-save-curso" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-save"></i> Guardar curso</button>
+                                                <button id="btn-save-curso" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-save"></i> Guardar curso</button>
                                             </div>
                                         </div>
                                     </div>
@@ -220,8 +222,8 @@
                                                     <table id="tabla-cursos" class="table table-striped table-bordered">
                                                         <thead>
                                                             <tr>
-                                                            <td>Puesto</td>
-                                                            <td>Acciones</td>
+                                                                <td>Puesto</td>
+                                                                <td>Acciones</td>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -244,7 +246,7 @@
                             </fieldset>
                         </div>
                         <!-- end wizard step-3 -->
-                        
+
                     </div>
                 </form>
 
