@@ -51,11 +51,7 @@ class Cursos extends General {
     public function newCourse($infoCourse) {
         $rutaImagen = null;
         if (isset($infoCourse['curso'])) {
-            if (!empty($_FILES)) {
-                $myArray = json_decode(json_encode($infoCourse['curso']), true);
-                var_dump($myArray);
-//                $rutaImagen = $this->guardarImagen($infoCourse['curso']);
-            }
+            
             $insertQuery = $this->DBS->insertCourse($infoCourse['curso'], $rutaImagen);
         }
 

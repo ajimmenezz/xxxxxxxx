@@ -76,6 +76,7 @@
                             </thead>
                             <tbody>
                                 <?php
+                               //var_dump($datos['cursos']['cursos']);
                                 if (!empty($datos['cursos']['cursos'])) {
                                     foreach ($datos['cursos']['cursos'] as $key => $value) {
                                         if ($value['estatus'] === '1' && $value['Porcentaje'] === '100') {
