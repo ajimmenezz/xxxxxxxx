@@ -59,7 +59,6 @@
                 </div>
             </div>
 
-
             <!-- begin tabla cursos -->
             <div class="row" style="margin-top:50px;">
                 <div class="col-md-12">
@@ -154,7 +153,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-5 div-tabla-temario">
                     <h4>Temario</h4>
                     <div class="underline m-b-15 m-t-15"></div>
                     <div class="table-responsive">
@@ -167,11 +166,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+<!--                                <tr>
                                     <td></td>
                                     <td><span class="temarioTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
                                     <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                </tr>
+                                </tr>-->
                             </tbody>
                         </table>
                     </div>
@@ -242,11 +241,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-5 div-tabla-temario">
                     <h4>Temario</h4>
                     <div class="underline m-b-15 m-t-15"></div>
                     <div class="table-responsive">
-                        <table class="tabla-cursosAsignados table table-striped table-bordered">
+                        <table id="tabla-temario-completado" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <td>Modulo</td>
@@ -255,7 +254,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+<!--                                <tr>
                                     <td></td>
                                     <td></td>
                                     <td><span class="temarioTablaCompletado"  style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
@@ -265,7 +264,7 @@
                                     <td></td>
                                     <td></td>
                                     <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                </tr>
+                                </tr>-->
                             </tbody>
                         </table>
                     </div>
@@ -349,11 +348,11 @@
             </div>
 
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-5 div-tabla-temario">
                     <h4>Temario</h4>
                     <div class="underline m-b-15 m-t-15"></div>
                     <div class="table-responsive">
-                        <table class="tabla-cursosAsignados table table-striped table-bordered">
+                        <table id="tabla-temario-terminar" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <td>Modulo</td>
@@ -362,11 +361,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+<!--                                <tr>
                                     <td></td>
                                     <td><span id="temarioContentTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
                                     <td><span id="temarioContentTablaComenzar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                </tr>
+                                </tr>-->
                             </tbody>
                         </table>
                     </div>
