@@ -81,32 +81,31 @@ class Modelo_Cursos extends Modelo_Base {
     }
 
     public function insertCourse($infoCurso, $rutaImagen = null) {
-        var_dump($infoCurso);
-//        $this->iniciaTransaccion();
-//        $this->insertar('t_curso', [
-//            'idTipoCurso' => $infoCurso['certificado'],
-//            'nombre' => $infoCurso['nombre'],
-//            'descripcion' => $infoCurso['descripcion'],
-//            'imagen' => $rutaImagen
-//        ]);
-//
-//        $ultimoCurso = $this->consulta("select last_insert_id() as Id");
-//
-//        $this->insertar('t_curso_online', [
-//            'idCurso' => $ultimoCurso[0]["Id"],
-//            'idTipoCertificado' => $infoCurso['certificado'],
-//            'url' => $infoCurso['url'],
-//            'costo' => $infoCurso['costo']
-//        ]);
-//
-//        $this->terminaTransaccion();
-//        if ($this->estatusTransaccion() === false) {
-//            $this->roolbackTransaccion();
-//            return ['code' => 400, 'id' => 0];
-//        } else {
-//            $this->commitTransaccion();
-//            return ['code' => 200, 'id' => $ultimoCurso[0]["Id"]];
-//        }
+        $this->iniciaTransaccion();
+        $this->insertar('t_curso', [
+            'idTipoCurso' => $infoCurso['certificado'],
+            'nombre' => $infoCurso['nombre'],
+            'descripcion' => $infoCurso['descripcion'],
+            'imagen' => $rutaImagen
+        ]);
+
+        $ultimoCurso = $this->consulta("select last_insert_id() as Id");
+
+        $this->insertar('t_curso_online', [
+            'idCurso' => $ultimoCurso[0]["Id"],
+            'idTipoCertificado' => $infoCurso['certificado'],
+            'url' => $infoCurso['url'],
+            'costo' => $infoCurso['costo']
+        ]);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400, 'id' => 0];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'id' => $ultimoCurso[0]["Id"]];
+        }
     }
 
     public function updateCourse($infoCurso) {
