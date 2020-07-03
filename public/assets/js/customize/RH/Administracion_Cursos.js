@@ -38,6 +38,9 @@ $(function () {
         $("#administracion-cursos_nuevoCurso").css('display', 'none')
 
         $("#administracion-cursos-ver").css('display', 'block')
+
+
+        
     });
 
     $('#btn-adminEditarCurso').on('click', function (e) {
@@ -99,6 +102,8 @@ $(function () {
         $('#modalSubirTemarios').modal('hide')
         $('#modalValidateTemario').modal('hide')
         $("#modalValidateParticipantes").modal('hide');
+        $("#administracion-cursos-ver").css('display', 'none')
+        $("#administracion-cursos-EDITAR").css('display', 'none')
 
         $("#administracion-cursos").css('display', 'block')
         $("#administracion-cursos_nuevoCurso").css('display', 'none')
@@ -114,14 +119,14 @@ $(function () {
 
 
         $("#administracion-cursos_nuevoCurso").css('display', 'none')
-
+        $("#administracion-cursos-ver").css('display', 'none')
         $("#administracion-cursos-EDITAR").css('display', 'none')
         $("#administracion-cursos").css('display', 'block')
 
     });
 
 
-
+    
 
 
     let listTemario = []

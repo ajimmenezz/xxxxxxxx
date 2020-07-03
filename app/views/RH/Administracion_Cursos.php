@@ -203,13 +203,13 @@
                                                     <label for="nuevoArchivo">Certificado </label>
                                                     <select id="certificadoCurso" class="form-control" style="width: 100%" data-parsley-required="true">
 
-<?php
-//var_dump($datos['certificados']);
-foreach ($datos['certificados'] as $value) {
+                                                        <?php
+                                                        //var_dump($datos['certificados']);
+                                                        foreach ($datos['certificados'] as $value) {
 
-    echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
-}
-?>
+                                                            echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
+                                                        }
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -287,17 +287,17 @@ foreach ($datos['certificados'] as $value) {
                                                     </thead>
                                                     <tbody>
 
-<?php
-//  echo "welcome ".$_COOKIE['temarios'];
-//  print_r($_COOKIE['temarios']);
-// foreach ($datos['temario'] as $value) {
-//     echo '<tr>';
-//     foreach ($value as $dato) {
-//         echo '<td>' . $dato . '</td>';
-//     }
-//     echo '</tr>';
-// }
-?>
+                                                        <?php
+                                                        //  echo "welcome ".$_COOKIE['temarios'];
+                                                        //  print_r($_COOKIE['temarios']);
+                                                        // foreach ($datos['temario'] as $value) {
+                                                        //     echo '<tr>';
+                                                        //     foreach ($value as $dato) {
+                                                        //         echo '<td>' . $dato . '</td>';
+                                                        //     }
+                                                        //     echo '</tr>';
+                                                        // }
+                                                        ?>
 
                                                     </tbody>
                                                 </table>
@@ -333,13 +333,13 @@ foreach ($datos['certificados'] as $value) {
                                                 <label for="puesto">Puesto </label>
                                                 <select id="puesto" class="form-control" style="width: 100%" data-parsley-required="true">
                                                     <option value="">Seleccionar</option>
-<?php
-var_dump($datos['perfiles']);
-foreach ($datos['perfiles'] as $value) {
+                                                        <?php
+                                                        var_dump($datos['perfiles']);
+                                                        foreach ($datos['perfiles'] as $value) {
 
-    echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-}
-?>
+                                                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                                                        }
+                                                        ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -373,15 +373,15 @@ foreach ($datos['perfiles'] as $value) {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-<?php
-// foreach ($datos['filas'] as $value) {
-//     echo '<tr>';
-//     foreach ($value as $dato) {
-//         echo '<td>' . $dato . '</td>';
-//     }
-//     echo '</tr>';
-// }
-?>
+                                                        <?php
+                                                        // foreach ($datos['filas'] as $value) {
+                                                        //     echo '<tr>';
+                                                        //     foreach ($value as $dato) {
+                                                        //         echo '<td>' . $dato . '</td>';
+                                                        //     }
+                                                        //     echo '</tr>';
+                                                        // }
+                                                        ?>
 
                                                     </tbody>
                                                 </table>
@@ -583,8 +583,12 @@ foreach ($datos['perfiles'] as $value) {
 
                         $("#administracion-cursos").css('display', 'none')
                         $("#administracion-cursos_nuevoCurso").css('display', 'none')
+                        $("#administracion-cursos-ver").css('display', 'none')
 
                         $("#administracion-cursos-EDITAR").css('display', 'block')
+
+
+                     
 
                         var datos = {
                             idCurso: id
@@ -745,15 +749,15 @@ foreach ($datos['perfiles'] as $value) {
                                                 </tr>
                                             </thead>
                                             <tbody>
-<?php
-foreach ($datos['filas'] as $value) {
-    echo '<tr>';
-    foreach ($value as $dato) {
-        echo '<td>' . $dato . '</td>';
-    }
-    echo '</tr>';
-}
-?>
+                                                <?php
+                                                foreach ($datos['filas'] as $value) {
+                                                    echo '<tr>';
+                                                    foreach ($value as $dato) {
+                                                        echo '<td>' . $dato . '</td>';
+                                                    }
+                                                    echo '</tr>';
+                                                }
+                                                ?>
                                             </tbody>
                                         </table>
                                     </div>
