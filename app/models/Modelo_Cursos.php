@@ -33,6 +33,7 @@ class Modelo_Cursos extends Modelo_Base {
                                     curso.Descripcion,
                                     curso.estatus,
                                     estatus(curso.estatus) AS EstatusNombre,
+                                    if(curso.estatus = 1, 'Disponible', 'No Disponible') AS EstatusNombre,
                                     relacion.fechaAsignacion,
                                     (select sum(tema.porcentaje) from t_curso_tema as tema
                                         left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
@@ -44,7 +45,7 @@ class Modelo_Cursos extends Modelo_Base {
                                 left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
                                 inner join t_curso_relacion_perfil as relacion on relacion.idCurso = curso.id
                                 where relacion.idPerfil = " . $perfil . "
-                                group by curso.id;");
+                                group by curso.id");
     }
 
     public function getAllProfile() {

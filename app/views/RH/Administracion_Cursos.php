@@ -226,7 +226,7 @@
                                                         <select id="certificadoCurso" class="form-control" style="width: 100%" data-parsley-required="true">
                                                             
                                                             <?php
-                                                            var_dump($datos['certificados']);
+                                                            //var_dump($datos['certificados']);
                                                             foreach ($datos['certificados'] as $value) {
                                                                
                                                                     echo '<option value="'.$value['id'].'">'.$value['nombre'].'</option>';
@@ -757,7 +757,7 @@ function btnAdminEditarCurso(id){
                 <div class="row" style="margin-top:50px;">
                     <div class="col-md-12">
                         <div class="table-responsive">
-                            <table id="tabla-cursosAsignados" class="table table-striped table-bordered">
+                            <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                 <thead>
                                     <tr>
                                     <td>Curso</td>
@@ -958,7 +958,7 @@ function btnAdminEditarCurso(id){
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="table-responsive">
-                                            <table id="tabla-cursos-temarioEdit" class="table table-hover table-striped table-bordered">
+                                            <table id="tabla-cursos-temarioEdit" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                                 <thead>
                                                     <tr>
                                                         <th>Temario</th>
@@ -1029,7 +1029,7 @@ function btnAdminEditarCurso(id){
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="table-responsive">
-                                            <table id="tabla-cursos-participantesEdit" class="table table-hover table-striped  table-bordered">
+                                            <table id="tabla-cursos-participantesEdit"  class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                                 <thead>
                                                     <tr>
                                                         <th>Puesto</th>

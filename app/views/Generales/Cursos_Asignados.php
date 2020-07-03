@@ -16,7 +16,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Avance total</h4>
-                            <p>65.33%</p>	
+                            <p><?php echo $datos['cursos']['avance']?>%</p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -31,7 +31,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Faltante total</h4>
-                            <p>33.77%</p>	
+                            <p><?php echo $datos['cursos']['feltante']?>%</p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -43,7 +43,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Total de cursos</h4>
-                            <p>90</p>	
+                            <p><?php echo $datos['cursos']['totalCursos']?></p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -64,7 +64,7 @@
             <div class="row" style="margin-top:50px;">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table class="tabla-cursosAsignados table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
                                     <th class="never">Id</th>
@@ -77,13 +77,13 @@
                             </thead>
                             <tbody>
                                 <?php
-                                if (!empty($datos['cursos'])) {
-                                    foreach ($datos['cursos'] as $key => $value) {
-                                        if ($value['estatus'] === '17' && $value['Porcentaje'] === '100') {
+                                if (!empty($datos['cursos']['cursos'])) {
+                                    foreach ($datos['cursos']['cursos'] as $key => $value) {
+                                        if ($value['estatus'] === '1' && $value['Porcentaje'] === '100') {
                                             $accion = '<span style="color: blue;"> <i class="fa fa-check-square"></i> Completado</span>';
-                                        } elseif ($value['estatus'] === '17' && $value['Porcentaje'] < '100' && $value['Porcentaje'] > '0') {
+                                        } elseif ($value['estatus'] === '1' && $value['Porcentaje'] < '100' && $value['Porcentaje'] > '0') {
                                             $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-continuar-curso" data-id="' . $value['id'] . '"><strong style="color: gold;"> <i class="fa fa-fast-forward"></i> Continuar</strong></a>';
-                                        } elseif ($value['estatus'] === '17' && $value['Porcentaje'] === '0') {
+                                        } elseif ($value['estatus'] === '1' && $value['Porcentaje'] === '0') {
                                             $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-comenzar-curso" data-id="' . $value['id'] . '"><strong style="color: forestgreen;"> <i class="fa fa-youtube-play"></i> Comenzar</strong></a>';
                                         } else {
                                             $accion = '<strong><i class="fa fa-ban"></i> Suspendido</strong>';
@@ -92,7 +92,7 @@
                                         echo '<tr>';
                                         echo '<td>' . $value['id'] . '</td>';
                                         echo '<td>' . $value['Nombre'] . '</td>';
-                                        echo '<td>' . $value['Porcentaje'] . '</td>';
+                                        echo '<td>' . $value['Porcentaje'] . '%</td>';
                                         echo '<td>' . $value['fechaAsignacion'] . '</td>';
                                         echo '<td>' . $value['EstatusNombre'] . '</td>';
                                         echo '<td>' . $accion . '</td>';

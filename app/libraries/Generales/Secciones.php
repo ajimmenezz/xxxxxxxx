@@ -618,25 +618,9 @@ class Secciones extends General {
                 $datos['certificados'] = $this->administracionCursos->getCertificate();
                 $datos['tipoCursos'] = $this->administracionCursos->getTypeCourses();
                 break;
-            case 'RH/MisCursos':
-                $datos['cursos'] = $this->administracionCursos->getMyCourses($usuario['IdPerfil']);
-                break;
             case 'Generales/Cursos_Asignados':
                 $datos['cursos'] = $this->administracionCursos->getMyCourses($usuario['IdPerfil']);
                 $datos['idUsuario'] = $usuario['Id'];
-//                $datos['filas'] = [0 => array(
-//                    'Id' => '1',
-//                    'Curso' => 'Diseño',
-//                    'Avance' => 'Hace algo',
-//                    'FechaAsignacion' => '20',
-//                    'Estatus' => 'Activo',
-//                    'Acciones' => '<a href="javascript:;" class="btn btn-link btn-xs btn-acciones" data-accion="1">
-//                    <span> <i class="fa fa-edit"></i>Completado</span></a>')];
-//                    <span><i class="fa  fa-fast-forward" @click="view(device.id)"></i>Continuar</span>
-//                    <span><i class="fa fa-certificate" "></i><i class="class="fa fa-youtube-play"" @click="view(device.id)"></i>Comenzar</span>
-//                    <span><i class="fa fa-edit" @click="view(device.id)"></i>Suspendido</span>');
-//                    array('Redes','Interesante','4','Activo','')
-//                ];
                 break;
             default:
                 break;
