@@ -451,23 +451,6 @@
 </div>
 <!-- Finalizando #contenido -->
 
-<div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
-            </div>
-            <div class="modal-body"></div>
-            <div class="modal-footer">
-                <div id="error-in-modal"></div>
-                <button type="button" id="btnCancelar" class="btn btn-white" data-dismiss="modal">Cancelar</button>
-                <button type="button" id="btnAceptar" class="btn btn-success">Comenzar</button>
-            </div>
-            <div id="errorModal"></div>
-        </div>
-    </div>
-</div>
-
 <script id="template-upload" type="text/x-tmpl">
     {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-upload fade">

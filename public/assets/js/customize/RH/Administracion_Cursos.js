@@ -11,7 +11,7 @@ $(function () {
 
     file.crearUpload('#inputImgCurso', 'Administracion_Cursos/Nuevo-Curso', ['jpg', 'jpeg', 'png'], false, [], '', null, false, 1);
     file.crearUpload('#inputImgCursoEdit', 'Administracion_Cursos/Editar-Curso', ['jpg', 'jpeg', 'png'], false, [], '', null, false, 1);
-
+    file.crearUploadBoton('#imagenCurso', '', 'Subir Imagen');
 
     //Inicializa funciones de la plantilla
     App.init();

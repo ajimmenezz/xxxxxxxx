@@ -266,12 +266,14 @@
                                     <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
                                 </div>
 
+
+
                                 <div class="row">
                                     <div class="col-xs-12 col-md-6">
                                         <div class="row">
                                             <div class="col-xs-9">
                                                 <div class="form-group">
-                                                    <label>Nombre del curso *</label>
+                                                    <label>Nombre del modulo </label>
                                                     <input type="text" id="nombreTemario" name="Nombre" placeholder="Nombre" class="form-control" />
                                                 </div>
                                             </div>
@@ -298,7 +300,7 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
-                                                    <table id="tabla-cursos-temario" class="table table-hover table-striped table-bordered">
+                                                    <table id="tabla-cursos-temario" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                                         <thead>
                                                             <tr>
                                                                 <th>Temario</th>
@@ -387,7 +389,7 @@
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="table-responsive">
-                                                    <table id="tabla-cursos-participantes" class="table table-hover table-striped  table-bordered">
+                                                    <table id="tabla-cursos-participantes" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                                         <thead>
                                                             <tr>
                                                                 <th class="all">Puesto</th>
@@ -573,7 +575,7 @@
 
           </div>
       </div>
-    </div>
+</div>
 
 <!-- fin guardar curso-->
 
@@ -931,7 +933,7 @@ function btnAdminEditarCurso(id){
                                 <div class="row">
                                     <div class="col-xs-9">
                                         <div class="form-group">
-                                            <label>Nombre del curso *</label>
+                                            <label>Nombre del modulo </label>
                                             <input type="text" id="nombreTemarioEdit" name="Nombre" placeholder="Nombre" class="form-control" />
                                         </div>
                                     </div>

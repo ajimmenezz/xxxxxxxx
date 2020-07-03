@@ -43,14 +43,13 @@ $(function () {
 
     $(".btn-comenzar-curso").off("click");
     $(".btn-comenzar-curso").on('click', function (e) {
-        evento.iniciarModal("#modalEdit", "<strong>Comenzar Curso</strong>", '<p class="text-center"><strong>¿Quieres Comenzar el curso?</strong></p>');
-
-        $("#btnAceptar").off("click");
-        $("#btnAceptar").on('click', function (e) {
-            let id = $(this).data('id');
+        let id = $(this).data('id');
+        evento.iniciarModal("#modal-box", "<strong>Comenzar Curso</strong>", '<p class="text-center"><strong>¿Quieres Comenzar el curso?</strong></p>');
+        $("#btnModalBoxConfirmar").off("click");
+        $("#btnModalBoxConfirmar").on('click', function (e) {
             let data = {'idCurso': id, 'idUsuario': idUsuario}
             evento.enviarEvento('Cursos_Asignados/Comenzar-Curso', data, '#modalEdit', function (respuesta) {
-                evento.terminarModal("#modalEdit");
+                evento.terminarModal("#modal-box");
                 cargarTemarioUsuario();
             });
         });
