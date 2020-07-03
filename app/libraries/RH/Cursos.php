@@ -19,12 +19,12 @@ class Cursos extends General {
 
     public function getMyCourses($perfil) {
         $sumaAvance = 0;
-        
-        $datos['cursos'] =  $this->DBS->getMyCourses($perfil);
+
+        $datos['cursos'] = $this->DBS->getMyCourses($perfil);
         $datos['totalCursos'] = count($datos['cursos']);
-                
+
         $puntosTotales = $datos['totalCursos'] * 100;
-        
+
         foreach ($datos['cursos'] as $value) {
             $sumaAvance += $value['Porcentaje'];
         }
@@ -32,7 +32,7 @@ class Cursos extends General {
         $sumaAvance = $sumaAvance / $puntosTotales;
         $datos['avance'] = $sumaAvance;
         $datos['feltante'] = 100 - $sumaAvance;
-        
+
         return $datos;
     }
 
@@ -73,7 +73,7 @@ class Cursos extends General {
 
         return ['response' => true, 'code' => 200];
     }
-    
+
     public function guardarImagen($infoCourse) {
         if (!empty($_FILES)) {
             $CI = parent::getCI();
@@ -140,23 +140,58 @@ class Cursos extends General {
             return false;
         }
     }
-    
+
+    public function TemaryCourseByUser($datos) {
+        $arregloCursos = [];
+        $key_array = [];
+        $temp_array = [];
+        $i = 0;
+        $avance = 0;
+        $faltante = 0;
+        
+        $temasPorUsuario = $this->DBS->getTemaryCourseByUser($datos);
+        $temasPorCurso = $this->DBS->getTemaryById($datos['idCurso']);
+
+        $arregloCursos = array_merge($temasPorUsuario, $temasPorCurso);
+
+        foreach ($arregloCursos as $val) {
+            if (!in_array($val['id'], $key_array)) {
+                $key_array[$i] = $val['id'];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+        foreach ($temp_array as $val) {
+            if (isset($val['fechaModificacion'])) {
+                $avance += $val['porcentaje'];
+            } else {
+                $faltante += $val['porcentaje'];
+            }
+        }
+        
+        $infoUsuario['temas'] = $temp_array;
+        $infoUsuario['avance'] = $avance;
+        $infoUsuario['faltante'] = $faltante;
+
+        return $infoUsuario;
+    }
+
     public function showCourse($idCurso) {
         $sumaAvance = 0;
         $infoCourse = $this->DBS->getDetailCourse($idCurso['idCurso']);
-        
+
         $informacion['perticipantes'] = $infoCourse;
         $informacion['total'] = count($infoCourse);
-        
+
         $puntosTotales = $informacion['total'] * 100;
-        
+
         foreach ($infoCourse as $value) {
             $sumaAvance += $value['Porcentaje'];
         }
         $sumaAvance *= 100;
         $sumaAvance = $sumaAvance / $puntosTotales;
         $informacion['avance'] = $sumaAvance;
-        
+
         return $informacion;
     }
 

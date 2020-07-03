@@ -208,7 +208,20 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
     
-    public function getDetailCourse($idCurso){
+    public function getTemaryCourseByUser($datos) {
+        return $this->consulta("select 
+                                    tema.id, 
+                                    tema.nombre, 
+                                    tema.porcentaje, 
+                                    avance.fechaModificacion, 
+                                    avance.idUsuario, 
+                                    avance.id as idAvance 
+                                from t_curso_tema as tema
+                                left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
+                                where tema.idCurso = " . $datos['idCurso'] . " and avance.idUsuario = " . $datos['idUsuario']);
+    }
+
+    public function getDetailCourse($idCurso) {
         return $this->consulta("SELECT 
                                 usuarios.Id,
                                 nombreUsuario(usuarios.Id),
@@ -223,7 +236,7 @@ class Modelo_Cursos extends Modelo_Base {
                             WHERE avance.idCurso = " . $idCurso . " AND usuarios.Flag = 1");
     }
 
-        public function insertStartCourse($infoUsuario) {
+    public function insertStartCourse($infoUsuario) {
         $this->iniciaTransaccion();
 
         $this->insertar('t_curso_relacion_avance_usuario', [
