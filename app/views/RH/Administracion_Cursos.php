@@ -30,7 +30,7 @@
             <div class="row" style="margin-top:50px;">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table id="tabla-cursos" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <table id="tabla-cursos" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <td>Nombre</td>
@@ -161,11 +161,9 @@
                                     <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
                                 </div>
 
-
-
                                 <div class="row">
                                     <div class="col-xs-4 text-center">
-                                        <input id="imagenCurso" name="imagenCurso[]" type="file" multiple>
+                                        <input id="inputImgCurso" name="inputImgCurso[]" type="file">
                                     </div>
                                     <div class="col-xs-8">
 
@@ -206,7 +204,7 @@
                                                     <select id="certificadoCurso" class="form-control" style="width: 100%" data-parsley-required="true">
 
                                                         <?php
-                                                        var_dump($datos['certificados']);
+                                                        //var_dump($datos['certificados']);
                                                         foreach ($datos['certificados'] as $value) {
 
                                                             echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
@@ -245,12 +243,14 @@
                                 <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
                             </div>
 
+
+
                             <div class="row">
                                 <div class="col-xs-12 col-md-6">
                                     <div class="row">
                                         <div class="col-xs-9">
                                             <div class="form-group">
-                                                <label>Nombre del curso *</label>
+                                                <label>Nombre del modulo </label>
                                                 <input type="text" id="nombreTemario" name="Nombre" placeholder="Nombre" class="form-control" />
                                             </div>
                                         </div>
@@ -280,23 +280,23 @@
                                                 <table id="tabla-cursos-temario" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <td>Temario</td>
-                                                            <td>Porcentaje</td>
-                                                            <td>Acciones</td>
+                                                            <th>Temario</th>
+                                                            <th>Porcentaje</th>
+                                                            <th>Acciones</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
 
                                                         <?php
-//  echo "welcome ".$_COOKIE['temarios'];
-//  print_r($_COOKIE['temarios']);
-// foreach ($datos['temario'] as $value) {
-//     echo '<tr>';
-//     foreach ($value as $dato) {
-//         echo '<td>' . $dato . '</td>';
-//     }
-//     echo '</tr>';
-// }
+                                                        //  echo "welcome ".$_COOKIE['temarios'];
+                                                        //  print_r($_COOKIE['temarios']);
+                                                        // foreach ($datos['temario'] as $value) {
+                                                        //     echo '<tr>';
+                                                        //     foreach ($value as $dato) {
+                                                        //         echo '<td>' . $dato . '</td>';
+                                                        //     }
+                                                        //     echo '</tr>';
+                                                        // }
                                                         ?>
 
                                                     </tbody>
@@ -333,13 +333,13 @@
                                                 <label for="puesto">Puesto </label>
                                                 <select id="puesto" class="form-control" style="width: 100%" data-parsley-required="true">
                                                     <option value="">Seleccionar</option>
-                                                    <?php
-                                                    var_dump($datos['perfiles']);
-                                                    foreach ($datos['perfiles'] as $value) {
+                                                        <?php
+                                                        var_dump($datos['perfiles']);
+                                                        foreach ($datos['perfiles'] as $value) {
 
-                                                        echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                    }
-                                                    ?>
+                                                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                                                        }
+                                                        ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -365,22 +365,22 @@
                                         <div class="col-xs-12">
                                             <div class="table-responsive">
                                                 <table id="tabla-cursos-participantes" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-
                                                     <thead>
                                                         <tr>
-                                                            <td>Puesto</td>
-                                                            <td>Acciones</td>
+                                                            <th class="all">Puesto</th>
+                                                            <th class="never">PuestoString</th>
+                                                            <th class="all">Acciones</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php
-// foreach ($datos['filas'] as $value) {
-//     echo '<tr>';
-//     foreach ($value as $dato) {
-//         echo '<td>' . $dato . '</td>';
-//     }
-//     echo '</tr>';
-// }
+                                                        // foreach ($datos['filas'] as $value) {
+                                                        //     echo '<tr>';
+                                                        //     foreach ($value as $dato) {
+                                                        //         echo '<td>' . $dato . '</td>';
+                                                        //     }
+                                                        //     echo '</tr>';
+                                                        // }
                                                         ?>
 
                                                     </tbody>
@@ -583,8 +583,12 @@
 
                         $("#administracion-cursos").css('display', 'none')
                         $("#administracion-cursos_nuevoCurso").css('display', 'none')
+                        $("#administracion-cursos-ver").css('display', 'none')
 
                         $("#administracion-cursos-EDITAR").css('display', 'block')
+
+
+                     
 
                         var datos = {
                             idCurso: id
@@ -735,7 +739,6 @@
                                 <div class="col-md-12">
                                     <div class="table-responsive">
                                         <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-
                                             <thead>
                                                 <tr>
                                                     <td>Curso</td>
@@ -800,9 +803,9 @@
                             </ul>
                             <div class="tab-content">
                                 <div id="eventAccionEditarCurso"></div>
-                                <div class="tab-pane fade active in" id="default-tab-1">
+                                <div class="tab-pane fade active in" id="default-tab-1" >
                                     <form id="formDatosNewCurso" data-parsley-validate="true" enctype="multipart/form-data">
-                                        <div class="row">
+                                        <div class="row" style="margin-top:40px;">
                                             <div class="col-xs-4">
                                                 <!-- <div class="col-xs-12">
                                                 <img class="img-fluid" style="width:90%; margin-left:12px;"   src="/assets/img/user-12.jpg" alt="img-curso">
@@ -855,21 +858,21 @@
                                                     <!-- end col-4 -->
                                                     <!-- begin col-4 -->
                                                     <div class=" col-xs-12 col-md-6">
-                                                        <?php
+<?php
 // var_dump($datos['certificados']);
 // var_dump($datos['tipoCursos']);
-                                                        ?>
+?>
                                                         <div class="form-group">
                                                             <label for="nuevoArchivo">Certificado </label>
                                                             <select disabled id="certificadoCursoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
 
-                                                                <?php
-                                                                var_dump($datos['certificados']);
-                                                                foreach ($datos['certificados'] as $value) {
+                                                        <?php
+                                                        var_dump($datos['certificados']);
+                                                        foreach ($datos['certificados'] as $value) {
 
-                                                                    echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
-                                                                }
-                                                                ?>
+                                                            echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
+                                                        }
+                                                        ?>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -898,12 +901,12 @@
                                     </form>
                                 </div>
                                 <div class="tab-pane fade" id="default-tab-2">
-                                    <div class="row">
+                                    <div class="row" style="margin-top:40px;">
                                         <div class="col-xs-12 col-md-6">
                                             <div class="row">
                                                 <div class="col-xs-9">
                                                     <div class="form-group">
-                                                        <label>Nombre del curso *</label>
+                                                        <label>Nombre del modulo </label>
                                                         <input type="text" id="nombreTemarioEdit" name="Nombre" placeholder="Nombre" class="form-control" />
                                                     </div>
                                                 </div>
@@ -931,17 +934,16 @@
                                                 <div class="col-xs-12">
                                                     <div class="table-responsive">
                                                         <table id="tabla-cursos-temarioEdit" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-
                                                             <thead>
                                                                 <tr>
-                                                                    <td>Temario</td>
-                                                                    <td>Porcentaje</td>
-                                                                    <td>Acciones</td>
+                                                                    <th>Temario</th>
+                                                                    <th>Porcentaje</th>
+                                                                    <th>Acciones</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
 
-                                                                <?php
+<?php
 //  echo "welcome ".$_COOKIE['temarios'];
 //  print_r($_COOKIE['temarios']);
 // foreach ($datos['temario'] as $value) {
@@ -951,7 +953,7 @@
 //     }
 //     echo '</tr>';
 // }
-                                                                ?>
+?>
 
                                                             </tbody>
                                                         </table>
@@ -962,7 +964,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="default-tab-3">
-                                    <div class="row">
+                                    <div class="row" style="margin-top:40px;">
                                         <div class="col-xs-12 col-md-6">
                                             <div class="row">
                                                 <div class="col-md-9">
@@ -971,13 +973,13 @@
                                                         <label for="puesto">Puesto </label>
                                                         <select id="puestoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
                                                             <option value="">Seleccionar</option>
-                                                            <?php
-                                                            var_dump($datos['perfiles']);
-                                                            foreach ($datos['perfiles'] as $value) {
+<?php
+//  var_dump($datos['perfiles']);
+foreach ($datos['perfiles'] as $value) {
 
-                                                                echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                            }
-                                                            ?>
+    echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+}
+?>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -1000,16 +1002,15 @@
                                             <div class="row">
                                                 <div class="col-xs-12">
                                                     <div class="table-responsive">
-                                                        <table id="tabla-cursos-participantesEdit" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-
+                                                        <table id="tabla-cursos-participantesEdit"  class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <td>Puesto</td>
-                                                                    <td>Acciones</td>
+                                                                    <th>Puesto</th>
+                                                                    <th>Acciones</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php
+<?php
 // foreach ($datos['filas'] as $value) {
 //     echo '<tr>';
 //     foreach ($value as $dato) {
@@ -1017,7 +1018,7 @@
 //     }
 //     echo '</tr>';
 // }
-                                                                ?>
+?>
 
                                                             </tbody>
                                                         </table>
