@@ -1893,8 +1893,8 @@ $config['RH'] = array(
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
             'RH/Administracion_Cursos',
-            'RH/form-wizards.demo.min',
-            'RH/form-wizards-validation.demo.min',
+            // 'RH/form-wizards.demo.min',
+            // 'RH/form-wizards-validation.demo.min',
             'RH/Cursos/test',
             'Base/fileUpload'
            
