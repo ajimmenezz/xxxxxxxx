@@ -12,7 +12,8 @@ $(function () {
 
     let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
     let tablaTemario = new TablaBasica('tabla-temario');
-    tablaTemario.iniciarTablaClass();
+    let tablaTemarioTerminar = new TablaBasica('tabla-temario-terminar');
+    let tablaTemarioCompletado = new TablaBasica('tabla-temario-completado');
     let idUsuario = $('#valorIdUsuario').val();
 
     $("#cursoTablaContinuar").on('click', function (e) {
@@ -21,24 +22,6 @@ $(function () {
         $("#temarioComenzarCurso").css('display', 'none')
         $("#temarioTerminarCurso").css('display', 'none')
         $("#asigCursoContinuar").css('display', 'block')
-    });
-
-    $(".temarioTablaCompletado").on('click', function (e) {
-        console.log("temarioTablaCompletado");
-        $("#tablaAsigCursos").css('display', 'none')
-        $("#asigCursoContinuar").css('display', 'none')
-        $("#temarioComenzarCurso").css('display', 'block')
-        $("#temarioTerminarCurso").css('display', 'none')
-
-    });
-
-    $(".temarioTablaTerminar").on('click', function (e) {
-        console.log("temarioTablaTerminar");
-        $("#tablaAsigCursos").css('display', 'none')
-        $("#asigCursoContinuar").css('display', 'none')
-        $("#temarioComenzarCurso").css('display', 'none')
-        $("#temarioTerminarCurso").css('display', 'block')
-
     });
 
     $(".btn-comenzar-curso").off("click");
@@ -60,7 +43,7 @@ $(function () {
         let id = $(this).data('id');
         let data = {'idCurso': id, 'idUsuario': idUsuario}
         evento.enviarEvento('Cursos_Asignados/Continuar-Curso', data, '#tablaAsigCursos', function (respuesta) {
-            cargarTemarioUsuario();
+            cargarTemarioUsuario(respuesta);
         });
     });
 
@@ -104,9 +87,39 @@ $(function () {
     //   $('#modalValidateTemario').modal('show')
     // });
 
-    function cargarTemarioUsuario() {
+    function cargarTemarioUsuario(respuesta) {
         $('#tablaAsigCursos').css('display', 'none');
         $('#asigCursoContinuar').css('display', 'block');
+
+        $.each(respuesta.data.temario.temas, function (k, v) {
+            let boton = '';
+
+            if (v.idAvance === undefined) {
+                boton = `<span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span>`;
+            } else {
+                boton = `<span class="temarioTablaCompletado"  style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span>`;
+            }
+
+            tablaTemario.agregarDatosFila([v.nombre, v.porcentaje + '%', boton]);
+            tablaTemarioCompletado.agregarDatosFila([v.nombre, v.porcentaje + '%', boton]);
+            tablaTemarioTerminar.agregarDatosFila([v.nombre, v.porcentaje + '%', boton]);
+        });
+
+        $(".temarioTablaCompletado").on('click', function (e) {
+            $("#tablaAsigCursos").css('display', 'none')
+            $("#asigCursoContinuar").css('display', 'none')
+            $("#temarioComenzarCurso").css('display', 'block')
+            $("#temarioTerminarCurso").css('display', 'none')
+
+        });
+
+        $(".temarioTablaTerminar").on('click', function (e) {
+            $("#tablaAsigCursos").css('display', 'none')
+            $("#asigCursoContinuar").css('display', 'none')
+            $("#temarioComenzarCurso").css('display', 'none')
+            $("#temarioTerminarCurso").css('display', 'block')
+
+        });
     }
 
 });
