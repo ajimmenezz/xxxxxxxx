@@ -807,12 +807,12 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
                 certificado: $("#certificadoCursoEdit").val(),
                 costo: $("#costoCursoEdit").val(),
             },
-            temario: {
-                archivo: false,
-                infoTabla: {}
+            // temario: {
+            //     archivo: false,
+            //     infoTabla: {}
 
-            },
-            participantes: {}
+            // },
+            // participantes: {}
         }
 
 
@@ -852,7 +852,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
         if ($('#inputImgCursoEdit').val() !== '') {
             file.enviarArchivos('#inputImgCursoEdit', 'Administracion_Cursos/Editar-Curso', '', json, function (respuesta) {
-                console.log(respuesta);
+                console.log("EDITAR_Curso",respuesta);
                 // if (respuesta !== 'otraImagen') {
                 //     window.open(respuesta.ruta, '_blank');
                 //     location.reload();
@@ -860,9 +860,11 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
                 //     evento.mostrarMensaje('.eventAccionEditarCurso', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
                 // }
                 if (!respuesta.success) {
-                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el curso.', 5000);
+                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
                     return;
                 }
+
+                
 
             });
         } else {
@@ -870,7 +872,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Editar-Curso', json, function (respuesta) {
                 console.log(respuesta);
                 if (!respuesta.success) {
-                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el curso.', 5000);
+                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
                     return;
                 }
 
@@ -878,9 +880,10 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
             });
         }
-        evento.mostrarMensaje('.eventAccionEditarCurso', true, 'Se ha registrado el curso.', 5000);
-        $('#modalresponseSave').modal('show')
-        location.reload();
+        
+        evento.mostrarMensaje('.eventAccionEditarCurso', true, 'Se ha editado el curso.', 5000);
+        $('#modalresponseSaveEdit').modal('show')
+       // location.reload();
         file.limpiar('#inputImgCursoEdit');
 
     });

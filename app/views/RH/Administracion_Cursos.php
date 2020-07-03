@@ -780,7 +780,7 @@
                 <!--  EDITAR curso -->
 
 
-                <div id="administracion-cursos-EDITAR" class="content" style="display:none;">
+                <div id="administracion-cursos-EDITAR" class="content" style="display:none; margin-top:15px;">
                     <!-- begin page-header -->
                     <div class="row">
                         <div class="col-sm-8">
@@ -796,20 +796,20 @@
                         <!-- end page-header -->
 
 
-                        <div class="col-sm-12">
+                        <div class="col-sm-12" style="margin-top:15px;">
                             <ul class="nav nav-tabs">
                                 <li class="active"><a href="#default-tab-1" data-toggle="tab">Datos del curso</a></li>
                                 <li class=""><a href="#default-tab-2" data-toggle="tab">Temario</a></li>
                                 <li class=""><a href="#default-tab-3" data-toggle="tab">Participantes</a></li>
                                 <div class=" col-xs-12 col-md-4 " style="float:right;">
-                                    <button id="btn-cancel_nuevo-curso" type="button" class="btn btn-primary m-r-5 m-b-5 btn-cancel_wizardEdit" style="float: right;">Regresar a cursos</button>
+                                    <button id="btn-cancel_nuevo-curso" type="button" class="btn btn-primary btn-sm m-r-5 m-b-5 btn-cancel_wizardEdit" style="float: right; margin-top:5px;">Regresar a cursos</button>
                                 </div>
                             </ul>
                             <div class="tab-content">
                                 <div id="eventAccionEditarCurso"></div>
                                 <div class="tab-pane fade active in" id="default-tab-1" >
                                     <form id="formDatosNewCursoEdit" data-parsley-validate="true" enctype="multipart/form-data">
-                                        <div class="row" style="margin-top:40px;">
+                                        <div class="row"  style="margin:40px 45px;">
                                             <div class="col-xs-4">
                                                 <!-- <div class="col-xs-12">
                                                 <img class="img-fluid" style="width:90%; margin-left:12px;"   src="/assets/img/user-12.jpg" alt="img-curso">
@@ -905,7 +905,7 @@
                                     </form>
                                 </div>
                                 <div class="tab-pane fade" id="default-tab-2">
-                                    <div class="row" style="margin-top:40px;">
+                                    <div class="row" style="margin:40px;">
                                         <div class="col-xs-12 col-md-6">
                                             <div class="row">
                                                 <div class="col-xs-9">
@@ -929,7 +929,7 @@
                                                     </b>
                                                 </div>
                                                 <div class="col-xs-12" style="text-align: center; margin-top:30px;" >
-                                                    <button id="btn-loadExcel-temarioEDit" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-file"></i> Subir Excel</button>
+                                                    <!-- <button id="btn-loadExcel-temarioEDit" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-file"></i> Subir Excel</button> -->
                                                 </div>
                                             </div>
                                         </div>
@@ -969,7 +969,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="default-tab-3">
-                                    <div class="row" style="margin-top:40px;">
+                                    <div class="row"  style="margin:40px 45px;">
                                         <div class="col-xs-12 col-md-6">
                                             <div class="row">
                                                 <div class="col-md-9">
@@ -1040,6 +1040,39 @@
                     </div>
 
                 </div>
+
+                 <!--  modal editar curso  -->
+                 <div id="modalresponseSaveEdit" class="modal fade ">
+                    <div class="modal-dialog" >
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalCenterTitle" >Datos del curso</h5>
+                                <button type="button" class="close btn-cancel_wizard" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body ">
+
+                                <div class="container">
+                                    <div class="row">
+
+                                        <div class="col-11">
+                                            Se cambiaron los datos del curso con éxito.<br>
+                                            <i class="fa fa-check-circle" style="color:#00acac;"></i>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <a href="javascript:;" class="btn btn-white m-r-5 " id="cerrar" data-dismiss="modal" aria-label="Close"> Cerrar</a>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- fin modal edit curso-->
 
                 <!-- fin EDITAR curso -->
 
