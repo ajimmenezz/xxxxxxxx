@@ -856,12 +856,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
         if ($('#inputImgCurso').val() !== '') {
             file.enviarArchivos('#inputImgCurso', 'Administracion_Cursos/Nuevo-Curso', '', json, function (respuesta) {
                 console.log(respuesta);
-                // if (respuesta !== 'otraImagen') {
-                //     window.open(respuesta.ruta, '_blank');
-                //     location.reload();
-                // } else {
-                //     evento.mostrarMensaje('.mensajeSolicitudPermisos', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
-                // }
+                
                 if (!respuesta.success) {
                     evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
                     return;

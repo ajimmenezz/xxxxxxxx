@@ -706,7 +706,7 @@
 
                             $("#cursoAvanceParticipante").text(perfiles.nombreUsuario);
                             $("#cursoAvanceCurso").text('nameCurso');
-                            $("#cursoAvancePuesto").text(perfiles.Nombre);
+                            $("#cursoAvancePuesto").html(perfiles.Nombre);
 
                             let tablaListCursosVer = null;
                             tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
@@ -971,7 +971,61 @@
                                                 <textarea id="textareaDescripcionCurso" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6"  data-parsley-group="wizard-step-1" required /></textarea>
                                             </div>
                                         </div>
-                                    </div>
+                                      
+                                            <div id="gallery" class="gallery">
+                                                <div class="image gallery-group-1">
+                                                    <div class="image-inner">
+                                                        <a href="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
+                                                            <img src="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="image-info">
+                                                        <h5>Fecha</h5>
+                                                        <h5 class="title">Comentarios</h5>
+                                                        <div class="desc">
+                                                            Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                       
+                                            <div id="gallery" class="gallery">
+                                                <div class="image gallery-group-1">
+                                                    <div class="image-inner">
+                                                        <a href="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
+                                                            <img src="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="image-info">
+                                                        <h5>Fecha</h5>
+                                                        <h5 class="title">Comentarios</h5>
+                                                        <div class="desc">
+                                                            Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                       
+                                            <div id="gallery" class="gallery">
+                                                <div class="image gallery-group-1">
+                                                    <div class="image-inner">
+                                                        <a href="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
+                                                            <img src="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="image-info">
+                                                        <h5>Fecha</h5>
+                                                        <h5 class="title">Comentarios</h5>
+                                                        <div class="desc">
+                                                            Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
                                    
                                    
                                     
