@@ -35,16 +35,18 @@ class Modelo_Cursos extends Modelo_Base {
                                     estatus(curso.estatus) AS EstatusNombre,
                                     if(curso.estatus = 1, 'Disponible', 'No Disponible') AS EstatusNombre,
                                     relacion.fechaAsignacion,
-                                    (select sum(tema.porcentaje) from t_curso_tema as tema
-                                        left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
-                                        where avance.fechaModificacion is not null and tema.idCurso = curso.id
+                                    (select sum(cursoTema.porcentaje) from t_curso_tema as cursoTema
+										left join t_curso_tema_relacion_avance_usuario as avanceUsuario on avanceUsuario.idTema = cursoTema.id
+										where avanceUsuario.idUsuario = usuario.Id and cursoTema.idCurso = curso.id 
+                                        group by cursoTema.idCurso
                                     ) as Porcentaje,
                                     avance.fechaModificacion
                                 from t_curso as curso
                                 left join t_curso_tema as tema on tema.idCurso = curso.id
                                 left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
                                 inner join t_curso_relacion_perfil as relacion on relacion.idCurso = curso.id
-                                where relacion.idPerfil = " . $perfil . "
+                                inner join cat_v3_usuarios as usuario on usuario.IdPerfil = relacion.idPerfil
+                                where usuario.Id = " . $perfil . "
                                 group by curso.id");
     }
 
@@ -252,6 +254,36 @@ class Modelo_Cursos extends Modelo_Base {
             $this->commitTransaccion();
             return ['code' => 200];
         }
+    }
+    
+//    public function insertAdvanceRelationship($info) {
+//        $this->iniciaTransaccion();
+//
+//        $this->insertar('t_curso_tema_relacion_avance_usuario', [
+//            'idTema' => $info["idTema"],
+//            'idUsuario' => $info["idUsuario"]
+//        ]);
+//        
+//        $ultimAvance = $this->consulta("select last_insert_id() as Id");
+//
+//        $this->terminaTransaccion();
+//        if ($this->estatusTransaccion() === false) {
+//            $this->roolbackTransaccion();
+//            return ['code' => 400, 'idAvance' => 0];
+//        } else {
+//            $this->commitTransaccion();
+//            return ['code' => 200, 'idAvance' => $ultimAvance[0]["Id"]];
+//        }
+//    }
+    
+    public function getEvidenceByID($idEvidencia) {
+        return $this->consulta("select 
+                                    avance.fechaModificacion, 
+                                    evidencia.comentarios, 
+                                    evidencia.url 
+                                from t_curso_tema_relacion_avance_usuario as avance
+                                inner join t_curso_tema_relacion_usuario_evidencia as evidencia on evidencia.idAvanceUsuario = avance.id
+                                where avance.id = " . $idEvidencia);
     }
 
 }
