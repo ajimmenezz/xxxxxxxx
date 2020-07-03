@@ -60,7 +60,8 @@
                                     echo "<td> 
                                                 <div style='text-align: center;'>
                                                 <input type='hidden' id='idElementSeleccionAccion'>
-                                                <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;' id='btn-adminVerCurso'></i>";
+                                            
+                                                <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;' id='btn-adminVerCurso'  onclick='btnAdminVerCurso(".$value["Id"].")'></i>";
                                     // if($value["Estatus"]!=0){
                                     echo "  <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;'' onclick='btnAdminEditarCurso(" . $value["Id"] . ")' id='btn-adminEditarCurso' ></i>
                                                     <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(" . $value["Id"] . ")' id='btn-adminEliminarCurso'></i>";
@@ -578,7 +579,7 @@
                     var eventoPagina = new Pagina();
                     function btnAdminEditarCurso(id) {
 
-                        alert("EDITAR CURSO");
+                        console.debug("EDITAR CURSO");
 
                         $("#idElementSeleccionAccion").val(id)
 
@@ -602,8 +603,7 @@
                         console.debug("PARAM", datos)
                         eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Obtener-Curso', datos, function (respuesta) {
                             console.debug(datos, "DATOS_CURSO", respuesta);
-                            alert(datos, "DATOS_CURSO", respuesta);
-                            
+                           
                             if (!respuesta.success) {
                                 evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido información del curso.', 5000);
                                 return;
@@ -650,6 +650,85 @@
 
                         });
                     }
+
+                    function btnAdminVerCurso(id){
+                        console.debug("VER CURSO");
+                        
+                        // <?php
+                        // var_dump($datos['cursos']);
+                        // // foreach ($datos['cursos'] as $value) {
+
+                        // // }
+
+                        // ?>
+
+                        if(id!=0){
+                        $("#idElementSeleccionAccion").val(id)
+                         }
+                         else{
+                            id=$("#idElementSeleccionAccion").val()
+                         }
+
+                        $('#modalSubirTemarios').modal('hide')
+                        $('#modalValidateTemario').modal('hide')
+                        $("#modalValidateParticipantes").modal('hide');
+                        $("#modalDeletoCursoAdmin").modal('hide')
+
+                        $("#administracion-cursos").css('display', 'none')
+                        $("#administracion-cursos-verAvance").css('display', 'none')
+                       
+                        $("#administracion-cursos_nuevoCurso").css('display', 'none')
+
+                        $("#administracion-cursos-ver").css('display', 'block')
+                        $("#evidenciasVerAvance").css('display', 'block')
+                        $("#evidenciasVerAvanceTema").css('display', 'none')
+
+                        
+                        var json={
+                        idCurso:id
+                        }
+
+                        eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Curso', json, function (respuesta) {
+                            console.debug("DATOS_VER_CURSO",respuesta);
+                            if (!respuesta.success) {
+                                evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido el curso.', 5000);
+                                return;
+                            }
+
+                            var datosCurso = respuesta.data.infoCurso
+                            var perfiles = respuesta.data.infoCurso.perticipantes
+
+                            var total = respuesta.data.infoCurso.total
+                            var avance = respuesta.data.infoCurso.avance
+
+                            $("#avanceVerCurso").text(avance);
+                            $("#totalVerCurso").text(total);
+
+                            $("#cursoAvanceParticipante").text(perfiles.nombreUsuario);
+                            $("#cursoAvanceCurso").text('nameCurso');
+                            $("#cursoAvancePuesto").text(perfiles.Nombre);
+
+                            let tablaListCursosVer = null;
+                            tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+
+
+
+                            perfiles.forEach(element => {
+                                tablaListCursosVer.agregarDatosFila([
+                                    element.nombreUsuario,
+                                    element.Nombre,
+                                    element.Porcentaje+'%',
+                                     element.Id,
+                                    "<span><i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  id='btn-AdminVerCursoVerAvance'></i>Ver avances</spand>"
+
+                                ]);
+                            });
+
+
+
+
+                        });
+                    }
                 </script>
 
                 <style>
@@ -681,10 +760,21 @@
 
                 <!-- ver cursos -->
 
-                <div id="administracion-cursos-ver" class="content" style="display:none;">
+                <div id="administracion-cursos-ver" class="content" style="display:none; margin-top:15px;">
                     <!-- begin page-header -->
-                    <h1 class="page-header">Administración de Cursos</h1>
-                    <!-- end page-header -->
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h1 class="page-header"> <b>Curso </b> Gestión de proyectos.</h1>
+                        </div>
+                        <div class="col-sm-4">
+                            <ol class="breadcrumb pull-right">
+                                <li><a class="btn-cancel_wizardEdit" href="javascript:;">Cursos</a></li>
+                                <li class="active">Avance del curso</li>
+                            </ol>
+
+                        </div>
+                    </div>
+                        <!-- end page-header -->
                     <div class="panel panel-inverse" data-sortable-id="ui-widget-1" id="tablaAsigCursos">
                         <div class="panel-heading">
                             <h4 class="panel-title">Cursos</h4>
@@ -698,7 +788,7 @@
                                                 <div class="stats-icon"></div>
                                                 <div class="stats-info">
                                                     <h4>Avance general</h4>
-                                                    <p>3,291</p>	
+                                                    <p id="avanceVerCurso"></p>	
                                                 </div>
                                                 <div class="stats-link">
                                                     <a href="javascript:;"></a>
@@ -711,13 +801,14 @@
                                                 <div class="stats-icon"></div>
                                                 <div class="stats-info">
                                                     <h4>Total de part.</h4>
-                                                    <p>3,278</p>	
+                                                    <p id="totalVerCurso"></p>	
                                                 </div>
                                                 <div class="stats-link">
                                                     <a href="javascript:;"></a>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-sm-4"></div>
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-6" style="text-align: right;">
@@ -735,10 +826,12 @@
                                         <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <td>Empleado</td>
-                                                    <td>Puesto</td>
-                                                    <td>Avance</td>
-                                                    <td>Acciones</td>
+                                                    <td class="all">Empleado</td>
+                                                    <td class="all">Puesto</td>
+                                                    <td class="all">Avance</td>
+                                                    <td class="never">id</td>
+                                                    <td class="all">Acciones</td>
+                                                    
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -755,8 +848,11 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
+                                                    <td></td>
                                                     <td>
-                                                    <span><i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  id='btn-AdminEliminarTemario'></i>Ver avances</spand>
+                                                    <span>
+                                                        <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  id='btn-AdminVerCursoVerAvance'>
+                                                    </i>Ver avances</spand>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -768,6 +864,135 @@
                         </div>
                     </div>
                 </div>
+
+
+                <!-- ver avance -->
+                <div id="administracion-cursos-verAvance" class="content" style="display:none; margin-top:15px;">
+                    <!-- begin page-header -->
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h1 class="page-header"> <b>Curso </b> Gestión de proyectos.</h1>
+                        </div>
+                        <div class="col-sm-4">
+                            <ol class="breadcrumb pull-right">
+                                <li><a class="btn-cancel_wizardEdit" href="javascript:;">Cursos</a></li>
+                                <li class="active" onclick="btnAdminVerCurso(0)">Avance</li>
+                                <li class="active">Detalles avance</li>
+                            </ol>
+
+                        </div>
+                    </div>
+                        <!-- end page-header -->
+                    <div  class="panel panel-inverse" data-sortable-id="ui-widget-1" >
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Avance de participante</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                
+                                <div class="col-sm-12 col-md-6">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="widget widget-stats bg-green">
+                                                <div class="stats-icon"></div>
+                                                <div class="stats-info">
+                                                    <h4>Avance total</h4>
+                                                    <p id="avanceVerDCurso"></p>	
+                                                </div>
+                                                <div class="stats-link">
+                                                    <a href="javascript:;"></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="widget widget-stats bg-red">
+                                                <div class="stats-icon"></div>
+                                                <div class="stats-info">
+                                                    <h4>Faltante total</h4>
+                                                    <p id="faltanteVerDCurso"></p>	
+                                                </div>
+                                                <div class="stats-link">
+                                                    <a href="javascript:;"></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4"></div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-6" style="float:right;">
+                                    
+                                    <b style="font-size:15px;">Participante </b><span style="font-size:13px;" id="cursoAvanceParticipante"> </span><br>
+                                    <b style="font-size:15px;">Curso </b><span style="font-size:13px;" id="cursoAvanceCurso"> </span><br>
+                                    <b style="font-size:15px;">Puesto </b><span style="font-size:13px;" id="cursoAvancePuesto"> </span>
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <h4><b>Temario</b></h4>
+                                    <div class="underline m-b-15 m-t-15"></div>
+                                    <div class="table-responsive">
+                                        <table id="tabla-temarioAvances" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="never">id</th>
+                                                    <th class="all">Modulo</th>
+                                                    <th class="all">Avance</th>
+                                                    <th class="all">Fecha</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                               
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-7" id="evidenciasVerAvance" >
+                                    <h4><b>Evidencias</b></h4>
+                                    <div class="underline m-b-15 m-t-15"></div>
+                                    <p class="text-justify">                                        
+                                        Realiza las siguientes instrucciones: <br><br>
+                                        1.- En la tabla de temarios identifica el tema que deseas revisar. <br>
+                                        2.- Da un clic sobre el renglón del tema para poder ver sus evidencias. <br>
+                                        3.- Da clic sobre la evidencia para poder ampliarla.<br>
+                                        
+                                    </p>
+                                    
+                                </div>
+
+                                <div class="col-md-7" id="evidenciasVerAvanceTema" >
+                                    <h4><b>Evidencias</b></h4>
+                                    <div class="underline m-b-15 m-t-15"></div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="nuevoArchivo">Descripción *</label>
+                                                <textarea id="textareaDescripcionCurso" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6"  data-parsley-group="wizard-step-1" required /></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                   
+                                    
+                                </div>
+
+                                
+                                
+                                </div>
+                                
+                                <div class="row" style="margin-top:20px; text-align: right;">
+                                    <div class="col-sm-12" >
+                                        <button id="btn-regresarCurso" type="button" class="btn btn-white btn-sm m-r-5 m-b-5 btn-cancel_wizardEdit" style=" margin-top:5px;">Regresar a cursos</button>
+                                   
+                                        <button id="btn-regresarAvance" type="button" class="btn btn-primary btn-sm m-r-5 m-b-5 " style=" margin-top:5px;" onclick="btnAdminVerCurso(0)">Regresar a avance</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
+                <!-- ver avance -->
                 <!--  fin ver cursos -->
 
 

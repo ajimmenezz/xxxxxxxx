@@ -28,18 +28,7 @@ $(function () {
 
 
     $('#btn-adminVerCurso').on('click', function (e) {
-        alert("VER CURSO");
-        $('#modalSubirTemarios').modal('hide')
-        $('#modalValidateTemario').modal('hide')
-        $("#modalValidateParticipantes").modal('hide');
-        $("#modalDeletoCursoAdmin").modal('hide')
-
-        $("#administracion-cursos").css('display', 'none')
-        $("#administracion-cursos_nuevoCurso").css('display', 'none')
-
-        $("#administracion-cursos-ver").css('display', 'block')
-
-
+       
         
     });
 
@@ -126,6 +115,7 @@ $(function () {
         $('#modalValidateTemario').modal('hide')
         $("#modalValidateParticipantes").modal('hide');
         $("#administracion-cursos-ver").css('display', 'none')
+        $("#administracion-cursos-verAvance").css('display', 'none')
         $("#administracion-cursos-EDITAR").css('display', 'none')
 
         $("#administracion-cursos").css('display', 'block')
@@ -143,6 +133,7 @@ $(function () {
 
         $("#administracion-cursos_nuevoCurso").css('display', 'none')
         $("#administracion-cursos-ver").css('display', 'none')
+        $("#administracion-cursos-verAvance").css('display', 'none')
         $("#administracion-cursos-EDITAR").css('display', 'none')
         $("#administracion-cursos").css('display', 'block')
 
@@ -655,6 +646,132 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
     });
+
+
+    //ver curso
+
+    let tablaListCursosVer = null;
+    tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+
+    let tablaListemasAvance = null;
+        tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
+
+
+    tablaListCursosVer.evento(function () {
+     
+      let datosTabla = tablaListCursosVer.datosTabla();
+
+      console.debug("eliminar", "resto", datosTabla, tablaListCursosVer.datosFila(this));
+
+      
+
+      if (datosTabla.length !== 0) {
+        
+        let datosElemento = tablaListCursosVer.datosFila(this);
+        console.debug("DATO_ESPECIFICO",datosElemento);
+
+          var json = {
+            idCurso: $("#idElementSeleccionAccion").val(),
+            idUsuario:234//datosElemento[3]
+        }
+
+        console.debug("PARAMS",json);
+        eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/TemasCursoUsuario', json, function (respuesta) {
+            console.log("TemasCursoUsuario_AVANCES",respuesta);
+            if (!respuesta.success) {
+                evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el participante.', 5000);
+                return;
+            }
+
+            var datosUser = respuesta.data.infoUsuario
+            var temas = respuesta.data.infoUsuario.temas
+
+            
+
+            var faltante = respuesta.data.infoUsuario.faltante
+            var avance = respuesta.data.infoUsuario.avance
+
+            $("#avanceVerDCurso").text(avance);
+            $("#faltanteVerDCurso").text(faltante);
+
+            
+            
+            tablaListemasAvance.limpiartabla();
+
+            temas.forEach(element => {
+                tablaListemasAvance.agregarDatosFila([
+                    element.id,
+                    element.nombre,
+                    element.porcentaje+'%',
+                    'fecha'
+                ]);
+            });
+
+
+
+        });
+
+        $('#modalSubirTemarios').modal('hide')
+        $('#modalValidateTemario').modal('hide')
+        $("#modalValidateParticipantes").modal('hide');
+
+
+        $("#administracion-cursos_nuevoCurso").css('display', 'none')
+        $("#administracion-cursos-ver").css('display', 'none')
+        $("#administracion-cursos-verAvance").css('display', 'block')
+        $("#administracion-cursos-EDITAR").css('display', 'none')
+        $("#administracion-cursos").css('display', 'none')
+        $("#evidenciasVerAvanceTema").css('display', 'none')
+        
+
+          
+      }
+
+    
+
+
+  });
+
+
+
+
+  tablaListemasAvance.evento(function () {
+   
+    let datosTabla = tablaListemasAvance.datosTabla();
+
+    console.debug("eliminar", "resto", datosTabla, tablaListemasAvance.datosFila(this));
+
+    
+
+    if (datosTabla.length !== 0) {
+      
+      let datosElemento = tablaListemasAvance.datosFila(this);
+      console.debug("DATO_ESPECIFICO",datosElemento);
+
+     
+      $('#modalSubirTemarios').modal('hide')
+      $('#modalValidateTemario').modal('hide')
+      $("#modalValidateParticipantes").modal('hide');
+
+
+      $("#administracion-cursos_nuevoCurso").css('display', 'none')
+      $("#administracion-cursos-ver").css('display', 'none')
+      $("#administracion-cursos-verAvance").css('display', 'block')
+      $("#administracion-cursos-EDITAR").css('display', 'none')
+      $("#administracion-cursos").css('display', 'none')
+      $("#evidenciasVerAvance").css('display', 'none')
+      $("#evidenciasVerAvanceTema").css('display', 'block')
+
+        
+    }
+
+  
+
+
+});
+
+  
+  
 
 
     $("#btn-save-curso").on('click', function (e) {
