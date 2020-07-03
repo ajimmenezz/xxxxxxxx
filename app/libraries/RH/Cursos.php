@@ -51,7 +51,9 @@ class Cursos extends General {
     public function newCourse($infoCourse) {
         $rutaImagen = null;
         if (isset($infoCourse['curso'])) {
-            
+            if($infoCourse['curso']['img'] !== ''){
+                $rutaImagen = $infoCourse['curso']['img'];
+            }
             $insertQuery = $this->DBS->insertCourse($infoCourse['curso'], $rutaImagen);
         }
 
@@ -187,7 +189,7 @@ class Cursos extends General {
         $sumaAvance *= 100;
         $sumaAvance = $sumaAvance / $puntosTotales;
         $informacion['avance'] = $sumaAvance;
-
+        var_dump($informacion);
         return $informacion;
     }
 

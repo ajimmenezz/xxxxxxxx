@@ -226,7 +226,7 @@ class Modelo_Cursos extends Modelo_Base {
     public function getDetailCourse($idCurso) {
         return $this->consulta("SELECT 
                                 usuarios.Id,
-                                nombreUsuario(usuarios.Id),
+                                nombreUsuario(usuarios.Id) as nombreUsuario,
                                 perfiles.Nombre,
                                 (select sum(tema.porcentaje) from t_curso_tema as tema
                                     left join t_curso_tema_relacion_avance_usuario as relacion on relacion.idTema = tema.id
