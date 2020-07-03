@@ -697,7 +697,7 @@
                                             <div class="widget widget-stats bg-green">
                                                 <div class="stats-icon"></div>
                                                 <div class="stats-info">
-                                                    <h4>Avance total</h4>
+                                                    <h4>Avance general</h4>
                                                     <p>3,291</p>	
                                                 </div>
                                                 <div class="stats-link">
@@ -705,23 +705,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <div class="widget widget-stats bg-red">
-                                                <div class="stats-icon"></div>
-                                                <div class="stats-info">
-                                                    <h4>Faltante total</h4>
-                                                    <p>3,291</p>	
-                                                </div>
-                                                <div class="stats-link">
-                                                    <a href="javascript:;"></a>
-                                                </div>
-                                            </div>
-                                        </div>
+                                  
                                         <div class="col-sm-4">
                                             <div class="widget widget-stats bg-blue">
                                                 <div class="stats-icon"></div>
                                                 <div class="stats-info">
-                                                    <h4>Total de cursos</h4>
+                                                    <h4>Total de part.</h4>
                                                     <p>3,278</p>	
                                                 </div>
                                                 <div class="stats-link">
@@ -731,12 +720,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-6">
-                                    En esta sección encontraras una serie de cursos en línea que se te han asignado a tu perfil, los cuales tiene 
-                                    como finalidad crear un aporte profecional en tu formación. Por lo tanto esta 
-                                    herramienta web te permite ir registrando el progreso de cada uno de los cursos que vas tomando. <br><br>
-
-                                    <b>Nota Es importante mencionar que el área de Capacitación estará al pendiente de progreso que lleves.</b><br>
+                                <div class="col-sm-12 col-md-6" style="text-align: right;">
+                                  
+                                    <b>En esta sección puedes ver el avance de cada uno de los participantes. <br>
+                                    Para poder realizarlo solo tienes que dar clic sobre el icono ver avances.</b><br>
                                 </div>
 
                             </div>
@@ -748,23 +735,30 @@
                                         <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <td>Curso</td>
+                                                    <td>Empleado</td>
+                                                    <td>Puesto</td>
                                                     <td>Avance</td>
-                                                    <td>Fecha de asignación</td>
-                                                    <td>Estatus</td>
                                                     <td>Acciones</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php
-                                                foreach ($datos['filas'] as $value) {
-                                                    echo '<tr>';
-                                                    foreach ($value as $dato) {
-                                                        echo '<td>' . $dato . '</td>';
-                                                    }
-                                                    echo '</tr>';
-                                                }
+                                                // foreach ($datos['filas'] as $value) {
+                                                //     echo '<tr>';
+                                                //     foreach ($value as $dato) {
+                                                //         echo '<td>' . $dato . '</td>';
+                                                //     }
+                                                //     echo '</tr>';
+                                                // }
                                                 ?>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>
+                                                    <span><i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  id='btn-AdminEliminarTemario'></i>Ver avances</spand>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
