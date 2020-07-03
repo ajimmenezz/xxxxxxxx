@@ -619,7 +619,7 @@ class Secciones extends General {
                 $datos['tipoCursos'] = $this->administracionCursos->getTypeCourses();
                 break;
             case 'Generales/Cursos_Asignados':
-                $datos['cursos'] = $this->administracionCursos->getMyCourses($usuario['IdPerfil']);
+                $datos['cursos'] = $this->administracionCursos->getMyCourses($usuario['Id']);
                 $datos['idUsuario'] = $usuario['Id'];
                 break;
             default:

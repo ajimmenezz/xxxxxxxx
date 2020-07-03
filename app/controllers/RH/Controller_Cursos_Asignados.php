@@ -29,10 +29,30 @@ class Controller_Cursos_Asignados extends Base {
                 echo $response->toJsonString();
                 break;
             case 'Continuar-Curso':
-                $resultado = $this->curso->continueCourse($this->input->post());
+                $resultado = $this->curso->TemaryCourseByUser($this->input->post());
                 if ($resultado) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("temario", $resultado);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
+            case 'Agregar-Avance':
+                $resultado = $this->curso->addEvidence($this->input->post());
+                if ($resultado) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("avance", $resultado);
+                } else {
+                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
+            case 'Ver-Evidencias':
+                $resultado = $this->curso->showEvidence($this->input->post());
+                if ($resultado) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("avance", $resultado);
                 } else {
                     $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
