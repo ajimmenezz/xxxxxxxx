@@ -13,7 +13,7 @@ $(function () {
     file.crearUploadBoton('#inputImgCurso', 'Administracion_Cursos/Nuevo-Curso', 'Subir Imagen');
 
     //Inicializa funciones de la plantilla
-    App.init();
+    App.init( );
 
     let tablaCursos = new TablaBasica('tabla-cursos');
     let tablaTemarios = new TablaBasica('tabla-cursos-temario');
@@ -62,37 +62,60 @@ $(function () {
 
 
 
-    $("#wizard").bwizard({validating: function (e, ui) {
-            console.debug("VALIDATE");
-            console.log(e, ui.index, ui.nextIndex);
-            // $("#wizard").bwizard("abort");
-            // $("#wizard").bwizard("back");
-            //let infoTabla = tablaTemarios.validarNumeroFilas();
-            // tablaTemarios.datosTabla()
-            if (ui.nextIndex == 1) {
-                console.debug("paso1-2");
-                if (evento.validarFormulario('#formDatosNewCurso')) { //&& infoTabla == true
-                }
-            }
-            if (ui.nextIndex == 2) {
-                console.debug("paso2-3");
-            }
+    // $("#wizard").bwizard({validating: function (e, ui) {
+    //         console.debug("VALIDATE");
+    //         console.log(e, ui.index, ui.nextIndex);
+    //         // $("#wizard").bwizard("abort");
+    //         // $("#wizard").bwizard("back");
+    //         //let infoTabla = tablaTemarios.validarNumeroFilas();
+    //         // tablaTemarios.datosTabla()
+    //         if (ui.nextIndex == 1) {
+    //             console.debug("paso1-2");
+    //             if (evento.validarFormulario('#formDatosNewCurso')) { //&& infoTabla == true
+    //             }
+    //         }
+    //         if (ui.nextIndex == 2) {
+    //             console.debug("paso2-3");
+    //         }
 
-        }});
+    //     }});
 
+    $("#wizard").bwizard();
+    
 
-    // $("#wizard").bwizard({ activeIndexChanged: function (e, ui) { 
+       
+          $("#wizard").bwizard({ validating: function (e, ui) { 
+            let datosTabla = tablaTemarios.datosTabla();
+        let datosTabla2 = tablaParticipantes.datosTabla();
 
-    //   console.log(ui.index);
-    //   //$("#wizard").bwizard("abort");
-    //   $("#wizard").bwizard("back");
-    //   alert("ABORT");
-    //   //showContentWizard(ui.index)
-    // } });
-
-    function showContentWizard(index) {
-
-    }
+       
+                  if (ui.index == 0) {
+                      // step-1 validation
+                        if (false === $('form[name="form-wizard"]').parsley().validate('wizard-step-1')) {
+                            return false;
+                        }
+                  } else if (ui.index == 1) {
+                      // step-2 validation
+                        // if (false === $('form[name="form-wizard"]').parsley().validate('wizard-step-2')) {
+                        //     return false;
+                        // }
+                        if (datosTabla.length <= 0) {
+                          $('#modalValidateTemario').modal('show')
+                          return false;
+                      }
+                  } else if (ui.index == 2) {
+                      // step-3 validation
+                        // if (false === $('form[name="form-wizard"]').parsley().validate('wizard-step-3')) {
+                        //     return false;
+                        // }
+                        if (datosTabla2.length <= 0) {
+                          $('#modalValidateParticipantes').modal('show')
+                          return false;
+                      }
+                  }
+              } 
+          });
+        
 
 
 
@@ -239,7 +262,7 @@ $(function () {
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje});
+                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje,'id':element[2]});
 
             }
 
@@ -250,18 +273,38 @@ $(function () {
 
             var json = {
                 tipoDato: 1,
-                id: $("#idElementSeleccionAccion").val(),
-                idCurso: $("#idElementSeleccionAccion").val()
+                idCurso: $("#idElementSeleccionAccion").val(),
+                temario: {
+                  archivo: false,
+                  infoTabla: {}
+  
+              },
             }
 
+            
+        var temas = []
+
+        for (let index = 0; index < datosTabla.length; index++) {
+            const element = datosTabla[index];
+            console.debug("DATOS", element, element[0])
+
+            temas.push([element[0], '', parseFloat(element[1])]);
+
+
+
+        }
+        console.debug("temas", temas)
+        json.temario.infoTabla = temas;
+
+
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
-                console.log(respuesta);
+                console.log("nuevoTema_EDIT",respuesta);
                 if (!respuesta.success) {
                     evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el tema.', 5000);
                     return;
                 }
 
-                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje});
+                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje,'id':0});
 
 
                 tablaTemariosEdit.limpiartabla();
@@ -271,6 +314,7 @@ $(function () {
                     tablaTemariosEdit.agregarDatosFila([
                         element.nombre,
                         element.porcentaje + '%',
+                        element.id,
                         "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
 
                     ]);
@@ -295,34 +339,33 @@ $(function () {
         console.debug(numItemsTemario, "eliminar", "resto", datosTabla, tablaTemariosEdit.datosFila(this));
 
         listTemarioEdit = []
+        let datos = tablaTemariosEdit.datosFila(this);
 
         if (datosTabla.length !== 0) {
             $long = datosTabla.length;
             $porcentaje = (100 / $long).toFixed(2);
-            let datos = tablaTemariosEdit.datosFila(this);
-            var info = $('#tabla-cursos-temario').DataTable().rows({search: 'applied'}).data();
-            // datos.forEach(element => {
-            //   listTemarioEdit.push({'nombre':element.nombre,'porcentaje':$porcentaje});
-            // });
-            console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos, info)
+            
+           
+            console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
 
             for (let index = 0; index < datosTabla.length; index++) {
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje});
+                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje,'id':element[2]});
 
             }
         }
 
         var json = {
             tipoDato: 1,
-            id: $("#idElementSeleccionAccion").val()
+            idCurso: $("#idElementSeleccionAccion").val(),
+            id:datos[2]
         }
 
 
         eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
-            console.log(respuesta);
+            console.log("eliminarTema_EDIT",respuesta);
             if (!respuesta.success) {
                 evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el tema.', 5000);
                 return;
@@ -337,6 +380,7 @@ $(function () {
                 tablaTemariosEdit.agregarDatosFila([
                     element.nombre,
                     element.porcentaje + '%',
+                    element.id,
                     "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
 
                 ]);
@@ -349,9 +393,6 @@ $(function () {
 
 
     });
-
-
-
 
 
     $("#file-upload-button").addClass("btn btn-success m-r-5 ");
@@ -368,7 +409,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
     $nombrePuesto=selectPartic.obtenerValor()
     $nombrePuestoString=selectPartic.obtenerTexto()
-    alert("string",$nombrePuestoString)
+    
     console.debug("stirng",$nombrePuestoString)
 
     if($nombrePuesto!==""){
@@ -377,10 +418,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
     let datos = tablaParticipantes.datosFila(this);
 
 
-            console.debug($nombrePuesto, "DATOS tEMARIO1", listPuesto)
-            listPuesto.push({'nombre': $nombrePuesto});
-
-    
+         
    
     console.debug($nombrePuesto,"DATOS tEMARIO1",listPuesto)
     listPuesto.push({'nombre':$nombrePuesto, 'nameString':$nombrePuestoString});
@@ -410,6 +448,9 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
     tablaParticipantes.evento(function () {
         let numItemsTemario = tablaParticipantes.datosTabla();
+        
+        let datosElemento = tablaParticipantes.datosFila(this);
+        console.debug("DATO_ESPECIFICO",datosElemento);
         var elim = tablaParticipantes.eliminarFila(this);
         let datosTabla = tablaParticipantes.datosTabla();
 
@@ -428,7 +469,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listPuesto.push({'nombre': element[0]});
+                listPuesto.push({'nombre': element[0],'nameString':element[1]});
 
             }
         }
@@ -439,6 +480,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
             tablaParticipantes.agregarDatosFila([
                 element.nombre,
+                element.nameString,
                 "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
 
             ]);
@@ -455,6 +497,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
     let listPuestoEdit = [];
+    let selectPart= new SelectBasico('puestoEdit')
     $("#btn-nuevo-puestoParticipanteEdit").on('click', function (e) {
         //modalSubirTemarios
         console.log("btn-nuevo-puestoParticipante")
@@ -474,7 +517,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listPuestoEdit.push({'nombre': element[0]});
+                listPuestoEdit.push({'nombre': element[0],'nameString':element[1]});
 
             }
 
@@ -488,17 +531,35 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
             var json = {
                 tipoDato: 0,
-                id: $("#idElementSeleccionAccion").val()
+                idCurso: $("#idElementSeleccionAccion").val(),
+                participantes: {}
+                
+                
             }
 
+            var part = []
+
+
+            for (let index = 0; index < datosTabla.length; index++) {
+                const element = datosTabla[index];
+                console.debug("DATOS_PART", element, element[0])
+    
+                part.push([element[0]]);
+    
+            }
+            console.debug("part", part)
+    
+            json.participantes = part;
+
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
-                console.log(respuesta);
+                console.log("nuevoParticipante_EDIT",respuesta);
                 if (!respuesta.success) {
                     evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el participante.', 5000);
                     return;
                 }
 
-                listPuestoEdit.push({'nombre': $nombrePuesto});
+                //listPuestoEdit.push({'nombre': $nombrePuesto});
+                listPuestoEdit.push({'nombre': $nombrePuesto,'nameString':$nombrePuestoString});
 
 
                 tablaParticipantesEdit.limpiartabla();
@@ -506,6 +567,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
                 listPuestoEdit.forEach(element => {
                     tablaParticipantesEdit.agregarDatosFila([
                         element.nombre,
+                        element.nameString,
                         "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
 
                     ]);
@@ -513,8 +575,6 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
             });
-
-
 
 
 
@@ -530,37 +590,45 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
     tablaParticipantesEdit.evento(function () {
-        let numItemsTemario = tablaParticipantesEdit.datosTabla();
-
+     
         let datosTabla = tablaParticipantesEdit.datosTabla();
 
-        console.debug(numItemsTemario, "eliminar", "resto", datosTabla, tablaParticipantesEdit.datosFila(this));
+        console.debug("eliminar", "resto", datosTabla, tablaParticipantesEdit.datosFila(this));
 
         listPuestoEdit = []
 
+        let datosElemento = tablaParticipantesEdit.datosFila(this);
+            console.debug("DATO_ESPECIFICO",datosElemento);
+
         if (datosTabla.length !== 0) {
 
-            let datos = tablaParticipantesEdit.datosFila(this);
+            
 
-            console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
+            
+      
+
+            console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datosElemento)
 
             for (let index = 0; index < datosTabla.length; index++) {
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listPuestoEdit.push({'nombre': element[0]});
+                
+                listPuestoEdit.push({'nombre': element[0],'nameString':element[1]});
+                
 
             }
         }
 
         var json = {
             tipoDato: 0,
-            id: $("#idElementSeleccionAccion").val()
+            idCurso: $("#idElementSeleccionAccion").val(),
+            id:datosElemento[0]
         }
 
 
         eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
-            console.log(respuesta);
+            console.log("eliminarParticipante_EDIT",respuesta);
             if (!respuesta.success) {
                 evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el participante.', 5000);
                 return;
@@ -573,6 +641,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
                 tablaParticipantesEdit.agregarDatosFila([
                     element.nombre,
+                    element.nameString,
                     "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
 
                 ]);
@@ -629,7 +698,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
                 infoTabla: {}
 
             },
-            participantes: part
+            participantes: {}
         }
 
 
@@ -697,7 +766,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
         }
         evento.mostrarMensaje('.messageAccionesWizard', true, 'Se ha registrado el curso.', 5000);
         $('#modalresponseSave').modal('show')
-        location.reload();
+       // location.reload();
         file.limpiar('#inputImgCurso');
 
     });
@@ -828,7 +897,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
 
-    $("#wizard").bwizard();
+    
 
     //nuevo curso
 
@@ -869,7 +938,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
     });
 
-    // FormWizardValidation.init();
+     
 
 
     $('#btnSubirFotoCurso').off("click");
