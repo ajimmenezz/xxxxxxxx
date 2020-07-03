@@ -8,7 +8,7 @@ class TablaBasica extends ITabla {
         tabla.draw();
     }
 
-    iniciarTabla() {
+    iniciarTablaClass() {
         let tabla = $(`.${this.tabla}`).DataTable({
             responsive: true,
             language: super.obtenerIdioma()
