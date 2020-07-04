@@ -615,14 +615,14 @@
                             var temas = respuesta.data.infoCurso.temas
 
                             $('#inputImgCursoEdit').val(),
-                                    $("#nombreCursoEdit").val(cursos.nombre),
-                                    $("#urlCursoEdit").val(cursos.url),
-                                    $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
-                                    $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
-                                    $("#costoCursoEdit").val(cursos.costo)
+                            $("#nombreCursoEdit").val(cursos.nombre),
+                            $("#urlCursoEdit").val(cursos.url),
+                            $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
+                            $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
+                            $("#costoCursoEdit").val(cursos.costo)
 
-                            let tablaTemariosEdit = null;
-                            tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
+                            
+                            var tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
 
                             temas.forEach(element => {
                                 tablaTemariosEdit.agregarDatosFila([
@@ -634,8 +634,8 @@
                             });
 
 
-                            let tablaParticipantesEdit = null;
-                            tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
+                        
+                            var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
 
 
 
