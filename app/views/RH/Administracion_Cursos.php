@@ -563,7 +563,7 @@
                 <!-- FIN #contenido MODALS-->
 
                 <script>
-
+                    var eventoPagina = new Pagina();
                     // function cambiar() {
                     //     var pdrs = document.getElementById('file-upload').files[0].name;
                     //     document.getElementById('info').innerHTML = pdrs;
@@ -576,7 +576,7 @@
                         $("#idElementSeleccionAccion").val(id)
                         $("#modalDeletoCursoAdmin").modal('show')
                     }
-                    var eventoPagina = new Pagina();
+                    
                     function btnAdminEditarCurso(id) {
 
                         console.debug("EDITAR CURSO");
@@ -615,14 +615,14 @@
                             var temas = respuesta.data.infoCurso.temas
 
                             $('#inputImgCursoEdit').val(),
-                                    $("#nombreCursoEdit").val(cursos.nombre),
-                                    $("#urlCursoEdit").val(cursos.url),
-                                    $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
-                                    $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
-                                    $("#costoCursoEdit").val(cursos.costo)
+                            $("#nombreCursoEdit").val(cursos.nombre),
+                            $("#urlCursoEdit").val(cursos.url),
+                            $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
+                            $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
+                            $("#costoCursoEdit").val(cursos.costo)
 
-                            let tablaTemariosEdit = null;
-                            tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
+                            
+                            var tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
 
                             temas.forEach(element => {
                                 tablaTemariosEdit.agregarDatosFila([
@@ -634,8 +634,7 @@
                             });
 
 
-                            let tablaParticipantesEdit = null;
-                            tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
+                            var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
 
 
 
@@ -669,6 +668,8 @@
                             id=$("#idElementSeleccionAccion").val()
                          }
 
+
+                         console.debug("VER CURSO",id);
                         $('#modalSubirTemarios').modal('hide')
                         $('#modalValidateTemario').modal('hide')
                         $("#modalValidateParticipantes").modal('hide');
@@ -708,8 +709,10 @@
                             $("#cursoAvanceCurso").text('nameCurso');
                             $("#cursoAvancePuesto").html(perfiles.Nombre);
 
-                            let tablaListCursosVer = null;
-                            tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+                            console.debug("DATOS_SPAN_TREXT_HTML",perfiles.nombreUsuario,perfiles.Nombre);
+
+                            
+                            var tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
 
 
 

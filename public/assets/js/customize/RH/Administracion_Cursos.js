@@ -17,7 +17,7 @@ $(function () {
 
     let tablaCursos = new TablaBasica('tabla-cursos');
     let tablaTemarios = new TablaBasica('tabla-cursos-temario');
-    let tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
+     let tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
 
     $('#btn-nuevo-curso').on('click', function (e) {
         $("#administracion-cursos").css('display', 'none')
@@ -50,24 +50,6 @@ $(function () {
 
 
 
-
-    // $("#wizard").bwizard({validating: function (e, ui) {
-    //         console.debug("VALIDATE");
-    //         console.log(e, ui.index, ui.nextIndex);
-    //         // $("#wizard").bwizard("abort");
-    //         // $("#wizard").bwizard("back");
-    //         //let infoTabla = tablaTemarios.validarNumeroFilas();
-    //         // tablaTemarios.datosTabla()
-    //         if (ui.nextIndex == 1) {
-    //             console.debug("paso1-2");
-    //             if (evento.validarFormulario('#formDatosNewCurso')) { //&& infoTabla == true
-    //             }
-    //         }
-    //         if (ui.nextIndex == 2) {
-    //             console.debug("paso2-3");
-    //         }
-
-    //     }});
 
     $("#wizard").bwizard();
     
@@ -141,8 +123,6 @@ $(function () {
 
 
     
-
-
     let listTemario = []
 
     $('#btn-agregar-nuevo-temario').on('click', function (e) {
@@ -275,17 +255,16 @@ $(function () {
             
         var temas = []
 
-        for (let index = 0; index < datosTabla.length; index++) {
-            const element = datosTabla[index];
-            console.debug("DATOS", element, element[0])
-
-            temas.push([element[0], '', parseFloat(element[1])]);
+  
+            temas.push([$nombreTemario, '', parseFloat($porcentaje)]);
 
 
 
-        }
+        
         console.debug("temas", temas)
         json.temario.infoTabla = temas;
+
+        console.debug("DATOS_SEND", json)
 
 
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
@@ -483,7 +462,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
     });
 
 
-    let tablaParticipantesEdit = null;
+   
     tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
 
 
@@ -531,13 +510,10 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
             var part = []
 
 
-            for (let index = 0; index < datosTabla.length; index++) {
-                const element = datosTabla[index];
-                console.debug("DATOS_PART", element, element[0])
+           
+                part.push([$nombrePuesto]);
     
-                part.push([element[0]]);
-    
-            }
+            
             console.debug("part", part)
     
             json.participantes = part;
@@ -650,8 +626,8 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
     //ver curso
 
-    let tablaListCursosVer = null;
-    tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+    // let tablaListCursosVer = null;
+    // tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
 
     let tablaListemasAvance = null;
         tablaListemasAvance = new TablaBasica('tabla-temarioAvances');

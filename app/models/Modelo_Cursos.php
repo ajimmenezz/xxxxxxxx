@@ -240,7 +240,7 @@ class Modelo_Cursos extends Modelo_Base {
                             FROM t_curso_relacion_perfil AS avance
                             LEFT JOIN cat_perfiles AS perfiles ON perfiles.Id = avance.idPerfil
                             INNER JOIN cat_v3_usuarios AS usuarios ON usuarios.IdPerfil = perfiles.Id
-                            WHERE avance.idCurso = " . $idCurso . " AND usuarios.Flag = 1");
+                            WHERE avance.idCurso =".$idCurso." AND usuarios.Flag = 1");
     }
 
     public function insertStartCourse($infoUsuario) {
