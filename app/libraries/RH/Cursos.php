@@ -126,14 +126,23 @@ class Cursos extends General {
     }
 
     public function addElementCourse($datos) {
+        $temasCurso = [];
+        $perfilesCurso = [];
         if ($datos['tipoDato'] == 1) {
-            $resultQuery = $this->DBS->insertTemaryCourse($datos, $datos['idCurso']);
+            foreach ($datos as $value) {
+                $this->DBS->insertTemaryCourse($value, $datos['idCurso']);
+            }
+            $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
         } else {
             $resultQuery = $this->DBS->insertParticipantsCourse($datos, $datos['idCurso']);
+            $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
         }
+        
+        $info['temas'] = $temasCurso;
+        $info['perfiles'] = $perfilesCurso;
 
         if ($resultQuery['code'] == 200) {
-            return true;
+            return ['response' => true, 'info' => $info];;
         } else {
             return false;
         }
@@ -189,7 +198,7 @@ class Cursos extends General {
         $sumaAvance *= 100;
         $sumaAvance = $sumaAvance / $puntosTotales;
         $informacion['avance'] = $sumaAvance;
-        var_dump($informacion);
+
         return $informacion;
     }
 
