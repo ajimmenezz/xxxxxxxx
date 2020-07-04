@@ -36,8 +36,8 @@ class Modelo_Cursos extends Modelo_Base {
                                     if(curso.estatus = 1, 'Disponible', 'No Disponible') AS EstatusNombre,
                                     relacion.fechaAsignacion,
                                     (select sum(cursoTema.porcentaje) from t_curso_tema as cursoTema
-										left join t_curso_tema_relacion_avance_usuario as avanceUsuario on avanceUsuario.idTema = cursoTema.id
-										where avanceUsuario.idUsuario = usuario.Id and cursoTema.idCurso = curso.id 
+                                        left join t_curso_tema_relacion_avance_usuario as avanceUsuario on avanceUsuario.idTema = cursoTema.id
+                                        where avanceUsuario.idUsuario = usuario.Id and cursoTema.idCurso = curso.id 
                                         group by cursoTema.idCurso
                                     ) as Porcentaje,
                                     avance.fechaModificacion
@@ -80,7 +80,12 @@ class Modelo_Cursos extends Modelo_Base {
     }
 
     public function getPerfilById($idCurso) {
-        return $this->consulta("SELECT * FROM t_curso_relacion_perfil WHERE idCurso = " . $idCurso . " AND estatus = 1");
+        return $this->consulta("SELECT 
+                                    relacionPerfil.*, 
+                                    perfil.Nombre 
+                                FROM t_curso_relacion_perfil as relacionPerfil
+                                inner join cat_perfiles as perfil on perfil.Id = relacionPerfil.idPerfil
+                                WHERE idCurso = " . $idCurso . " AND estatus = 1");
     }
 
     public function insertCourse($infoCurso, $rutaImagen = null) {

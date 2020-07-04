@@ -72,8 +72,9 @@ class Controller_Administracion_Cursos extends Base {
                 break;
             case 'Agregar-ElementoCurso':
                 $resultado = $this->curso->addElementCourse($this->input->post());
-                if ($resultado) {
+                if ($resultado['response']) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("info", $resultado['info']);
                 } else {
                     $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
