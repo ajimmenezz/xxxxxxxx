@@ -17,10 +17,10 @@ class Cursos extends General {
         return $this->DBS->getAllCourses();
     }
 
-    public function getMyCourses($perfil) {
+    public function getMyCourses($idUsuario) {
         $sumaAvance = 0;
 
-        $datos['cursos'] = $this->DBS->getMyCourses($perfil);
+        $datos['cursos'] = $this->DBS->getMyCourses($idUsuario);
         $datos['totalCursos'] = count($datos['cursos']);
 
         $puntosTotales = $datos['totalCursos'] * 100;
@@ -179,6 +179,7 @@ class Cursos extends General {
         $infoUsuario['temas'] = $temp_array;
         $infoUsuario['avance'] = $avance;
         $infoUsuario['faltante'] = $faltante;
+        $infoUsuario['infoUsuario'] = $this->DBS->getInfoUserCurse($datos);
 
         return $infoUsuario;
     }
