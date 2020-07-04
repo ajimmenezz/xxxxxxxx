@@ -123,8 +123,6 @@ $(function () {
 
 
     
-
-
     let listTemario = []
 
     $('#btn-agregar-nuevo-temario').on('click', function (e) {
@@ -265,6 +263,8 @@ $(function () {
         
         console.debug("temas", temas)
         json.temario.infoTabla = temas;
+
+        console.debug("DATOS_SEND", json)
 
 
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
@@ -626,8 +626,8 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
     //ver curso
 
-    let tablaListCursosVer = null;
-    tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+    // let tablaListCursosVer = null;
+    // tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
 
     let tablaListemasAvance = null;
         tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
