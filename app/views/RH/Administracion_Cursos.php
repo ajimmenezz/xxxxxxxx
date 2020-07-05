@@ -42,7 +42,7 @@
                             </thead>
                             <tbody>
                                 <?php
-                                // var_dump($datos['cursos']);
+                                 var_dump($datos['cursos']);
 
 
 
@@ -61,15 +61,14 @@
                                                 <div style='text-align: center;'>
                                                 <input type='hidden' id='idElementSeleccionAccion'>
                                             
-                                                <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;' id='btn-adminVerCurso'  onclick='btnAdminVerCurso(".$value["Id"].")'></i>";
-                                    // if($value["Estatus"]!=0){
-                                    echo "  <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;'' onclick='btnAdminEditarCurso(" . $value["Id"] . ")' id='btn-adminEditarCurso' ></i>
-                                                    <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(" . $value["Id"] . ")' id='btn-adminEliminarCurso'></i>";
-                                    //    }
+                                                <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  onclick='btnAdminVerCurso(".$value["Id"].")'></i>
+                                                <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;' onclick='btnAdminEditarCurso(".$value["Id"].")' id='btn-adminEditarCurso' ></i>
+                                                <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(".$value["Id"].")' id='btn-adminEliminarCurso'></i>
+                                  
 
-                                    echo "           </div>
-                                            </td>";
-                                    echo "</tr>";
+                                            </div>
+                                        </td>
+                                    </tr>";
                                 }
 
 
@@ -622,10 +621,10 @@
                             $("#costoCursoEdit").val(cursos.costo)
 
                             
-                            var tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
+                            var tablaTemariosEdit1 = new TablaBasica('tabla-cursos-temarioEdit');
 
                             temas.forEach(element => {
-                                tablaTemariosEdit.agregarDatosFila([
+                                tablaTemariosEdit1.agregarDatosFila([
                                     element.nombre,
                                     element.porcentaje + '%',
                                     element.id,
@@ -686,7 +685,8 @@
 
                         
                         var json={
-                        idCurso:id
+                        idCurso:id,
+                        idUsuario:
                         }
 
                         eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Curso', json, function (respuesta) {
