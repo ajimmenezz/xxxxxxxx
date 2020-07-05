@@ -26,7 +26,7 @@ class Modelo_Cursos extends Modelo_Base {
                                 where curso.estatus = 1 and usuarios.Flag = 1 group by curso.Nombre");
     }
 
-    public function getMyCourses($perfil) {
+    public function getMyCourses($idUsuario) {
         return $this->consulta("SELECT 
                                     curso.id, 
                                     curso.Nombre,
@@ -35,18 +35,18 @@ class Modelo_Cursos extends Modelo_Base {
                                     estatus(curso.estatus) AS EstatusNombre,
                                     if(curso.estatus = 1, 'Disponible', 'No Disponible') AS EstatusNombre,
                                     relacion.fechaAsignacion,
-                                    (select sum(cursoTema.porcentaje) from t_curso_tema as cursoTema
-										left join t_curso_tema_relacion_avance_usuario as avanceUsuario on avanceUsuario.idTema = cursoTema.id
-										where avanceUsuario.idUsuario = usuario.Id and cursoTema.idCurso = curso.id 
+                                    if( avance.fechaModificacion is null, 0, (select sum(cursoTema.porcentaje) from t_curso_tema as cursoTema
+                                        left join t_curso_tema_relacion_avance_usuario as avanceUsuario on avanceUsuario.idTema = cursoTema.id
+                                        where avanceUsuario.idUsuario = usuario.Id and cursoTema.idCurso = curso.id 
                                         group by cursoTema.idCurso
-                                    ) as Porcentaje,
+                                    )) as Porcentaje,
                                     avance.fechaModificacion
                                 from t_curso as curso
                                 left join t_curso_tema as tema on tema.idCurso = curso.id
                                 left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
                                 inner join t_curso_relacion_perfil as relacion on relacion.idCurso = curso.id
                                 inner join cat_v3_usuarios as usuario on usuario.IdPerfil = relacion.idPerfil
-                                where usuario.Id = " . $perfil . "
+                                where usuario.Id = " . $idUsuario . "
                                 group by curso.id");
     }
 
@@ -80,7 +80,12 @@ class Modelo_Cursos extends Modelo_Base {
     }
 
     public function getPerfilById($idCurso) {
-        return $this->consulta("SELECT * FROM t_curso_relacion_perfil WHERE idCurso = " . $idCurso . " AND estatus = 1");
+        return $this->consulta("SELECT 
+                                    relacionPerfil.*, 
+                                    perfil.Nombre 
+                                FROM t_curso_relacion_perfil as relacionPerfil
+                                inner join cat_perfiles as perfil on perfil.Id = relacionPerfil.idPerfil
+                                WHERE idCurso = " . $idCurso . " AND estatus = 1");
     }
 
     public function insertCourse($infoCurso, $rutaImagen = null) {
@@ -226,7 +231,7 @@ class Modelo_Cursos extends Modelo_Base {
     public function getDetailCourse($idCurso) {
         return $this->consulta("SELECT 
                                 usuarios.Id,
-                                nombreUsuario(usuarios.Id),
+                                nombreUsuario(usuarios.Id) as nombreUsuario,
                                 perfiles.Nombre,
                                 (select sum(tema.porcentaje) from t_curso_tema as tema
                                     left join t_curso_tema_relacion_avance_usuario as relacion on relacion.idTema = tema.id
@@ -235,7 +240,7 @@ class Modelo_Cursos extends Modelo_Base {
                             FROM t_curso_relacion_perfil AS avance
                             LEFT JOIN cat_perfiles AS perfiles ON perfiles.Id = avance.idPerfil
                             INNER JOIN cat_v3_usuarios AS usuarios ON usuarios.IdPerfil = perfiles.Id
-                            WHERE avance.idCurso = " . $idCurso . " AND usuarios.Flag = 1");
+                            WHERE avance.idCurso =".$idCurso." AND usuarios.Flag = 1");
     }
 
     public function insertStartCourse($infoUsuario) {
@@ -284,6 +289,18 @@ class Modelo_Cursos extends Modelo_Base {
                                 from t_curso_tema_relacion_avance_usuario as avance
                                 inner join t_curso_tema_relacion_usuario_evidencia as evidencia on evidencia.idAvanceUsuario = avance.id
                                 where avance.id = " . $idEvidencia);
+    }
+    
+    public function getInfoUserCurse($datos) {
+        return $this->consulta("SELECT 
+                                    curso.nombre as Curso, 
+                                    nombreUsuario(usuario.Id) as NOmbre, 
+                                    perfil.Nombre as Perfil 
+                                from t_curso_relacion_avance_usuario as relacionPerfil
+                                inner join t_curso as curso on curso.id = relacionPerfil.idCurso
+                                inner join cat_v3_usuarios as usuario on usuario.Id = relacionPerfil.idUsuario
+                                inner join cat_perfiles as perfil on perfil.Id = usuario.IdPerfil
+                                where curso.id = " . $datos['idCurso'] . " and usuario.Id = " . $datos['idUsuario']);
     }
 
 }

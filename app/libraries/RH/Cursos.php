@@ -17,10 +17,10 @@ class Cursos extends General {
         return $this->DBS->getAllCourses();
     }
 
-    public function getMyCourses($perfil) {
+    public function getMyCourses($idUsuario) {
         $sumaAvance = 0;
 
-        $datos['cursos'] = $this->DBS->getMyCourses($perfil);
+        $datos['cursos'] = $this->DBS->getMyCourses($idUsuario);
         $datos['totalCursos'] = count($datos['cursos']);
 
         $puntosTotales = $datos['totalCursos'] * 100;
@@ -51,7 +51,9 @@ class Cursos extends General {
     public function newCourse($infoCourse) {
         $rutaImagen = null;
         if (isset($infoCourse['curso'])) {
-
+            if($infoCourse['curso']['img'] !== ''){
+                $rutaImagen = $infoCourse['curso']['img'];
+            }
             $insertQuery = $this->DBS->insertCourse($infoCourse['curso'], $rutaImagen);
         }
 
@@ -124,14 +126,23 @@ class Cursos extends General {
     }
 
     public function addElementCourse($datos) {
+        $temasCurso = [];
+        $perfilesCurso = [];
         if ($datos['tipoDato'] == 1) {
-            $resultQuery = $this->DBS->insertTemaryCourse($datos, $datos['idCurso']);
+            foreach ($datos as $value) {
+                $this->DBS->insertTemaryCourse($value, $datos['idCurso']);
+            }
+            $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
         } else {
             $resultQuery = $this->DBS->insertParticipantsCourse($datos, $datos['idCurso']);
+            $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
         }
+        
+        $info['temas'] = $temasCurso;
+        $info['perfiles'] = $perfilesCurso;
 
         if ($resultQuery['code'] == 200) {
-            return true;
+            return ['response' => true, 'info' => $info];;
         } else {
             return false;
         }
@@ -168,6 +179,7 @@ class Cursos extends General {
         $infoUsuario['temas'] = $temp_array;
         $infoUsuario['avance'] = $avance;
         $infoUsuario['faltante'] = $faltante;
+        $infoUsuario['infoUsuario'] = $this->DBS->getInfoUserCurse($datos);
 
         return $infoUsuario;
     }
