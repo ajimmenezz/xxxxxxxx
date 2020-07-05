@@ -18,6 +18,7 @@ $(function () {
     let tablaTemarioTerminar = new TablaBasica('tabla-temario-terminar');
     let tablaTemarioCompletado = new TablaBasica('tabla-temario-completado');
     let idUsuario = $('#valorIdUsuario').val();
+    let idTema = null;
     file.crearUploadBoton('#evidenciasAvanceCurso', 'Cursos_Asignados/Agregar-Avance', 'Agregar Archivos', 'btn btn-success');
 
 
@@ -75,8 +76,9 @@ $(function () {
     $("#btn-registrar-avance").on('click', function (e) {
         let comentarios = $('#cometariosAvanceCurso').val();
         let evidencias = $('#evidenciasAvanceCurso').val();
-        let data = {comentarios};
-
+        let idUsuario = $('#valorIdUsuario').val();
+        let data = {comentarios: comentarios, idUsuario: idUsuario, idTema: idTema};
+        
         if (evidencias !== '') {
             if (comentarios !== '') {
                 file.enviarArchivos('#evidenciasAvanceCurso', 'Cursos_Asignados/Agregar-Avance', '#temarioTerminarCurso', data, function (respuesta) {
@@ -123,11 +125,11 @@ $(function () {
         $.each(respuesta.data.temario.temas, function (k, v) {
             let boton = '';
 
-//            if (v.idAvance === undefined) {
-            boton = `<span class="temarioTablaTerminar" data-avance="${v.idAvance}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i> Terminar</span>`;
-//            } else {
-//                boton = `<span class="temarioTablaCompletado" data-avance="${v.idAvance}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-check-square"></i> Completado</span>`;
-//            }
+            if (v.idAvance === undefined) {
+                boton = `<span class="temarioTablaTerminar" data-avance="${v.idAvance}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i> Terminar</span>`;
+            } else {
+                boton = `<span class="temarioTablaCompletado" data-avance="${v.idAvance}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-check-square"></i> Completado</span>`;
+            }
 
             tablaTemario.agregarDatosFila([v.nombre, v.porcentaje + '%', boton]);
             tablaTemarioCompletado.agregarDatosFila([v.nombre, v.porcentaje + '%', boton]);
@@ -139,7 +141,7 @@ $(function () {
 
         $(".temarioTablaCompletado").on('click', function (e) {
             let idAvance = $(this).data('avance');
-            let data = {idAvance: idAvance}
+            let data = {idAvance: idAvance};
 
             evento.enviarEvento('Cursos_Asignados/Ver-Evidencias', data, '#asigCursoContinuar', function (respuesta) {
                 $("#tablaAsigCursos").css('display', 'none');
@@ -153,16 +155,14 @@ $(function () {
                 $('#divMigajaTemario').addClass('hidden');
                 $('#divMigajaTemarioCompletado').removeClass('hidden');
             });
-
-
         });
 
         $(".temarioTablaTerminar").on('click', function (e) {
-            $("#tablaAsigCursos").css('display', 'none')
-            $("#asigCursoContinuar").css('display', 'none')
-            $("#temarioComenzarCurso").css('display', 'none')
-            $("#temarioTerminarCurso").css('display', 'block')
-
+            idTema = $(this).data('avance');
+            $("#tablaAsigCursos").css('display', 'none');
+            $("#asigCursoContinuar").css('display', 'none');
+            $("#temarioComenzarCurso").css('display', 'none');
+            $("#temarioTerminarCurso").css('display', 'block');
         });
     }
 
