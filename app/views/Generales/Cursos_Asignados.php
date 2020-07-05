@@ -16,7 +16,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Avance total</h4>
-                            <p><?php echo $datos['cursos']['avance']?>%</p>	
+                            <p><?php echo $datos['cursos']['avance'] ?>%</p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -31,7 +31,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Faltante total</h4>
-                            <p><?php echo $datos['cursos']['feltante']?>%</p>	
+                            <p><?php echo $datos['cursos']['feltante'] ?>%</p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -43,7 +43,7 @@
                         <div class="stats-icon"></div>
                         <div class="stats-info">
                             <h4>Total de cursos</h4>
-                            <p><?php echo $datos['cursos']['totalCursos']?></p>	
+                            <p><?php echo $datos['cursos']['totalCursos'] ?></p>	
                         </div>
                         <div class="stats-link">
                             <a href="javascript:;"></a>
@@ -76,7 +76,7 @@
                             </thead>
                             <tbody>
                                 <?php
-                               //var_dump($datos['cursos']['cursos']);
+                                //var_dump($datos['cursos']['cursos']);
                                 if (!empty($datos['cursos']['cursos'])) {
                                     foreach ($datos['cursos']['cursos'] as $key => $value) {
                                         if ($value['estatus'] === '1' && $value['Porcentaje'] === '100') {
@@ -116,13 +116,13 @@
         </div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-sm-12 col-md-6" style="float:left;">
+                <div class="col-sm-12 col-md-5" style="float:left;">
                     <span style="font-size:15px;"><b style="font-size:18px;">Curso </b> Gestión de proyectos</span>
-                    <p style="margin-top:25px;">En esta sección encuentras los temas que lleva el curso. Cada tema equivale a un porcentaje del total del <br>
-                        curso por lo que la información del lado derechose estará actualizando. Ingresa a la siguiente liga para <br>
+                    <p style="margin-top:25px;">En esta sección encuentras los temas que lleva el curso. Cada tema equivale a un porcentaje del total del
+                        curso por lo que la información del lado derechose estará actualizando. Ingresa a la siguiente liga para
                         empezar el curso: <a href="#">https://url</a></p>
                 </div>
-                <div class="col-sm-12 col-md-6">
+                <div class="col-sm-12 col-md-7">
                     <div class="row">
                         <div class="col-sm-4"></div>
                         <div class="col-sm-4">
@@ -130,7 +130,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Faltante total</h4>
-                                    <p>100%</p>	
+                                    <p class="divFaltante"></p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -142,7 +142,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Avance total</h4>
-                                    <p>0%</p>	
+                                    <p class="divAvance"></p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -201,16 +201,14 @@
         <div class="panel-body">
             <div class="row">
 
-                <div class="col-sm-12 col-md-6" style="float:left;">
+                <div class="col-sm-12 col-md-5" style="float:left;">
                     <span style="font-size:15px;"><b style="font-size:18px;">Curso </b> Gestión de proyectos</span>
-
-                    <p style="margin-top:25px;">En esta sección encuentras los temas que lleva el curso. Cada tema equivale a un porcentaje del total del <br>
-                        curso por lo que la información del lado derechose estará actualizando. Ingresa a la siguiente liga para <br>
+                    <p style="margin-top:25px;">En esta sección encuentras los temas que lleva el curso. Cada tema equivale a un porcentaje del total del
+                        curso por lo que la información del lado derechose estará actualizando. Ingresa a la siguiente liga para
                         empezar el curso: <a href="#">https://url</a></p>
-
                 </div>
 
-                <div class="col-sm-12 col-md-6">
+                <div class="col-sm-12 col-md-7">
                     <div class="row">
                         <div class="col-sm-4"></div>
                         <div class="col-sm-4">
@@ -218,7 +216,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Faltante total</h4>
-                                    <p>80%</p>	
+                                    <p class="divFaltante"></p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -230,7 +228,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Avance total</h4>
-                                    <p>20%</p>	
+                                    <p class="divAvance"></p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -254,7 +252,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-<!--                                <tr>
+<!--                                                <tr>
                                     <td></td>
                                     <td></td>
                                     <td><span class="temarioTablaCompletado"  style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
@@ -273,22 +271,18 @@
                     <h4>Avances</h4>
                     <div class="underline m-b-15 m-t-15"></div>
                     Comentarios <br>
-                    <textarea class="form-control" placeholder="Comentarios" rows="5"></textarea>
+                    <textarea id="avanceComentario" class="form-control" placeholder="Comentarios" rows="5" disabled></textarea>
                     <div id="gallery" class="gallery">
-                        <div class="image gallery-group-1">
-                            <div class="image-inner">
-                                <a href="assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
-                                    <img src="http://localhost/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
-                                </a>
-                            </div>
-                            <div class="image-info">
-                                <h5>Fecha</h5>
-                                <h5 class="title">Comentarios</h5>
-                                <div class="desc">
-                                    Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
-                                </div>
-                            </div>
-                        </div>
+                        <!--                        <div class="image gallery-group-1">
+                                                    <div class="image-inner">
+                                                        <a href="assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
+                                                            <img src="http://localhost/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="image-info">
+                                                        <h5>Fecha</h5>
+                                                    </div>
+                                                </div>-->
                     </div>
                     <div class="text-right">
                         <button type="button" id="btnCerrarCompletarAvanceCurso" class="btn btn-white text-right" data-dismiss="modal">Cerrar</button>
@@ -307,16 +301,16 @@
         <div class="panel-body">
             <div class="row">
 
-                <div class="col-sm-12 col-md-6" style="float:left;">
+                <div class="col-sm-12 col-md-5" style="float:left;">
                     <span style="font-size:15px;"><b style="font-size:18px;">Curso </b> Gestión de proyectos</span>
 
-                    <p style="margin-top:25px;">En esta sección encuentras los temas que lleva el curso. Cada tema equivale a un porcentaje del total del <br>
-                        curso por lo que la información del lado derechose estará actualizando. Ingresa a la siguiente liga para <br>
+                    <p style="margin-top:25px;">En esta sección encuentras los temas que lleva el curso. Cada tema equivale a un porcentaje del total del
+                        curso por lo que la información del lado derechose estará actualizando. Ingresa a la siguiente liga para
                         empezar el curso: <a href="#">https://url</a></p>
 
                 </div>
 
-                <div class="col-sm-12 col-md-6" style="float-right">
+                <div class="col-sm-12 col-md-7" style="float-right">
                     <div class="row">
                         <div class="col-sm-4"></div>
                         <div class="col-sm-4">
@@ -324,7 +318,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Faltante total</h4>
-                                    <p>100%</p>	
+                                    <p class="divFaltante"></p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -336,7 +330,7 @@
                                 <div class="stats-icon"></div>
                                 <div class="stats-info">
                                     <h4>Avance total</h4>
-                                    <p>0%</p>	
+                                    <p class="divAvance"></p>	
                                 </div>
                                 <div class="stats-link">
                                     <a href="javascript:;"></a>
@@ -396,33 +390,41 @@
                         </div>
                         <div class="col-md-7">
                             <div class="row">
-                                <form id="fileupload" action="assets/global/plugins/jquery-file-upload/server/php/" enctype="multipart/form-data">
-                                    <div class="row fileupload-buttonbar">
-                                        <div class="col-md-12">
-                                            <span class="btn btn-success btn-sm fileinput-button">
-                                                <span>Agregar archivos</span>
-                                                <input type="file" name="files[]" multiple>
-                                            </span>
-                                            <button type="button" class="btn btn-primary btn-sm start">
-                                                <span>Subir evidencias</span>
-                                            </button>
-                                            <button type="button" class="btn btn-danger btn-sm delete">
-                                                <span>Borrar</span>
-                                            </button>
-                                            <span class="fileupload-process"></span>
-                                        </div>
-
+                                <!--<div id="fileupload">-->
+                                <div class="row fileupload-buttonbar">
+                                    <div class="col-md-12">
+                                        <span class="btn btn-success btn-sm fileinput-button">
+                                            <span>Agregar archivos</span>
+                                            <input id="multiFiles" type="file" name="files[]" multiple>
+                                        </span>
+                                        <button type="reset" class="btn btn-danger btn-sm cancel">
+                                            <span>Borrar</span>
+                                        </button>
+                                        <span class="fileupload-process"></span>
                                     </div>
-                                    <!--                                    <div class="row">
-                                                                            <div class="col-md-12 fileupload-progress fade">
-                                                                                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                                                                                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
-                                                                                </div>
-                                                                                <div class="progress-extended">&nbsp;</div>
+
+                                </div>
+                                <!--                                    <div class="row">
+                                                                        <div class="col-md-12 fileupload-progress fade">
+                                                                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                                                                <div class="progress-bar progress-bar-success" style="width:0%;"></div>
                                                                             </div>
-                                                                        </div>-->
-                                    <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
-                                </form>
+                                                                            <div class="progress-extended">&nbsp;</div>
+                                                                        </div>
+                                                                    </div>-->
+                            <!--<input type="file" id="multiupload" name="uploadFiledd[]" multiple >-->
+                                <!--<button type="button" id="upcvr" class="btn btn-primary">Start Upload</button>-->
+                                <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
+                                <p id="msg"></p>
+                                <!--</div>-->
+                                <!--<div id="uploadsts"></div>-->
+<!--                                <input id="sortpicture" type="file" name="sortpic" />
+                            <button id="upload">Upload</button>-->
+
+                                <!--<input type="file" id="multiFiles" name="files[]" multiple="multiple"/>-->
+                                <!--<button id="upload">Upload</button>-->
+
+
                             </div>
                         </div>
                     </div>

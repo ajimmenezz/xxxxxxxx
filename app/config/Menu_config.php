@@ -387,6 +387,7 @@ $config['Generales'] = array(
             'jquery-file-upload/blueimp-gallery/blueimp-gallery.min',
             'jquery-file-upload/css/jquery.fileupload',
             'jquery-file-upload/css/jquery.fileupload-ui',
+            'isotope/isotope',
         ),
         'js' => array(
             'Base/Base',
@@ -426,7 +427,9 @@ $config['Generales'] = array(
             'jquery-file-upload/js/jquery.fileupload-validate',
             'jquery-file-upload/js/jquery.fileupload-ui',
             'jquery-file-upload/js/main',
-            'jquery-file-upload/js/cors/jquery.xdr-transport'
+            'jquery-file-upload/js/cors/jquery.xdr-transport',
+            'isotope/jquery.isotope.min',
+            
         ),
         'Permiso' => 'VGENCA'
     )

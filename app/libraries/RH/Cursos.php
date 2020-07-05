@@ -51,7 +51,7 @@ class Cursos extends General {
     public function newCourse($infoCourse) {
         $rutaImagen = null;
         if (isset($infoCourse['curso'])) {
-            
+
             $insertQuery = $this->DBS->insertCourse($infoCourse['curso'], $rutaImagen);
         }
 
@@ -144,7 +144,7 @@ class Cursos extends General {
         $i = 0;
         $avance = 0;
         $faltante = 0;
-        
+
         $temasPorUsuario = $this->DBS->getTemaryCourseByUser($datos);
         $temasPorCurso = $this->DBS->getTemaryById($datos['idCurso']);
 
@@ -164,7 +164,7 @@ class Cursos extends General {
                 $faltante += $val['porcentaje'];
             }
         }
-        
+
         $infoUsuario['temas'] = $temp_array;
         $infoUsuario['avance'] = $avance;
         $infoUsuario['faltante'] = $faltante;
@@ -208,25 +208,24 @@ class Cursos extends General {
             return false;
         }
     }
-    
+
     public function addEvidence($infoAvence) {
-        var_dump($infoAvence);
-//        if($infoAvence["idEvidencias"] == ''){
-//            $resultQuery = $this->DBS->insertAdvanceRelationship($infoAvence);
-//            if ($resultQuery['code'] == 200) {
-//                $idAvance = $resultQuery['idAvance'];
-//            }
-//        } else {
-//            $idAvance = $infoAvence["idEvidencias"];
-//        }
-//        
-//        if ($resultAdvance['code'] == 200) {
-//            return $resultQuery;
-//        } else {
-//            return false;
-//        }
+        if($infoAvence["idEvidencias"] == ''){
+            $resultQuery = $this->DBS->insertAdvanceRelationship($infoAvence);
+            if ($resultQuery['code'] == 200) {
+                $idAvance = $resultQuery['idAvance'];
+            }
+        } else {
+            $idAvance = $infoAvence["idEvidencias"];
+        }
+        
+        if ($resultAdvance['code'] == 200) {
+            return $resultQuery;
+        } else {
+            return false;
+        }
     }
-    
+
     public function showEvidence($infoAvence) {
         return $this->DBS->getEvidenceByID($infoAvence['idAvance']);
     }
