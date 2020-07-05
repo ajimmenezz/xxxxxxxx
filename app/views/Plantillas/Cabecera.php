@@ -133,6 +133,7 @@
 //            smartlook('init', 'b2ff341c34242150ed3e8ffe2249aa6c666dcc4b');
         </script>
 
+
         <script>
 //            var scriptTemplate = tmpl($("#scriptTemplate").html());
 //            var scriptData = {firstName: "John", lastName: "Doe"};

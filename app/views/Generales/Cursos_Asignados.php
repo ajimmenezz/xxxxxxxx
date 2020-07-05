@@ -1,7 +1,23 @@
 <!-- Empezando #contenido -->
 <div id="administracion-cursos" class="content">
     <!-- begin page-header -->
-    <h1 class="page-header">Cursos asignados</h1>
+    <div class="row">
+        <div class="col-sm-8">
+            <h1 class="page-header">Cursos asignados</h1>
+        </div>
+        <div id="divMigajaTemario" class="col-sm-4 hidden">
+            <ol class="breadcrumb pull-right">
+                <li><a id="btn-regresar-temario" href="javascript:;">Curso</a></li>
+                <li class="active">Gestión de Proyectos</li>
+            </ol>
+        </div>
+        <div id="divMigajaTemarioCompletado" class="col-sm-4 hidden">
+            <ol class="breadcrumb pull-right">
+                <li><a id="btn-regresar-temario-completado" href="javascript:;">Curso</a></li>
+                <li class="active">Gestión de Proyectos</li>
+            </ol>
+        </div>
+    </div>
     <!-- end page-header -->
 
     <div id="tablaAsigCursos" class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:block;">
@@ -76,15 +92,14 @@
                             </thead>
                             <tbody>
                                 <?php
-                                //var_dump($datos['cursos']['cursos']);
                                 if (!empty($datos['cursos']['cursos'])) {
                                     foreach ($datos['cursos']['cursos'] as $key => $value) {
                                         if ($value['estatus'] === '1' && $value['Porcentaje'] === '100') {
-                                            $accion = '<span style="color: blue;"> <i class="fa fa-check-square"></i> Completado</span>';
+                                            $accion = '<span style="color: #348fe2;"> <i class="fa fa-check-square"></i> Completado</span>';
                                         } elseif ($value['estatus'] === '1' && $value['Porcentaje'] < '100' && $value['Porcentaje'] > '0') {
                                             $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-continuar-curso" data-id="' . $value['id'] . '"><strong style="color: gold;"> <i class="fa fa-fast-forward"></i> Continuar</strong></a>';
                                         } elseif ($value['estatus'] === '1' && $value['Porcentaje'] === '0') {
-                                            $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-comenzar-curso" data-id="' . $value['id'] . '"><strong style="color: forestgreen;"> <i class="fa fa-youtube-play"></i> Comenzar</strong></a>';
+                                            $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-comenzar-curso" data-id="' . $value['id'] . '"><strong style="color: #00acac;"> <i class="fa fa-youtube-play"></i> Comenzar</strong></a>';
                                         } else {
                                             $accion = '<strong><i class="fa fa-ban"></i> Suspendido</strong>';
                                         }
@@ -166,11 +181,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-<!--                                <tr>
-                                    <td></td>
-                                    <td><span class="temarioTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-                                    <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                </tr>-->
                             </tbody>
                         </table>
                     </div>
@@ -252,17 +262,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-<!--                                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td><span class="temarioTablaCompletado"  style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td><span class="temarioTablaTerminar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                </tr>-->
                             </tbody>
                         </table>
                     </div>
@@ -273,16 +272,6 @@
                     Comentarios <br>
                     <textarea id="avanceComentario" class="form-control" placeholder="Comentarios" rows="5" disabled></textarea>
                     <div id="gallery" class="gallery">
-                        <!--                        <div class="image gallery-group-1">
-                                                    <div class="image-inner">
-                                                        <a href="assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
-                                                            <img src="http://localhost/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="image-info">
-                                                        <h5>Fecha</h5>
-                                                    </div>
-                                                </div>-->
                     </div>
                     <div class="text-right">
                         <button type="button" id="btnCerrarCompletarAvanceCurso" class="btn btn-white text-right" data-dismiss="modal">Cerrar</button>
@@ -294,7 +283,7 @@
     <!-- fin contenido continuar, continuar curso evidencias-->
 
     <!-- inicio contenido continuar, terminar curso evidencias -->
-    <div class="panel panel-inverse" data-sortable-id="ui-widget-1" id="temarioTerminarCurso" style="display:none;">
+    <div id="temarioTerminarCurso" class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:none;">
         <div class="panel-heading">
             <h4 class="panel-title">Cursos</h4>
         </div>
@@ -355,11 +344,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-<!--                                <tr>
-                                    <td></td>
-                                    <td><span id="temarioContentTablaCompletado" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-edit"></i>Completado</span></td>
-                                    <td><span id="temarioContentTablaComenzar" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i>Terminar</span></td>
-                                </tr>-->
                             </tbody>
                         </table>
                     </div>
@@ -390,41 +374,7 @@
                         </div>
                         <div class="col-md-7">
                             <div class="row">
-                                <!--<div id="fileupload">-->
-                                <div class="row fileupload-buttonbar">
-                                    <div class="col-md-12">
-                                        <span class="btn btn-success btn-sm fileinput-button">
-                                            <span>Agregar archivos</span>
-                                            <input id="multiFiles" type="file" name="files[]" multiple>
-                                        </span>
-                                        <button type="reset" class="btn btn-danger btn-sm cancel">
-                                            <span>Borrar</span>
-                                        </button>
-                                        <span class="fileupload-process"></span>
-                                    </div>
-
-                                </div>
-                                <!--                                    <div class="row">
-                                                                        <div class="col-md-12 fileupload-progress fade">
-                                                                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                                                                                <div class="progress-bar progress-bar-success" style="width:0%;"></div>
-                                                                            </div>
-                                                                            <div class="progress-extended">&nbsp;</div>
-                                                                        </div>
-                                                                    </div>-->
-                            <!--<input type="file" id="multiupload" name="uploadFiledd[]" multiple >-->
-                                <!--<button type="button" id="upcvr" class="btn btn-primary">Start Upload</button>-->
-                                <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
-                                <p id="msg"></p>
-                                <!--</div>-->
-                                <!--<div id="uploadsts"></div>-->
-<!--                                <input id="sortpicture" type="file" name="sortpic" />
-                            <button id="upload">Upload</button>-->
-
-                                <!--<input type="file" id="multiFiles" name="files[]" multiple="multiple"/>-->
-                                <!--<button id="upload">Upload</button>-->
-
-
+                                <input id="evidenciasAvanceCurso" name="evidenciasAvanceCurso[]" type="file" multiple >
                             </div>
                         </div>
                     </div>
@@ -452,71 +402,3 @@
 
 </div>
 <!-- Finalizando #contenido -->
-
-<script id="template-upload" type="text/x-tmpl">
-    {% for (var i=0, file; file=o.files[i]; i++) { %}
-    <tr class="template-upload fade">
-    <td class="col-md-1">
-    <span class="preview"></span>
-    </td>
-    <td>
-    <p class="name">{%=file.name%}</p>
-    <strong class="error text-danger"></strong>
-    </td>
-    <td>
-    <p class="size">Processing...</p>
-    </td>
-    <td>
-    {% if (!i) { %}
-    <button class="btn btn-white btn-sm cancel">
-    <span>Cancel</span>
-    </button>
-    {% } %}
-    </td>
-    </tr>
-    {% } %}
-</script>
-<!-- The template to display files available for download -->
-<script id="template-download" type="text/x-tmpl">
-    {% for (var i=0, file; file=o.files[i]; i++) { %}
-    <tr class="template-download fade">
-    <td>
-    <span class="preview">
-    {% if (file.thumbnailUrl) { %}
-    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
-    {% } %}
-    </span>
-    </td>
-    <td>
-    <p class="name">
-    {% if (file.url) { %}
-    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
-    {% } else { %}
-    <span>{%=file.name%}</span>
-    {% } %}
-    </p>
-    {% if (file.error) { %}
-    <div><span class="label label-danger">Error</span> {%=file.error%}</div>
-    {% } %}
-    </td>
-    <td>
-    <span class="size">{%=o.formatFileSize(file.size)%}</span>
-    </td>
-    <td>
-    {% if (file.deleteUrl) { %}
-    <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
-    <i class="glyphicon glyphicon-trash"></i>
-    <span>Delete</span>
-    </button>
-    <input type="checkbox" name="delete" value="1" class="toggle">
-    {% } else { %}
-    <button class="btn btn-warning cancel">
-    <i class="glyphicon glyphicon-ban-circle"></i>
-    <span>Cancel</span>
-    </button>
-    {% } %}
-    </td>
-    </tr>
-    {% } %}
-</script>
-

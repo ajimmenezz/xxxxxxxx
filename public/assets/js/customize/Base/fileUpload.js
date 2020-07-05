@@ -170,18 +170,26 @@ Upload.prototype.crearUpload = function () {
 Upload.prototype.crearUploadBoton = function () {
     var objeto = arguments[0];
     var url = arguments[1] || '#';
-    var titulo = arguments[2] || 'Examinar';
+    var tituloAceptar = arguments[2] || 'Examinar';
+    var colorBoton = arguments[3] || 'btn btn-warning';
+    var tituloEliminar = arguments[4] || 'Borrar';
 
     $(objeto).fileinput({
         uploadUrl: url,
+        uploadAsync: false,
         language: 'es',
         showUpload: false,
         showCaption: false,
         dropZoneEnabled: false,
-        browseClass: "btn btn-warning",
-        browseLabel: titulo,
+        browseClass: colorBoton,
+        browseLabel: tituloAceptar,
         browseIcon: "",
         removeIcon: " ",
+        removeClass: "btn btn-danger",
+        removeLabel: tituloEliminar,
+        fileActionSettings: {
+            showUpload: false,
+        },
     });
 };
 

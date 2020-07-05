@@ -383,11 +383,8 @@ $config['Generales'] = array(
         'pluginsCss' => array(
             'DataTables/css/data-table',
             'select2/dist/css/select2.min',
-            'jquery-fileUpload/css/fileinput.min',
-            'jquery-file-upload/blueimp-gallery/blueimp-gallery.min',
-            'jquery-file-upload/css/jquery.fileupload',
-            'jquery-file-upload/css/jquery.fileupload-ui',
             'isotope/isotope',
+            'jquery-fileUpload/css/fileinput.min',
         ),
         'js' => array(
             'Base/Base',
@@ -406,30 +403,16 @@ $config['Generales'] = array(
             'Componentes/Tablas/TablaBasica',
             'Componentes/FileUpload/IUpload',
             'Componentes/FileUpload/FileUpload_Basico',
+            'Base/fileUpload'
         ),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
             'DataTables/js/dataTables.responsive',
             'select2/dist/js/select2.min',
             'pace/pace.min',
+            'isotope/jquery.isotope.min',
             'jquery-fileUpload/js/fileinput',
             'jquery-fileUpload/js/es',
-            'jquery-file-upload/js/vendor/jquery.ui.widget',
-            'jquery-file-upload/js/vendor/canvas-to-blob.min',
-            'jquery-file-upload/js/vendor/load-image.min',
-            'jquery-file-upload/js/vendor/tmpl.min',
-            'jquery-file-upload/js/jquery.iframe-transport',
-            'jquery-file-upload/js/jquery.fileupload',
-            'jquery-file-upload/js/jquery.fileupload-process',
-            'jquery-file-upload/js/jquery.fileupload-image',
-            'jquery-file-upload/js/jquery.fileupload-audio',
-            'jquery-file-upload/js/jquery.fileupload-video',
-            'jquery-file-upload/js/jquery.fileupload-validate',
-            'jquery-file-upload/js/jquery.fileupload-ui',
-            'jquery-file-upload/js/main',
-            'jquery-file-upload/js/cors/jquery.xdr-transport',
-            'isotope/jquery.isotope.min',
-            
         ),
         'Permiso' => 'VGENCA'
     )
@@ -1880,7 +1863,6 @@ $config['RH'] = array(
             'bootstrap-wizard/css/bwizard.min',
             'parsley/src/parsley',
             'jquery-fileUpload/css/fileinput.min',
-            
         ),
         'js' => array(
             'Base/Base',
@@ -1900,8 +1882,6 @@ $config['RH'] = array(
             // 'RH/form-wizards-validation.demo.min',
             'RH/Cursos/test',
             'Base/fileUpload'
-           
-            
         ),
         'pluginsJs' => array(
             'DataTables/js/jquery.dataTables',
@@ -1912,9 +1892,6 @@ $config['RH'] = array(
             'bootstrap-wizard/js/bwizard',
             'jquery-fileUpload/js/fileinput',
             'jquery-fileUpload/js/es',
-            
-            
-            
         ),
         'Permiso' => 'VRHCU'
     )
