@@ -24,7 +24,7 @@ class Controller_Cursos_Asignados extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("temario", $resultado);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al comenzar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -34,7 +34,7 @@ class Controller_Cursos_Asignados extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("temario", $resultado);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al obtener la informacón", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -44,7 +44,7 @@ class Controller_Cursos_Asignados extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("avance", $resultado);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al agregar avances", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -54,7 +54,7 @@ class Controller_Cursos_Asignados extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("avance", $resultado);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al obtener las evidencias", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;

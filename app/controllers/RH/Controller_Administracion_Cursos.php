@@ -25,7 +25,7 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("cursos", $cursosActualizados);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al agregar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -35,7 +35,7 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("infoCurso", $resultado);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al obtener el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -46,7 +46,7 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("cursos", $cursosActualizados);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al aditar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -66,7 +66,7 @@ class Controller_Administracion_Cursos extends Base {
                 if ($resultado) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al realizar esta acción", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -76,7 +76,7 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("info", $resultado['info']);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al realizar esta acció", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -86,16 +86,17 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("infoCurso", $resultado);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al obtener la informacón", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
+                break;
             case 'TemasCursoUsuario':
                 $resultado = $this->curso->TemaryCourseByUser($this->input->post());
                 if ($resultado) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("infoUsuario", $resultado);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al obtener los temas", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
@@ -105,7 +106,7 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("avance", $resultado);
                 } else {
-                    $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al obtener las evidencias", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
