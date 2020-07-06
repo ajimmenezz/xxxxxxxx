@@ -19,8 +19,11 @@ $(function () {
     let tablaTemarioCompletado = new TablaBasica('tabla-temario-completado');
     let idUsuario = $('#valorIdUsuario').val();
     let idTema = null;
-//    file.crearUploadBoton('#evidenciasAvanceCurso', 'Cursos_Asignados/Agregar-Avance', 'Agregar Archivos', 'btn btn-success');
-    let evidenciaMaterial = new FileUpload_Basico('evidenciasAvanceCurso', {url: 'Cursos_Asignados/Agregar-Avance', extensiones: ['jpg', 'jpeg', 'png']});
+    let evidenciaMaterial = new FileUpload_Boton('evidencias', {
+        url: 'Cursos_Asignados/Agregar-Avance',
+        extensiones: ['jpg', 'jpeg', 'png'],
+        tituloAceptar: 'Agregar Archivos',
+        colorBotonAceptar: 'btn btn-success'});
     evidenciaMaterial.iniciarFileUpload();
 
     $("#cursoTablaContinuar").on('click', function (e) {
@@ -79,10 +82,10 @@ $(function () {
         let evidencias = $('#evidenciasAvanceCurso').val();
         let idUsuario = $('#valorIdUsuario').val();
         let data = {comentarios: comentarios, idUsuario: idUsuario, idTema: idTema};
-        
+
         if (evidencias !== '') {
             if (comentarios !== '') {
-                evidenciaMaterial.enviarPeticionServidor('evidenciasAvanceCurso', data, function (respuesta) {
+                evidenciaMaterial.enviarPeticionServidor('evidencias', data, function (respuesta) {
                     evento.iniciarModal(
                             "#modalEdit",
                             "<strong>Avance Tema</strong>",
