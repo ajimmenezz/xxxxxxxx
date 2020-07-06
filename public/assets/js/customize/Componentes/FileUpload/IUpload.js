@@ -100,7 +100,7 @@ class IUpload {
     enviarPeticionServidor(panel = '', datos = {}, callback) {
         let _this = this;
         _this.definiendoDatosExtra(datos);
-
+        console.log(datos);
 //        if (_this.validarArchivos()) {
         $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
             _this.pagina.empezarPantallaCargando(panel);
@@ -128,6 +128,7 @@ class IUpload {
 
     definiendoDatosExtra(datos = {}){
         this.datosExtra = datos;
+        console.log(this.datosExtra);
     }
 
     totalArchivos() {

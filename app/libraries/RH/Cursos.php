@@ -21,17 +21,24 @@ class Cursos extends General {
         $sumaAvance = 0;
 
         $datos['cursos'] = $this->DBS->getMyCourses($idUsuario);
-        $datos['totalCursos'] = count($datos['cursos']);
 
-        $puntosTotales = $datos['totalCursos'] * 100;
+        if (!empty($datos)) {
+            $datos['totalCursos'] = count($datos['cursos']);
 
-        foreach ($datos['cursos'] as $value) {
-            $sumaAvance += $value['Porcentaje'];
+            $puntosTotales = $datos['totalCursos'] * 100;
+
+            foreach ($datos['cursos'] as $value) {
+                $sumaAvance += $value['Porcentaje'];
+            }
+            $sumaAvance *= 100;
+            $sumaAvance = $sumaAvance / $puntosTotales;
+            $datos['avance'] = $sumaAvance;
+            $datos['feltante'] = 100 - $sumaAvance;
+        } else {
+            $datos['totalCursos'] = '0';
+            $datos['avance'] = '0';
+            $datos['feltante'] = '0';
         }
-        $sumaAvance *= 100;
-        $sumaAvance = $sumaAvance / $puntosTotales;
-        $datos['avance'] = $sumaAvance;
-        $datos['feltante'] = 100 - $sumaAvance;
 
         return $datos;
     }
@@ -49,20 +56,42 @@ class Cursos extends General {
     }
 
     public function newCourse($infoCourse) {
-        $rutaImagen = null;
-        if (isset($infoCourse['curso'])) {
-            if($infoCourse['curso']['img'] !== ''){
-                $rutaImagen = $infoCourse['curso']['img'];
-            }
-            $insertQuery = $this->DBS->insertCourse($infoCourse['curso'], $rutaImagen);
+        $rutaImagen = $this->guardarImagen($infoCourse);
+
+        if (!$rutaImagen) {
+            $rutaImagen = NULL;
         }
 
+        $cursos = explode(',', $infoCourse['cursos']);
+        $datosCursos['nombre'] = $cursos[1];
+        $datosCursos['url'] = $cursos[2];
+        $datosCursos['descripcion'] = $cursos[3];
+        $datosCursos['certificado'] = $cursos[4];
+        $datosCursos['costo'] = $cursos[5];
+        $datosCursos['imagen'] = $rutaImagen;
+        $participantes = explode(",", $infoCourse['participantes']);
+        $temario = explode(",/", $infoCourse['temario']);
+        $arrayNuevoTemario = array();
+
+        foreach ($temario as $key => $value) {
+            if ($key !== 0) {
+                $value = substr($value, 1);
+            }
+
+            if (!empty($value)) {
+                $datosTemario = explode(",", $value);
+                $arrayNuevoTemario[$key] = $datosTemario;
+            }
+        }
+
+        $insertQuery = $this->DBS->insertCourse($datosCursos);
+
         if ($insertQuery['code'] == 200) {
-            foreach ($infoCourse['temario']['infoTabla'] as $value) {
+            foreach ($arrayNuevoTemario as $value) {
                 $this->DBS->insertTemaryCourse($value, $insertQuery['id']);
             }
 
-            foreach ($infoCourse['participantes'] as $value) {
+            foreach ($participantes as $value) {
                 $this->DBS->insertParticipantsCourse($value[0], $insertQuery['id']);
             }
         } else {
@@ -137,12 +166,13 @@ class Cursos extends General {
             $resultQuery = $this->DBS->insertParticipantsCourse($datos, $datos['idCurso']);
             $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
         }
-        
+
         $info['temas'] = $temasCurso;
         $info['perfiles'] = $perfilesCurso;
 
         if ($resultQuery['code'] == 200) {
-            return ['response' => true, 'info' => $info];;
+            return ['response' => true, 'info' => $info];
+            ;
         } else {
             return false;
         }
@@ -223,7 +253,7 @@ class Cursos extends General {
 
     public function addEvidence($infoAvence) {
         $rutaImagen = $this->guardarImagen($infoAvence);
-        
+
         $resultQuery = $this->DBS->saveEvidance($infoAvence, $rutaImagen);
 
         if ($resultQuery['code'] == 200) {

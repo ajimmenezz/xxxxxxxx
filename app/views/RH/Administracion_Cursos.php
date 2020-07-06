@@ -168,7 +168,7 @@
 
                                     <div class="row" style="margin: 10px 25px;">
                                         <div class="col-xs-4 text-center">
-                                            <input id="inputImgCurso" name="inputImgCurso[]" type="file">
+                                            <input id="evidencias" name="evidencias[]" type="file">
                                         </div>
                                         <div class="col-xs-8">
 

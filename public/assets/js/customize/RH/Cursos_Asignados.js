@@ -2,6 +2,7 @@ $(function () {
 
     var evento = new Base();
     var file = new Upload();
+    var bug = new Bug();
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
 
@@ -86,17 +87,19 @@ $(function () {
         if (evidencias !== '') {
             if (comentarios !== '') {
                 evidenciaMaterial.enviarPeticionServidor('evidencias', data, function (respuesta) {
-                    evento.iniciarModal(
-                            "#modalEdit",
-                            "<strong>Avance Tema</strong>",
-                            `<p class="text-center">Se registro el avance del curso con éxito.</p>                      
-                    <p class="text-center"><span class="fa-stack fa-2x text-success">
+                    if (bug.validar(respuesta)) {
+                        evento.iniciarModal(
+                                "#modalEdit",
+                                "<strong>Avance Tema</strong>",
+                                `<p class="text-center">Se registro el avance del curso con éxito.</p>                      
+                                <p class="text-center"><span class="fa-stack fa-2x text-success">
                             <i class="fa fa-circle fa-stack-2x"></i>
                             <i class="fa fa-check fa-stack-1x fa-inverse"></i>
                         </span></i></p>`);
 
-                    $('#btnAceptar').addClass('hidden');
-                    $('#btnCancelar').empty().html('Cerrar');
+                        $('#btnAceptar').addClass('hidden');
+                        $('#btnCancelar').empty().html('Cerrar');
+                    }
                 });
             } else {
                 evento.mostrarMensaje("#errorCometariosAvanceCurso", false, "Agrega la comentarios.", 3000);

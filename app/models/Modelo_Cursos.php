@@ -94,7 +94,7 @@ class Modelo_Cursos extends Modelo_Base {
             'idTipoCurso' => $infoCurso['certificado'],
             'nombre' => $infoCurso['nombre'],
             'descripcion' => $infoCurso['descripcion'],
-            'imagen' => $rutaImagen
+            'imagen' => $infoCurso['imagen']
         ]);
 
         $ultimoCurso = $this->consulta("select last_insert_id() as Id");
