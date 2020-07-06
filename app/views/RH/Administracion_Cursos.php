@@ -642,7 +642,7 @@
                             perfiles.forEach(element => {
                                 tablaParticipantesEdit.agregarDatosFila([
                                     element.idPerfil,
-                                    '',
+                                    element.Nombre,
                                     "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
 
                                 ]);
@@ -1217,7 +1217,7 @@
                                                                 <tr>
                                                                     <th class="all">Temario</th>
                                                                     <th class="all">Porcentaje</th>
-                                                                    <th class="all">id</th>
+                                                                    <th class="never">id</th>
                                                                     <th class="all">Acciones</th>
                                                                 </tr>
                                                             </thead>
@@ -1285,7 +1285,7 @@
                                                         <table id="tabla-cursos-participantesEdit"  class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="all">id</th>
+                                                                    <th class="never">id</th>
                                                                     <th class="all">Puesto</th>
                                                                     <th class="all">Acciones</th>
                                                                 </tr>

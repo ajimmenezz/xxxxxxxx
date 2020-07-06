@@ -220,7 +220,7 @@ $(function () {
 
     $('#btn-agregar-nuevo-temarioEdit').on('click', function (e) {
         //modalSubirTemarios
-        console.log("btn-agregar-nuevo-temario")
+        console.log("btn-agregar-nuevo-temario_EDIT")
         $nombreTemario = $("#nombreTemarioEdit").val();
         if ($nombreTemario !== "") {
 
@@ -476,7 +476,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
     let selectPart= new SelectBasico('puestoEdit')
     $("#btn-nuevo-puestoParticipanteEdit").on('click', function (e) {
         //modalSubirTemarios
-        console.log("btn-nuevo-puestoParticipante")
+        console.log("btn-nuevo-puestoParticipante_EDIT")
 
         $nombrePuesto=selectPart.obtenerValor()
         $nombrePuestoString=selectPart.obtenerTexto()
@@ -523,6 +523,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
             console.debug("part", part)
     
             json.participantes = part;
+            console.debug("DATOS_SEND",json);
 
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
                 console.log("nuevoParticipante_EDIT",respuesta);
@@ -552,7 +553,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
 
-            console.debug($nombrePuesto, "DATOS tEMARIO2", listPuestoEdit)
+            console.debug($nombrePuesto, "DATOS part2", listPuestoEdit)
             $("#puestoEdit").val("");
         }
 
