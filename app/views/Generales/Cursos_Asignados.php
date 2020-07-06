@@ -374,7 +374,7 @@
                         </div>
                         <div class="col-md-7">
                             <div class="row">
-                                <input id="evidenciasAvanceCurso" name="evidenciasAvanceCurso[]" type="file" multiple >
+                                <input id="evidencias" name="evidencias[]" type="file" multiple >
                             </div>
                         </div>
                     </div>
