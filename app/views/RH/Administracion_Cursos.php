@@ -713,9 +713,11 @@
                             // console.debug("DATOS_SPAN_TREXT_HTML",perfiles.nombreUsuario,perfiles.Nombre);
 
                             
-                            var tablaListCursosVer1 = new TablaBasica('tabla-cursosAsignados');
-
-
+                            var tablaListCursosVer1=[]
+                            
+                            tablaListCursosVer1 = new TablaBasica('tabla-cursosAsignados');
+                                tablaListCursosVer1.limpiartabla();
+                            
 
                             perfiles.forEach(element => {
                                 var porcentaje='0';
@@ -876,7 +878,7 @@
                         <div class="col-sm-4">
                             <ol class="breadcrumb pull-right">
                                 <li><a class="btn-cancel_wizardEdit" href="javascript:;">Cursos</a></li>
-                                <li class="active" onclick='btnAdminVerCurso(0)'>Avance</li>
+                                <li class="active" onclick='btnAdminVerCurso(0)' style="cursor: pointer;">Avance</li>
                                 <li class="active">Detalles avance</li>
                             </ol>
 
