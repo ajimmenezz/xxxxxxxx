@@ -403,6 +403,7 @@ $config['Generales'] = array(
             'Componentes/Tablas/TablaBasica',
             'Componentes/FileUpload/IUpload',
             'Componentes/FileUpload/FileUpload_Boton',
+            'Componentes/HerramientasWeb/Bug',
             'Base/fileUpload'
         ),
         'pluginsJs' => array(
@@ -1871,9 +1872,13 @@ $config['RH'] = array(
             'Componentes/Modal/ModalBase',
             'Componentes/Modal/Alertas',
             'Componentes/Modal/Modal',
+            'Componentes/HerramientasWeb/Utileria',
             'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
             'Componentes/Selects/SelectMultiple',
+            'Componentes/FileUpload/IUpload',
+            'Componentes/FileUpload/FileUpload_Boton',
+            'Componentes/FileUpload/FileUpload_Basico',
             'Componentes/Pagina',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
