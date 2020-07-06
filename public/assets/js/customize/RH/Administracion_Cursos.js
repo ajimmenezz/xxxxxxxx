@@ -367,7 +367,7 @@ $(function () {
         });
 
 
-        console.debug(elim, "FINAL", listTemarioEdit)
+        console.debug("FINAL", listTemarioEdit)
 
 
     });
