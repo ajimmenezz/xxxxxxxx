@@ -190,14 +190,19 @@ class Cursos extends General {
         $temasPorCurso = $this->DBS->getTemaryById($datos['idCurso']);
 
         $arregloCursos = array_merge($temasPorUsuario, $temasPorCurso);
+        
+      //  print_r($arregloCursos);
 
         foreach ($arregloCursos as $val) {
+           
             if (!in_array($val['id'], $key_array)) {
                 $key_array[$i] = $val['id'];
                 $temp_array[$i] = $val;
             }
             $i++;
         }
+
+        //print_r($temp_array);
         foreach ($temp_array as $val) {
             if (isset($val['fechaModificacion'])) {
                 $avance += $val['porcentaje'];
