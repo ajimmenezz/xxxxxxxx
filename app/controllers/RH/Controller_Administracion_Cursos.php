@@ -89,7 +89,7 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onError("Error", "Error al obtener la informacón", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
-                break;
+            break;
             case 'TemasCursoUsuario':
                 $resultado = $this->curso->TemaryCourseByUser($this->input->post());
                 if ($resultado) {
