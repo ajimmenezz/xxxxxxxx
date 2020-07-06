@@ -4,13 +4,15 @@ namespace Librerias\Generales;
 
 use Controladores\Controller_Base_General as General;
 
-class Correo extends General {
+class Correo extends General
+{
 
     private $DBCO;
     private $DBRU;
     private $catalogo;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         parent::getCI()->load->library('encrypt');
         parent::getCI()->load->library('email');
@@ -28,7 +30,8 @@ class Correo extends General {
      * @return boolean regresa true si envio con exito el correo de lo contrario false.
      */
 
-    public function validarCorreo(string $Email) {
+    public function validarCorreo(string $Email)
+    {
         if (filter_var($Email, FILTER_VALIDATE_EMAIL)) {
             $usuario = $this->catalogo->catUsuarios('4', array('email' => $Email));
             if (empty($usuario)) {
@@ -68,20 +71,26 @@ class Correo extends General {
      * @param string $mensaje recibe el mensaje que lleva el correo
      */
 
-    public function enviarCorreo(string $remitente, array $destinatario, string $asunto, string $mensaje, array $archivoAdjunto = [], string $style = '') {
+    public function enviarCorreo(string $remitente, array $destinatario, string $asunto, string $mensaje, array $archivoAdjunto = [], string $style = '')
+    {
         $host = $_SERVER['SERVER_NAME'];
         $destinatarios = implode(',', $destinatario);
-
+        $isSandbox = strpos($_SERVER['SERVER_NAME'], 'sandbox.siccob.solutions');
         if ($host !== 'siccobsolutions.com.mx' || $host !== 'siccobsolutions.com.mx') {
-            if ($style == '') {
-                $style = ''
+            $sandboxText = '';
+            if ($isSandbox !== FALSE) {
+                $sandboxText = 'SANDBOX!! ';
+            }
+            if ($host)
+                if ($style == '') {
+                    $style = ''
                         . '<style>
                         .table-striped>tbody>tr:nth-of-type(odd) {
                             background-color: #f9f9f9;
 }                       }
                     </style>';
-            }
-            
+                }
+
             $contenido = '  <html>
                             <head>
                                 <title>' . $asunto . '</title>
@@ -93,12 +102,12 @@ class Correo extends General {
                             </body>
                         </html>';
             $config['mailtype'] = 'html';
-            
+
             parent::getCI()->email->initialize($config);
             parent::getCI()->email->clear(TRUE);
             parent::getCI()->email->from($remitente);
             parent::getCI()->email->to($destinatarios);
-            parent::getCI()->email->subject($asunto);
+            parent::getCI()->email->subject($sandboxText . $asunto);
             parent::getCI()->email->message($contenido);
 
             if (!empty($archivoAdjunto)) {
@@ -119,7 +128,8 @@ class Correo extends General {
         }
     }
 
-    private function crearReporteFallasEnvio(string $contenido) {
+    private function crearReporteFallasEnvio(string $contenido)
+    {
         if (file_exists("./storage/Archivos/ReportesTXT/ReporteFallasEnvio.txt")) {
             $archivo = fopen("./storage/Archivos/ReportesTXT/ReporteFallasEnvio.txt", "a");
             fputs($archivo, chr(13) . chr(10));
@@ -144,7 +154,8 @@ class Correo extends General {
      * @return array regresa los datos de pagina a mostrar 
      */
 
-    public function validarLiga($clave) {
+    public function validarLiga($clave)
+    {
         $datos = array();
         $clave = $this->optenerClave(urldecode($clave));
         $usuario = parent::getCI()->encrypt->decode($clave);
@@ -158,13 +169,15 @@ class Correo extends General {
                 'pagina' => 'error_general',
                 'clave' => '600',
                 'titulo' => 'Liga vencida',
-                'descripcion' => 'Esta liga ha expirado es necesario que vuelva a solicitar su recuperación.');
+                'descripcion' => 'Esta liga ha expirado es necesario que vuelva a solicitar su recuperación.'
+            );
         } else if ($datosClave['Flag'] === '0') {
             $datos = array(
                 'pagina' => 'error_general',
                 'clave' => '600',
                 'titulo' => 'Liga vencida',
-                'descripcion' => 'Esta liga ha expirado es necesario que vuelva a solicitar su recuperación.');
+                'descripcion' => 'Esta liga ha expirado es necesario que vuelva a solicitar su recuperación.'
+            );
         } else {
             $datos = array('pagina' => 'Nuevo_Password', 'Usuario' => $usuario, 'IdPsw' => $datosClave['Id']);
         }
@@ -175,7 +188,8 @@ class Correo extends General {
      * Se crea el cuerpo del mensaje en html para el mensaje de correo
      */
 
-    public function mensajeCorreo(string $titulo, string $texto) {
+    public function mensajeCorreo(string $titulo, string $texto)
+    {
         $mensaje = '<div align="center">
                         <table style="max-width: 600px; height: 240px;" border="0" width="598" cellspacing="0" cellpadding="0">
                             <tbody>
@@ -244,7 +258,8 @@ class Correo extends General {
         return $mensaje;
     }
 
-    public function optenerClave(string $clave) {
+    public function optenerClave(string $clave)
+    {
         if ($posicion = strpos($clave, ' ')) {
             $fragmentoClave = substr($clave, 0, $posicion);
             $clave = $this->DBCO->consulta('select Codigo from t_recuperacion_password where Codigo like "' . $fragmentoClave . '%"');
@@ -258,5 +273,4 @@ class Correo extends General {
             return $clave;
         }
     }
-
 }
