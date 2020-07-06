@@ -76,7 +76,7 @@ class Cursos extends General {
         if (!empty($_FILES)) {
             $CI = parent::getCI();
             $carpeta = 'Cursos/';
-            $archivos = implode(',', setMultiplesArchivos($CI, 'evidenciasIncapacidad', $carpeta));
+            $archivos = implode(',', setMultiplesArchivos($CI, 'evidencias', $carpeta));
             return $archivos;
         } else {
             return false;
@@ -222,17 +222,12 @@ class Cursos extends General {
     }
 
     public function addEvidence($infoAvence) {
-        if($infoAvence["idEvidencias"] == ''){
-            $resultQuery = $this->DBS->insertAdvanceRelationship($infoAvence);
-            if ($resultQuery['code'] == 200) {
-                $idAvance = $resultQuery['idAvance'];
-            }
-        } else {
-            $idAvance = $infoAvence["idEvidencias"];
-        }
+        $rutaImagen = $this->guardarImagen($infoAvence);
         
-        if ($resultAdvance['code'] == 200) {
-            return $resultQuery;
+        $resultQuery = $this->DBS->saveEvidance($infoAvence, $rutaImagen);
+
+        if ($resultQuery['code'] == 200) {
+            return $this->DBS->getEvidenceByID($resultQuery['idAvance']);
         } else {
             return false;
         }

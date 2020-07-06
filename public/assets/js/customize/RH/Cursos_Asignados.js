@@ -19,8 +19,9 @@ $(function () {
     let tablaTemarioCompletado = new TablaBasica('tabla-temario-completado');
     let idUsuario = $('#valorIdUsuario').val();
     let idTema = null;
-    file.crearUploadBoton('#evidenciasAvanceCurso', 'Cursos_Asignados/Agregar-Avance', 'Agregar Archivos', 'btn btn-success');
-
+//    file.crearUploadBoton('#evidenciasAvanceCurso', 'Cursos_Asignados/Agregar-Avance', 'Agregar Archivos', 'btn btn-success');
+    let evidenciaMaterial = new FileUpload_Basico('evidenciasAvanceCurso', {url: 'Cursos_Asignados/Agregar-Avance', extensiones: ['jpg', 'jpeg', 'png']});
+    evidenciaMaterial.iniciarFileUpload();
 
     $("#cursoTablaContinuar").on('click', function (e) {
         console.log("continuar");
@@ -81,7 +82,7 @@ $(function () {
         
         if (evidencias !== '') {
             if (comentarios !== '') {
-                file.enviarArchivos('#evidenciasAvanceCurso', 'Cursos_Asignados/Agregar-Avance', '#temarioTerminarCurso', data, function (respuesta) {
+                evidenciaMaterial.enviarPeticionServidor('evidenciasAvanceCurso', data, function (respuesta) {
                     evento.iniciarModal(
                             "#modalEdit",
                             "<strong>Avance Tema</strong>",
@@ -126,7 +127,7 @@ $(function () {
             let boton = '';
 
             if (v.idAvance === undefined) {
-                boton = `<span class="temarioTablaTerminar" data-avance="${v.idAvance}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i> Terminar</span>`;
+                boton = `<span class="temarioTablaTerminar" data-avance="${v.id}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i> Terminar</span>`;
             } else {
                 boton = `<span class="temarioTablaCompletado" data-avance="${v.idAvance}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-check-square"></i> Completado</span>`;
             }

@@ -261,25 +261,26 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
     
-//    public function insertAdvanceRelationship($info) {
-//        $this->iniciaTransaccion();
-//
-//        $this->insertar('t_curso_tema_relacion_avance_usuario', [
-//            'idTema' => $info["idTema"],
-//            'idUsuario' => $info["idUsuario"]
-//        ]);
-//        
-//        $ultimAvance = $this->consulta("select last_insert_id() as Id");
-//
-//        $this->terminaTransaccion();
-//        if ($this->estatusTransaccion() === false) {
-//            $this->roolbackTransaccion();
-//            return ['code' => 400, 'idAvance' => 0];
-//        } else {
-//            $this->commitTransaccion();
-//            return ['code' => 200, 'idAvance' => $ultimAvance[0]["Id"]];
-//        }
-//    }
+    public function saveEvidance($info, $imagen) {
+        $this->iniciaTransaccion();
+
+        $this->insertar('t_curso_tema_relacion_usuario_evidencia', [
+            'idAvanceUsuario' => $info["idTema"],
+            'comentarios' => $info["comentarios"],
+            'url' => $imagen
+        ]);
+        
+        $ultimoAvance = $this->consulta("select last_insert_id() as Id");
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'idAvance' => $ultimoAvance[0]["Id"]];
+        }
+    }
     
     public function getEvidenceByID($idEvidencia) {
         return $this->consulta("select 
