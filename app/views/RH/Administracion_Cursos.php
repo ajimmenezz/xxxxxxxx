@@ -713,10 +713,10 @@
                             // console.debug("DATOS_SPAN_TREXT_HTML",perfiles.nombreUsuario,perfiles.Nombre);
 
                             
-                            var tablaListCursosVer1=[]
+                            var tablaListCursosVer=[]
                             
-                            tablaListCursosVer1 = new TablaBasica('tabla-cursosAsignados');
-                                tablaListCursosVer1.limpiartabla();
+                            tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+                                tablaListCursosVer.limpiartabla();
                             
 
                             perfiles.forEach(element => {
@@ -724,7 +724,7 @@
                                 if(element.Porcentaje!=null && element.Porcentaje!='' && element.Porcentaje!='null'){
                                     porcentaje=element.Porcentaje;
                                 }
-                                tablaListCursosVer1.agregarDatosFila([
+                                tablaListCursosVer.agregarDatosFila([
                                     element.nombreUsuario,
                                     element.Nombre,
                                     porcentaje+'%',
@@ -970,64 +970,16 @@
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <label for="nuevoArchivo">Descripción *</label>
-                                                <textarea id="textareaDescripcionCurso" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6"  data-parsley-group="wizard-step-1" required /></textarea>
+                                                <label for="nuevoArchivo">Comentarios</label>
+                                                <textarea id="comenarioEvidencias" class="form-control" name="comenarioEvidencias"  rows="6"  data-parsley-group="wizard-step-1" required /></textarea>
                                             </div>
                                         </div>
-                                      
-                                            <div id="gallery" class="gallery">
-                                                <div class="image gallery-group-1">
-                                                    <div class="image-inner">
-                                                        <a href="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
-                                                            <img src="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="image-info">
-                                                        <h5>Fecha</h5>
-                                                        <h5 class="title">Comentarios</h5>
-                                                        <div class="desc">
-                                                            Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         
-                                       
-                                            <div id="gallery" class="gallery">
-                                                <div class="image gallery-group-1">
-                                                    <div class="image-inner">
-                                                        <a href="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
-                                                            <img src="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="image-info">
-                                                        <h5>Fecha</h5>
-                                                        <h5 class="title">Comentarios</h5>
-                                                        <div class="desc">
-                                                            Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        
-                                       
-                                            <div id="gallery" class="gallery">
-                                                <div class="image gallery-group-1">
-                                                    <div class="image-inner">
-                                                        <a href="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" data-lightbox="gallery-group-1">
-                                                            <img src="http://htdocs.local/plantilla/admin/template_content_ajax/assets/img/gallery/gallery-1.jpg" alt="" />
-                                                        </a>
-                                                    </div>
-                                                    <div class="image-info">
-                                                        <h5>Fecha</h5>
-                                                        <h5 class="title">Comentarios</h5>
-                                                        <div class="desc">
-                                                            Nunc velit urna, aliquam at interdum sit amet, lacinia sit amet ligula. Quisque et erat eros. Aenean auctor metus in tortor placerat, non luctus justo blandit.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    </div>
+
+                                    <div  id="CONTENT_IMG_EVIDENCIAS" <div id="gallery" class="row gallery">
+                                    
+                                    </div>
                                     
                                    
                                    

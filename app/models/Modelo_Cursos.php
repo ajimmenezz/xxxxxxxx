@@ -283,13 +283,13 @@ class Modelo_Cursos extends Modelo_Base {
     }
     
     public function getEvidenceByID($idEvidencia) {
-        return $this->consulta("select 
+        return $this->consulta("SELECT 
                                     avance.fechaModificacion, 
                                     evidencia.comentarios, 
                                     evidencia.url 
-                                from t_curso_tema_relacion_avance_usuario as avance
-                                inner join t_curso_tema_relacion_usuario_evidencia as evidencia on evidencia.idAvanceUsuario = avance.id
-                                where avance.id = " . $idEvidencia);
+                                FROM t_curso_tema_relacion_avance_usuario as avance
+                                INNER JOIN t_curso_tema_relacion_usuario_evidencia as evidencia on evidencia.idAvanceUsuario = avance.id
+                                WHERE avance.id=".$idEvidencia);
     }
     
     public function getInfoUserCurse($datos) {

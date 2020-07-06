@@ -801,6 +801,56 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
       $("#administracion-cursos").css('display', 'none')
       $("#evidenciasVerAvance").css('display', 'none')
       $("#evidenciasVerAvanceTema").css('display', 'block')
+
+     // verEvidencia(datosElemento[4])
+
+            var json={
+                idAvance:datosElemento[4]
+            }
+
+            console.debug("PARAMS",json)
+            eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Evidencias', json, function (respuesta) {
+                console.log("Ver-Evidencias_AVANCES",respuesta);
+                if (!respuesta.success) {
+                    evento.mostrarMensaje('.alertMessageAvance', false, 'No se han obtenido las evidencias del tema.', 5000);
+                    return;
+                }
+                    
+                    var datosG=respuesta.data.avance
+
+                    var datos=respuesta.data.avance[0]
+
+                    $("#comenarioEvidencias").text(datos.comentarios);
+                    var texto='';
+
+                    datosG.forEach(datos => {
+                         texto+=`<div class="image gallery-group-1 col-xs-12 col-md-4" style="width: 170px; height: 230px; text-align: center;">
+                                    <div class="image-inner">
+                                        <a href="${datos.url}" data-lightbox="gallery-group-1">
+                                            <img src="${datos.url}" alt="" style="width: 120px; height: 100px;"/>
+                                        </a>
+                                        
+                                    </div>
+                                    <div class="image-info">
+                                        <h5 class="title">${datos.fechaModificacion}</h5>
+                                        
+                                        <div class="desc">
+                                        <b>Comentarios</b><br>
+                                        ${datos.comentarios}
+                                        </div>
+                                    </div>
+                                </div>
+                        `;
+                    });
+
+
+                    $("#CONTENT_IMG_EVIDENCIAS").html(texto);
+
+
+
+            });
+
+
      }else{
         evento.mostrarMensaje('.alertMessageAvance', false, 'No hay evidencias del tema.', 4000);
      }
@@ -812,6 +862,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
 });
+
 
   
   
