@@ -891,7 +891,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                
+                                <div class="alertMessageAvance"></div>
                                 <div class="col-sm-12 col-md-6">
                                     <div class="row">
                                         <div class="col-sm-4">
@@ -942,6 +942,7 @@
                                                     <th class="all">Modulo</th>
                                                     <th class="all">Avance</th>
                                                     <th class="all">Fecha</th>
+                                                    <th class="never">idAvance</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

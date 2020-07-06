@@ -678,19 +678,60 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
             $("#avanceVerDCurso").text(avance);
             $("#faltanteVerDCurso").text(faltante);
 
-            
+            console.debug("DATOS_TEMAS",temas,respuesta.data.infoUsuario.temas)
             
             tablaListemasAvance.limpiartabla();
 
-            temas.forEach(element => {
+           
+
+            // temas.forEach(element => {
+            //     tablaListemasAvance.agregarDatosFila([
+            //         element.id,
+            //         element.nombre,
+            //         element.porcentaje+'%',
+            //        element.fechaModificacion,
+            //        element.idAvance
+            //     ]);
+            // });
+            
+            for (var index in temas) {
+                console.debug("FOR");
+                // if(index>0){
+                //     index=index+1;
+                // }
+                const element = temas[index];
+
+                var idAvance=-1;
+                var fecha='-';
+                if(element.idAvance){
+                    idAvance=element.idAvance;
+                }
+                if(element.fechaModificacion){
+                    fecha=element.fechaModificacion;
+                }
+                
+                
                 tablaListemasAvance.agregarDatosFila([
                     element.id,
                     element.nombre,
                     element.porcentaje+'%',
-                    'fecha'
+                   fecha,
+                   idAvance
                 ]);
-            });
 
+                console.debug("ELEMENTOS",element,idAvance,index)
+                
+            }
+
+            var datosUserInfo = respuesta.data.infoUsuario.infoUsuario[0];
+
+            console.debug("DATOS_INFO",datosUserInfo,tablaListemasAvance)
+
+            $("#cursoAvanceParticipante").text(datosUserInfo.NOmbre);
+            $("#cursoAvanceCurso").text(datosUserInfo.Perfil);
+            $("#cursoAvancePuesto").html(datosUserInfo.Curso);
+
+            
 
 
         });
@@ -720,10 +761,25 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
 
   tablaListemasAvance.evento(function () {
+    $('#modalSubirTemarios').modal('hide')
+    $('#modalValidateTemario').modal('hide')
+    $("#modalValidateParticipantes").modal('hide');
+
+
+    $("#administracion-cursos_nuevoCurso").css('display', 'none')
+    $("#administracion-cursos-ver").css('display', 'none')
+    $("#administracion-cursos-verAvance").css('display', 'block')
+    $("#administracion-cursos-EDITAR").css('display', 'none')
+    $("#administracion-cursos").css('display', 'none')
+    $("#evidenciasVerAvance").css('display', 'block')
+    $("#evidenciasVerAvanceTema").css('display', 'none')
    
+ 
+
+
     let datosTabla = tablaListemasAvance.datosTabla();
 
-    console.debug("eliminar", "resto", datosTabla, tablaListemasAvance.datosFila(this));
+    console.debug(datosTabla,"evidencia", "resto",  tablaListemasAvance.datosFila(this));
 
     
 
@@ -732,7 +788,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
       let datosElemento = tablaListemasAvance.datosFila(this);
       console.debug("DATO_ESPECIFICO",datosElemento);
 
-     
+     if(datosElemento[4]!=-1){
       $('#modalSubirTemarios').modal('hide')
       $('#modalValidateTemario').modal('hide')
       $("#modalValidateParticipantes").modal('hide');
@@ -745,6 +801,9 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
       $("#administracion-cursos").css('display', 'none')
       $("#evidenciasVerAvance").css('display', 'none')
       $("#evidenciasVerAvanceTema").css('display', 'block')
+     }else{
+        evento.mostrarMensaje('.alertMessageAvance', false, 'No hay evidencias del tema.', 4000);
+     }
 
         
     }

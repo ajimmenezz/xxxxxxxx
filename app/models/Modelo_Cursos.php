@@ -76,7 +76,7 @@ class Modelo_Cursos extends Modelo_Base {
     }
 
     public function getTemaryById($idCurso) {
-        return $this->consulta("SELECT * FROM t_curso_tema WHERE idCurso = " . $idCurso);
+        return $this->consulta("SELECT * FROM t_curso_tema WHERE idCurso = ".$idCurso);
     }
 
     public function getPerfilById($idCurso) {
@@ -216,16 +216,16 @@ class Modelo_Cursos extends Modelo_Base {
     }
     
     public function getTemaryCourseByUser($datos) {
-        return $this->consulta("select 
+        return $this->consulta("SELECT 
                                     tema.id, 
                                     tema.nombre, 
                                     tema.porcentaje, 
                                     avance.fechaModificacion, 
                                     avance.idUsuario, 
                                     avance.id as idAvance 
-                                from t_curso_tema as tema
-                                left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
-                                where tema.idCurso = ".$datos['idCurso']." and avance.idUsuario = ".$datos['idUsuario']);
+                                FROM t_curso_tema as tema
+                                LEFT JOIN t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
+                                WHERE tema.idCurso = ".$datos['idCurso']." and avance.idUsuario = ".$datos['idUsuario']);
     }
 
     public function getDetailCourse($idCurso) {
