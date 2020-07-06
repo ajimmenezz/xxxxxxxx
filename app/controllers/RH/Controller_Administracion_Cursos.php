@@ -89,6 +89,7 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onError("Error", "Error al eliminar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
+            break;
             case 'TemasCursoUsuario':
                 $resultado = $this->curso->TemaryCourseByUser($this->input->post());
                 if ($resultado) {

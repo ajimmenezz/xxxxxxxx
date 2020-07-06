@@ -18,6 +18,12 @@ $(function () {
     let tablaCursos = new TablaBasica('tabla-cursos');
     let tablaTemarios = new TablaBasica('tabla-cursos-temario');
      let tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
+    
+     let tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+    let tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
+    let tablaParticipantes = new TablaBasica('tabla-cursos-participantes');
+
+  
 
     $('#btn-nuevo-curso').on('click', function (e) {
         $("#administracion-cursos").css('display', 'none')
@@ -121,7 +127,7 @@ $(function () {
 
     });
 
-
+ 
     
     let listTemario = []
 
@@ -178,7 +184,7 @@ $(function () {
             $long = datosTabla.length;
             $porcentaje = (100 / $long).toFixed(2);
             let datos = tablaTemarios.datosFila(this);
-            var info = $('#tabla-cursos-temario').DataTable().rows({search: 'applied'}).data();
+            var info = $('#tabla-cursosPrinc').DataTable().rows({search: 'applied'}).data();
             // datos.forEach(element => {
             //   listTemario.push({'nombre':element.nombre,'porcentaje':$porcentaje});
             // });
@@ -301,6 +307,8 @@ $(function () {
         }
     });
 
+   
+
     tablaTemariosEdit.evento(function () {
         let numItemsTemario = tablaTemariosEdit.datosTabla();
 
@@ -368,8 +376,6 @@ $(function () {
     $("#file-upload-button").addClass("btn btn-success m-r-5 ");
 
 
-    let tablaParticipantes = null;
-    tablaParticipantes = new TablaBasica('tabla-cursos-participantes');
 
 let listPuesto=[];
 let selectPartic= new SelectBasico('puesto')
@@ -626,11 +632,12 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
     //ver curso
 
-    // let tablaListCursosVer = null;
-    // tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+   
 
-    let tablaListemasAvance = null;
-        tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
+    var tablePrinc = new TablaBasica('tabla-cursosPrinc');
+  
+
+ 
 
 
     tablaListCursosVer.evento(function () {

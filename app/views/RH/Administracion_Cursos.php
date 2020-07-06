@@ -30,9 +30,10 @@
             <div class="row" style="margin-top:50px;">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table id="tabla-cursos" class="table table-striped table-bordered">
+                        <table id="tabla-cursosPrinc" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                             <thead>
                                 <tr>
+                                    <td class="never">Id</td>
                                     <td>Nombre</td>
                                     <td>Descripción</td>
                                     <td>#Participantes</td>
@@ -42,12 +43,13 @@
                             </thead>
                             <tbody>
                                 <?php
-                                 var_dump($datos['cursos']);
+                                // var_dump($datos['cursos']);
 
 
 
                                 foreach ($datos['cursos'] as $value) {
                                     echo "<tr>";
+                                    echo "<td>".$value["Id"]."</td>";
                                     echo "<td>" . $value["Nombre"] . "</td>";
                                     echo "<td>" . $value["Descripcion"] . "</td>";
 
@@ -61,7 +63,7 @@
                                                 <div style='text-align: center;'>
                                                 <input type='hidden' id='idElementSeleccionAccion'>
                                             
-                                                <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  onclick='btnAdminVerCurso(".$value["Id"].")'></i>
+                                                <i class='fa fa-eye ' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  onclick='btnAdminVerCurso(".$value["Id"].")'></i>
                                                 <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;' onclick='btnAdminEditarCurso(".$value["Id"].")' id='btn-adminEditarCurso' ></i>
                                                 <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(".$value["Id"].")' id='btn-adminEliminarCurso'></i>
                                   
@@ -685,8 +687,7 @@
 
                         
                         var json={
-                        idCurso:id,
-                        idUsuario:
+                        idCurso:id
                         }
 
                         eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Curso', json, function (respuesta) {
@@ -705,11 +706,11 @@
                             $("#avanceVerCurso").text(avance);
                             $("#totalVerCurso").text(total);
 
-                            $("#cursoAvanceParticipante").text(perfiles.nombreUsuario);
-                            $("#cursoAvanceCurso").text('nameCurso');
-                            $("#cursoAvancePuesto").html(perfiles.Nombre);
+                            // $("#cursoAvanceParticipante").text(perfiles.nombreUsuario);
+                            // $("#cursoAvanceCurso").text('nameCurso');
+                            // $("#cursoAvancePuesto").html(perfiles.Nombre);
 
-                            console.debug("DATOS_SPAN_TREXT_HTML",perfiles.nombreUsuario,perfiles.Nombre);
+                            // console.debug("DATOS_SPAN_TREXT_HTML",perfiles.nombreUsuario,perfiles.Nombre);
 
                             
                             var tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
@@ -717,10 +718,14 @@
 
 
                             perfiles.forEach(element => {
+                                var porcentaje='0';
+                                if(element.Porcentaje!=null && element.Porcentaje!='' && element.Porcentaje!='null'){
+                                    porcentaje=element.Porcentaje;
+                                }
                                 tablaListCursosVer.agregarDatosFila([
                                     element.nombreUsuario,
                                     element.Nombre,
-                                    element.Porcentaje+'%',
+                                    porcentaje+'%',
                                      element.Id,
                                     "<span><i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  id='btn-AdminVerCursoVerAvance'></i>Ver avances</spand>"
 
@@ -732,6 +737,8 @@
 
                         });
                     }
+
+                 
                 </script>
 
                 <style>
@@ -879,7 +886,7 @@
                         <div class="col-sm-4">
                             <ol class="breadcrumb pull-right">
                                 <li><a class="btn-cancel_wizardEdit" href="javascript:;">Cursos</a></li>
-                                <li class="active" onclick="btnAdminVerCurso(0)">Avance</li>
+                                <li class="active btnAdminVerCurso">Avance</li>
                                 <li class="active">Detalles avance</li>
                             </ol>
 
@@ -1042,7 +1049,7 @@
                                     <div class="col-sm-12" >
                                         <button id="btn-regresarCurso" type="button" class="btn btn-white btn-sm m-r-5 m-b-5 btn-cancel_wizardEdit" style=" margin-top:5px;">Regresar a cursos</button>
                                    
-                                        <button id="btn-regresarAvance" type="button" class="btn btn-primary btn-sm m-r-5 m-b-5 " style=" margin-top:5px;" onclick="btnAdminVerCurso(0)">Regresar a avance</button>
+                                        <button id="btn-regresarAvance" type="button" class="btn btn-primary btn-sm m-r-5 m-b-5 btnAdminVerCurso" style=" margin-top:5px;" >Regresar a avance</button>
                                     </div>
                                 </div>
                             </div>
