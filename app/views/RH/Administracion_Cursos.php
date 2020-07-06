@@ -713,7 +713,7 @@
                             // console.debug("DATOS_SPAN_TREXT_HTML",perfiles.nombreUsuario,perfiles.Nombre);
 
                             
-                            var tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+                            var tablaListCursosVer1 = new TablaBasica('tabla-cursosAsignados');
 
 
 
@@ -722,7 +722,7 @@
                                 if(element.Porcentaje!=null && element.Porcentaje!='' && element.Porcentaje!='null'){
                                     porcentaje=element.Porcentaje;
                                 }
-                                tablaListCursosVer.agregarDatosFila([
+                                tablaListCursosVer1.agregarDatosFila([
                                     element.nombreUsuario,
                                     element.Nombre,
                                     porcentaje+'%',
@@ -793,7 +793,7 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-6">
                                     <div class="row">
-                                        <div class="col-sm-4">
+                                        <div class="col-md-6 col-xs-12">
                                             <div class="widget widget-stats bg-green">
                                                 <div class="stats-icon"></div>
                                                 <div class="stats-info">
@@ -806,7 +806,7 @@
                                             </div>
                                         </div>
                                   
-                                        <div class="col-sm-4">
+                                        <div class="col-md-6 col-xs-12">
                                             <div class="widget widget-stats bg-blue">
                                                 <div class="stats-icon"></div>
                                                 <div class="stats-info">
@@ -818,7 +818,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4"></div>
+                                       
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-6" style="text-align: right;">
@@ -854,17 +854,7 @@
                                                 //     echo '</tr>';
                                                 // }
                                                 ?>
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>
-                                                    <span>
-                                                        <i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  id='btn-AdminVerCursoVerAvance'>
-                                                    </i>Ver avances</spand>
-                                                    </td>
-                                                </tr>
+                                               
                                             </tbody>
                                         </table>
                                     </div>
@@ -886,7 +876,7 @@
                         <div class="col-sm-4">
                             <ol class="breadcrumb pull-right">
                                 <li><a class="btn-cancel_wizardEdit" href="javascript:;">Cursos</a></li>
-                                <li class="active btnAdminVerCurso">Avance</li>
+                                <li class="active" onclick='btnAdminVerCurso(0)'>Avance</li>
                                 <li class="active">Detalles avance</li>
                             </ol>
 
@@ -1049,7 +1039,7 @@
                                     <div class="col-sm-12" >
                                         <button id="btn-regresarCurso" type="button" class="btn btn-white btn-sm m-r-5 m-b-5 btn-cancel_wizardEdit" style=" margin-top:5px;">Regresar a cursos</button>
                                    
-                                        <button id="btn-regresarAvance" type="button" class="btn btn-primary btn-sm m-r-5 m-b-5 btnAdminVerCurso" style=" margin-top:5px;" >Regresar a avance</button>
+                                        <button id="btn-regresarAvance" type="button" class="btn btn-primary btn-sm m-r-5 m-b-5 " onclick='btnAdminVerCurso(0)' style=" margin-top:5px;" >Regresar a avance</button>
                                     </div>
                                 </div>
                             </div>

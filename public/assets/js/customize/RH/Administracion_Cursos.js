@@ -655,7 +655,7 @@ $("#btn-nuevo-puestoParticipante").on('click',function(e){
 
           var json = {
             idCurso: $("#idElementSeleccionAccion").val(),
-            idUsuario:234//datosElemento[3]
+            idUsuario:datosElemento[3]
         }
 
         console.debug("PARAMS",json);
