@@ -849,12 +849,7 @@ $(function () {
     });
 
 
-    tablaListemasAvance.evento(function () {
-
-
-
-
-
+   
 
         $("#btn-save-curso").on('click', function (e) {
             var temas = [];
@@ -1140,6 +1135,6 @@ $(function () {
 
             return html;
         }
-        ;
-    });
+        
+  
 });
