@@ -199,7 +199,7 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
 
-    public function deleteElementById($id, $tabla) {
+    public function deleteElementById($idCurso,$id,$tabla) {
         $this->iniciaTransaccion();
 
         $this->actualizar($tabla, array(

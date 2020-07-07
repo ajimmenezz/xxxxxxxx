@@ -175,7 +175,7 @@ class Cursos extends General {
         } else {
             $tabla = 't_curso_relacion_perfil';
         }
-        $resultQuery = $this->DBS->deleteElementById($datos['idCurso'], $tabla);
+        $resultQuery = $this->DBS->deleteElementById($datos['idCurso'],$datos['id'], $tabla);
         if ($resultQuery['code'] == 200) {
             return true;
         } else {

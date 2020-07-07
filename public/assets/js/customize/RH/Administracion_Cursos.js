@@ -234,6 +234,8 @@ $(function () {
             $filas_num = datosTabla.length;
             let datos = tablaTemariosEdit.datosFila(this);
 
+            var idCurso=$("#idElementSeleccionAccion").val();
+
 
             console.debug(datos, "DATOS TABLA TEMARIOS", datosTabla, $filas_num, datos);
 
@@ -245,7 +247,7 @@ $(function () {
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2]});
+                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2],'idCurso':element[3]});
 
             }
 
@@ -256,7 +258,7 @@ $(function () {
 
             var json = {
                 tipoDato: 1,
-                idCurso: $("#idElementSeleccionAccion").val(),
+                idCurso: idCurso,
                 temario: {
                     archivo: false,
                     infoTabla: {}
@@ -286,7 +288,7 @@ $(function () {
                     return;
                 }
 
-                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': 0});
+                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': 0,'idCurso':idCurso});
 
 
                 tablaTemariosEdit.limpiartabla();
@@ -297,6 +299,7 @@ $(function () {
                         element.nombre,
                         element.porcentaje + '%',
                         element.id,
+                        element.idCurso,
                         "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
 
                     ]);
@@ -317,63 +320,75 @@ $(function () {
 
     tablaTemariosEdit.evento(function () {
         let numItemsTemario = tablaTemariosEdit.datosTabla();
-
+        let datos = tablaTemariosEdit.datosFila(this);
+        let elim  = tablaTemariosEdit.eliminarFila(this);  
         let datosTabla = tablaTemariosEdit.datosTabla();
 
-        console.debug(numItemsTemario, "eliminar", "resto", datosTabla, tablaTemariosEdit.datosFila(this));
 
-        listTemarioEdit = []
-        let datos = tablaTemariosEdit.datosFila(this);
+        console.debug("resto",datos,elim,"antes de ELIMANR",numItemsTemario, numItemsTemario.length,"eliminar_FIN",  datosTabla, datosTabla.length, tablaTemariosEdit.datosFila(this));
 
-        if (datosTabla.length !== 0) {
-            $long = datosTabla.length;
-            $porcentaje = (100 / $long).toFixed(2);
+        if (numItemsTemario.length !=0) {
 
-
-            console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
-
-            for (let index = 0; index < datosTabla.length; index++) {
-                const element = datosTabla[index];
-                console.debug("DATOS", element, element[0])
-
-                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2]});
-
-            }
-        }
-
-        var json = {
-            tipoDato: 1,
-            idCurso: $("#idElementSeleccionAccion").val(),
-            id: datos[2]
-        }
-
-
-        eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
-            console.log("eliminarTema_EDIT", respuesta);
-            if (!respuesta.success) {
-                evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el tema.', 5000);
-                return;
+            var json = {
+                tipoDato: 1,
+                idCurso: datos[3],
+                id: datos[2]
             }
 
-            var elim = tablaTemariosEdit.eliminarFila(this);
 
-            tablaTemariosEdit.limpiartabla();
 
-            listTemarioEdit.forEach(element => {
+            eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
+                console.log("eliminarTema_EDIT", respuesta);
+                if (!respuesta.success) {
+                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el tema.', 5000);
+                    return;
+                }
 
-                tablaTemariosEdit.agregarDatosFila([
-                    element.nombre,
-                    element.porcentaje + '%',
-                    element.id,
-                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+                
+                console.debug("FILA_ELIMINAR",elim);
 
-                ]);
+
+                listTemarioEdit = []
+        
+
+                if (datosTabla.length >=0) {
+                    $long = datosTabla.length;
+                    $porcentaje = (100 / $long).toFixed(2);
+                    
+                    
+                    console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
+        
+                    for (let index = 0; index < datosTabla.length; index++) {
+                        const element = datosTabla[index];
+                        console.debug("DATOS", element, element[0])
+        
+                        listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2],'idCurso':element[3]});
+        
+                    }
+                }
+
+                console.debug("ERREGLO",listTemarioEdit);
+
+
+                tablaTemariosEdit.limpiartabla();
+
+                listTemarioEdit.forEach(element => {
+
+                    tablaTemariosEdit.agregarDatosFila([
+                        element.nombre,
+                        element.porcentaje + '%',
+                        element.id,
+                        element.idCurso,
+                        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+
+                    ]);
+                });
+                console.debug("Areeglo_FIN",listTemarioEdit);
+
             });
+    }
 
-        });
-
-
-        console.debug("FINAL", listTemarioEdit)
+      
 
 
     });
