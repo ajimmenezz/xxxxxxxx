@@ -88,7 +88,7 @@ class Modelo_Cursos extends Modelo_Base {
                                 WHERE idCurso = " . $idCurso . " AND estatus = 1");
     }
 
-    public function insertCourse($infoCurso, $rutaImagen = null) {
+    public function insertCourse($infoCurso) {
         $this->iniciaTransaccion();
         $this->insertar('t_curso', [
             'idTipoCurso' => $infoCurso['certificado'],
@@ -121,14 +121,15 @@ class Modelo_Cursos extends Modelo_Base {
         $this->actualizar('t_curso', array(
             'idTipoCurso' => $infoCurso['certificado'],
             'nombre' => $infoCurso['nombre'],
-            'descripcion' => $infoCurso['descripcion']
+            'descripcion' => $infoCurso['descripcion'],
+            'imagen' => $infoCurso['imagen']
                 ), array('id' => $infoCurso['idCurso']));
 
         $this->actualizar('t_curso_online', array(
             'idTipoCertificado' => $infoCurso['certificado'],
             'url' => $infoCurso['url'],
             'costo' => $infoCurso['costo']
-                ), array('id' => $infoCurso['idCurso']));
+                ), array('idCurso' => $infoCurso['idCurso']));
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {

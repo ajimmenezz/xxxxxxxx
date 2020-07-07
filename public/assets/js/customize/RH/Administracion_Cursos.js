@@ -849,277 +849,161 @@ $(function () {
     });
 
 
-   
 
-        $("#btn-save-curso").on('click', function (e) {
-            var temas = [];
-            var part = [];
-            var nombre = $("#nombreCurso").val();
-            var url = $("#urlCurso").val();
-            var descripcion = $("#textareaDescripcionCurso").val();
-            $("#nameCurso").text($("#nombreCurso").val());
 
-            if (nombre == '' || url == '' || descripcion == '') {
-                evento.mostrarMensaje('.messageAccionesWizard', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
-                return false;
-            }
-
-            let datosTabla = tablaTemarios.datosTabla();
-            let datosTabla2 = tablaParticipantes.datosTabla();
-
-            if (datosTabla.length <= 0) {
-                $('#modalValidateTemario').modal('show')
-                return false;
-            }
-
-            if (datosTabla2.length <= 0) {
-                $('#modalValidateParticipantes').modal('show')
-                return false;
-            }
-
-            var cursos = [
-                $('#evidencias').val(),
-                $("#nombreCurso").val(),
-                $("#urlCurso").val(),
-                $("#textareaDescripcionCurso").val(),
-                $("#certificadoCurso").val(),
-                $("#costoCurso").val()
-            ];
-
-            var json = {
-                cursos: cursos
-            };
-
-
-            for (let index = 0; index < datosTabla.length; index++) {
-                const element = datosTabla[index];
-                temas.push([element[0], '', parseFloat(element[1]), '/']);
-            }
-
-            json.temario = temas;
-
-            for (let index = 0; index < datosTabla2.length; index++) {
-                const element = datosTabla2[index];
-                part.push([element[0]]);
-            }
-
-            json.participantes = part;
-
-            if ($('#inputImgCurso').val() !== '') {
-                evidenciaCurso.enviarPeticionServidor('evidencias', json, function (respuesta) {
-                    if (!respuesta.success) {
-                        evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
-                        return;
-                    }
-                });
-            } else {
-                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Nuevo-Curso', json, function (respuesta) {
-                    if (!respuesta.success) {
-                        evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
-                        return;
-                    }
-                });
-            }
-            evento.mostrarMensaje('.messageAccionesWizard', true, 'Se ha registrado el curso.', 5000);
-            $('#modalresponseSave').modal('show')
-            location.reload();
-        });
-
-        $("#btn-editarDatosSave").on('click', function (e) {
-            //modalSubirTemarios
-            console.log("btn-editarDatosSave")
-
-            var nombre = $("#nombreCursoEdit").val();
-            var url = $("#urlCursoEdit").val();
-            var descripcion = $("#textareaDescripcionCursoEdit").val();
-
-            if (nombre == '' || url == '' || descripcion == '') {
-                evento.mostrarMensaje('.eventAccionEditarCurso', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
-                return false;
-            }
-
-            let datosTabla = tablaTemariosEdit.datosTabla();
-            let datosTabla2 = tablaParticipantesEdit.datosTabla();
-
-            if (datosTabla.length <= 0) {
-                $('#modalValidateTemario').modal('show')
-                return false;
-            }
-
-            if (datosTabla2.length <= 0) {
-                $('#modalValidateParticipantes').modal('show')
-                return false;
-            }
-
-
-            var json = {
-                curso: {
-                    img: $('#inputImgCursoEdit').val(),
-                    nombre: $("#nombreCursoEdit").val(),
-                    url: $("#urlCursoEdit").val(),
-                    descripcion: $("#textareaDescripcionCursoEdit").val(),
-                    certificado: $("#certificadoCursoEdit").val(),
-                    costo: $("#costoCursoEdit").val(),
-                },
-                // temario: {
-                //     archivo: false,
-                //     infoTabla: {}
-
-                // },
-                // participantes: {}
-            }
-
-
-            // var temas=[]
-
-            // for (let index = 0; index < datosTabla.length; index++) {
-            //   const element = datosTabla[index];
-            //   console.debug("DATOS",element,element[0])
-
-            //   temas.push([element[0],'',parseFloat(element[1])]);
-
-            //   //array_push(temas,[element[0],'',element[1]])
-
-            // }
-            // console.debug("temas",temas)
-            // json.temario.infoTabla=temas;
-
-            // var part=[]
-
-
-            // for (let index = 0; index < datosTabla2.length; index++) {
-            //   const element = datosTabla2[index];
-            //   console.debug("DATOS_PART",element,element[0])
-
-            //   part.push([element[0]]);
-
-            // }
-            // console.debug("part",part)
-
-            // json.participantes=part;
-
-
-            $("#nameCurso").text($("#nombreCursoEdit").val());
-
-            console.debug("DATOS_SAVE", json);
-
-
-            if ($('#inputImgCursoEdit').val() !== '') {
-                file.enviarArchivos('#inputImgCursoEdit', 'Administracion_Cursos/Editar-Curso', '', json, function (respuesta) {
-                    console.log("EDITAR_Curso", respuesta);
-                    // if (respuesta !== 'otraImagen') {
-                    //     window.open(respuesta.ruta, '_blank');
-                    //     location.reload();
-                    // } else {
-                    //     evento.mostrarMensaje('.eventAccionEditarCurso', false, 'Hubo un problema con la imagen selecciona otra distinta.', 3000);
-                    // }
-                    if (!respuesta.success) {
-                        evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
-                        return;
-                    }
-
-
-
-                });
-            } else {
-
-                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Editar-Curso', json, function (respuesta) {
-                    console.log(respuesta);
-                    if (!respuesta.success) {
-                        evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
-                        return;
-                    }
-
-
-
-                });
-            }
-
-            evento.mostrarMensaje('.eventAccionEditarCurso', true, 'Se ha editado el curso.', 5000);
-            $('#modalresponseSaveEdit').modal('show')
-            // location.reload();
-            file.limpiar('#inputImgCursoEdit');
-
-        });
-
-
-
-
-        $("#btn-loadExcel-temario").on('click', function (e) {
-            //modalSubirTemarios
-            console.log("ABRIR_MODAL")
-            $('#modalSubirTemarios').modal('show')
-        });
-
-
-
-
-
-
-        //nuevo curso
-
-
-
-
-
-
-        $("#btn-editarDatosStatus").on('click', function (e) {
-            //modalSubirTemarios
-            console.log("editarDatosStatus")
-            $("#btn-editarDatosStatus").css('display', 'none')
-            $("#btn-cancelar-cambios").css('display', 'block')
-            $("#btn-editarDatosSave").css('display', 'block')
-
-            $('#inputImgCursoEdit').removeAttr('disabled')
-            $("#nombreCursoEdit").removeAttr('disabled')
-            $("#urlCursoEdit").removeAttr('disabled')
-            $("#textareaDescripcionCursoEdit").removeAttr('disabled')
-            $("#certificadoCursoEdit").removeAttr('disabled')
-            $("#costoCursoEdit").removeAttr('disabled')
-
-        });
-
-        $("#btn-cancelar-cambios").on('click', function (e) {
-            //modalSubirTemarios
-            console.log("editarDatosStatus")
-            $("#btn-editarDatosStatus").css('display', 'block')
-            $("#btn-cancelar-cambios").css('display', 'none')
-            $("#btn-editarDatosSave").css('display', 'none')
-
-            $('#inputImgCursoEdit').attr('disabled', 'disabled')
-            $("#nombreCursoEdit").attr('disabled', 'disabled')
-            $("#urlCursoEdit").attr('disabled', 'disabled')
-            $("#textareaDescripcionCursoEdit").attr('disabled', 'disabled')
-            $("#certificadoCursoEdit").attr('disabled', 'disabled')
-            $("#costoCursoEdit").attr('disabled', 'disabled')
-
-        });
-
-
-
-
-        $('#btnSubirFotoCurso').off("click");
-        $('#btnSubirFotoCurso').on('click', function () {
-            evento.iniciarModal('#modal-box', 'Imagen de Curso', htmlFormularioSubirImagen());
-            file.crearUpload('#fotoCurso', '', ['jpg', 'jpeg', 'png'], false, [], '', null, false, 1);
-
-            $('#btnModalBoxConfirmar').off('click');
-            $('#btnModalBoxConfirmar').on('click', function () {
-                var foto = $('#btnModalConfirmar').val();
-                if (foto !== '') {
-                    var datos = {};
-                    file.enviarArchivos('#fotoUsuario', 'PerfilUsuario/ActualizarFotoUsuario', '#modal-box', datos, function (resultado) {
-                    });
-                } else {
-                    evento.mostrarMensaje("#errorFoto", false, "Favor de seleccionar una foto.", 4000);
+    $("#btn-save-curso").on('click', function (e) {
+        var temas = [];
+        var part = [];
+        var nombre = $("#nombreCurso").val();
+        var url = $("#urlCurso").val();
+        var descripcion = $("#textareaDescripcionCurso").val();
+        $("#nameCurso").text($("#nombreCurso").val());
+
+        if (nombre == '' || url == '' || descripcion == '') {
+            evento.mostrarMensaje('.messageAccionesWizard', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
+            return false;
+        }
+
+        let datosTabla = tablaTemarios.datosTabla();
+        let datosTabla2 = tablaParticipantes.datosTabla();
+
+        if (datosTabla.length <= 0) {
+            $('#modalValidateTemario').modal('show')
+            return false;
+        }
+
+        if (datosTabla2.length <= 0) {
+            $('#modalValidateParticipantes').modal('show')
+            return false;
+        }
+
+        var cursos = [
+            $('#evidencias').val(),
+            $("#nombreCurso").val(),
+            $("#urlCurso").val(),
+            $("#textareaDescripcionCurso").val(),
+            $("#certificadoCurso").val(),
+            $("#costoCurso").val()
+        ];
+
+        var json = {
+            cursos: cursos
+        };
+
+
+        for (let index = 0; index < datosTabla.length; index++) {
+            const element = datosTabla[index];
+            temas.push([element[0], '', parseFloat(element[1]), '/']);
+        }
+
+        json.temario = temas;
+
+        for (let index = 0; index < datosTabla2.length; index++) {
+            const element = datosTabla2[index];
+            part.push([element[0]]);
+        }
+
+        json.participantes = part;
+
+        if ($('#inputImgCurso').val() !== '') {
+            evidenciaCurso.enviarPeticionServidor('evidencias', json, function (respuesta) {
+                if (!respuesta.success) {
+                    evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
+                    return;
                 }
-
-                cerrarModalCambios();
             });
-        });
+        } else {
+            eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Nuevo-Curso', json, function (respuesta) {
+                if (!respuesta.success) {
+                    evento.mostrarMensaje('.messageAccionesWizard', false, 'No se ha registrado el curso.', 5000);
+                    return;
+                }
+            });
+        }
+        evento.mostrarMensaje('.messageAccionesWizard', true, 'Se ha registrado el curso.', 5000);
+        $('#modalresponseSave').modal('show');
+        location.reload();
+    });
 
-        function htmlFormularioSubirImagen() {
-            let html = `<div class="row">
+
+
+
+
+
+    $("#btn-loadExcel-temario").on('click', function (e) {
+        //modalSubirTemarios
+        console.log("ABRIR_MODAL")
+        $('#modalSubirTemarios').modal('show')
+    });
+
+
+
+
+
+
+    //nuevo curso
+
+
+
+
+
+
+    $("#btn-editarDatosStatus").on('click', function (e) {
+        //modalSubirTemarios
+        console.log("editarDatosStatus")
+        $("#btn-editarDatosStatus").css('display', 'none');
+        $("#btn-cancelar-cambios").css('display', 'block');
+        $("#btn-editarDatosSave").css('display', 'block');
+
+        $('#inputImgCursoEdit').removeAttr('disabled');
+        $("#nombreCursoEdit").removeAttr('disabled');
+        $("#urlCursoEdit").removeAttr('disabled');
+        $("#textareaDescripcionCursoEdit").removeAttr('disabled');
+        $("#certificadoCursoEdit").removeAttr('disabled');
+        $("#costoCursoEdit").removeAttr('disabled');
+        $('#divImagenCurso').removeClass('hidden');
+        $('.profile-center').addClass('hidden');
+    });
+
+    $("#btn-cancelar-cambios").on('click', function (e) {
+        $("#btn-editarDatosStatus").css('display', 'block')
+        $("#btn-cancelar-cambios").css('display', 'none')
+        $("#btn-editarDatosSave").css('display', 'none')
+        $('#inputImgCursoEdit').attr('disabled', 'disabled')
+        $("#nombreCursoEdit").attr('disabled', 'disabled')
+        $("#urlCursoEdit").attr('disabled', 'disabled')
+        $("#textareaDescripcionCursoEdit").attr('disabled', 'disabled')
+        $("#certificadoCursoEdit").attr('disabled', 'disabled')
+        $("#costoCursoEdit").attr('disabled', 'disabled');
+        $('#divImagenCurso').addClass('hidden');
+        $('.profile-center').removeClass('hidden');
+    });
+
+
+
+
+    $('#btnSubirFotoCurso').off("click");
+    $('#btnSubirFotoCurso').on('click', function () {
+        evento.iniciarModal('#modal-box', 'Imagen de Curso', htmlFormularioSubirImagen());
+        file.crearUpload('#fotoCurso', '', ['jpg', 'jpeg', 'png'], false, [], '', null, false, 1);
+
+        $('#btnModalBoxConfirmar').off('click');
+        $('#btnModalBoxConfirmar').on('click', function () {
+            var foto = $('#btnModalConfirmar').val();
+            if (foto !== '') {
+                var datos = {};
+                file.enviarArchivos('#fotoUsuario', 'PerfilUsuario/ActualizarFotoUsuario', '#modal-box', datos, function (resultado) {
+                });
+            } else {
+                evento.mostrarMensaje("#errorFoto", false, "Favor de seleccionar una foto.", 4000);
+            }
+
+            cerrarModalCambios();
+        });
+    });
+
+    function htmlFormularioSubirImagen() {
+        let html = `<div class="row">
                     <div class="col-md-12">                                    
                         <div class="form-group">
                             <label id="divArchivos">Foto *</label>
@@ -1133,8 +1017,8 @@ $(function () {
                         </div>
                 </div>`;
 
-            return html;
-        }
-        
-  
+        return html;
+    }
+
+
 });

@@ -56,7 +56,7 @@ class Cursos extends General {
     }
 
     public function newCourse($infoCourse) {
-        $rutaImagen = $this->guardarImagen($infoCourse);
+        $rutaImagen = $this->guardarImagen('evidencias');
 
         if (!$rutaImagen) {
             $rutaImagen = NULL;
@@ -101,11 +101,11 @@ class Cursos extends General {
         return ['response' => true, 'code' => 200];
     }
 
-    public function guardarImagen($infoCourse) {
+    public function guardarImagen(string $idEvidencia) {
         if (!empty($_FILES)) {
             $CI = parent::getCI();
             $carpeta = 'Cursos/';
-            $archivos = implode(',', setMultiplesArchivos($CI, 'evidencias', $carpeta));
+            $archivos = implode(',', setMultiplesArchivos($CI, $idEvidencia, $carpeta));
             return $archivos;
         } else {
             return false;
@@ -125,9 +125,38 @@ class Cursos extends General {
     }
 
     public function editCourse($infoCourse) {
-        if (isset($infoCourse['curso'])) {
-            $updateQuery = $this->DBS->updateCourse($infoCourse['curso']);
+        if (!empty($_FILES)) {
+            $cursos = explode(',', $infoCourse['curso']);
+            $datosCursos['nombre'] = $cursos[1];
+            $datosCursos['url'] = $cursos[2];
+            $datosCursos['descripcion'] = $cursos[3];
+            $datosCursos['certificado'] = $cursos[4];
+            $datosCursos['costo'] = $cursos[5];
+            $rutaImagen = $this->guardarImagen('evidenciasEditarCurso');
+
+            if (!$rutaImagen) {
+                $rutaImagen = NULL;
+            }
+            
+            $datosCursos['imagen'] = $rutaImagen;
+            
+        } else {
+            $datosCursos['nombre'] = $infoCourse['curso'][1];
+            $datosCursos['url'] = $infoCourse['curso'][2];
+            $datosCursos['descripcion'] = $infoCourse['curso'][3];
+            $datosCursos['certificado'] = $infoCourse['curso'][4];
+            $datosCursos['costo'] = $infoCourse['curso'][5];
+            $datosCurso = $this->DBS->getCourseById($infoCourse['id']);
+            $datosCursos['imagen'] = $datosCurso[0]['imagen'];
+            
         }
+
+        $datosCursos['idCurso'] = $infoCourse['id'];
+
+        if (isset($infoCourse['curso'])) {
+            $updateQuery = $this->DBS->updateCourse($datosCursos);
+        }
+
         return ['response' => true, 'code' => 200];
     }
 
@@ -190,11 +219,11 @@ class Cursos extends General {
         $temasPorCurso = $this->DBS->getTemaryById($datos['idCurso']);
 
         $arregloCursos = array_merge($temasPorUsuario, $temasPorCurso);
-        
-      //  print_r($arregloCursos);
+
+        //  print_r($arregloCursos);
 
         foreach ($arregloCursos as $val) {
-           
+
             if (!in_array($val['id'], $key_array)) {
                 $key_array[$i] = $val['id'];
                 $temp_array[$i] = $val;
@@ -257,7 +286,7 @@ class Cursos extends General {
     }
 
     public function addEvidence($infoAvence) {
-        $rutaImagen = $this->guardarImagen($infoAvence);
+        $rutaImagen = $this->guardarImagen('evidencias');
 
         $resultQuery = $this->DBS->saveEvidance($infoAvence, $rutaImagen);
 
