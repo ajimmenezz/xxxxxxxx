@@ -75,6 +75,7 @@ class Controller_Administracion_Cursos extends Base {
                 if ($resultado['response']) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("info", $resultado['info']);
+                    $response->addData("id", $resultado['id']);
                 } else {
                     $response->onError("Error", "Error al realizar esta acció", HttpStatusCode::HTTP_BAD_REQUEST);
                 }

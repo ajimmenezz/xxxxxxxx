@@ -26,7 +26,7 @@ $(function () {
     let tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
     let tablaParticipantes = new TablaBasica('tabla-cursos-participantes');
     var tablePrinc = new TablaBasica('tabla-cursosPrinc');
-
+    let tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
 
     $('#btn-nuevo-curso').on('click', function (e) {
         $("#administracion-cursos").css('display', 'none')
@@ -231,6 +231,8 @@ $(function () {
             $filas_num = datosTabla.length;
             let datos = tablaTemariosEdit.datosFila(this);
 
+            var idCurso = $("#idElementSeleccionAccion").val();
+
 
             console.debug(datos, "DATOS TABLA TEMARIOS", datosTabla, $filas_num, datos);
 
@@ -242,7 +244,7 @@ $(function () {
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2]});
+                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2], 'idCurso': element[3]});
 
             }
 
@@ -253,7 +255,7 @@ $(function () {
 
             var json = {
                 tipoDato: 1,
-                idCurso: $("#idElementSeleccionAccion").val(),
+                idCurso: idCurso,
                 temario: {
                     archivo: false,
                     infoTabla: {}
@@ -283,7 +285,7 @@ $(function () {
                     return;
                 }
 
-                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': 0});
+                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': 0, 'idCurso': idCurso});
 
 
                 tablaTemariosEdit.limpiartabla();
@@ -294,6 +296,7 @@ $(function () {
                         element.nombre,
                         element.porcentaje + '%',
                         element.id,
+                        element.idCurso,
                         "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
 
                     ]);
@@ -314,63 +317,75 @@ $(function () {
 
     tablaTemariosEdit.evento(function () {
         let numItemsTemario = tablaTemariosEdit.datosTabla();
-
+        let datos = tablaTemariosEdit.datosFila(this);
+        let elim = tablaTemariosEdit.eliminarFila(this);
         let datosTabla = tablaTemariosEdit.datosTabla();
 
-        console.debug(numItemsTemario, "eliminar", "resto", datosTabla, tablaTemariosEdit.datosFila(this));
 
-        listTemarioEdit = []
-        let datos = tablaTemariosEdit.datosFila(this);
+        console.debug("resto", datos, elim, "antes de ELIMANR", numItemsTemario, numItemsTemario.length, "eliminar_FIN", datosTabla, datosTabla.length, tablaTemariosEdit.datosFila(this));
 
-        if (datosTabla.length !== 0) {
-            $long = datosTabla.length;
-            $porcentaje = (100 / $long).toFixed(2);
+        if (numItemsTemario.length != 0) {
 
-
-            console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
-
-            for (let index = 0; index < datosTabla.length; index++) {
-                const element = datosTabla[index];
-                console.debug("DATOS", element, element[0])
-
-                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2]});
-
-            }
-        }
-
-        var json = {
-            tipoDato: 1,
-            idCurso: $("#idElementSeleccionAccion").val(),
-            id: datos[2]
-        }
-
-
-        eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
-            console.log("eliminarTema_EDIT", respuesta);
-            if (!respuesta.success) {
-                evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el tema.', 5000);
-                return;
+            var json = {
+                tipoDato: 1,
+                idCurso: datos[3],
+                id: datos[2]
             }
 
-            var elim = tablaTemariosEdit.eliminarFila(this);
 
-            tablaTemariosEdit.limpiartabla();
 
-            listTemarioEdit.forEach(element => {
+            eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
+                console.log("eliminarTema_EDIT", respuesta);
+                if (!respuesta.success) {
+                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el tema.', 5000);
+                    return;
+                }
 
-                tablaTemariosEdit.agregarDatosFila([
-                    element.nombre,
-                    element.porcentaje + '%',
-                    element.id,
-                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
 
-                ]);
+                console.debug("FILA_ELIMINAR", elim);
+
+
+                listTemarioEdit = []
+
+
+                if (datosTabla.length >= 0) {
+                    $long = datosTabla.length;
+                    $porcentaje = (100 / $long).toFixed(2);
+
+
+                    console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
+
+                    for (let index = 0; index < datosTabla.length; index++) {
+                        const element = datosTabla[index];
+                        console.debug("DATOS", element, element[0])
+
+                        listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2], 'idCurso': element[3]});
+
+                    }
+                }
+
+                console.debug("ERREGLO", listTemarioEdit);
+
+
+                tablaTemariosEdit.limpiartabla();
+
+                listTemarioEdit.forEach(element => {
+
+                    tablaTemariosEdit.agregarDatosFila([
+                        element.nombre,
+                        element.porcentaje + '%',
+                        element.id,
+                        element.idCurso,
+                        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarTemario'></i></spand>"
+
+                    ]);
+                });
+                console.debug("Areeglo_FIN", listTemarioEdit);
+
             });
+        }
 
-        });
 
-
-        console.debug("FINAL", listTemarioEdit)
 
 
     });
@@ -486,6 +501,8 @@ $(function () {
         alert("string", $nombrePuestoString)
         console.debug("stirng", $nombrePuestoString)
 
+
+
         if ($nombrePuesto !== "") {
             let datosTabla = tablaParticipantesEdit.datosTabla();
             $filas_num = datosTabla.length;
@@ -496,11 +513,11 @@ $(function () {
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listPuestoEdit.push({'nombre': element[0], 'nameString': element[1]});
+                listPuestoEdit.push({'nombre': element[2], 'nameString': element[3], 'id': element[0], 'idCurso': element[1]});
 
             }
 
-
+            var idCurso = $("#idElementSeleccionAccion").val();
 
 
             var perfiles = $('#perfiles').val()
@@ -510,22 +527,12 @@ $(function () {
 
             var json = {
                 tipoDato: 0,
-                idCurso: $("#idElementSeleccionAccion").val(),
-                participantes: {}
+                idCurso: idCurso,
+                idPerfil: $nombrePuesto
 
 
             }
 
-            var part = []
-
-
-
-            part.push([$nombrePuesto]);
-
-
-            console.debug("part", part)
-
-            json.participantes = part;
             console.debug("DATOS_SEND", json);
 
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
@@ -536,13 +543,15 @@ $(function () {
                 }
 
                 //listPuestoEdit.push({'nombre': $nombrePuesto});
-                listPuestoEdit.push({'nombre': $nombrePuesto, 'nameString': $nombrePuestoString});
+                listPuestoEdit.push({'nombre': $nombrePuesto, 'nameString': $nombrePuestoString, 'id': respuesta.data.id, 'idCurso': idCurso});
 
 
                 tablaParticipantesEdit.limpiartabla();
 
                 listPuestoEdit.forEach(element => {
                     tablaParticipantesEdit.agregarDatosFila([
+                        element.id,
+                        element.idCurso,
                         element.nombre,
                         element.nameString,
                         "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
@@ -568,71 +577,79 @@ $(function () {
 
     tablaParticipantesEdit.evento(function () {
 
+        let numItemsTemario = tablaParticipantesEdit.datosTabla();
+        let datos = tablaParticipantesEdit.datosFila(this);
+        let elim = tablaParticipantesEdit.eliminarFila(this);
         let datosTabla = tablaParticipantesEdit.datosTabla();
 
-        console.debug("eliminar", "resto", datosTabla, tablaParticipantesEdit.datosFila(this));
 
-        listPuestoEdit = []
+        console.debug("resto", datos, elim, "antes de ELIMANR", numItemsTemario, numItemsTemario.length, "eliminar_FIN", datosTabla, datosTabla.length, tablaParticipantesEdit.datosFila(this));
 
-        let datosElemento = tablaParticipantesEdit.datosFila(this);
-        console.debug("DATO_ESPECIFICO", datosElemento);
+        if (numItemsTemario.length != 0) {
 
-        if (datosTabla.length !== 0) {
-
-
-
-
-
-
-            console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datosElemento)
-
-            for (let index = 0; index < datosTabla.length; index++) {
-                const element = datosTabla[index];
-                console.debug("DATOS", element, element[0])
-
-
-                listPuestoEdit.push({'nombre': element[0], 'nameString': element[1]});
-
-
-            }
-        }
-
-        var json = {
-            tipoDato: 0,
-            idCurso: $("#idElementSeleccionAccion").val(),
-            id: datosElemento[0]
-        }
-
-
-        eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
-            console.log("eliminarParticipante_EDIT", respuesta);
-            if (!respuesta.success) {
-                evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el participante.', 5000);
-                return;
+            var json = {
+                tipoDato: 0,
+                idCurso: datos[1],
+                id: datos[0]
             }
 
-            var elim = tablaParticipantesEdit.eliminarFila(this);
-            tablaParticipantesEdit.limpiartabla();
 
-            listPuestoEdit.forEach(element => {
 
-                tablaParticipantesEdit.agregarDatosFila([
-                    element.nombre,
-                    element.nameString,
-                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
+            eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
+                console.log("eliminarPART_EDIT", respuesta);
+                if (!respuesta.success) {
+                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el participante.', 5000);
+                    return;
+                }
 
-                ]);
+
+                console.debug("FILA_ELIMINAR", elim);
+
+
+                listPuestoEdit = []
+
+
+                if (datosTabla.length >= 0) {
+
+                    console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
+
+
+                    for (let index = 0; index < datosTabla.length; index++) {
+                        const element = datosTabla[index];
+                        console.debug("DATOS", element, element[0])
+
+                        listPuestoEdit.push({'nombre': element[2], 'nameString': element[3], 'id': element[0], 'idCurso': element[1]});
+                    }
+
+                }
+
+                console.debug("ERREGLO", listPuestoEdit);
+
+
+                tablaParticipantesEdit.limpiartabla();
+
+                listPuestoEdit.forEach(element => {
+
+                    tablaParticipantesEdit.agregarDatosFila([
+                        element.id,
+                        element.idCurso,
+                        element.nombre,
+                        element.nameString,
+                        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
+
+                    ]);
+                });
+                console.debug("Areeglo_FIN", listPuestoEdit);
+
             });
+        }
 
 
-        });
 
-
-        console.debug(elim, "FINAL", listPuestoEdit)
 
 
     });
-//   var tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+    var tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
 
     //ver curso
     tablaListCursosVer.evento(function () {
@@ -652,7 +669,7 @@ $(function () {
                     return;
                 }
 
-                let tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
+//                let tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
                 var temas = respuesta.data.infoUsuario.temas;
                 var datosUserInfo = respuesta.data.infoUsuario.infoUsuario[0];
 
@@ -696,82 +713,81 @@ $(function () {
 
 
 //    var tablePrinc = new TablaBasica('tabla-cursosPrinc');
-//    var tablePrinc = new TablaBasica('tabla-cursosPrinc');
 
-//    tablaListemasAvance.evento(function () {
-//        $('#modalSubirTemarios').modal('hide')
-//        $('#modalValidateTemario').modal('hide')
-//        $("#modalValidateParticipantes").modal('hide');
-//
-//        $("#administracion-cursos_nuevoCurso").css('display', 'none')
-//        $("#administracion-cursos-ver").css('display', 'none')
-//        $("#administracion-cursos-verAvance").css('display', 'block')
-//        $("#administracion-cursos-EDITAR").css('display', 'none')
-//        $("#administracion-cursos").css('display', 'none')
-//        $("#evidenciasVerAvance").css('display', 'block')
-//        $("#evidenciasVerAvanceTema").css('display', 'none')
-//
-//        let datosTabla = tablaListemasAvance.datosTabla();
-//
-//        if (datosTabla.length !== 0) {
-//            let datosElemento = tablaListemasAvance.datosFila(this);
-//
-//            if (datosElemento[4] != -1) {
-//                $('#modalSubirTemarios').modal('hide')
-//                $('#modalValidateTemario').modal('hide')
-//                $("#modalValidateParticipantes").modal('hide');
-//
-//                $("#administracion-cursos_nuevoCurso").css('display', 'none')
-//                $("#administracion-cursos-ver").css('display', 'none')
-//                $("#administracion-cursos-verAvance").css('display', 'block')
-//                $("#administracion-cursos-EDITAR").css('display', 'none')
-//                $("#administracion-cursos").css('display', 'none')
-//                $("#evidenciasVerAvance").css('display', 'none')
-//                $("#evidenciasVerAvanceTema").css('display', 'block')
-//
-//                var json = {
-//                    idAvance: datosElemento[4]
-//                }
-//
-//                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Evidencias', json, function (respuesta) {
-//                    if (!respuesta.success) {
-//                        evento.mostrarMensaje('.alertMessageAvance', false, 'No se han obtenido las evidencias del tema.', 5000);
-//                        return;
-//                    }
-//
-//                    var datosG = respuesta.data.avance
-//                    var datos = respuesta.data.avance[0]
-//                    var texto = '';
-//
-//                    $("#comenarioEvidencias").text(datos.comentarios);
-//
-//                    datosG.forEach(datos => {
-//                        texto += `<div class="image gallery-group-1 col-xs-12 col-md-4" style="width: 170px; height: 230px; text-align: center;">
-//                                    <div class="image-inner">
-//                                        <a href="${datos.url}" data-lightbox="gallery-group-1">
-//                                            <img src="${datos.url}" alt="" style="width: 120px; height: 100px;"/>
-//                                        </a>
-//                                        
-//                                    </div>
-//                                    <div class="image-info">
-//                                        <h5 class="title">${datos.fechaModificacion}</h5>
-//                                        
-//                                        <div class="desc">
-//                                        <b>Comentarios</b><br>
-//                                        ${datos.comentarios}
-//                                        </div>
-//                                    </div>
-//                                </div>
-//                        `;
-//                    });
-//
-//                    $("#CONTENT_IMG_EVIDENCIAS").html(texto);
-//                });
-//            } else {
-//                evento.mostrarMensaje('.alertMessageAvance', false, 'No hay evidencias del tema.', 4000);
-//            }
-//        }
-//    });
+    tablaListemasAvance.evento(function () {
+        $('#modalSubirTemarios').modal('hide')
+        $('#modalValidateTemario').modal('hide')
+        $("#modalValidateParticipantes").modal('hide');
+
+        $("#administracion-cursos_nuevoCurso").css('display', 'none')
+        $("#administracion-cursos-ver").css('display', 'none')
+        $("#administracion-cursos-verAvance").css('display', 'block')
+        $("#administracion-cursos-EDITAR").css('display', 'none')
+        $("#administracion-cursos").css('display', 'none')
+        $("#evidenciasVerAvance").css('display', 'block')
+        $("#evidenciasVerAvanceTema").css('display', 'none')
+
+        let datosTabla = tablaListemasAvance.datosTabla();
+
+        if (datosTabla.length !== 0) {
+            let datosElemento = tablaListemasAvance.datosFila(this);
+
+            if (datosElemento[4] != -1) {
+                $('#modalSubirTemarios').modal('hide')
+                $('#modalValidateTemario').modal('hide')
+                $("#modalValidateParticipantes").modal('hide');
+
+                $("#administracion-cursos_nuevoCurso").css('display', 'none')
+                $("#administracion-cursos-ver").css('display', 'none')
+                $("#administracion-cursos-verAvance").css('display', 'block')
+                $("#administracion-cursos-EDITAR").css('display', 'none')
+                $("#administracion-cursos").css('display', 'none')
+                $("#evidenciasVerAvance").css('display', 'none')
+                $("#evidenciasVerAvanceTema").css('display', 'block')
+
+                var json = {
+                    idAvance: datosElemento[4]
+                }
+
+                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Evidencias', json, function (respuesta) {
+                    if (!respuesta.success) {
+                        evento.mostrarMensaje('.alertMessageAvance', false, 'No se han obtenido las evidencias del tema.', 5000);
+                        return;
+                    }
+
+                    var datosG = respuesta.data.avance
+                    var datos = respuesta.data.avance[0]
+                    var texto = '';
+
+                    $("#comenarioEvidencias").text(datos.comentarios);
+
+                    datosG.forEach(datos => {
+                        texto += `<div class="image gallery-group-1 col-xs-12 col-md-4" style="width: 170px; height: 230px; text-align: center;">
+                                    <div class="image-inner">
+                                        <a href="${datos.url}" data-lightbox="gallery-group-1">
+                                            <img src="${datos.url}" alt="" style="width: 120px; height: 100px;"/>
+                                        </a>
+                                        
+                                    </div>
+                                    <div class="image-info">
+                                        <h5 class="title">${datos.fechaModificacion}</h5>
+                                        
+                                        <div class="desc">
+                                        <b>Comentarios</b><br>
+                                        ${datos.comentarios}
+                                        </div>
+                                    </div>
+                                </div>
+                        `;
+                    });
+
+                    $("#CONTENT_IMG_EVIDENCIAS").html(texto);
+                });
+            } else {
+                evento.mostrarMensaje('.alertMessageAvance', false, 'No hay evidencias del tema.', 4000);
+            }
+        }
+    });
 
 
 

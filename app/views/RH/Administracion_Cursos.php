@@ -549,23 +549,16 @@
 
             <script>
                 var eventoPagina = new Pagina();
+
                 var tablaListCursosVer = [];
                 tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
-                // function cambiar() {
-                //     var pdrs = document.getElementById('file-upload').files[0].name;
-                //     document.getElementById('info').innerHTML = pdrs;
-                //     alert(pdrs)
-                // }
-
-
-
                 function btnAdminEliminarCurso(id) {
                     alert("ELLIMNAR", id);
                     console.debug("ELLIMNAR", id);
                     $("#idElementSeleccionAccion").val(id)
                     $("#modalDeletoCursoAdmin").modal('show')
                 }
-
+//
                 function btnAdminEditarCurso(id) {
                     let evidenciaCursoEditar = new FileUpload_Boton('evidenciasEditarCurso', {
                         url: 'Administracion_Cursos/Editar-Curso',
@@ -573,7 +566,125 @@
                         tituloAceptar: 'Agregar Archivos',
                         colorBotonAceptar: 'btn btn-success'});
                     evidenciaCursoEditar.iniciarFileUpload();
-                    console.debug("EDITAR CURSO");
+//                    console.debug("EDITAR CURSO");
+//
+//                    var datos = {
+//                        idCurso: id
+//                    }
+//
+//                    console.debug("PARAM", datos)
+//                    eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Obtener-Curso', datos, function (respuesta) {
+//                        console.log(respuesta);
+//                        console.debug(datos, "DATOS_CURSO", respuesta);
+//
+//                        if (!respuesta.success) {
+//                            evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido información del curso.', 5000);
+//                            return;
+//                        }
+//
+//                        var datosCurso = respuesta.data.infoCurso;
+//                        var cursos = respuesta.data.infoCurso.curso;
+//                        var perfiles = respuesta.data.infoCurso.perfiles;
+//                        var temas = respuesta.data.infoCurso.temas;
+//
+//                        $('#inputImgCursoEdit').val(),
+//                                $("#nombreCursoEdit").val(cursos.nombre),
+//                                $("#urlCursoEdit").val(cursos.url),
+//                                $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
+//                                $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
+//                                $("#costoCursoEdit").val(cursos.costo)
+//
+//                        if (respuesta.data.infoCurso.curso.imagen !== null) {
+//                            let imagenCurso = respuesta.data.infoCurso.curso.imagen;
+//                            $('#divEditarImagenCurso').attr('src', imagenCurso);
+//                        }
+//
+//                        var tablaTemariosEdit1 = new TablaBasica('tabla-cursos-temarioEdit');
+//
+//                        temas.forEach(element => {
+//                            tablaTemariosEdit1.agregarDatosFila([
+//                                element.nombre,
+//                                element.porcentaje + '%',
+//                                element.id,
+//                                "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn-AdminEliminarTemario'></i></spand>"
+//                            ]);
+//                        });
+//
+//                        var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
+//
+//                        perfiles.forEach(element => {
+//                            tablaParticipantesEdit.agregarDatosFila([
+//                                element.idPerfil,
+//                                element.Nombre,
+//                                "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
+//
+//                            ]);
+//                        });
+//                        $("#btn-editarDatosSave").off("click");
+//                        $("#btn-editarDatosSave").on('click', function (e) {
+//                            var id = $("#idElementSeleccionAccion").val()
+//                            var nombre = $("#nombreCursoEdit").val();
+//                            var url = $("#urlCursoEdit").val();
+//                            var descripcion = $("#textareaDescripcionCursoEdit").val();
+//
+//                            if (nombre == '' || url == '' || descripcion == '') {
+//                                eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
+//                                return false;
+//                            }
+//
+////                            let datosTabla = tablaTemariosEdit.datosTabla();
+////                            let datosTabla2 = tablaParticipantesEdit.datosTabla();
+//
+////                            if (datosTabla.length <= 0) {
+////                                $('#modalValidateTemario').modal('show')
+////                                return false;
+////                            }
+////
+////                            if (datosTabla2.length <= 0) {
+////                                $('#modalValidateParticipantes').modal('show')
+////                                return false;
+////                            }
+//
+//                            var json = {
+//                                id: id,
+//                                curso: [
+//                                    $('#videnciasEditarCurso').val(),
+//                                    $("#nombreCursoEdit").val(),
+//                                    $("#urlCursoEdit").val(),
+//                                    $("#textareaDescripcionCursoEdit").val(),
+//                                    $("#certificadoCursoEdit").val(),
+//                                    $("#costoCursoEdit").val()
+//                                ]
+//                            }
+//
+//                            $("#nameCurso").text($("#nombreCursoEdit").val());
+//
+//                            if ($('#evidenciasEditarCurso').val() !== '') {
+//                                evidenciaCursoEditar.enviarPeticionServidor('evidenciasEditarCurso', json, function (respuesta) {
+//                                    console.log(respuesta);
+//                                    if (!respuesta.success) {
+//                                        eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
+//                                        return;
+//                                    }
+//                                });
+//                            } else {
+//                                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Editar-Curso', json, function (respuesta) {
+//                                    console.log(respuesta);
+//                                    if (!respuesta.success) {
+//                                        evento.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
+//                                        return;
+//                                    }
+//                                });
+//                            }
+//
+//                            $('#modalresponseSaveEdit').modal('show');
+//                            location.reload();
+//                        });
+//
+//
+//                    });
+//                }
+
 
                     $("#idElementSeleccionAccion").val(id)
 
@@ -586,9 +697,6 @@
                     $("#administracion-cursos-ver").css('display', 'none')
 
                     $("#administracion-cursos-EDITAR").css('display', 'block')
-
-
-
 
                     var datos = {
                         idCurso: id
@@ -632,10 +740,7 @@
                             ]);
                         });
 
-
                         var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
-
-
 
                         perfiles.forEach(element => {
                             tablaParticipantesEdit.agregarDatosFila([
@@ -771,21 +876,10 @@
 
                 }
 
+
             </script>
 
             <style>
-                .subir{
-                    padding: 5px 10px;
-                    background: #ffa500;
-                    color:#fff;
-                    border:0px solid #fff;
-                }
-
-                .subir:hover{
-                    color:#fff;
-                    background: #d8900c;
-                }
-
 
                 /* .file-thumbnail-footer{
                     width: 130px;
@@ -861,25 +955,26 @@
 
                         </div>
 
-                        <!-- begin tabla cursos -->
-                        <div class="row" style="margin-top:50px;">
-                            <div class="col-md-12">
-                                <div class="table-responsive">
-                                    <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <td class="all">Empleado</td>
-                                                <td class="all">Puesto</td>
-                                                <td class="all">Avance</td>
-                                                <td class="never">id</td>
-                                                <td class="all">Acciones</td>
+                    </div>
 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
+                    <!-- begin tabla cursos -->
+                    <div class="row" style="margin-top:50px;">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table id="tabla-cursosAsignados" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <td class="all">Empleado</td>
+                                            <td class="all">Puesto</td>
+                                            <td class="all">Avance</td>
+                                            <td class="never">id</td>
+                                            <td class="all">Acciones</td>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <!-- end tabla cursos -->
@@ -1071,104 +1166,82 @@
                                                         <?php // $datosConduccion = $datos['datosUsuario']['datosConduccion']; ?>
                                                         <?php // (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
                                                         <img id="divEditarImagenCurso" src="" alt="" />
-                                                        <!--<input type="hidden" value="<?php // echo $usuario['Usuario'];                             ?>" id="usuario"/>-->
+                                                        <!--<input type="hidden" value="<?php // echo $usuario['Usuario'];                                    ?>" id="usuario"/>-->
                                                         <!--<i class="fa fa-user hide"></i>-->
                                                     </div>
-                                                    <!-- Finalizando perfil-image -->
-                                                    <!--                                                    <div class="m-b-10">
-                                                                                                            <a id="btnSubirFotoUsuario" href="javascript:;" class="btn btn-warning btn-block btn-sm">Cambiar Foto</a>
-                                                                                                        </div>-->
+
                                                 </div>
+                                            </div>
+                                            <div class="col-xs-8">
 
-                                                <div id="divImagenCurso" class="hidden">
-                                                    <input id="evidenciasEditarCurso" name="evidenciasEditarCurso[]" type="file">
+                                                <!-- begin row -->
+                                                <div class="row">
+                                                    <!-- begin col-4 -->
+                                                    <div class=" col-xs-12 col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Nombre del curso *</label>
+                                                            <input disabled type="text" id="nombreCursoEdit" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
+                                                        </div>
+                                                    </div>
+                                                    <!-- end col-4 -->
+                                                    <!-- begin col-4 -->
+                                                    <div class=" col-xs-12 col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Url *</label>
+                                                            <input disabled type="text" id="urlCursoEdit" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
+                                                        </div>
+                                                    </div>
+                                                    <!-- end col-4 -->
+                                                    <!-- begin col-4 -->
+                                                    <div class=" col-xs-12 col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="nuevoArchivo">Descripción *</label>
+                                                            <textarea disabled id="textareaDescripcionCursoEdit" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <!-- end col-4 -->
+                                                    <!-- begin col-4 -->
+                                                    <div class=" col-xs-12 col-md-6">
+                                                        <?php
+                                                        // var_dump($datos['certificados']);
+                                                        // var_dump($datos['tipoCursos']);
+                                                        ?>
+                                                        <div class="form-group">
+                                                            <label for="nuevoArchivo">Certificado </label>
+                                                            <select disabled id="certificadoCursoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
+
+                                                                <?php
+                                                                var_dump($datos['certificados']);
+                                                                foreach ($datos['certificados'] as $value) {
+
+                                                                    echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
+                                                                }
+                                                                ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <!-- end col-4 -->
+                                                    <!-- begin col-4 -->
+                                                    <div class=" col-xs-12 col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Costo </label>
+                                                            <input disabled type="text" id="costoCursoEdit" name="costo" placeholder="$00.00" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                    <!-- end col-4 -->
                                                 </div>
+                                                <!-- end row -->
+                                            </div>
 
-
-                                                <!-- <label for="file-upload" class="subir btn" style="width:100%">
-                                                    <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                                                </label>
-                                                <input id="file-upload" onchange='cambiar()' type="file" style='display: none;'/>
-                                                <div id="info"></div> -->
-
-                                                <!--                                                    <div id="archivo" class="form-group" disabled>
-                                                
-                                                                                                        <label>Imagen curso</label><br><br>
-                                                                                                        <input id="inputImgCursoEdit" name="evidenciasIncapacidad[]" type="file" multiple >
-                                                                                                    </div>-->
-
+                                            <div class="col-sm-12">
+                                                <button style="margin-top: 21px; float: right;"  id="btn-editarDatosStatus" type="button" class="btn btn-success m-r-5 m-b-5" >
+                                                    Editar datos</button>
+                                                <button style="margin-top: 21px; float: right; display:none;"  id="btn-cancelar-cambios" type="button" class="btn btn-white m-r-5 m-b-5" >
+                                                    Cancelar cambios</button>
+                                                <button style="margin-top: 21px; float: right; display:none;"  id="btn-editarDatosSave" type="button" class="btn btn-success m-r-5 m-b-5" >
+                                                    <i class="fa fa-save"></i> Editar datos</button>
                                             </div>
                                         </div>
-                                        <div class="col-xs-8">
-
-                                            <!-- begin row -->
-                                            <div class="row">
-                                                <!-- begin col-4 -->
-                                                <div class=" col-xs-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Nombre del curso *</label>
-                                                        <input disabled type="text" id="nombreCursoEdit" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
-                                                    </div>
-                                                </div>
-                                                <!-- end col-4 -->
-                                                <!-- begin col-4 -->
-                                                <div class=" col-xs-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Url *</label>
-                                                        <input disabled type="text" id="urlCursoEdit" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
-                                                    </div>
-                                                </div>
-                                                <!-- end col-4 -->
-                                                <!-- begin col-4 -->
-                                                <div class=" col-xs-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="nuevoArchivo">Descripción *</label>
-                                                        <textarea disabled id="textareaDescripcionCursoEdit" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
-                                                    </div>
-                                                </div>
-                                                <!-- end col-4 -->
-                                                <!-- begin col-4 -->
-                                                <div class=" col-xs-12 col-md-6">
-                                                    <?php
-                                                    // var_dump($datos['certificados']);
-                                                    // var_dump($datos['tipoCursos']);
-                                                    ?>
-                                                    <div class="form-group">
-                                                        <label for="nuevoArchivo">Certificado </label>
-                                                        <select disabled id="certificadoCursoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
-
-                                                            <?php
-                                                            var_dump($datos['certificados']);
-                                                            foreach ($datos['certificados'] as $value) {
-
-                                                                echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
-                                                            }
-                                                            ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <!-- end col-4 -->
-                                                <!-- begin col-4 -->
-                                                <div class=" col-xs-12 col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Costo </label>
-                                                        <input disabled type="text" id="costoCursoEdit" name="costo" placeholder="$00.00" class="form-control" />
-                                                    </div>
-                                                </div>
-                                                <!-- end col-4 -->
-                                            </div>
-                                            <!-- end row -->
-                                        </div>
-
-                                        <div class="col-sm-12">
-                                            <button style="margin-top: 21px; float: right;"  id="btn-editarDatosStatus" type="button" class="btn btn-success m-r-5 m-b-5" >
-                                                Editar datos</button>
-                                            <button style="margin-top: 21px; float: right; display:none;"  id="btn-cancelar-cambios" type="button" class="btn btn-white m-r-5 m-b-5" >
-                                                Cancelar cambios</button>
-                                            <button style="margin-top: 21px; float: right; display:none;"  id="btn-editarDatosSave" type="button" class="btn btn-success m-r-5 m-b-5" >
-                                                <i class="fa fa-save"></i> Editar datos</button>
-                                        </div>
-                                    </div>
                                 </form>
                             </div>
                             <div class="tab-pane fade" id="default-tab-2">
@@ -1210,6 +1283,7 @@
                                                                 <th class="all">Temario</th>
                                                                 <th class="all">Porcentaje</th>
                                                                 <th class="never">id</th>
+                                                                <th class="never">idCurso</th>
                                                                 <th class="all">Acciones</th>
                                                             </tr>
                                                         </thead>
@@ -1278,6 +1352,8 @@
                                                         <thead>
                                                             <tr>
                                                                 <th class="never">id</th>
+                                                                <th class="never">idCurso</th>
+                                                                <th class="never">idP</th>
                                                                 <th class="all">Puesto</th>
                                                                 <th class="all">Acciones</th>
                                                             </tr>
@@ -1321,13 +1397,11 @@
                             <div class="container">
                                 <div class="row">
 
-                                    <div class="col-md-12">
-                                        <p class="">Se cambiaron los datos del curso con éxito.</p>
-                                        <p class=""><span class="fa-stack fa-2x text-success">
-                                                <i class="fa fa-circle fa-stack-2x"></i>
-                                                <i class="fa fa-check fa-stack-1x fa-inverse"></i>
-                                            </span></i></p>
+                                    <div class="col-11">
+                                        Se cambiaron los datos del curso con éxito.<br>
+                                        <i class="fa fa-check-circle" style="color:#00acac;"></i>
                                     </div>
+
                                 </div>
                             </div>
 
