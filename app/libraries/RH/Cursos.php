@@ -187,12 +187,11 @@ class Cursos extends General {
         $temasCurso = [];
         $perfilesCurso = [];
         if ($datos['tipoDato'] == 1) {
-            foreach ($datos as $value) {
-                $this->DBS->insertTemaryCourse($value, $datos['idCurso']);
-            }
-            $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
+            
+            $resultQuery = $this->DBS->insertTemaryCourseEdit($datos['nombre'],$datos['descripcion'],$datos['porcentaje'],$datos['idCurso']);
+            $temasCurso = $this->DBS->getTemaryById($datos,$datos['idCurso']);
         } else {
-            $resultQuery = $this->DBS->insertParticipantsCourse($datos['idPerfil'], $datos['idCurso']);
+            $resultQuery = $this->DBS->insertParticipantsCourseEdit($datos['idPerfil'], $datos['idCurso']);
             $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
         }
 

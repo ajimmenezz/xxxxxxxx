@@ -141,6 +141,52 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
 
+    public function insertTemaryCourseEdit($name,$desc,$porcen,$idCurso) {
+       
+        $this->iniciaTransaccion();
+
+        $this->insertar('t_curso_tema', [
+            'nombre' => $name,
+            'descripcion' => $desc,
+            'porcentaje' => $porcen,
+            'idCurso' => $idCurso
+        ]);
+
+        $id = $this->consulta("select last_insert_id() as id");
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'id'=>$id[0]['id']];
+        }
+    }
+
+    function insertParticipantsCourseEdit($perfil, $idCurso) {
+        $this->iniciaTransaccion();
+
+        $this->insertar('t_curso_relacion_perfil', [
+            'idCurso' => $idCurso,
+            'idPerfil' => $perfil
+        ]);
+        
+        $id = $this->consulta("select last_insert_id() as id");
+
+        
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return ['code' => 400];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200, 'id'=>$id[0]['id']];
+        }
+    }
+
+
     public function insertTemaryCourse($infoTema, $idCurso) {
         $this->iniciaTransaccion();
 
