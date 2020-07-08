@@ -192,7 +192,7 @@ class Cursos extends General {
             }
             $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
         } else {
-            $resultQuery = $this->DBS->insertParticipantsCourse($datos, $datos['idCurso']);
+            $resultQuery = $this->DBS->insertParticipantsCourse($datos['idPerfil'], $datos['idCurso']);
             $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
         }
 
@@ -200,8 +200,8 @@ class Cursos extends General {
         $info['perfiles'] = $perfilesCurso;
 
         if ($resultQuery['code'] == 200) {
-            return ['response' => true, 'info' => $info];
-            ;
+            return ['response' => true, 'info' => $info,'id'=>$resultQuery['id']];
+            
         } else {
             return false;
         }

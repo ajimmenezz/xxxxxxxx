@@ -531,21 +531,11 @@ $(function () {
             var json = {
                 tipoDato: 0,
                 idCurso: idCurso,
-                participantes: {}
+                idPerfil: $nombrePuesto
 
 
             }
 
-            var part = []
-
-
-
-            part.push([$nombrePuesto]);
-
-
-            console.debug("part", part)
-
-            json.participantes = part;
             console.debug("DATOS_SEND", json);
 
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
@@ -556,7 +546,7 @@ $(function () {
                 }
 
                 //listPuestoEdit.push({'nombre': $nombrePuesto});
-                listPuestoEdit.push({'nombre': $nombrePuesto, 'nameString': $nombrePuestoString});
+                listPuestoEdit.push({'nombre': $nombrePuesto, 'nameString': $nombrePuestoString,'id':respuesta.data.id,'idCurso':idCurso});
 
 
                 tablaParticipantesEdit.limpiartabla();

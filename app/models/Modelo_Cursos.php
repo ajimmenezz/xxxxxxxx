@@ -168,6 +168,10 @@ class Modelo_Cursos extends Modelo_Base {
             'idCurso' => $idCurso,
             'idPerfil' => $perfil
         ]);
+        
+        $id = $this->consulta("select last_insert_id() as id");
+
+        
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
@@ -175,7 +179,7 @@ class Modelo_Cursos extends Modelo_Base {
             return ['code' => 400];
         } else {
             $this->commitTransaccion();
-            return ['code' => 200];
+            return ['code' => 200, 'id'=>$id[0]['id']];
         }
     }
 
