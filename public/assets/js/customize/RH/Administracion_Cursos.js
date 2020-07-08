@@ -256,24 +256,12 @@ $(function () {
             var json = {
                 tipoDato: 1,
                 idCurso: idCurso,
-                temario: {
-                    archivo: false,
-                    infoTabla: {}
-
-                },
+                nombre:$nombreTemario,
+                porcentaje:$porcentaje,
+                descripcion:''
             }
 
-
-            var temas = []
-
-
-            temas.push([$nombreTemario, '', parseFloat($porcentaje)]);
-
-
-
-
-            console.debug("temas", temas)
-            json.temario.infoTabla = temas;
+           
 
             console.debug("DATOS_SEND", json)
 
@@ -285,7 +273,7 @@ $(function () {
                     return;
                 }
 
-                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': 0, 'idCurso': idCurso});
+                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': respuesta.data.id,'idCurso':idCurso});
 
 
                 tablaTemariosEdit.limpiartabla();
@@ -365,6 +353,7 @@ $(function () {
                 }
 
                 console.debug("ERREGLO", listTemarioEdit);
+
 
 
                 tablaTemariosEdit.limpiartabla();
