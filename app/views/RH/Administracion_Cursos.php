@@ -549,16 +549,16 @@
 
             <script>
                 var eventoPagina = new Pagina();
-
                 var tablaListCursosVer = [];
                 tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+
                 function btnAdminEliminarCurso(id) {
                     alert("ELLIMNAR", id);
                     console.debug("ELLIMNAR", id);
                     $("#idElementSeleccionAccion").val(id)
                     $("#modalDeletoCursoAdmin").modal('show')
                 }
-//
+
                 function btnAdminEditarCurso(id) {
                     let evidenciaCursoEditar = new FileUpload_Boton('evidenciasEditarCurso', {
                         url: 'Administracion_Cursos/Editar-Curso',
@@ -566,125 +566,6 @@
                         tituloAceptar: 'Agregar Archivos',
                         colorBotonAceptar: 'btn btn-success'});
                     evidenciaCursoEditar.iniciarFileUpload();
-//                    console.debug("EDITAR CURSO");
-//
-//                    var datos = {
-//                        idCurso: id
-//                    }
-//
-//                    console.debug("PARAM", datos)
-//                    eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Obtener-Curso', datos, function (respuesta) {
-//                        console.log(respuesta);
-//                        console.debug(datos, "DATOS_CURSO", respuesta);
-//
-//                        if (!respuesta.success) {
-//                            evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido información del curso.', 5000);
-//                            return;
-//                        }
-//
-//                        var datosCurso = respuesta.data.infoCurso;
-//                        var cursos = respuesta.data.infoCurso.curso;
-//                        var perfiles = respuesta.data.infoCurso.perfiles;
-//                        var temas = respuesta.data.infoCurso.temas;
-//
-//                        $('#inputImgCursoEdit').val(),
-//                                $("#nombreCursoEdit").val(cursos.nombre),
-//                                $("#urlCursoEdit").val(cursos.url),
-//                                $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
-//                                $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
-//                                $("#costoCursoEdit").val(cursos.costo)
-//
-//                        if (respuesta.data.infoCurso.curso.imagen !== null) {
-//                            let imagenCurso = respuesta.data.infoCurso.curso.imagen;
-//                            $('#divEditarImagenCurso').attr('src', imagenCurso);
-//                        }
-//
-//                        var tablaTemariosEdit1 = new TablaBasica('tabla-cursos-temarioEdit');
-//
-//                        temas.forEach(element => {
-//                            tablaTemariosEdit1.agregarDatosFila([
-//                                element.nombre,
-//                                element.porcentaje + '%',
-//                                element.id,
-//                                "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn-AdminEliminarTemario'></i></spand>"
-//                            ]);
-//                        });
-//
-//                        var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
-//
-//                        perfiles.forEach(element => {
-//                            tablaParticipantesEdit.agregarDatosFila([
-//                                element.idPerfil,
-//                                element.Nombre,
-//                                "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
-//
-//                            ]);
-//                        });
-//                        $("#btn-editarDatosSave").off("click");
-//                        $("#btn-editarDatosSave").on('click', function (e) {
-//                            var id = $("#idElementSeleccionAccion").val()
-//                            var nombre = $("#nombreCursoEdit").val();
-//                            var url = $("#urlCursoEdit").val();
-//                            var descripcion = $("#textareaDescripcionCursoEdit").val();
-//
-//                            if (nombre == '' || url == '' || descripcion == '') {
-//                                eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
-//                                return false;
-//                            }
-//
-////                            let datosTabla = tablaTemariosEdit.datosTabla();
-////                            let datosTabla2 = tablaParticipantesEdit.datosTabla();
-//
-////                            if (datosTabla.length <= 0) {
-////                                $('#modalValidateTemario').modal('show')
-////                                return false;
-////                            }
-////
-////                            if (datosTabla2.length <= 0) {
-////                                $('#modalValidateParticipantes').modal('show')
-////                                return false;
-////                            }
-//
-//                            var json = {
-//                                id: id,
-//                                curso: [
-//                                    $('#videnciasEditarCurso').val(),
-//                                    $("#nombreCursoEdit").val(),
-//                                    $("#urlCursoEdit").val(),
-//                                    $("#textareaDescripcionCursoEdit").val(),
-//                                    $("#certificadoCursoEdit").val(),
-//                                    $("#costoCursoEdit").val()
-//                                ]
-//                            }
-//
-//                            $("#nameCurso").text($("#nombreCursoEdit").val());
-//
-//                            if ($('#evidenciasEditarCurso').val() !== '') {
-//                                evidenciaCursoEditar.enviarPeticionServidor('evidenciasEditarCurso', json, function (respuesta) {
-//                                    console.log(respuesta);
-//                                    if (!respuesta.success) {
-//                                        eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
-//                                        return;
-//                                    }
-//                                });
-//                            } else {
-//                                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Editar-Curso', json, function (respuesta) {
-//                                    console.log(respuesta);
-//                                    if (!respuesta.success) {
-//                                        evento.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
-//                                        return;
-//                                    }
-//                                });
-//                            }
-//
-//                            $('#modalresponseSaveEdit').modal('show');
-//                            location.reload();
-//                        });
-//
-//
-//                    });
-//                }
-
 
                     $("#idElementSeleccionAccion").val(id)
 
@@ -700,19 +581,14 @@
 
                     var datos = {
                         idCurso: id
-                    }
+                    };
 
-                    console.debug("PARAM", datos)
                     eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Obtener-Curso', datos, function (respuesta) {
-                        console.log(respuesta);
-                        console.debug(datos, "DATOS_CURSO", respuesta);
-
                         if (!respuesta.success) {
                             evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido información del curso.', 5000);
                             return;
                         }
 
-                        var datosCurso = respuesta.data.infoCurso;
                         var cursos = respuesta.data.infoCurso.curso;
                         var perfiles = respuesta.data.infoCurso.perfiles;
                         var temas = respuesta.data.infoCurso.temas;
@@ -732,24 +608,30 @@
                         var tablaTemariosEdit1 = new TablaBasica('tabla-cursos-temarioEdit');
 
                         temas.forEach(element => {
-                            tablaTemariosEdit1.agregarDatosFila([
-                                element.nombre,
-                                element.porcentaje + '%',
-                                element.id,
-                                "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn-AdminEliminarTemario'></i></spand>"
-                            ]);
+                            if (element.estatus != 0 && element.estatus != '0') {
+                                tablaTemariosEdit1.agregarDatosFila([
+                                    element.nombre,
+                                    element.porcentaje + '%',
+                                    element.id,
+                                    element.idCurso,
+                                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn-AdminEliminarTemario'></i></spand>"
+                                ]);
+                            }
                         });
 
-                        var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
+                        var tablaParticipantesEdit1 = new TablaBasica('tabla-cursos-participantesEdit');
 
                         perfiles.forEach(element => {
-                            tablaParticipantesEdit.agregarDatosFila([
+                            tablaParticipantesEdit1.agregarDatosFila([
+                                element.id,
+                                element.idCurso,
                                 element.idPerfil,
                                 element.Nombre,
                                 "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
 
                             ]);
                         });
+
                         $("#btn-editarDatosSave").off("click");
                         $("#btn-editarDatosSave").on('click', function (e) {
                             var id = $("#idElementSeleccionAccion").val()
@@ -761,19 +643,6 @@
                                 eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
                                 return false;
                             }
-
-//                            let datosTabla = tablaTemariosEdit.datosTabla();
-//                            let datosTabla2 = tablaParticipantesEdit.datosTabla();
-
-//                            if (datosTabla.length <= 0) {
-//                                $('#modalValidateTemario').modal('show')
-//                                return false;
-//                            }
-//
-//                            if (datosTabla2.length <= 0) {
-//                                $('#modalValidateParticipantes').modal('show')
-//                                return false;
-//                            }
 
                             var json = {
                                 id: id,
@@ -791,7 +660,6 @@
 
                             if ($('#evidenciasEditarCurso').val() !== '') {
                                 evidenciaCursoEditar.enviarPeticionServidor('evidenciasEditarCurso', json, function (respuesta) {
-                                    console.log(respuesta);
                                     if (!respuesta.success) {
                                         eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
                                         return;
@@ -799,7 +667,6 @@
                                 });
                             } else {
                                 eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Editar-Curso', json, function (respuesta) {
-                                    console.log(respuesta);
                                     if (!respuesta.success) {
                                         evento.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
                                         return;
@@ -810,8 +677,6 @@
                             $('#modalresponseSaveEdit').modal('show');
                             location.reload();
                         });
-
-
                     });
                 }
 
@@ -849,12 +714,18 @@
                             return;
                         }
 
-                        var perfiles = respuesta.data.infoCurso.perticipantes
-                        var total = respuesta.data.infoCurso.total
-                        var avance = respuesta.data.infoCurso.avance
+                        var perfiles = respuesta.data.infoCurso.perticipantes;
+                        var total = respuesta.data.infoCurso.total;
+                        var avance = respuesta.data.infoCurso.avance;
 
                         $("#avanceVerCurso").text(avance);
                         $("#totalVerCurso").text(total);
+
+                        var tablaListCursosVer = []
+
+                        tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+                        tablaListCursosVer.limpiartabla();
+
 
                         perfiles.forEach(element => {
                             var porcentaje = '0';
@@ -871,28 +742,10 @@
                             ]);
                         });
                     });
-
-
-
                 }
 
 
             </script>
-
-            <style>
-
-                /* .file-thumbnail-footer{
-                    width: 130px;
-                    height: 60px;
-                }
-                
-                .kv-preview-data file-preview-image{
-                    width: 130px;
-                    height: 100px;
-                } */
-
-            </style>
-
 
             <!-- ver cursos -->
 
@@ -1159,89 +1012,86 @@
                                             </div> -->
                                             <div class="col-xs-12" style="text-align: center;  margin-top: 10px;">
 
-                                                <div class="profile-center">
-                                                    <!-- Empezando perfil-image -->
-                                                    <div class="profile-image text-center">
-                                                        <?php // $datosUsuario = $datos['datosUsuario']['datosUsuario']; ?>
-                                                        <?php // $datosConduccion = $datos['datosUsuario']['datosConduccion']; ?>
-                                                        <?php // (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
-                                                        <img id="divEditarImagenCurso" src="" alt="" />
-                                                        <!--<input type="hidden" value="<?php // echo $usuario['Usuario'];                                    ?>" id="usuario"/>-->
-                                                        <!--<i class="fa fa-user hide"></i>-->
-                                                    </div>
-
+                                                <div class="profile-image text-center">
+                                                    <img id="divEditarImagenCurso" src="" alt="" />
                                                 </div>
-                                            </div>
-                                            <div class="col-xs-8">
 
-                                                <!-- begin row -->
-                                                <div class="row">
-                                                    <!-- begin col-4 -->
-                                                    <div class=" col-xs-12 col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Nombre del curso *</label>
-                                                            <input disabled type="text" id="nombreCursoEdit" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
-                                                        </div>
-                                                    </div>
-                                                    <!-- end col-4 -->
-                                                    <!-- begin col-4 -->
-                                                    <div class=" col-xs-12 col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Url *</label>
-                                                            <input disabled type="text" id="urlCursoEdit" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
-                                                        </div>
-                                                    </div>
-                                                    <!-- end col-4 -->
-                                                    <!-- begin col-4 -->
-                                                    <div class=" col-xs-12 col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="nuevoArchivo">Descripción *</label>
-                                                            <textarea disabled id="textareaDescripcionCursoEdit" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
-                                                        </div>
-                                                    </div>
-                                                    <!-- end col-4 -->
-                                                    <!-- begin col-4 -->
-                                                    <div class=" col-xs-12 col-md-6">
-                                                        <?php
-                                                        // var_dump($datos['certificados']);
-                                                        // var_dump($datos['tipoCursos']);
-                                                        ?>
-                                                        <div class="form-group">
-                                                            <label for="nuevoArchivo">Certificado </label>
-                                                            <select disabled id="certificadoCursoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
-
-                                                                <?php
-                                                                var_dump($datos['certificados']);
-                                                                foreach ($datos['certificados'] as $value) {
-
-                                                                    echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
-                                                                }
-                                                                ?>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <!-- end col-4 -->
-                                                    <!-- begin col-4 -->
-                                                    <div class=" col-xs-12 col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Costo </label>
-                                                            <input disabled type="text" id="costoCursoEdit" name="costo" placeholder="$00.00" class="form-control" />
-                                                        </div>
-                                                    </div>
-                                                    <!-- end col-4 -->
+                                                <div id="archivo" class="form-group hidden">
+                                                    <input id="evidenciasEditarCurso" name="evidenciasEditarCurso[]" type="file" multiple >
                                                 </div>
-                                                <!-- end row -->
-                                            </div>
 
-                                            <div class="col-sm-12">
-                                                <button style="margin-top: 21px; float: right;"  id="btn-editarDatosStatus" type="button" class="btn btn-success m-r-5 m-b-5" >
-                                                    Editar datos</button>
-                                                <button style="margin-top: 21px; float: right; display:none;"  id="btn-cancelar-cambios" type="button" class="btn btn-white m-r-5 m-b-5" >
-                                                    Cancelar cambios</button>
-                                                <button style="margin-top: 21px; float: right; display:none;"  id="btn-editarDatosSave" type="button" class="btn btn-success m-r-5 m-b-5" >
-                                                    <i class="fa fa-save"></i> Editar datos</button>
                                             </div>
                                         </div>
+                                        <div class="col-xs-8">
+
+                                            <!-- begin row -->
+                                            <div class="row">
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Nombre del curso *</label>
+                                                        <input disabled type="text" id="nombreCursoEdit" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Url *</label>
+                                                        <input disabled type="text" id="urlCursoEdit" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="nuevoArchivo">Descripción *</label>
+                                                        <textarea disabled id="textareaDescripcionCursoEdit" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <?php
+                                                    // var_dump($datos['certificados']);
+                                                    // var_dump($datos['tipoCursos']);
+                                                    ?>
+                                                    <div class="form-group">
+                                                        <label for="nuevoArchivo">Certificado </label>
+                                                        <select disabled id="certificadoCursoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
+
+                                                            <?php
+                                                            var_dump($datos['certificados']);
+                                                            foreach ($datos['certificados'] as $value) {
+
+                                                                echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                                <!-- begin col-4 -->
+                                                <div class=" col-xs-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Costo </label>
+                                                        <input disabled type="text" id="costoCursoEdit" name="costo" placeholder="$00.00" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <!-- end col-4 -->
+                                            </div>
+                                            <!-- end row -->
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <button style="margin-top: 21px; float: right;"  id="btn-editarDatosStatus" type="button" class="btn btn-success m-r-5 m-b-5" >
+                                                Editar datos</button>
+                                            <button style="margin-top: 21px; float: right; display:none;"  id="btn-cancelar-cambios" type="button" class="btn btn-white m-r-5 m-b-5" >
+                                                Cancelar cambios</button>
+                                            <button style="margin-top: 21px; float: right; display:none;"  id="btn-editarDatosSave" type="button" class="btn btn-success m-r-5 m-b-5" >
+                                                <i class="fa fa-save"></i> Editar datos</button>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                             <div class="tab-pane fade" id="default-tab-2">

@@ -9,7 +9,9 @@ $(function () {
     //Evento para cerra la session
     evento.cerrarSesion();
 
-    file.crearUpload('#inputImgCursoEdit', 'Administracion_Cursos/Editar-Curso', ['jpg', 'jpeg', 'png'], false, [], '', null, false, 1);
+    //Inicializa funciones de la plantilla
+
+//    file.crearUpload('#inputImgCursoEdit', 'Administracion_Cursos/Editar-Curso', ['jpg', 'jpeg', 'png'], false, [], '', null, false, 1);
 //    file.crearUploadBoton('#inputImgCurso', 'Administracion_Cursos/Nuevo-Curso', 'Subir Imagen');
     let evidenciaCurso = new FileUpload_Boton('evidencias', {
         url: 'Administracion_Cursos/Nuevo-Curso',
@@ -18,8 +20,8 @@ $(function () {
         colorBotonAceptar: 'btn btn-success'});
     evidenciaCurso.iniciarFileUpload();
 
-    //Inicializa funciones de la plantilla
-    App.init( );
+    App.init();
+
 
     let tablaCursos = new TablaBasica('tabla-cursos');
     let tablaTemarios = new TablaBasica('tabla-cursos-temario');
@@ -95,9 +97,6 @@ $(function () {
             }
         }
     });
-
-
-
 
     $(".btn-cancel_wizard").on('click', function (e) {
         //modalSubirTemarios
@@ -256,12 +255,12 @@ $(function () {
             var json = {
                 tipoDato: 1,
                 idCurso: idCurso,
-                nombre:$nombreTemario,
-                porcentaje:$porcentaje,
-                descripcion:''
+                nombre: $nombreTemario,
+                porcentaje: $porcentaje,
+                descripcion: ''
             }
 
-           
+
 
             console.debug("DATOS_SEND", json)
 
@@ -273,7 +272,7 @@ $(function () {
                     return;
                 }
 
-                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': respuesta.data.id,'idCurso':idCurso});
+                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': respuesta.data.id, 'idCurso': idCurso});
 
 
                 tablaTemariosEdit.limpiartabla();
@@ -893,6 +892,8 @@ $(function () {
         $("#costoCursoEdit").removeAttr('disabled');
         $('#divImagenCurso').removeClass('hidden');
         $('.profile-center').addClass('hidden');
+        $('#archivo').removeClass('hidden');
+        $('.profile-image').addClass('hidden');
     });
 
     $("#btn-cancelar-cambios").on('click', function (e) {
@@ -907,6 +908,8 @@ $(function () {
         $("#costoCursoEdit").attr('disabled', 'disabled');
         $('#divImagenCurso').addClass('hidden');
         $('.profile-center').removeClass('hidden');
+        $('#archivo').addClass('hidden');
+        $('.profile-image').removeClass('hidden');
     });
 
 
