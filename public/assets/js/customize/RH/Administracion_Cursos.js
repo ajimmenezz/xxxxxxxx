@@ -24,11 +24,8 @@ $(function () {
     let tablaCursos = new TablaBasica('tabla-cursos');
     let tablaTemarios = new TablaBasica('tabla-cursos-temario');
     let tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
-
-    let tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
-    let tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
     let tablaParticipantes = new TablaBasica('tabla-cursos-participantes');
-
+    var tablePrinc = new TablaBasica('tabla-cursosPrinc');
 
 
     $('#btn-nuevo-curso').on('click', function (e) {
@@ -635,81 +632,45 @@ $(function () {
 
 
     });
-
+//   var tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
 
     //ver curso
-
-
-
-    var tablePrinc = new TablaBasica('tabla-cursosPrinc');
-
-
-
-
-
     tablaListCursosVer.evento(function () {
-
         let datosTabla = tablaListCursosVer.datosTabla();
 
-        console.debug("eliminar", "resto", datosTabla, tablaListCursosVer.datosFila(this));
-
-
-
         if (datosTabla.length !== 0) {
-
             let datosElemento = tablaListCursosVer.datosFila(this);
-            console.debug("DATO_ESPECIFICO", datosElemento);
 
             var json = {
                 idCurso: $("#idElementSeleccionAccion").val(),
                 idUsuario: datosElemento[3]
             }
 
-            console.debug("PARAMS", json);
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/TemasCursoUsuario', json, function (respuesta) {
-                console.log("TemasCursoUsuario_AVANCES", respuesta);
                 if (!respuesta.success) {
                     evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el participante.', 5000);
                     return;
                 }
 
-                var datosUser = respuesta.data.infoUsuario
-                var temas = respuesta.data.infoUsuario.temas
-
-
-
-                console.debug("DATOS_TEMAS", temas, respuesta.data.infoUsuario.temas)
+                let tablaListemasAvance = new TablaBasica('tabla-temarioAvances');
+                var temas = respuesta.data.infoUsuario.temas;
+                var datosUserInfo = respuesta.data.infoUsuario.infoUsuario[0];
 
                 tablaListemasAvance.limpiartabla();
 
 
-
-                // temas.forEach(element => {
-                //     tablaListemasAvance.agregarDatosFila([
-                //         element.id,
-                //         element.nombre,
-                //         element.porcentaje+'%',
-                //        element.fechaModificacion,
-                //        element.idAvance
-                //     ]);
-                // });
-
                 for (var index in temas) {
-                    console.debug("FOR");
-                    // if(index>0){
-                    //     index=index+1;
-                    // }
                     const element = temas[index];
-
                     var idAvance = -1;
                     var fecha = '-';
+
                     if (element.idAvance) {
                         idAvance = element.idAvance;
                     }
+
                     if (element.fechaModificacion) {
                         fecha = element.fechaModificacion;
                     }
-
 
                     tablaListemasAvance.agregarDatosFila([
                         element.id,
@@ -718,135 +679,99 @@ $(function () {
                         fecha,
                         idAvance
                     ]);
-
-                    console.debug("ELEMENTOS", element, idAvance, index)
-
                 }
 
-                var datosUserInfo = respuesta.data.infoUsuario.infoUsuario[0];
-
-                console.debug("DATOS_INFO", datosUserInfo, tablaListemasAvance)
-
-                $("#cursoAvanceParticipante").text(datosUserInfo.NOmbre);
-                $("#cursoAvanceCurso").text(datosUserInfo.Perfil);
-                $("#cursoAvancePuesto").html(datosUserInfo.Curso);
-
-
-
-
+                $("#cursoAvanceParticipante").text(datosUserInfo.Nombre);
+                $("#cursoAvancePuesto").html(datosUserInfo.Perfil);
+                $("#cursoAvanceCurso").text(respuesta.data.infoUsuario.infoCurso[0].nombre);
                 $("#administracion-cursos_nuevoCurso").css('display', 'none')
                 $("#administracion-cursos-ver").css('display', 'none')
                 $("#administracion-cursos-verAvance").css('display', 'block')
                 $("#administracion-cursos-EDITAR").css('display', 'none')
                 $("#administracion-cursos").css('display', 'none')
                 $("#evidenciasVerAvanceTema").css('display', 'none')
-
-
-
             });
         }
     });
 
 
-    tablaListemasAvance.evento(function () {
-        $('#modalSubirTemarios').modal('hide')
-        $('#modalValidateTemario').modal('hide')
-        $("#modalValidateParticipantes").modal('hide');
+//    var tablePrinc = new TablaBasica('tabla-cursosPrinc');
+//    var tablePrinc = new TablaBasica('tabla-cursosPrinc');
 
-
-        $("#administracion-cursos_nuevoCurso").css('display', 'none')
-        $("#administracion-cursos-ver").css('display', 'none')
-        $("#administracion-cursos-verAvance").css('display', 'block')
-        $("#administracion-cursos-EDITAR").css('display', 'none')
-        $("#administracion-cursos").css('display', 'none')
-        $("#evidenciasVerAvance").css('display', 'block')
-        $("#evidenciasVerAvanceTema").css('display', 'none')
-
-
-
-
-        let datosTabla = tablaListemasAvance.datosTabla();
-
-        console.debug(datosTabla, "evidencia", "resto", tablaListemasAvance.datosFila(this));
-
-
-
-        if (datosTabla.length !== 0) {
-
-            let datosElemento = tablaListemasAvance.datosFila(this);
-            console.debug("DATO_ESPECIFICO", datosElemento);
-
-            if (datosElemento[4] != -1) {
-                $('#modalSubirTemarios').modal('hide')
-                $('#modalValidateTemario').modal('hide')
-                $("#modalValidateParticipantes").modal('hide');
-
-
-                $("#administracion-cursos_nuevoCurso").css('display', 'none')
-                $("#administracion-cursos-ver").css('display', 'none')
-                $("#administracion-cursos-verAvance").css('display', 'block')
-                $("#administracion-cursos-EDITAR").css('display', 'none')
-                $("#administracion-cursos").css('display', 'none')
-                $("#evidenciasVerAvance").css('display', 'none')
-                $("#evidenciasVerAvanceTema").css('display', 'block')
-
-                // verEvidencia(datosElemento[4])
-
-                var json = {
-                    idAvance: datosElemento[4]
-                }
-
-                console.debug("PARAMS", json)
-                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Evidencias', json, function (respuesta) {
-                    console.log("Ver-Evidencias_AVANCES", respuesta);
-                    if (!respuesta.success) {
-                        evento.mostrarMensaje('.alertMessageAvance', false, 'No se han obtenido las evidencias del tema.', 5000);
-                        return;
-                    }
-
-                    var datosG = respuesta.data.avance
-
-                    var datos = respuesta.data.avance[0]
-
-                    $("#comenarioEvidencias").text(datos.comentarios);
-                    var texto = '';
-
-                    datosG.forEach(datos => {
-                        texto += `<div class="image gallery-group-1 col-xs-12 col-md-4" style="width: 170px; height: 230px; text-align: center;">
-                                    <div class="image-inner">
-                                        <a href="${datos.url}" data-lightbox="gallery-group-1">
-                                            <img src="${datos.url}" alt="" style="width: 120px; height: 100px;"/>
-                                        </a>
-                                        
-                                    </div>
-                                    <div class="image-info">
-                                        <h5 class="title">${datos.fechaModificacion}</h5>
-                                        
-                                        <div class="desc">
-                                        <b>Comentarios</b><br>
-                                        ${datos.comentarios}
-                                        </div>
-                                    </div>
-                                </div>
-                        `;
-                    });
-
-
-                    $("#CONTENT_IMG_EVIDENCIAS").html(texto);
-
-
-
-                });
-
-
-            } else {
-                evento.mostrarMensaje('.alertMessageAvance', false, 'No hay evidencias del tema.', 4000);
-            }
-
-
-        }
-
-    });
+//    tablaListemasAvance.evento(function () {
+//        $('#modalSubirTemarios').modal('hide')
+//        $('#modalValidateTemario').modal('hide')
+//        $("#modalValidateParticipantes").modal('hide');
+//
+//        $("#administracion-cursos_nuevoCurso").css('display', 'none')
+//        $("#administracion-cursos-ver").css('display', 'none')
+//        $("#administracion-cursos-verAvance").css('display', 'block')
+//        $("#administracion-cursos-EDITAR").css('display', 'none')
+//        $("#administracion-cursos").css('display', 'none')
+//        $("#evidenciasVerAvance").css('display', 'block')
+//        $("#evidenciasVerAvanceTema").css('display', 'none')
+//
+//        let datosTabla = tablaListemasAvance.datosTabla();
+//
+//        if (datosTabla.length !== 0) {
+//            let datosElemento = tablaListemasAvance.datosFila(this);
+//
+//            if (datosElemento[4] != -1) {
+//                $('#modalSubirTemarios').modal('hide')
+//                $('#modalValidateTemario').modal('hide')
+//                $("#modalValidateParticipantes").modal('hide');
+//
+//                $("#administracion-cursos_nuevoCurso").css('display', 'none')
+//                $("#administracion-cursos-ver").css('display', 'none')
+//                $("#administracion-cursos-verAvance").css('display', 'block')
+//                $("#administracion-cursos-EDITAR").css('display', 'none')
+//                $("#administracion-cursos").css('display', 'none')
+//                $("#evidenciasVerAvance").css('display', 'none')
+//                $("#evidenciasVerAvanceTema").css('display', 'block')
+//
+//                var json = {
+//                    idAvance: datosElemento[4]
+//                }
+//
+//                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Evidencias', json, function (respuesta) {
+//                    if (!respuesta.success) {
+//                        evento.mostrarMensaje('.alertMessageAvance', false, 'No se han obtenido las evidencias del tema.', 5000);
+//                        return;
+//                    }
+//
+//                    var datosG = respuesta.data.avance
+//                    var datos = respuesta.data.avance[0]
+//                    var texto = '';
+//
+//                    $("#comenarioEvidencias").text(datos.comentarios);
+//
+//                    datosG.forEach(datos => {
+//                        texto += `<div class="image gallery-group-1 col-xs-12 col-md-4" style="width: 170px; height: 230px; text-align: center;">
+//                                    <div class="image-inner">
+//                                        <a href="${datos.url}" data-lightbox="gallery-group-1">
+//                                            <img src="${datos.url}" alt="" style="width: 120px; height: 100px;"/>
+//                                        </a>
+//                                        
+//                                    </div>
+//                                    <div class="image-info">
+//                                        <h5 class="title">${datos.fechaModificacion}</h5>
+//                                        
+//                                        <div class="desc">
+//                                        <b>Comentarios</b><br>
+//                                        ${datos.comentarios}
+//                                        </div>
+//                                    </div>
+//                                </div>
+//                        `;
+//                    });
+//
+//                    $("#CONTENT_IMG_EVIDENCIAS").html(texto);
+//                });
+//            } else {
+//                evento.mostrarMensaje('.alertMessageAvance', false, 'No hay evidencias del tema.', 4000);
+//            }
+//        }
+//    });
 
 
 
@@ -1001,6 +926,7 @@ $(function () {
             cerrarModalCambios();
         });
     });
+
 
     function htmlFormularioSubirImagen() {
         let html = `<div class="row">

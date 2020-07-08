@@ -22,7 +22,7 @@ class Cursos extends General {
 
         $datos['cursos'] = $this->DBS->getMyCourses($idUsuario);
 
-        if (!empty($datos)) {
+        if (!empty($datos['cursos'])) {
             $datos['totalCursos'] = count($datos['cursos']);
 
             $puntosTotales = $datos['totalCursos'] * 100;
@@ -137,9 +137,8 @@ class Cursos extends General {
             if (!$rutaImagen) {
                 $rutaImagen = NULL;
             }
-            
+
             $datosCursos['imagen'] = $rutaImagen;
-            
         } else {
             $datosCursos['nombre'] = $infoCourse['curso'][1];
             $datosCursos['url'] = $infoCourse['curso'][2];
@@ -148,7 +147,6 @@ class Cursos extends General {
             $datosCursos['costo'] = $infoCourse['curso'][5];
             $datosCurso = $this->DBS->getCourseById($infoCourse['id']);
             $datosCursos['imagen'] = $datosCurso[0]['imagen'];
-            
         }
 
         $datosCursos['idCurso'] = $infoCourse['id'];
@@ -208,19 +206,26 @@ class Cursos extends General {
     }
 
     public function TemaryCourseByUser($datos) {
+        $datosFaltanteAvance = $this->faltanteAvance($datos);
+        $infoUsuario['temas'] = $datosFaltanteAvance['temp_array'];
+        $infoUsuario['avance'] = $datosFaltanteAvance['avance'];
+        $infoUsuario['faltante'] = $datosFaltanteAvance['faltante'];
+        $infoUsuario['infoUsuario'] = $this->DBS->getInfoUserCurse($datos);
+        $infoUsuario['infoCurso'] = $this->DBS->getCourseById($datos['idCurso']);
+        return $infoUsuario;
+    }
+
+    public function faltanteAvance(array $datos) {
         $arregloCursos = [];
         $key_array = [];
         $temp_array = [];
         $i = 0;
         $avance = 0;
         $faltante = 0;
-
         $temasPorUsuario = $this->DBS->getTemaryCourseByUser($datos);
         $temasPorCurso = $this->DBS->getTemaryById($datos['idCurso']);
 
         $arregloCursos = array_merge($temasPorUsuario, $temasPorCurso);
-
-        //  print_r($arregloCursos);
 
         foreach ($arregloCursos as $val) {
 
@@ -231,7 +236,6 @@ class Cursos extends General {
             $i++;
         }
 
-        //print_r($temp_array);
         foreach ($temp_array as $val) {
             if (isset($val['fechaModificacion'])) {
                 $avance += $val['porcentaje'];
@@ -240,12 +244,7 @@ class Cursos extends General {
             }
         }
 
-        $infoUsuario['temas'] = $temp_array;
-        $infoUsuario['avance'] = $avance;
-        $infoUsuario['faltante'] = $faltante;
-        $infoUsuario['infoUsuario'] = $this->DBS->getInfoUserCurse($datos);
-
-        return $infoUsuario;
+        return array('faltante' => $faltante, 'avance' => $avance, 'temp_array' => $temp_array);
     }
 
     public function showCourse($idCurso) {
@@ -269,8 +268,9 @@ class Cursos extends General {
 
     public function startCourse($infoUsuario) {
         $resultQuery = $this->DBS->insertStartCourse($infoUsuario);
+
         if ($resultQuery['code'] == 200) {
-            return $this->continueCourse($infoUsuario);
+            return $this->TemaryCourseByUser($infoUsuario);
         } else {
             return false;
         }

@@ -76,7 +76,7 @@ class Modelo_Cursos extends Modelo_Base {
     }
 
     public function getTemaryById($idCurso) {
-        return $this->consulta("SELECT * FROM t_curso_tema WHERE idCurso = ".$idCurso);
+        return $this->consulta("SELECT * FROM t_curso_tema WHERE idCurso = " . $idCurso);
     }
 
     public function getPerfilById($idCurso) {
@@ -215,7 +215,7 @@ class Modelo_Cursos extends Modelo_Base {
             return ['code' => 200];
         }
     }
-    
+
     public function getTemaryCourseByUser($datos) {
         return $this->consulta("SELECT 
                                     tema.id, 
@@ -226,7 +226,7 @@ class Modelo_Cursos extends Modelo_Base {
                                     avance.id as idAvance 
                                 FROM t_curso_tema as tema
                                 LEFT JOIN t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
-                                WHERE tema.idCurso = ".$datos['idCurso']." and avance.idUsuario = ".$datos['idUsuario']);
+                                WHERE tema.idCurso = " . $datos['idCurso'] . " and avance.idUsuario = " . $datos['idUsuario']);
     }
 
     public function getDetailCourse($idCurso) {
@@ -241,7 +241,7 @@ class Modelo_Cursos extends Modelo_Base {
                             FROM t_curso_relacion_perfil AS avance
                             LEFT JOIN cat_perfiles AS perfiles ON perfiles.Id = avance.idPerfil
                             INNER JOIN cat_v3_usuarios AS usuarios ON usuarios.IdPerfil = perfiles.Id
-                            WHERE avance.idCurso =".$idCurso." AND usuarios.Flag = 1");
+                            WHERE avance.idCurso =" . $idCurso . " AND usuarios.Flag = 1");
     }
 
     public function insertStartCourse($infoUsuario) {
@@ -261,7 +261,7 @@ class Modelo_Cursos extends Modelo_Base {
             return ['code' => 200];
         }
     }
-    
+
     public function saveEvidance($info, $imagen) {
         $this->iniciaTransaccion();
 
@@ -270,7 +270,7 @@ class Modelo_Cursos extends Modelo_Base {
             'comentarios' => $info["comentarios"],
             'url' => $imagen
         ]);
-        
+
         $ultimoAvance = $this->consulta("select last_insert_id() as Id");
 
         $this->terminaTransaccion();
@@ -282,7 +282,7 @@ class Modelo_Cursos extends Modelo_Base {
             return ['code' => 200, 'idAvance' => $ultimoAvance[0]["Id"]];
         }
     }
-    
+
     public function getEvidenceByID($idEvidencia) {
         return $this->consulta("SELECT 
                                     avance.fechaModificacion, 
@@ -290,19 +290,15 @@ class Modelo_Cursos extends Modelo_Base {
                                     evidencia.url 
                                 FROM t_curso_tema_relacion_avance_usuario as avance
                                 INNER JOIN t_curso_tema_relacion_usuario_evidencia as evidencia on evidencia.idAvanceUsuario = avance.id
-                                WHERE avance.id=".$idEvidencia);
+                                WHERE avance.id=" . $idEvidencia);
     }
-    
+
     public function getInfoUserCurse($datos) {
         return $this->consulta("SELECT 
-                                    curso.nombre as Curso, 
-                                    nombreUsuario(usuario.Id) as NOmbre, 
-                                    perfil.Nombre as Perfil 
-                                from t_curso_relacion_avance_usuario as relacionPerfil
-                                inner join t_curso as curso on curso.id = relacionPerfil.idCurso
-                                inner join cat_v3_usuarios as usuario on usuario.Id = relacionPerfil.idUsuario
-                                inner join cat_perfiles as perfil on perfil.Id = usuario.IdPerfil
-                                where curso.id = " . $datos['idCurso'] . " and usuario.Id = " . $datos['idUsuario']);
+                                nombreUsuario(usuario.Id) as Nombre,
+                                (SELECT Nombre FROM cat_perfiles WHERE Id = usuario.IdPerfil) AS Perfil
+                                FROM cat_v3_usuarios AS usuario
+                                WHERE usuario.Id = " . $datos['idUsuario']);
     }
 
 }

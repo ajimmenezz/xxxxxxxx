@@ -34,19 +34,15 @@
                             <thead>
                                 <tr>
                                     <td class="never">Id</td>
-                                    <td>Nombre</td>
-                                    <td>Descripción</td>
-                                    <td>#Participantes</td>
-                                    <td>Estatus</td>
-                                    <td>Acciones</td>
+                                    <td class="all">Nombre</td>
+                                    <td class="all">Descripción</td>
+                                    <td class="all">#Participantes</td>
+                                    <td class="all">Estatus</td>
+                                    <td class="all">Acciones</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                // var_dump($datos['cursos']);
-
-
-
                                 foreach ($datos['cursos'] as $value) {
                                     echo "<tr>";
                                     echo "<td>" . $value["Id"] . "</td>";
@@ -58,30 +54,18 @@
                                     if ($value["Estatus"] == 0) {
                                         $estado = "Inactivo";
                                     }
+//                                                <i class='fa fa-eye ' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;  onclick='VerCurso(" . $value["Id"] . ")'></i>
                                     echo "<td>" . $estado . "</td>";
                                     echo "<td> 
                                                 <div style='text-align: center;'>
                                                 <input type='hidden' id='idElementSeleccionAccion'>
-                                            
                                                 <i class='fa fa-eye ' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  onclick='btnAdminVerCurso(" . $value["Id"] . ")'></i>
                                                 <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;' onclick='btnAdminEditarCurso(" . $value["Id"] . ")' id='btn-adminEditarCurso' ></i>
                                                 <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(" . $value["Id"] . ")' id='btn-adminEliminarCurso'></i>
-                                  
-
                                             </div>
                                         </td>
                                     </tr>";
                                 }
-
-
-
-                                // foreach ($datos['cursos'] as $value) {
-                                //     echo '<tr>';
-                                //     foreach ($value as $dato) {
-                                //         echo '<td>' . $dato . '</td>';
-                                //     }
-                                //     echo '</tr>';
-                                // }
                                 ?>
                             </tbody>
 
@@ -565,11 +549,15 @@
 
             <script>
                 var eventoPagina = new Pagina();
+                var tablaListCursosVer = [];
+                tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
                 // function cambiar() {
                 //     var pdrs = document.getElementById('file-upload').files[0].name;
                 //     document.getElementById('info').innerHTML = pdrs;
                 //     alert(pdrs)
                 // }
+
+
 
                 function btnAdminEliminarCurso(id) {
                     alert("ELLIMNAR", id);
@@ -723,14 +711,8 @@
                 }
 
                 function btnAdminVerCurso(id) {
-                    console.debug("VER CURSO");
-
-                    // <?php
-                                                            // var_dump($datos['cursos']);
-                                                            // // foreach ($datos['cursos'] as $value) {
-                                                            // // }
-                                                            // 
-                                                            ?>
+                    tablaListCursosVer.iniciarTabla();
+                    tablaListCursosVer.limpiartabla();
 
                     if (id != 0) {
                         $("#idElementSeleccionAccion").val(id)
@@ -738,8 +720,6 @@
                         id = $("#idElementSeleccionAccion").val()
                     }
 
-
-                    console.debug("VER CURSO", id);
                     $('#modalSubirTemarios').modal('hide')
                     $('#modalValidateTemario').modal('hide')
                     $("#modalValidateParticipantes").modal('hide');
@@ -754,39 +734,22 @@
                     $("#evidenciasVerAvance").css('display', 'block')
                     $("#evidenciasVerAvanceTema").css('display', 'none')
 
-
                     var json = {
                         idCurso: id
                     }
 
-                    eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Ver-Curso', json, function (respuesta) {
-                        console.debug("DATOS_VER_CURSO", respuesta);
+                    eventoPagina.enviarPeticionServidor('tablaAsigCursos', 'Administracion_Cursos/Ver-Curso', json, function (respuesta) {
                         if (!respuesta.success) {
                             evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido el curso.', 5000);
                             return;
                         }
 
-                        var datosCurso = respuesta.data.infoCurso
                         var perfiles = respuesta.data.infoCurso.perticipantes
-
                         var total = respuesta.data.infoCurso.total
                         var avance = respuesta.data.infoCurso.avance
 
                         $("#avanceVerCurso").text(avance);
                         $("#totalVerCurso").text(total);
-
-                        // $("#cursoAvanceParticipante").text(perfiles.nombreUsuario);
-                        // $("#cursoAvanceCurso").text('nameCurso');
-                        // $("#cursoAvancePuesto").html(perfiles.Nombre);
-
-                        // console.debug("DATOS_SPAN_TREXT_HTML",perfiles.nombreUsuario,perfiles.Nombre);
-
-
-                        var tablaListCursosVer = []
-
-                        tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
-                        tablaListCursosVer.limpiartabla();
-
 
                         perfiles.forEach(element => {
                             var porcentaje = '0';
@@ -802,13 +765,11 @@
 
                             ]);
                         });
-
-
-
-
                     });
-                }
 
+
+
+                }
 
             </script>
 
@@ -916,16 +877,6 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php
-                                            // foreach ($datos['filas'] as $value) {
-                                            //     echo '<tr>';
-                                            //     foreach ($value as $dato) {
-                                            //         echo '<td>' . $dato . '</td>';
-                                            //     }
-                                            //     echo '</tr>';
-                                            // }
-                                            ?>
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -1120,7 +1071,7 @@
                                                         <?php // $datosConduccion = $datos['datosUsuario']['datosConduccion']; ?>
                                                         <?php // (empty($datosUsuario['UrlFoto'])) ? $foto = '/assets/img/user-13.jpg' : $foto = $datosUsuario['UrlFoto']; ?>
                                                         <img id="divEditarImagenCurso" src="" alt="" />
-                                                        <!--<input type="hidden" value="<?php // echo $usuario['Usuario'];             ?>" id="usuario"/>-->
+                                                        <!--<input type="hidden" value="<?php // echo $usuario['Usuario'];                             ?>" id="usuario"/>-->
                                                         <!--<i class="fa fa-user hide"></i>-->
                                                     </div>
                                                     <!-- Finalizando perfil-image -->

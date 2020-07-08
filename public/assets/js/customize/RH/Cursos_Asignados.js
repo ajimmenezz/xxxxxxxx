@@ -11,8 +11,6 @@ $(function () {
 
     //Inicializa funciones de la plantilla
     App.init();
-//    Gallery.init();
-
 
     let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
     let tablaTemario = new TablaBasica('tabla-temario');
@@ -28,7 +26,6 @@ $(function () {
     evidenciaMaterial.iniciarFileUpload();
 
     $("#cursoTablaContinuar").on('click', function (e) {
-        console.log("continuar");
         $("#tablaAsigCursos").css('display', 'none')
         $("#temarioComenzarCurso").css('display', 'none')
         $("#temarioTerminarCurso").css('display', 'none')
@@ -41,10 +38,10 @@ $(function () {
         evento.iniciarModal("#modal-box", "<strong>Comenzar Curso</strong>", '<p class="text-center"><strong>¿Quieres Comenzar el curso?</strong></p>');
         $("#btnModalBoxConfirmar").off("click");
         $("#btnModalBoxConfirmar").on('click', function (e) {
-            let data = {'idCurso': id, 'idUsuario': idUsuario}
-            evento.enviarEvento('Cursos_Asignados/Comenzar-Curso', data, '#modalEdit', function (respuesta) {
+            let data = {'idCurso': id, 'idUsuario': idUsuario};
+            evento.enviarEvento('Cursos_Asignados/Comenzar-Curso', data, '#modal-box', function (respuesta) {
                 evento.terminarModal("#modal-box");
-                cargarTemarioUsuario();
+                cargarTemarioUsuario(respuesta);
             });
         });
     });
@@ -67,7 +64,6 @@ $(function () {
 
     $("#btn-regresar-temario-completado").off("click");
     $("#btn-regresar-temario-completado").on('click', function (e) {
-
         regresarTemario();
     });
 
@@ -121,6 +117,7 @@ $(function () {
     }
 
     function cargarTemarioUsuario(respuesta) {
+        console.log(respuesta);
         $('#tablaAsigCursos').css('display', 'none');
         $('#asigCursoContinuar').css('display', 'block');
         $('#divMigajaTemario').removeClass("hidden");
@@ -128,6 +125,9 @@ $(function () {
         tablaTemario.limpiartabla();
         tablaTemarioCompletado.limpiartabla();
         tablaTemarioTerminar.limpiartabla();
+
+        $('.divFaltante').empty().html(respuesta.data.temario.faltante + '%');
+        $('.divAvance').empty().html(respuesta.data.temario.avance + '%');
 
         $.each(respuesta.data.temario.temas, function (k, v) {
             let boton = '';
@@ -142,9 +142,6 @@ $(function () {
             tablaTemarioCompletado.agregarDatosFila([v.nombre, v.porcentaje + '%', boton]);
             tablaTemarioTerminar.agregarDatosFila([v.nombre, v.porcentaje + '%', boton]);
         });
-
-        $('.divFaltante').empty().html(respuesta.data.temario.faltante + '%');
-        $('.divAvance').empty().html(respuesta.data.temario.avance + '%');
 
         $(".temarioTablaCompletado").on('click', function (e) {
             let idAvance = $(this).data('avance');
@@ -251,4 +248,5 @@ $(function () {
             return false;
         });
     };
+
 });
