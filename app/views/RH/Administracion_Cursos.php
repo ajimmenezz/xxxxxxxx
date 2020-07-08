@@ -638,12 +638,14 @@
                             });
 
 
-                            var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
+                            var tablaParticipantesEdit1 = new TablaBasica('tabla-cursos-participantesEdit');
 
 
 
                             perfiles.forEach(element => {
-                                tablaParticipantesEdit.agregarDatosFila([
+                                tablaParticipantesEdit1.agregarDatosFila([
+                                    element.id,
+                                    element.idCurso,
                                     element.idPerfil,
                                     element.Nombre,
                                     "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
@@ -1243,6 +1245,8 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th class="never">id</th>
+                                                                    <th class="never">idCurso</th>
+                                                                    <th class="never">idP</th>
                                                                     <th class="all">Puesto</th>
                                                                     <th class="all">Acciones</th>
                                                                 </tr>

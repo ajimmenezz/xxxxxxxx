@@ -386,7 +386,7 @@ $(function () {
                 console.debug("Areeglo_FIN",listTemarioEdit);
 
             });
-    }
+        }
 
       
 
@@ -504,6 +504,8 @@ $(function () {
         alert("string", $nombrePuestoString)
         console.debug("stirng", $nombrePuestoString)
 
+
+
         if ($nombrePuesto !== "") {
             let datosTabla = tablaParticipantesEdit.datosTabla();
             $filas_num = datosTabla.length;
@@ -514,11 +516,11 @@ $(function () {
                 const element = datosTabla[index];
                 console.debug("DATOS", element, element[0])
 
-                listPuestoEdit.push({'nombre': element[0], 'nameString': element[1]});
+                listPuestoEdit.push({'nombre': element[2], 'nameString': element[3],'id':element[0], 'idCurso':element[1]});
 
             }
 
-
+            var idCurso=$("#idElementSeleccionAccion").val();
 
 
             var perfiles = $('#perfiles').val()
@@ -528,7 +530,7 @@ $(function () {
 
             var json = {
                 tipoDato: 0,
-                idCurso: $("#idElementSeleccionAccion").val(),
+                idCurso: idCurso,
                 participantes: {}
 
 
@@ -561,6 +563,8 @@ $(function () {
 
                 listPuestoEdit.forEach(element => {
                     tablaParticipantesEdit.agregarDatosFila([
+                        element.id,
+                        element.idCurso,
                         element.nombre,
                         element.nameString,
                         "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
@@ -586,67 +590,75 @@ $(function () {
 
     tablaParticipantesEdit.evento(function () {
 
+        let numItemsTemario = tablaParticipantesEdit.datosTabla();
+        let datos = tablaParticipantesEdit.datosFila(this);
+        let elim  = tablaParticipantesEdit.eliminarFila(this);  
         let datosTabla = tablaParticipantesEdit.datosTabla();
-
-        console.debug("eliminar", "resto", datosTabla, tablaParticipantesEdit.datosFila(this));
-
-        listPuestoEdit = []
-
-        let datosElemento = tablaParticipantesEdit.datosFila(this);
-        console.debug("DATO_ESPECIFICO", datosElemento);
-
-        if (datosTabla.length !== 0) {
-
-
-
-
-
-
-            console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datosElemento)
-
-            for (let index = 0; index < datosTabla.length; index++) {
-                const element = datosTabla[index];
-                console.debug("DATOS", element, element[0])
-
-
-                listPuestoEdit.push({'nombre': element[0], 'nameString': element[1]});
-
-
+        
+        
+        console.debug("resto",datos,elim,"antes de ELIMANR",numItemsTemario, numItemsTemario.length,"eliminar_FIN",  datosTabla, datosTabla.length, tablaParticipantesEdit.datosFila(this));
+        
+        if (numItemsTemario.length !=0) {
+        
+            var json = {
+                tipoDato: 0,
+                idCurso: datos[1],
+                id: datos[0]
             }
-        }
+        
+        
+        
+            eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
+                console.log("eliminarPART_EDIT", respuesta);
+                if (!respuesta.success) {
+                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el participante.', 5000);
+                    return;
+                }
+        
+                
+                console.debug("FILA_ELIMINAR",elim);
+        
+        
+                listPuestoEdit = []
+        
+        
+                if (datosTabla.length >=0) {
+                    
+                    console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
+        
+            
+                    for (let index = 0; index < datosTabla.length; index++) {
+                        const element = datosTabla[index];
+                        console.debug("DATOS", element, element[0])
+                       
+                        listPuestoEdit.push({'nombre': element[2], 'nameString': element[3],'id':element[0], 'idCurso':element[1]});
+                    }
+        
+                }
+        
+                console.debug("ERREGLO",listPuestoEdit);
+        
+        
+                tablaParticipantesEdit.limpiartabla();
+        
+                listPuestoEdit.forEach(element => {
+        
+                    tablaParticipantesEdit.agregarDatosFila([
+                        element.id,
+                        element.idCurso,
+                        element.nombre,
+                        element.nameString,
+                        "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
 
-        var json = {
-            tipoDato: 0,
-            idCurso: $("#idElementSeleccionAccion").val(),
-            id: datosElemento[0]
-        }
-
-
-        eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
-            console.log("eliminarParticipante_EDIT", respuesta);
-            if (!respuesta.success) {
-                evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el participante.', 5000);
-                return;
-            }
-
-            var elim = tablaParticipantesEdit.eliminarFila(this);
-            tablaParticipantesEdit.limpiartabla();
-
-            listPuestoEdit.forEach(element => {
-
-                tablaParticipantesEdit.agregarDatosFila([
-                    element.nombre,
-                    element.nameString,
-                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
-
-                ]);
+                    ]);
+                });
+                console.debug("Areeglo_FIN",listPuestoEdit);
+        
             });
-
-
-        });
-
-
-        console.debug(elim, "FINAL", listPuestoEdit)
+        }
+        
+        
+        
 
 
     });
