@@ -867,12 +867,7 @@ $(function () {
 
 
 
-
-
-
     //nuevo curso
-
-
 
 
 
