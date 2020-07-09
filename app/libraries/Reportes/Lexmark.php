@@ -95,4 +95,8 @@ class Lexmark extends General
         var_dump($array);
         echo "</pre>";
     }
+
+    public function setTemporalLexmark(){
+        $this->DB->setTemporalLexmark();
+    }
 }
