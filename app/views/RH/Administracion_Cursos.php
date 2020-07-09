@@ -658,17 +658,10 @@
 
                     function btnAdminVerCurso(id){
                         console.debug("VER CURSO");
-                        
-                        // <?php
-                        // var_dump($datos['cursos']);
-                        // // foreach ($datos['cursos'] as $value) {
-
-                        // // }
-
-                        // ?>
+                
 
                         if(id!=0){
-                        $("#idElementSeleccionAccion").val(id)
+                            $("#idElementSeleccionAccion").val(id)
                          }
                          else{
                             id=$("#idElementSeleccionAccion").val()

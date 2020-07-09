@@ -944,12 +944,7 @@ $(function () {
 
 
 
-
-
-
     //nuevo curso
-
-
 
 
 
