@@ -141,8 +141,22 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
 
-    public function insertTemaryCourseEdit($name,$desc,$porcen,$idCurso) {
-       
+    public function updateTemaryCourseEdit(array $datos, array $where) {
+        $this->iniciaTransaccion();
+        $this->actualizar('t_curso_tema', $datos, $where);
+
+        $this->terminaTransaccion();
+        if ($this->estatusTransaccion() === false) {
+            $this->roolbackTransaccion();
+            return true;
+        } else {
+            $this->commitTransaccion();
+            return false;
+        }
+    }
+
+    public function insertTemaryCourseEdit($name, $desc, $porcen, $idCurso) {
+
         $this->iniciaTransaccion();
 
         $this->insertar('t_curso_tema', [
@@ -160,7 +174,7 @@ class Modelo_Cursos extends Modelo_Base {
             return ['code' => 400];
         } else {
             $this->commitTransaccion();
-            return ['code' => 200, 'id'=>$id[0]['id']];
+            return ['code' => 200, 'id' => $id[0]['id']];
         }
     }
 
@@ -171,10 +185,10 @@ class Modelo_Cursos extends Modelo_Base {
             'idCurso' => $idCurso,
             'idPerfil' => $perfil
         ]);
-        
+
         $id = $this->consulta("select last_insert_id() as id");
 
-        
+
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
@@ -182,10 +196,9 @@ class Modelo_Cursos extends Modelo_Base {
             return ['code' => 400];
         } else {
             $this->commitTransaccion();
-            return ['code' => 200, 'id'=>$id[0]['id']];
+            return ['code' => 200, 'id' => $id[0]['id']];
         }
     }
-
 
     public function insertTemaryCourse($infoTema, $idCurso) {
         $this->iniciaTransaccion();
@@ -214,10 +227,10 @@ class Modelo_Cursos extends Modelo_Base {
             'idCurso' => $idCurso,
             'idPerfil' => $perfil
         ]);
-        
+
         $id = $this->consulta("select last_insert_id() as id");
 
-        
+
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {
@@ -225,7 +238,7 @@ class Modelo_Cursos extends Modelo_Base {
             return ['code' => 400];
         } else {
             $this->commitTransaccion();
-            return ['code' => 200, 'id'=>$id[0]['id']];
+            return ['code' => 200, 'id' => $id[0]['id']];
         }
     }
 
@@ -249,7 +262,7 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
 
-    public function deleteElementById($idCurso,$id,$tabla) {
+    public function deleteElementById($idCurso, $id, $tabla) {
         $this->iniciaTransaccion();
 
         $this->actualizar($tabla, array(

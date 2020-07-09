@@ -317,12 +317,10 @@
                                         <div class="row">
                                             <div class="col-md-9">
                                                 <div class="form-group">
-                                            <!-- <input id="perfiles" type="hidden" value="<?php echo $datos['perfiles']; ?>"> -->
                                                     <label for="puesto">Puesto </label>
                                                     <select id="puesto" class="form-control" style="width: 100%" >
                                                         <option value="">Seleccionar</option>
                                                         <?php
-                                                        var_dump($datos['perfiles']);
                                                         foreach ($datos['perfiles'] as $value) {
 
                                                             echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
@@ -551,6 +549,8 @@
                 var eventoPagina = new Pagina();
                 var tablaListCursosVer = [];
                 tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+                var tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
+                var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
 
                 function btnAdminEliminarCurso(id) {
                     alert("ELLIMNAR", id);
@@ -560,6 +560,11 @@
                 }
 
                 function btnAdminEditarCurso(id) {
+                    tablaTemariosEdit.iniciarTabla();
+                    tablaParticipantesEdit.iniciarTabla();
+                    tablaTemariosEdit.limpiartabla();
+                    tablaParticipantesEdit.limpiartabla();
+
                     let evidenciaCursoEditar = new FileUpload_Boton('evidenciasEditarCurso', {
                         url: 'Administracion_Cursos/Editar-Curso',
                         extensiones: ['jpg', 'jpeg', 'png'],
@@ -589,6 +594,9 @@
                             return;
                         }
 
+                        let selectPuestoEditar = new SelectBasico('puestoEdit');
+                        selectPuestoEditar.cargaDatosEnSelect(respuesta.data.infoCurso.selectPuesto);
+
                         var cursos = respuesta.data.infoCurso.curso;
                         var perfiles = respuesta.data.infoCurso.perfiles;
                         var temas = respuesta.data.infoCurso.temas;
@@ -605,11 +613,10 @@
                             $('#divEditarImagenCurso').attr('src', imagenCurso);
                         }
 
-                        var tablaTemariosEdit1 = new TablaBasica('tabla-cursos-temarioEdit');
 
                         temas.forEach(element => {
                             if (element.estatus != 0 && element.estatus != '0') {
-                                tablaTemariosEdit1.agregarDatosFila([
+                                tablaTemariosEdit.agregarDatosFila([
                                     element.nombre,
                                     element.porcentaje + '%',
                                     element.id,
@@ -619,10 +626,9 @@
                             }
                         });
 
-                        var tablaParticipantesEdit1 = new TablaBasica('tabla-cursos-participantesEdit');
 
                         perfiles.forEach(element => {
-                            tablaParticipantesEdit1.agregarDatosFila([
+                            tablaParticipantesEdit.agregarDatosFila([
                                 element.id,
                                 element.idCurso,
                                 element.idPerfil,
@@ -1165,17 +1171,9 @@
                                         <div class="row">
                                             <div class="col-md-9">
                                                 <div class="form-group">
-                                                <!-- <input id="perfiles" type="hidden" value="<?php echo $datos['perfiles']; ?>"> -->
-                                                    <label for="puesto">Puesto </label>
+                                                    <label for="puestoEdit">Puesto </label>
                                                     <select id="puestoEdit" class="form-control" style="width: 100%" data-parsley-required="true">
                                                         <option value="">Seleccionar</option>
-                                                        <?php
-                                                        //  var_dump($datos['perfiles']);
-                                                        foreach ($datos['perfiles'] as $value) {
-
-                                                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                        }
-                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>

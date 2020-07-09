@@ -113,13 +113,30 @@ class Cursos extends General {
     }
 
     public function getCourse($idCurso) {
+        $arrayIdPerfil = array();
+        $arrayPerfiles = array();
         $curso = $this->DBS->getCourseById($idCurso['idCurso']);
         $temasCurso = $this->DBS->getTemaryById($idCurso['idCurso']);
         $perfilesCurso = $this->DBS->getPerfilById($idCurso['idCurso']);
+        $datosPerfiles = $this->getProfile();
+        $contador = 0;
+
+        foreach ($perfilesCurso as $key => $value) {
+            array_push($arrayIdPerfil, $value['idPerfil']);
+        }
+
+        foreach ($datosPerfiles as $key => $value) {
+            if (!in_array($value['Id'], $arrayIdPerfil)) {
+                $arrayPerfiles[$contador]['id'] = $value['Id'];
+                $arrayPerfiles[$contador]['text'] = $value['Nombre'];
+                $contador++;
+            }
+        }
 
         $infoCurso['curso'] = $curso[0];
         $infoCurso['temas'] = $temasCurso;
         $infoCurso['perfiles'] = $perfilesCurso;
+        $infoCurso['selectPuesto'] = $arrayPerfiles;
 
         return $infoCurso;
     }
@@ -173,7 +190,7 @@ class Cursos extends General {
         } else {
             $tabla = 't_curso_relacion_perfil';
         }
-        $resultQuery = $this->DBS->deleteElementById($datos['idCurso'],$datos['id'], $tabla);
+        $resultQuery = $this->DBS->deleteElementById($datos['idCurso'], $datos['id'], $tabla);
         if ($resultQuery['code'] == 200) {
             return true;
         } else {
@@ -184,11 +201,13 @@ class Cursos extends General {
     public function addElementCourse($datos) {
         $temasCurso = [];
         $perfilesCurso = [];
+
         if ($datos['tipoDato'] == 1) {
-            
-            $resultQuery = $this->DBS->insertTemaryCourseEdit($datos['nombre'],$datos['descripcion'],$datos['porcentaje'],$datos['idCurso']);
+            $resultQuery = $this->DBS->insertTemaryCourseEdit($datos['nombre'], $datos['descripcion'], $datos['porcentaje'], $datos['idCurso']);
+            $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $datos['porcentaje']), array('idCurso' => $datos['idCurso']));
             $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
         } else {
+//            var_dump('pumas');
             $resultQuery = $this->DBS->insertParticipantsCourseEdit($datos['idPerfil'], $datos['idCurso']);
             $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
         }
@@ -197,8 +216,7 @@ class Cursos extends General {
         $info['perfiles'] = $perfilesCurso;
 
         if ($resultQuery['code'] == 200) {
-            return ['response' => true, 'info' => $info,'id'=>$resultQuery['id']];
-            
+            return ['response' => true, 'info' => $info, 'id' => $resultQuery['id']];
         } else {
             return false;
         }

@@ -612,7 +612,6 @@ class Secciones extends General {
                 $datos['folios'] = $this->Solicitud->sla();
                 break;
             case 'RH/Administracion_Cursos':
-
                 $datos['cursos'] = $this->administracionCursos->getCourses();
                 $datos['perfiles'] = $this->administracionCursos->getProfile();
                 $datos['certificados'] = $this->administracionCursos->getCertificate();

@@ -221,64 +221,39 @@ $(function () {
     let listTemarioEdit = []
 
     $('#btn-agregar-nuevo-temarioEdit').on('click', function (e) {
-        //modalSubirTemarios
-        console.log("btn-agregar-nuevo-temario_EDIT")
-        $nombreTemario = $("#nombreTemarioEdit").val();
-        if ($nombreTemario !== "") {
-
+        let nombreTemario = $("#nombreTemarioEdit").val();
+        if (nombreTemario !== "") {
             let datosTabla = tablaTemariosEdit.datosTabla();
-            $filas_num = datosTabla.length;
+            let filas_num = datosTabla.length;
             let datos = tablaTemariosEdit.datosFila(this);
-
             var idCurso = $("#idElementSeleccionAccion").val();
-
-
-            console.debug(datos, "DATOS TABLA TEMARIOS", datosTabla, $filas_num, datos);
-
-            $long = datosTabla.length + 1;
-            $porcentaje = (100 / $long).toFixed(2);
+            let long = datosTabla.length + 1;
+            let porcentaje = (100 / long).toFixed(2);
 
             listTemarioEdit = []
             for (let index = 0; index < datosTabla.length; index++) {
                 const element = datosTabla[index];
-                console.debug("DATOS", element, element[0])
-
-                listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2], 'idCurso': element[3]});
-
+                listTemarioEdit.push({'nombre': element[0], 'porcentaje': porcentaje, 'id': element[2], 'idCurso': element[3]});
             }
-
-
-
-            console.debug($nombreTemario, $porcentaje, "DATOS tEMARIO1", listTemarioEdit)
-
 
             var json = {
                 tipoDato: 1,
                 idCurso: idCurso,
-                nombre: $nombreTemario,
-                porcentaje: $porcentaje,
+                nombre: nombreTemario,
+                porcentaje: porcentaje,
                 descripcion: ''
             }
 
-
-
-            console.debug("DATOS_SEND", json)
-
-
-            eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
-                console.log("nuevoTema_EDIT", respuesta);
+            eventoPagina.enviarPeticionServidor('administracion-cursos-EDITAR', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
                 if (!respuesta.success) {
                     evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el tema.', 5000);
                     return;
                 }
 
-                listTemarioEdit.push({'nombre': $nombreTemario, 'porcentaje': $porcentaje, 'id': respuesta.data.id, 'idCurso': idCurso});
-
-
+                listTemarioEdit.push({'nombre': nombreTemario, 'porcentaje': porcentaje, 'id': respuesta.data.id, 'idCurso': idCurso});
                 tablaTemariosEdit.limpiartabla();
-
                 listTemarioEdit.forEach(element => {
-                    element.porcentaje = $porcentaje;
+                    element.porcentaje = porcentaje;
                     tablaTemariosEdit.agregarDatosFila([
                         element.nombre,
                         element.porcentaje + '%',
@@ -288,15 +263,11 @@ $(function () {
 
                     ]);
                 });
-
-
             });
 
-
-
-
-            console.debug($nombreTemario, $porcentaje, "DATOS tEMARIO2", listTemarioEdit)
             $("#nombreTemarioEdit").val("");
+        } else {
+            evento.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha registrado el modulo.', 5000);
         }
     });
 
@@ -308,9 +279,6 @@ $(function () {
         let elim = tablaTemariosEdit.eliminarFila(this);
         let datosTabla = tablaTemariosEdit.datosTabla();
 
-
-        console.debug("resto", datos, elim, "antes de ELIMANR", numItemsTemario, numItemsTemario.length, "eliminar_FIN", datosTabla, datosTabla.length, tablaTemariosEdit.datosFila(this));
-
         if (numItemsTemario.length != 0) {
 
             var json = {
@@ -319,41 +287,23 @@ $(function () {
                 id: datos[2]
             }
 
-
-
             eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Eliminar-ElementoCurso', json, function (respuesta) {
-                console.log("eliminarTema_EDIT", respuesta);
                 if (!respuesta.success) {
                     evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha eliminado el tema.', 5000);
                     return;
                 }
 
-
-                console.debug("FILA_ELIMINAR", elim);
-
-
                 listTemarioEdit = []
 
-
                 if (datosTabla.length >= 0) {
-                    $long = datosTabla.length;
-                    $porcentaje = (100 / $long).toFixed(2);
-
-
-                    console.debug(datosTabla, "ENTRE FOR", datosTabla.length, datos)
+                    let long = datosTabla.length;
+                    let porcentaje = (100 / long).toFixed(2);
 
                     for (let index = 0; index < datosTabla.length; index++) {
                         const element = datosTabla[index];
-                        console.debug("DATOS", element, element[0])
-
-                        listTemarioEdit.push({'nombre': element[0], 'porcentaje': $porcentaje, 'id': element[2], 'idCurso': element[3]});
-
+                        listTemarioEdit.push({'nombre': element[0], 'porcentaje': porcentaje, 'id': element[2], 'idCurso': element[3]});
                     }
                 }
-
-                console.debug("ERREGLO", listTemarioEdit);
-
-
 
                 tablaTemariosEdit.limpiartabla();
 
@@ -368,14 +318,8 @@ $(function () {
 
                     ]);
                 });
-                console.debug("Areeglo_FIN", listTemarioEdit);
-
             });
         }
-
-
-
-
     });
 
 
@@ -384,7 +328,8 @@ $(function () {
 
 
     let listPuesto = [];
-    let selectPartic = new SelectBasico('puesto')
+    let selectPartic = new SelectBasico('puesto');
+    
     $("#btn-nuevo-puestoParticipante").on('click', function (e) {
         //modalSubirTemarios
         console.log("btn-nuevo-puestoParticipante")
@@ -479,60 +424,38 @@ $(function () {
 
 
     let listPuestoEdit = [];
-    let selectPart = new SelectBasico('puestoEdit')
+
+    $('#btn-nuevo-puestoParticipanteEdit').off("click");
     $("#btn-nuevo-puestoParticipanteEdit").on('click', function (e) {
-        //modalSubirTemarios
-        console.log("btn-nuevo-puestoParticipante_EDIT")
+        let nombrePuesto = selectPart.obtenerValor()
+        let nombrePuestoString = selectPart.obtenerTexto()
 
-        $nombrePuesto = selectPart.obtenerValor()
-        $nombrePuestoString = selectPart.obtenerTexto()
-        alert("string", $nombrePuestoString)
-        console.debug("stirng", $nombrePuestoString)
-
-
-
-        if ($nombrePuesto !== "") {
+        if (nombrePuesto !== "") {
             let datosTabla = tablaParticipantesEdit.datosTabla();
-            $filas_num = datosTabla.length;
+            let filas_num = datosTabla.length;
             let datos = tablaParticipantesEdit.datosFila(this);
-
             let listPuestoEdit = [];
+            var idCurso = $("#idElementSeleccionAccion").val();
+            var perfiles = $('#perfiles').val()
+
             for (let index = 0; index < datosTabla.length; index++) {
                 const element = datosTabla[index];
-                console.debug("DATOS", element, element[0])
-
                 listPuestoEdit.push({'nombre': element[2], 'nameString': element[3], 'id': element[0], 'idCurso': element[1]});
-
             }
-
-            var idCurso = $("#idElementSeleccionAccion").val();
-
-
-            var perfiles = $('#perfiles').val()
-            console.debug('per', perfiles, 'files', datos, "DATOS TABLA TEMARIOS", datosTabla, $filas_num, datos);
-
-            console.debug($nombrePuesto, "DATOS tEMARIO1", listPuestoEdit)
 
             var json = {
                 tipoDato: 0,
                 idCurso: idCurso,
-                idPerfil: $nombrePuesto
-
-
+                idPerfil: nombrePuesto
             }
 
-            console.debug("DATOS_SEND", json);
-
-            eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
-                console.log("nuevoParticipante_EDIT", respuesta);
+            eventoPagina.enviarPeticionServidor('administracion-cursos-EDITAR', 'Administracion_Cursos/Agregar-ElementoCurso', json, function (respuesta) {
                 if (!respuesta.success) {
-                    evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha registrado el participante.', 5000);
+                    evento.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha registrado el participante.', 5000);
                     return;
                 }
 
-                //listPuestoEdit.push({'nombre': $nombrePuesto});
-                listPuestoEdit.push({'nombre': $nombrePuesto, 'nameString': $nombrePuestoString, 'id': respuesta.data.id, 'idCurso': idCurso});
-
+                listPuestoEdit.push({'nombre': nombrePuesto, 'nameString': nombrePuestoString, 'id': respuesta.data.id, 'idCurso': idCurso});
 
                 tablaParticipantesEdit.limpiartabla();
 
@@ -543,21 +466,13 @@ $(function () {
                         element.nombre,
                         element.nameString,
                         "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
-
                     ]);
                 });
-
-
             });
-
-
-
-
-            console.debug($nombrePuesto, "DATOS part2", listPuestoEdit)
             $("#puestoEdit").val("");
+        } else {
+            evento.mostrarMensaje('#eventAccionEditarCurso', false, 'Debe seleccionar un puesto.', 5000);
         }
-
-
     });
 
 
