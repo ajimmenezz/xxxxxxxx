@@ -66,6 +66,7 @@ $(function () {
             tabla.agregarFila("#data-table-SLA", [
                 item.Folio,
                 item.Sucursal,
+                item.Zona,
                 item.AtiendeSolicitud,
                 item.Tecnico,
                 item.FechaCreacionServicio,
