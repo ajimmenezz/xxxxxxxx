@@ -96,7 +96,7 @@
                                     foreach ($datos['cursos']['cursos'] as $key => $value) {
                                         if ($value['estatus'] === '1' && $value['Porcentaje'] === '100') {
                                             $accion = '<span style="color: #348fe2;"> <i class="fa fa-check-square"></i> Completado</span>';
-                                        } elseif ($value['estatus'] === '1' && $value['Porcentaje'] < '100' && $value['Porcentaje'] > '0') {
+                                        } elseif ($value['estatus'] === '1' && !empty($value['FechaInicio'])) {
                                             $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-continuar-curso" data-id="' . $value['id'] . '"><strong style="color: gold;"> <i class="fa fa-fast-forward"></i> Continuar</strong></a>';
                                         } elseif ($value['estatus'] === '1' && $value['Porcentaje'] === '0') {
                                             $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-comenzar-curso" data-id="' . $value['id'] . '"><strong style="color: #00acac;"> <i class="fa fa-youtube-play"></i> Comenzar</strong></a>';

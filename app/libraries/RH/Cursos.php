@@ -207,7 +207,6 @@ class Cursos extends General {
             $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $datos['porcentaje']), array('idCurso' => $datos['idCurso']));
             $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
         } else {
-//            var_dump('pumas');
             $resultQuery = $this->DBS->insertParticipantsCourseEdit($datos['idPerfil'], $datos['idCurso']);
             $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
         }
@@ -302,13 +301,15 @@ class Cursos extends General {
         }
     }
 
-    public function addEvidence($infoAvence) {
+    public function addEvidence(array $infoAvence) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $rutaImagen = $this->guardarImagen('evidencias');
-
+        $infoAvence['fechaModificacion'] = $fecha;
+        $infoAvence['url'] = $rutaImagen;
         $resultQuery = $this->DBS->saveEvidance($infoAvence, $rutaImagen);
 
         if ($resultQuery['code'] == 200) {
-            return $this->DBS->getEvidenceByID($resultQuery['idAvance']);
+            return $this->TemaryCourseByUser($infoAvence);
         } else {
             return false;
         }

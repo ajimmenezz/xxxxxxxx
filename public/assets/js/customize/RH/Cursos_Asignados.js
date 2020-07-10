@@ -18,6 +18,7 @@ $(function () {
     let tablaTemarioCompletado = new TablaBasica('tabla-temario-completado');
     let idUsuario = $('#valorIdUsuario').val();
     let idTema = null;
+    let idCurso = null;
     let evidenciaMaterial = new FileUpload_Boton('evidencias', {
         url: 'Cursos_Asignados/Agregar-Avance',
         extensiones: ['jpg', 'jpeg', 'png'],
@@ -34,13 +35,14 @@ $(function () {
 
     $(".btn-comenzar-curso").off("click");
     $(".btn-comenzar-curso").on('click', function (e) {
-        let id = $(this).data('id');
+        idCurso = $(this).data('id');
         evento.iniciarModal("#modal-box", "<strong>Comenzar Curso</strong>", '<p class="text-center"><strong>¿Quieres Comenzar el curso?</strong></p>');
         $("#btnModalBoxConfirmar").off("click");
         $("#btnModalBoxConfirmar").on('click', function (e) {
-            let data = {'idCurso': id, 'idUsuario': idUsuario};
+            let data = {'idCurso': idCurso, 'idUsuario': idUsuario};
             evento.enviarEvento('Cursos_Asignados/Comenzar-Curso', data, '#modal-box', function (respuesta) {
                 evento.terminarModal("#modal-box");
+                respuesta.idCurso = idCurso;
                 cargarTemarioUsuario(respuesta);
             });
         });
@@ -48,9 +50,10 @@ $(function () {
 
     $(".btn-continuar-curso").off("click");
     $(".btn-continuar-curso").on('click', function (e) {
-        let id = $(this).data('id');
-        let data = {'idCurso': id, 'idUsuario': idUsuario}
+        let idCurso = $(this).data('id');
+        let data = {'idCurso': idCurso, 'idUsuario': idUsuario}
         evento.enviarEvento('Cursos_Asignados/Continuar-Curso', data, '#tablaAsigCursos', function (respuesta) {
+            respuesta.idCurso = idCurso;
             cargarTemarioUsuario(respuesta);
         });
     });
@@ -76,26 +79,36 @@ $(function () {
     $("#btn-registrar-avance").off("click");
     $("#btn-registrar-avance").on('click', function (e) {
         let comentarios = $('#cometariosAvanceCurso').val();
-        let evidencias = $('#evidenciasAvanceCurso').val();
+        let evidencias = $('#evidencias').val();
         let idUsuario = $('#valorIdUsuario').val();
-        let data = {comentarios: comentarios, idUsuario: idUsuario, idTema: idTema};
+        let data = {comentarios: comentarios, idUsuario: idUsuario, idTema: idTema, idCurso: idCurso};
 
         if (evidencias !== '') {
             if (comentarios !== '') {
-                evidenciaMaterial.enviarPeticionServidor('evidencias', data, function (respuesta) {
-                    if (bug.validar(respuesta)) {
-                        evento.iniciarModal(
-                                "#modalEdit",
-                                "<strong>Avance Tema</strong>",
-                                `<p class="text-center">Se registro el avance del curso con éxito.</p>                      
+                evidenciaMaterial.enviarPeticionServidor('temarioTerminarCurso', data, function (respuesta) {
+                    evento.iniciarModal(
+                            "#modal-box",
+                            "<strong>Avance Tema</strong>",
+                            `<p class="text-center">Se registro el avance del curso con éxito.</p>                      
                                 <p class="text-center"><span class="fa-stack fa-2x text-success">
                             <i class="fa fa-circle fa-stack-2x"></i>
                             <i class="fa fa-check fa-stack-1x fa-inverse"></i>
                         </span></i></p>`);
 
-                        $('#btnAceptar').addClass('hidden');
-                        $('#btnCancelar').empty().html('Cerrar');
-                    }
+                    $('#btnModalBoxConfirmar').addClass('hidden');
+                    $('#btnModalBoxAbortar').empty().html('Cerrar');
+                    $("#btnModalBoxAbortar").off("click");
+                    $("#btnModalBoxAbortar").on('click', function (e) {
+                        $('#cometariosAvanceCurso').val('');
+                        evidenciaMaterial.limpiarElemento();
+                        $("#temarioTerminarCurso").css('display', 'none');
+                        
+                        if(respuesta.data.temario.temas.length === 1){
+                            location.reload();
+                        }else{
+                            cargarTemarioUsuario(respuesta);
+                        }
+                    });
                 });
             } else {
                 evento.mostrarMensaje("#errorCometariosAvanceCurso", false, "Agrega la comentarios.", 3000);
@@ -117,7 +130,6 @@ $(function () {
     }
 
     function cargarTemarioUsuario(respuesta) {
-        console.log(respuesta);
         $('#tablaAsigCursos').css('display', 'none');
         $('#asigCursoContinuar').css('display', 'block');
         $('#divMigajaTemario').removeClass("hidden");
@@ -133,7 +145,7 @@ $(function () {
             let boton = '';
 
             if (v.idAvance === undefined) {
-                boton = `<span class="temarioTablaTerminar" data-avance="${v.id}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i> Terminar</span>`;
+                boton = `<span class="temarioTablaTerminar" data-curso="${respuesta.idCurso}"  data-avance="${v.id}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #00acac; "><i class="fa fa-youtube-play" ></i> Terminar</span>`;
             } else {
                 boton = `<span class="temarioTablaCompletado" data-avance="${v.idAvance}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-check-square"></i> Completado</span>`;
             }
@@ -163,6 +175,7 @@ $(function () {
 
         $(".temarioTablaTerminar").on('click', function (e) {
             idTema = $(this).data('avance');
+            idCurso = $(this).data('curso');
             $("#tablaAsigCursos").css('display', 'none');
             $("#asigCursoContinuar").css('display', 'none');
             $("#temarioComenzarCurso").css('display', 'none');
@@ -172,19 +185,17 @@ $(function () {
 
     function crearGaleriaAvance(avances) {
         let html = '';
-        $.each(avances, function (k, v) {
+        let arrayAvances = avances[0].url.split(',');
+
+        $.each(arrayAvances, function (k, v) {
             html += `<div class="image gallery-group-1">
                             <div class="image-inner">
-                                <a href="${v.url}" data-lightbox="gallery-group-1">
-                                    <img src="${v.url}" alt="" />
+                                <a href="${v}" data-lightbox="gallery-group-1">
+                                    <img src="${v}" alt="" />
                                 </a>
                             </div>
                             <div class="image-info">
-                                <h5>Fecha ${v.fechaModificacion}</h5>
-                            </div>
-                            <h5 class="title">Comentarios</h5>
-                            <div class="desc">
-                                ${v.comentarios}
+                                <h5>Fecha ${avances[0].fechaModificacion}</h5>
                             </div>
                         </div>`;
         });

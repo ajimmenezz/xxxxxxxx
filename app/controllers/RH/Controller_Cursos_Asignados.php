@@ -42,7 +42,7 @@ class Controller_Cursos_Asignados extends Base {
                 $resultado = $this->curso->addEvidence($this->input->post());
                 if ($resultado) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
-                    $response->addData("avance", $resultado);
+                    $response->addData("temario", $resultado);
                 } else {
                     $response->onError("Error", "Error al agregar avances", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
