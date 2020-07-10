@@ -32,7 +32,7 @@ class Cursos extends General {
             }
             $sumaAvance *= 100;
             $sumaAvance = $sumaAvance / $puntosTotales;
-            $datos['avance'] = $sumaAvance;
+            $datos['avance'] = ceil($sumaAvance);
             $datos['feltante'] = 100 - $sumaAvance;
         } else {
             $datos['totalCursos'] = '0';
@@ -55,7 +55,7 @@ class Cursos extends General {
         return $this->DBS->getTypeCourses();
     }
 
-    public function newCourse($infoCourse) {
+    public function newCourse(array $infoCourse) {
         $rutaImagen = $this->guardarImagen('evidencias');
 
         if (!$rutaImagen) {
@@ -260,7 +260,7 @@ class Cursos extends General {
             }
         }
 
-        return array('faltante' => $faltante, 'avance' => $avance, 'temp_array' => $temp_array);
+        return array('faltante' => ceil($faltante), 'avance' => ceil($avance), 'temp_array' => $temp_array);
     }
 
     public function showCourse($idCurso) {
