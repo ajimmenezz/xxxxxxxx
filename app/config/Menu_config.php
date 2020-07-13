@@ -401,6 +401,7 @@ $config['Generales'] = array(
             'Componentes/Pagina',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
+            'Componentes/Tablas/TablaRender',
             'Componentes/FileUpload/IUpload',
             'Componentes/FileUpload/FileUpload_Boton',
             'Componentes/HerramientasWeb/Bug',

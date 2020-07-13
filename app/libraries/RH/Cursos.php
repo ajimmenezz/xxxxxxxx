@@ -228,6 +228,8 @@ class Cursos extends General {
         $infoUsuario['faltante'] = $datosFaltanteAvance['faltante'];
         $infoUsuario['infoUsuario'] = $this->DBS->getInfoUserCurse($datos);
         $infoUsuario['infoCurso'] = $this->DBS->getCourseById($datos['idCurso']);
+        $infoUsuario['cursos'] = $this->DBS->getMyCourses($datos['idUsuario']);
+        
         return $infoUsuario;
     }
 

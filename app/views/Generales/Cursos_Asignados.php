@@ -87,6 +87,7 @@
                                     <td class="all">Avance</td>
                                     <td class="all">Fecha de asignación</td>
                                     <td class="all">Estatus</td>
+                                    <td class="never">Fecha Inicio</td>
                                     <td class="all">Acciones</td>
                                 </tr>
                             </thead>
@@ -94,23 +95,14 @@
                                 <?php
                                 if (!empty($datos['cursos']['cursos'])) {
                                     foreach ($datos['cursos']['cursos'] as $key => $value) {
-                                        if ($value['estatus'] === '1' && ceil($value['Porcentaje']) == '100') {
-                                            $accion = '<span style="color: #348fe2;"> <i class="fa fa-check-square"></i> Completado</span>';
-                                        } elseif ($value['estatus'] === '1' && !empty($value['FechaInicio'])) {
-                                            $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-continuar-curso" data-id="' . $value['id'] . '"><strong style="color: #f0ad4e;"> <i class="fa fa-fast-forward"></i> Continuar</strong></a>';
-                                        } elseif ($value['estatus'] === '1' && $value['Porcentaje'] == '0') {
-                                            $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-comenzar-curso" data-id="' . $value['id'] . '"><strong style="color: #00acac;"> <i class="fa fa-youtube-play"></i> Comenzar</strong></a>';
-                                        } else {
-                                            $accion = '<strong><i class="fa fa-ban"></i> Suspendido</strong>';
-                                        }
-
                                         echo '<tr>';
                                         echo '<td>' . $value['id'] . '</td>';
                                         echo '<td>' . $value['Nombre'] . '</td>';
                                         echo '<td>' . ceil($value['Porcentaje']) . '%</td>';
                                         echo '<td>' . $value['fechaAsignacion'] . '</td>';
                                         echo '<td>' . $value['EstatusNombre'] . '</td>';
-                                        echo '<td>' . $accion . '</td>';
+                                        echo '<td>' . $value['FechaInicio'] . '</td>';
+                                        echo '<td></td>';
                                         echo '</tr>';
                                     }
                                 }
@@ -175,9 +167,11 @@
                         <table id="tabla-temario" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <td>Modulo</td>
-                                    <td>Avance</td>
-                                    <td>Acciones</td>
+                                    <td class="never">IdCurso</td>
+                                    <td class="never">IdAvance</td>
+                                    <td class="all">Modulo</td>
+                                    <td class="all">Avance</td>
+                                    <td class="all">Acciones</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -256,9 +250,11 @@
                         <table id="tabla-temario-completado" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <td>Modulo</td>
-                                    <td>Avance</td>
-                                    <td>Acciones</td>
+                                    <td class="never">IdCurso</td>
+                                    <td class="never">IdAvance</td>
+                                    <td class="all">Modulo</td>
+                                    <td class="all">Avance</td>
+                                    <td class="all">Acciones</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -338,6 +334,8 @@
                         <table id="tabla-temario-terminar" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
+                                    <td class="never">IdCurso</td>
+                                    <td class="never">IdAvance</td>
                                     <td>Modulo</td>
                                     <td>Avance</td>
                                     <td>Acciones</td>
