@@ -94,11 +94,11 @@
                                 <?php
                                 if (!empty($datos['cursos']['cursos'])) {
                                     foreach ($datos['cursos']['cursos'] as $key => $value) {
-                                        if ($value['estatus'] === '1' && $value['Porcentaje'] === '100') {
+                                        if ($value['estatus'] === '1' && ceil($value['Porcentaje']) == '100') {
                                             $accion = '<span style="color: #348fe2;"> <i class="fa fa-check-square"></i> Completado</span>';
-                                        } elseif ($value['estatus'] === '1' && $value['Porcentaje'] < '100' && $value['Porcentaje'] > '0') {
-                                            $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-continuar-curso" data-id="' . $value['id'] . '"><strong style="color: gold;"> <i class="fa fa-fast-forward"></i> Continuar</strong></a>';
-                                        } elseif ($value['estatus'] === '1' && $value['Porcentaje'] === '0') {
+                                        } elseif ($value['estatus'] === '1' && !empty($value['FechaInicio'])) {
+                                            $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-continuar-curso" data-id="' . $value['id'] . '"><strong style="color: #f0ad4e;"> <i class="fa fa-fast-forward"></i> Continuar</strong></a>';
+                                        } elseif ($value['estatus'] === '1' && $value['Porcentaje'] == '0') {
                                             $accion = '<a href="javascript:;" class="btn btn-link btn-xs btn-comenzar-curso" data-id="' . $value['id'] . '"><strong style="color: #00acac;"> <i class="fa fa-youtube-play"></i> Comenzar</strong></a>';
                                         } else {
                                             $accion = '<strong><i class="fa fa-ban"></i> Suspendido</strong>';
@@ -107,7 +107,7 @@
                                         echo '<tr>';
                                         echo '<td>' . $value['id'] . '</td>';
                                         echo '<td>' . $value['Nombre'] . '</td>';
-                                        echo '<td>' . $value['Porcentaje'] . '%</td>';
+                                        echo '<td>' . ceil($value['Porcentaje']) . '%</td>';
                                         echo '<td>' . $value['fechaAsignacion'] . '</td>';
                                         echo '<td>' . $value['EstatusNombre'] . '</td>';
                                         echo '<td>' . $accion . '</td>';

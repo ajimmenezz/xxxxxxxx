@@ -32,7 +32,7 @@ class Cursos extends General {
             }
             $sumaAvance *= 100;
             $sumaAvance = $sumaAvance / $puntosTotales;
-            $datos['avance'] = $sumaAvance;
+            $datos['avance'] = ceil($sumaAvance);
             $datos['feltante'] = 100 - $sumaAvance;
         } else {
             $datos['totalCursos'] = '0';
@@ -55,7 +55,7 @@ class Cursos extends General {
         return $this->DBS->getTypeCourses();
     }
 
-    public function newCourse($infoCourse) {
+    public function newCourse(array $infoCourse) {
         $rutaImagen = $this->guardarImagen('evidencias');
 
         if (!$rutaImagen) {
@@ -207,7 +207,6 @@ class Cursos extends General {
             $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $datos['porcentaje']), array('idCurso' => $datos['idCurso']));
             $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
         } else {
-//            var_dump('pumas');
             $resultQuery = $this->DBS->insertParticipantsCourseEdit($datos['idPerfil'], $datos['idCurso']);
             $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
         }
@@ -261,7 +260,7 @@ class Cursos extends General {
             }
         }
 
-        return array('faltante' => $faltante, 'avance' => $avance, 'temp_array' => $temp_array);
+        return array('faltante' => ceil($faltante), 'avance' => ceil($avance), 'temp_array' => $temp_array);
     }
 
     public function showCourse($idCurso) {
@@ -302,13 +301,15 @@ class Cursos extends General {
         }
     }
 
-    public function addEvidence($infoAvence) {
+    public function addEvidence(array $infoAvence) {
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
         $rutaImagen = $this->guardarImagen('evidencias');
-
+        $infoAvence['fechaModificacion'] = $fecha;
+        $infoAvence['url'] = $rutaImagen;
         $resultQuery = $this->DBS->saveEvidance($infoAvence, $rutaImagen);
 
         if ($resultQuery['code'] == 200) {
-            return $this->DBS->getEvidenceByID($resultQuery['idAvance']);
+            return $this->TemaryCourseByUser($infoAvence);
         } else {
             return false;
         }

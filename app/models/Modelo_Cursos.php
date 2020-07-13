@@ -40,7 +40,8 @@ class Modelo_Cursos extends Modelo_Base {
                                         where avanceUsuario.idUsuario = usuario.Id and cursoTema.idCurso = curso.id 
                                         group by cursoTema.idCurso
                                     )) as Porcentaje,
-                                    avance.fechaModificacion
+                                    avance.fechaModificacion,
+                                    (SELECT fechaInicio FROM t_curso_relacion_avance_usuario WHERE IdCurso = curso.id AND IdUsuario = " . $idUsuario . ") AS FechaInicio
                                 from t_curso as curso
                                 left join t_curso_tema as tema on tema.idCurso = curso.id
                                 left join t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
@@ -325,13 +326,23 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
 
-    public function saveEvidance($info, $imagen) {
+    public function saveEvidance(array $info) {
         $this->iniciaTransaccion();
 
+        $this->insertar('t_curso_tema_relacion_avance_usuario', [
+            'idTema' => $info["idTema"],
+            'idUsuario' => $info["idUsuario"],
+            'estatus' => '1',
+            'fechaModificacion' => $info['fechaModificacion']
+        ]);
+        
+        $ultimoIdCursoTema = $this->consulta("select last_insert_id() as Id");
+        
         $this->insertar('t_curso_tema_relacion_usuario_evidencia', [
-            'idAvanceUsuario' => $info["idTema"],
+            'idAvanceUsuario' => $ultimoIdCursoTema[0]["Id"],
             'comentarios' => $info["comentarios"],
-            'url' => $imagen
+            'fechaModificacion' => $info['fechaModificacion'],
+            'url' => $info['url']
         ]);
 
         $ultimoAvance = $this->consulta("select last_insert_id() as Id");
