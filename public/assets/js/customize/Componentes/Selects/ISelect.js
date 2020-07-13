@@ -3,11 +3,7 @@ class ISelect {
     constructor(nombreSelect) {
         this.select = nombreSelect;
         this.objetoSelect = $(`#${this.select}`);
-//        this.iniciarSelect();
-    }
-
-    iniciarSelect() {
-        this.objetoSelect.select2();
+        this.iniciarSelect();
     }
 
     limpiarElemento() {

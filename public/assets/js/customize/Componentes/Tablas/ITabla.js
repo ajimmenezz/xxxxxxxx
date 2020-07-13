@@ -1,12 +1,13 @@
 class ITabla {
 
-    constructor(tabla = '', datos = [], scroll = false) {
+    constructor(tabla = '', datos = [], config = {}) {
 
         this.tabla = tabla;
         this.objetoTabla = $(`#${this.tabla}`);
         this.datos = datos;
-
-        if (scroll) {
+        this.config = config;
+        
+        if (config.scroll) {
             this.iniciarTablaScroll();
         } else {
             this.iniciarTabla();

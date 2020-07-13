@@ -8,10 +8,11 @@ $(function () {
     //Evento para cerra la session
     evento.cerrarSesion();
 
+    let config = {scroll: true};
     //Creando tabla de areas
     let tablaPrincipal = new TablaBasica('data-table-unidad-negocios');
     let tablaSublineas = new TablaBasica('data-table-sublineas');
-    let tablaInfoSublineas = new TablaBasica('data-table-infoSublineas', [], true);
+    let tablaInfoSublineas = new TablaBasica('data-table-infoSublineas', [], config);
     let selectArea = new SelectBasico('selectArea');
     let selectEliminarArea = new SelectBasico('selectEliminarArea');
     let selectSublineas = new SelectBasico('selectSublinea');

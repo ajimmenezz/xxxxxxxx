@@ -5,10 +5,9 @@ class Pagina {
         this.tablas = new Map();
         this.formularios = new Map();
         this.gantts = new Map();
-        this.socket = new Socket();
+//        this.socket = new Socket();
         this.modal = new Modal('modal-dialogo');
         this.alerta = new Alertas('modal-alerta-error');
-        this.select = new Select('select');
 
         this.crearTablas(objetos);
         this.crearFormularios(objetos);

@@ -1867,7 +1867,6 @@ $config['RH'] = array(
         ),
         'js' => array(
             'Base/Base',
-            'Base/Select',
             'Componentes/Socket',
             'Componentes/Modal/ModalBase',
             'Componentes/Modal/Alertas',
@@ -1882,10 +1881,10 @@ $config['RH'] = array(
             'Componentes/Pagina',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
+            'Componentes/Tablas/TablaRender',
+            'Componentes/Wizard/IWizard',
+            'Componentes/Wizard/WizardValidation',
             'RH/Administracion_Cursos',
-            // 'RH/form-wizards.demo.min',
-            // 'RH/form-wizards-validation.demo.min',
-            'RH/Cursos/test',
             'Base/fileUpload'
         ),
         'pluginsJs' => array(

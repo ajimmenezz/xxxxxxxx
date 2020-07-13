@@ -1,5 +1,5 @@
-<!-- Empezando #contenido -->
-<div id="administracion-cursos" class="content">
+<!-- Empezando #seccion-cursos -->
+<div id="seccion-cursos" class="content">
     <!-- begin page-header -->
     <h1 class="page-header">Administración de Cursos</h1>
     <!-- end page-header -->
@@ -19,7 +19,6 @@
                 <div class="col-md-3">
                     <button id="btn-nuevo-curso" type="button" class="btn btn-primary m-r-5 m-b-5" style="float: right;">Nuevo Curso</button>
                     <button id="btn-loadExcel-temario" type="button" class="btn btn-info m-r-5 m-b-5" style="float: right;">Subir Cursos</button>
-
                 </div>
 
             </div>
@@ -29,75 +28,56 @@
             <!-- begin tabla cursos -->
             <div class="row" style="margin-top:50px;">
                 <div class="col-md-12">
-                    <div class="table-responsive">
-                        <table id="tabla-cursosPrinc" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                            <thead>
-                                <tr>
-                                    <td class="never">Id</td>
-                                    <td class="all">Nombre</td>
-                                    <td class="all">Descripción</td>
-                                    <td class="all">#Participantes</td>
-                                    <td class="all">Estatus</td>
-                                    <td class="all">Acciones</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                foreach ($datos['cursos'] as $value) {
-                                    echo "<tr>";
-                                    echo "<td>" . $value["Id"] . "</td>";
-                                    echo "<td>" . $value["Nombre"] . "</td>";
-                                    echo "<td>" . $value["Descripcion"] . "</td>";
+                    <table id="tabla-cursos" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                        <thead>
+                            <tr>
+                                <td class="never">Id</td>
+                                <td class="all">Nombre</td>
+                                <td class="all">Descripción</td>
+                                <td class="all">#Participantes</td>
+                                <td class="all">Estatus</td>
+                                <td class="all">Acciones</td>
+                            </tr>
+                        </thead>
+                        <tbody>                               
+                            <tr>
+                                <td>1</td>
+                                <td>Programacion</td>
+                                <td>Prueba</td>
+                                <td>10</td>
+                                <td>Activo</td>
+                                <td></td>
+                            </tr>          
+                            <?php
+                            foreach ($datos['cursos'] as $value) {
+                                echo "<tr>";
+                                echo "<td>" . $value["Id"] . "</td>";
+                                echo "<td>" . $value["Nombre"] . "</td>";
+                                echo "<td>" . $value["Descripcion"] . "</td>";
 
-                                    echo "<td>" . $value["Participantes"] . "</td>";
-                                    $estado = "Activo";
-                                    if ($value["Estatus"] == 0) {
-                                        $estado = "Inactivo";
-                                    }
-//                                                <i class='fa fa-eye ' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;  onclick='VerCurso(" . $value["Id"] . ")'></i>
-                                    echo "<td>" . $estado . "</td>";
-                                    echo "<td> 
-                                                <div style='text-align: center;'>
-                                                <input type='hidden' id='idElementSeleccionAccion'>
-                                                <i class='fa fa-eye ' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  onclick='btnAdminVerCurso(" . $value["Id"] . ")'></i>
-                                                <i class='fa fa-pencil' style='cursor: pointer; margin: 5px; font-size: 17px; color: orange;' onclick='btnAdminEditarCurso(" . $value["Id"] . ")' id='btn-adminEditarCurso' ></i>
-                                                <i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;' onclick='btnAdminEliminarCurso(" . $value["Id"] . ")' id='btn-adminEliminarCurso'></i>
-                                            </div>
-                                        </td>
-                                    </tr>";
+                                echo "<td>" . $value["Participantes"] . "</td>";
+                                $estado = "Activo";
+                                if ($value["Estatus"] == 0) {
+                                    $estado = "Inactivo";
                                 }
-                                ?>
-                            </tbody>
+                                echo "<td>" . $estado . "</td>";
+                                echo "<td></td></tr>";
+                            }
+                            ?>
+                        </tbody>
 
-                        </table>
-                    </div>
+                    </table>
+
                 </div>
             </div>
             <!-- end tabla cursos -->
         </div>
     </div>
-
-    <!--SandBox SmartResponse--->
-    <div class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:none;">
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-12">
-                    <button id="btn-demo-smartresponse" type="button" class="btn btn-info m-r-5 m-b-5">Demo SmartResponse</button>
-                    <button id="btn-demo-smartresponse-error" type="button" class="btn btn-info m-r-5 m-b-5">Demo SmartResponse Error</button>
-                </div>
-            </div>
-
-            <div class="row">
-                <div id="sandbox-result" class="col-md-12"></div>
-            </div>
-        </div>
-    </div>
 </div>
-<!-- Finalizando #contenido  PRINCIPAL-->
+<!-- Finalizando #seccion-cursos-->
 
-
-<!-- Empezando #contenido NUEVO CURSO-->
-<div id="administracion-cursos_nuevoCurso" class="content" style="display:none;">
+<!-- Empezando #seccion-nuevo-curso -->
+<div id="seccion-nuevo-curso" class="content hidden">
     <!-- begin page-header -->
     <h1 class="page-header">Administración de Cursos</h1>
     <!-- end page-header -->
@@ -107,165 +87,118 @@
             <h4 class="panel-title">Nuevo curso</h4>
         </div>
         <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <!--                <div class="col-sm-12  messageAccionesWizard"></div>-->
+                    <form id="formDatosNewCurso"  enctype="multipart/form-data" data-parsley-validate="true" name="form-wizard">
+                        <div id="wizard">
+                            <ol>
+                                <li><!-- id="showContent_1" -->
+                                    Datos del curso
+                                    <small>Establece la Información del curso.</small>
+                                </li>
+                                <li> <!-- id="showContent_2" -->
+                                    Temario
+                                    <small>Establece los temas que se estarán evaluando en el curso.</small>
+                                </li>
+                                <li> <!-- id="showContent_3"-->
+                                    Participantes
+                                    <small>Indican los puestos que tendrán que tomar el curso.</small>
+                                </li>
 
-            <div class="row" style=" margin: 35px 45px;">
-
-                <div class="col-sm-12  messageAccionesWizard"></div>
-
-                <!-- <form action="/" method="POST" data-parsley-validate="true" name="form-wizard"> -->
-                <form id="formDatosNewCurso"  enctype="multipart/form-data" data-parsley-validate="true" name="form-wizard">
-                    <div id="wizard">
-
-
-                        <ol>
-                            <li><!-- id="showContent_1" -->
-                                Datos del curso
-                                <small>Establece la Información del curso.</small>
-                            </li>
-                            <li> <!-- id="showContent_2" -->
-                                Temario
-                                <small>Establece los temas que se estarán evaluando en el curso.</small>
-                            </li>
-                            <li> <!-- id="showContent_3"-->
-                                Participantes
-                                <small>Indican los puestos que tendrán que tomar el curso.</small>
-                            </li>
-
-                        </ol>
-                        <!-- begin wizard step-1 -->
-
-
-                        <div class="wizard-step-1">
-
-                            <fieldset>
-
-
-                                <div class="row">
-                                    <div class=" col-xs-12 col-md-8">
-                                        <h4 class="pull-left width-full">Datos curso</h4>
-                                    </div>
-                                    <div class=" col-xs-12 col-md-4">
-                                        <button id="btn-cancel_nuevo-curso" type="button" class="btn btn-danger m-r-5 m-b-5 btn-cancel_wizard" style="float: right;">Cancelar</button>
-                                    </div>
-                                    <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
-                                </div>
-
-                                <div class="row" style="margin: 10px 25px;">
-                                    <div class="col-xs-4 text-center">
-                                        <input id="evidencias" name="evidencias[]" type="file">
-                                    </div>
-                                    <div class="col-xs-8">
-
-                                        <!-- begin row -->
-                                        <div class="row">
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Nombre del curso *</label>
-                                                    <input type="text" id="nombreCurso" name="Nombre" placeholder="Nombre" class="form-control"  data-parsley-group="wizard-step-1" required/>
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Url *</label>
-                                                    <input type="text" id="urlCurso" name="url" placeholder="http://" class="form-control"  data-parsley-group="wizard-step-1" required />
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="nuevoArchivo">Descripción *</label>
-                                                    <textarea id="textareaDescripcionCurso" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6"  data-parsley-group="wizard-step-1" required /></textarea>
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <?php
-                                                // var_dump($datos['certificados']);
-                                                // var_dump($datos['tipoCursos']);
-                                                ?>
-                                                <div class="form-group">
-                                                    <label for="nuevoArchivo">Certificado </label>
-                                                    <select id="certificadoCurso" class="form-control" style="width: 100%" >
-
-                                                        <?php
-                                                        //var_dump($datos['certificados']);
-                                                        foreach ($datos['certificados'] as $value) {
-
-                                                            echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
-                                                        }
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
-                                            <!-- begin col-4 -->
-                                            <div class=" col-xs-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label>Costo </label>
-                                                    <input type="text" id="costoCurso" name="costo" placeholder="$00.00" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <!-- end col-4 -->
+                            </ol>
+                            <!-- begin wizard step-1 -->
+                            <div class="wizard-step-1">
+                                <fieldset>
+                                    <legend class="width-full">
+                                        <h4 class="pull-left">Datos curso</h4>
+                                        <button type="button" class="btn btn-danger m-r-5 m-b-5 btn-cancel-wizard pull-right">Cancelar</button>
+                                    </legend>
+                                    <!-- begin formulario -->
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input id="evidencias" name="evidencias[]" type="file">
                                         </div>
-                                        <!-- end row -->
-                                    </div>
-                                </div>
-
-                            </fieldset>
-                        </div>
-                        <!-- end wizard step-1 -->
-                        <!-- begin wizard step-2 -->
-                        <div class="wizard-step-2">
-                            <fieldset>
-                                <div class="row">
-                                    <div class=" col-xs-12 col-md-8">
-                                        <h4 class="pull-left width-full">Temario</h4>
-                                    </div>
-                                    <div class=" col-xs-12 col-md-4">
-                                        <button id="btn-cancel_temario" type="button" class="btn btn-danger m-r-5 m-b-5 btn-cancel_wizard" style="float: right;">Cancelar</button>
-                                    </div>
-                                    <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
-                                </div>
-
-
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-6">
-                                        <div class="row">
-                                            <div class="col-xs-9">
-                                                <div class="form-group">
-                                                    <label>Nombre del modulo </label>
-                                                    <input type="text" id="nombreTemario" name="Nombre" placeholder="Nombre" class="form-control" />
-                                                </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Nombre del curso *</label>
+                                                <input type="text" id="input-nombreCurso" name="Nombre" placeholder="Nombre" class="form-control"  data-parsley-group="wizard-step-1" required/>
                                             </div>
-                                            <div class="col-xs-3">
-                                                <button style="margin-top: 21px;" id="btn-agregar-nuevo-temario" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;"><i class="fa fa-plus"></i> Agregar</button>
+                                            <div class="form-group">
+                                                <label for="nuevoArchivo">Descripción *</label>
+                                                <textarea id="textarea-descripcionCurso" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6"  data-parsley-group="wizard-step-1" required /></textarea>
                                             </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Url *</label>
+                                                <input type="text" id="input-urlCurso" name="url" placeholder="http://" class="form-control"  data-parsley-group="wizard-step-1" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="nuevoArchivo">Certificado </label>
+                                                <select id="select-certificado" class="form-control" style="width: 100%" >
+                                                    <?php
+                                                    foreach ($datos['certificados'] as $value) {
 
-                                            <div class="col-xs-12">
-                                                Aqui defines el temario que lleva el curso que tomara el personal de la empresa.<br>
-                                                Cada temario que se ingrese tendrá un valor porcentual del 100%, esto quiere 
-                                                decir, que si yo ingreso 10 temas cada uno tendrá un valor del 10%, por lo que es 
-                                                importante que tome esto en consideración al definirlo.
-                                                <br><br>
-                                                <b>Nota: Es importante que se deba definir al menos un temario al curso ya que 
-                                                    no se podrá crear.
-                                                </b>
+                                                        echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
+                                                    }
+                                                    ?>
+                                                </select>
                                             </div>
-                                            <div class="col-xs-12" style="text-align: center; margin-top:30px;" >
-                                                <!-- <button  id="btn-loadExcel-temario" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-file"></i> Subir Excel</button> -->
+                                            <div class="form-group">
+                                                <label>Costo </label>
+                                                <input type="text" id="input-costoCurso" name="costo" placeholder="$00.00" class="form-control" />
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-md-6">
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <div class="table-responsive">
-                                                    <table id="tabla-cursos-temario" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                    <!-- end formulario -->
+                                </fieldset>
+                            </div>
+                            <!-- end wizard step-1 -->
+                            <!-- begin wizard step-2 -->
+                            <div class="wizard-step-2">
+                                <fieldset>
+                                    <legend class="pull-left width-full">
+                                        <h4 class="pull-left">Temario</h4>
+                                        <button type="button" class="btn btn-danger m-r-5 m-b-5 btn-cancel-wizard pull-right">Cancelar</button>
+                                    </legend>
+
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="form-group">                                                
+                                                <div class="col-md-12">
+                                                    <p>
+                                                        Aqui defines el temario que lleva el curso que tomara el personal de la empresa.<br>
+                                                        Cada temario que se ingrese tendrá un valor porcentual del 100%, esto quiere 
+                                                        decir, que si yo ingreso 10 temas cada uno tendrá un valor del 10%, por lo que es 
+                                                        importante que tome esto en consideración al definirlo.
+                                                        <br><br>
+                                                        <b>Nota: Es importante que se deba definir al menos un temario al curso ya que 
+                                                            no se podrá crear.
+                                                        </b>
+                                                    </p>
+                                                </div>
+                                                <div class="col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 m-t-30 hidden">
+                                                    <button type="button" class="btn btn-success m-r-5 m-b-5 visible-md-block  visible-lg-block btn-subir-excel-temario" ><i class="fa fa-file"></i> Subir Excel</button>
+                                                    <button type="button" class="btn btn-success m-r-5 m-b-5 visible-sm-block btn-subir-excel-temario" ><i class="fa fa-file"></i> Subir Excel</button>
+                                                    <button type="button" class="btn btn-block btn-success m-r-5 m-b-5 visible-xs-block btn-subir-excel-temario" ><i class="fa fa-file"></i> Subir Excel</button>
+                                                </div>                                               
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="input-group">
+                                                        <input type="text" id="input-temario" name="Nombre" placeholder="Nombre del temario" class="form-control"/>
+                                                        <div class="input-group-btn">
+                                                            <label>&nbsp;</label> 
+                                                            <button type="button" id="btn-agregar-nuevo-temario"  class="btn btn-success"><i class="fa fa-plus"></i> Agregar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <table id="tabla-nuevo-curso-temarios" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                                         <thead>
                                                             <tr>
                                                                 <th>Temario</th>
@@ -274,128 +207,86 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-
-                                                            <?php
-                                                            //  echo "welcome ".$_COOKIE['temarios'];
-                                                            //  print_r($_COOKIE['temarios']);
-                                                            // foreach ($datos['temario'] as $value) {
-                                                            //     echo '<tr>';
-                                                            //     foreach ($value as $dato) {
-                                                            //         echo '<td>' . $dato . '</td>';
-                                                            //     }
-                                                            //     echo '</tr>';
-                                                            // }
-                                                            ?>
-
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </fieldset>
+                                </fieldset>
+                            </div>
+                            <!-- end wizard step-2 -->
+                            <!-- begin wizard step-3 -->
+                            <div class="wizard-step-3">
+                                <fieldset>
+                                    <legend class="width-full">
+                                        <h4 class="pull-left">Participantes</h4>
+                                        <button type="button" class="btn btn-danger m-r-5 m-b-5 btn-cancel-wizard pull-right">Cancelar</button>
+                                    </legend>             
 
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <div class="col-md-12">                                                    
+                                                    <p>
+                                                        Indica los puestos que deben tomar el curso.<br>
+                                                        Cuando generes el curso el sistema notificará por correo al personal que cubra el 
+                                                        puesto que esta asignado en el curso y también le aparecerá en la sección de CURSOS ASIGNADOS.
 
-                        </div>
-                        <!-- end wizard step-2 -->
-                        <!-- begin wizard step-3 -->
-                        <div class="wizard-step-3">
-                            <fieldset>
-                                <div class="row">
-                                    <div class=" col-xs-12 col-md-8">
-                                        <h4 class="pull-left width-full">Participantes</h4>
-                                    </div>
-                                    <div class=" col-xs-12 col-md-4">
-                                        <button id="btn-cancel_participantes" type="button" class="btn btn-danger m-r-5 m-b-5 btn-cancel_wizard" style="float: right;">Cancelar</button>
-                                    </div>
-                                    <div class=" col-xs-12 col-md-12"><hr style="width:100%;"></div>
-                                </div>
-
-                                <div class="row" style="margin:10px 25px;">
-                                    <div class="col-xs-12 col-md-6">
-                                        <div class="row">
-                                            <div class="col-md-9">
+                                                        <br><br>
+                                                        <b>Nota: Es importante que se deba definir al menos un puesto. </b>
+                                                    </p>
+                                                </div>
+                                                <div class="col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 m-t-30">
+                                                    <button id="btn-generar-curso" type="button" class="btn btn-success" ><i class="fa fa-save"></i> Guardar curso</button>
+                                                </div>  
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="form-inline">
                                                 <div class="form-group">
-                                                    <label for="puesto">Puesto </label>
-                                                    <select id="puesto" class="form-control" style="width: 100%" >
-                                                        <option value="">Seleccionar</option>
-                                                        <?php
-                                                        foreach ($datos['perfiles'] as $value) {
-
-                                                            echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
-                                                        }
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <button style="margin-top: 21px;"  id="btn-nuevo-puestoParticipante" type="button" class="btn btn-success m-r-5 m-b-5" style="float: right;"><i class="fa fa-plus"></i> Agregar</button>
-                                            </div>
-
-                                            <div class="col-xs-12">
-                                                Indica los puestos que deben tomar el curso.<br>
-                                                Cuando generes el curso el sistema notificará por correo al personal que cubra el 
-                                                puesto que esta asignado en el curso y también le aparecerá en la sección de CURSOS ASIGNADOS.
-
-                                                <br><br>
-                                                <b>Nota: Es importante que se deba definir al menos un puesto. </b>
-                                            </div>
-                                            <div class="col-xs-12" style="text-align: center; margin-top:30px;">
-                                                <button id="btn-save-curso" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-save"></i> Guardar curso</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-md-6">
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <div class="table-responsive">
-                                                    <table id="tabla-cursos-participantes" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="never">id</th>
-                                                                <th class="all">Puesto</th>
-                                                                <th class="all">Acciones</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
+                                                    <div class="col-md-9 m-r-0">
+                                                        <select id="select-participante" class="form-control" style="width: 100%">
+                                                            <option value="">Seleccionar</option>
                                                             <?php
-                                                            // foreach ($datos['filas'] as $value) {
-                                                            //     echo '<tr>';
-                                                            //     foreach ($value as $dato) {
-                                                            //         echo '<td>' . $dato . '</td>';
-                                                            //     }
-                                                            //     echo '</tr>';
-                                                            // }
-                                                            ?>
+                                                            foreach ($datos['perfiles'] as $value) {
 
-                                                        </tbody>
-                                                    </table>
+                                                                echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3 p-l-0">
+                                                        <button id="btn-nuevo-puestoParticipante" type="button" class="btn btn-success btn-block"><i class="fa fa-plus"></i> Agregar</button>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <table id="tabla-nuevo-cursos-participantes" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="never">id</th>
+                                                                    <th class="all">Puesto</th>
+                                                                    <th class="all">Acciones</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </fieldset>
+                                </fieldset>
+                            </div>
+                            <!-- end wizard step-3 -->
                         </div>
-                        <!-- end wizard step-3 -->
-
-
-
-                    </div>
-
-                </form>
-
-
-
+                    </form>
+                </div>
             </div>
-
-
         </div>
     </div>
 </div>
 <!-- Finalizando #contenido -->
-
 
 <!-- Empezando #contenido MODALS-->
 
@@ -442,7 +333,6 @@
                     </div>
                 </div>
             </div>
-
 
             <!-- fin subir temarios -->
 
@@ -546,209 +436,209 @@
             <!-- FIN #contenido MODALS-->
 
             <script>
-                var eventoPagina = new Pagina();
-                var tablaListCursosVer = [];
-                tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
-                var tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
-                var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
-
-                function btnAdminEliminarCurso(id) {
-                    alert("ELLIMNAR", id);
-                    console.debug("ELLIMNAR", id);
-                    $("#idElementSeleccionAccion").val(id)
-                    $("#modalDeletoCursoAdmin").modal('show')
-                }
-
-                function btnAdminEditarCurso(id) {
-                    tablaTemariosEdit.iniciarTabla();
-                    tablaParticipantesEdit.iniciarTabla();
-                    tablaTemariosEdit.limpiartabla();
-                    tablaParticipantesEdit.limpiartabla();
-
-                    let evidenciaCursoEditar = new FileUpload_Boton('evidenciasEditarCurso', {
-                        url: 'Administracion_Cursos/Editar-Curso',
-                        extensiones: ['jpg', 'jpeg', 'png'],
-                        tituloAceptar: 'Agregar Archivos',
-                        colorBotonAceptar: 'btn btn-success'});
-                    evidenciaCursoEditar.iniciarFileUpload();
-
-                    $("#idElementSeleccionAccion").val(id)
-
-                    $('#modalSubirTemarios').modal('hide')
-                    $('#modalValidateTemario').modal('hide')
-                    $("#modalValidateParticipantes").modal('hide');
-
-                    $("#administracion-cursos").css('display', 'none')
-                    $("#administracion-cursos_nuevoCurso").css('display', 'none')
-                    $("#administracion-cursos-ver").css('display', 'none')
-
-                    $("#administracion-cursos-EDITAR").css('display', 'block')
-
-                    var datos = {
-                        idCurso: id
-                    };
-
-                    eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Obtener-Curso', datos, function (respuesta) {
-                        if (!respuesta.success) {
-                            evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido información del curso.', 5000);
-                            return;
-                        }
-
-                        let selectPuestoEditar = new SelectBasico('puestoEdit');
-                        selectPuestoEditar.cargaDatosEnSelect(respuesta.data.infoCurso.selectPuesto);
-
-                        var cursos = respuesta.data.infoCurso.curso;
-                        var perfiles = respuesta.data.infoCurso.perfiles;
-                        var temas = respuesta.data.infoCurso.temas;
-
-                        $('#inputImgCursoEdit').val(),
-                                $("#nombreCursoEdit").val(cursos.nombre),
-                                $("#urlCursoEdit").val(cursos.url),
-                                $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
-                                $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
-                                $("#costoCursoEdit").val(cursos.costo)
-
-                        if (respuesta.data.infoCurso.curso.imagen !== null) {
-                            let imagenCurso = respuesta.data.infoCurso.curso.imagen;
-                            $('#divEditarImagenCurso').attr('src', imagenCurso);
-                        }
-
-
-                        temas.forEach(element => {
-                            if (element.estatus != 0 && element.estatus != '0') {
-                                tablaTemariosEdit.agregarDatosFila([
-                                    element.nombre,
-                                    element.porcentaje + '%',
-                                    element.id,
-                                    element.idCurso,
-                                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn-AdminEliminarTemario'></i></spand>"
-                                ]);
-                            }
-                        });
-
-
-                        perfiles.forEach(element => {
-                            tablaParticipantesEdit.agregarDatosFila([
-                                element.id,
-                                element.idCurso,
-                                element.idPerfil,
-                                element.Nombre,
-                                "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
-
-                            ]);
-                        });
-
-                        $("#btn-editarDatosSave").off("click");
-                        $("#btn-editarDatosSave").on('click', function (e) {
-                            var id = $("#idElementSeleccionAccion").val()
-                            var nombre = $("#nombreCursoEdit").val();
-                            var url = $("#urlCursoEdit").val();
-                            var descripcion = $("#textareaDescripcionCursoEdit").val();
-
-                            if (nombre == '' || url == '' || descripcion == '') {
-                                eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
-                                return false;
-                            }
-
-                            var json = {
-                                id: id,
-                                curso: [
-                                    $('#videnciasEditarCurso').val(),
-                                    $("#nombreCursoEdit").val(),
-                                    $("#urlCursoEdit").val(),
-                                    $("#textareaDescripcionCursoEdit").val(),
-                                    $("#certificadoCursoEdit").val(),
-                                    $("#costoCursoEdit").val()
-                                ]
-                            }
-
-                            $("#nameCurso").text($("#nombreCursoEdit").val());
-
-                            if ($('#evidenciasEditarCurso').val() !== '') {
-                                evidenciaCursoEditar.enviarPeticionServidor('evidenciasEditarCurso', json, function (respuesta) {
-                                    if (!respuesta.success) {
-                                        eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
-                                        return;
-                                    }
-                                });
-                            } else {
-                                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Editar-Curso', json, function (respuesta) {
-                                    if (!respuesta.success) {
-                                        evento.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
-                                        return;
-                                    }
-                                });
-                            }
-
-                            $('#modalresponseSaveEdit').modal('show');
-                            location.reload();
-                        });
-                    });
-                }
-
-                function btnAdminVerCurso(id) {
-                    tablaListCursosVer.iniciarTabla();
-                    tablaListCursosVer.limpiartabla();
-
-                    if (id != 0) {
-                        $("#idElementSeleccionAccion").val(id)
-                    } else {
-                        id = $("#idElementSeleccionAccion").val()
-                    }
-
-                    $('#modalSubirTemarios').modal('hide')
-                    $('#modalValidateTemario').modal('hide')
-                    $("#modalValidateParticipantes").modal('hide');
-                    $("#modalDeletoCursoAdmin").modal('hide')
-
-                    $("#administracion-cursos").css('display', 'none')
-                    $("#administracion-cursos-verAvance").css('display', 'none')
-
-                    $("#administracion-cursos_nuevoCurso").css('display', 'none')
-
-                    $("#administracion-cursos-ver").css('display', 'block')
-                    $("#evidenciasVerAvance").css('display', 'block')
-                    $("#evidenciasVerAvanceTema").css('display', 'none')
-
-                    var json = {
-                        idCurso: id
-                    }
-
-                    eventoPagina.enviarPeticionServidor('tablaAsigCursos', 'Administracion_Cursos/Ver-Curso', json, function (respuesta) {
-                        if (!respuesta.success) {
-                            evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido el curso.', 5000);
-                            return;
-                        }
-
-                        var perfiles = respuesta.data.infoCurso.perticipantes;
-                        var total = respuesta.data.infoCurso.total;
-                        var avance = respuesta.data.infoCurso.avance;
-
-                        $("#avanceVerCurso").text(avance);
-                        $("#totalVerCurso").text(total);
-
-                        var tablaListCursosVer = []
-
-                        tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
-                        tablaListCursosVer.limpiartabla();
-
-
-                        perfiles.forEach(element => {
-                            var porcentaje = '0';
-                            if (element.Porcentaje != null && element.Porcentaje != '' && element.Porcentaje != 'null') {
-                                porcentaje = element.Porcentaje;
-                            }
-                            tablaListCursosVer.agregarDatosFila([
-                                element.nombreUsuario,
-                                element.Nombre,
-                                porcentaje + '%',
-                                element.Id,
-                                "<span><i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  id='btn-AdminVerCursoVerAvance'></i>Ver avances</spand>"
-
-                            ]);
-                        });
-                    });
-                }
+//                var eventoPagina = new Pagina();
+//                var tablaListCursosVer = [];
+//                tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+//                var tablaTemariosEdit = new TablaBasica('tabla-cursos-temarioEdit');
+//                var tablaParticipantesEdit = new TablaBasica('tabla-cursos-participantesEdit');
+//
+//                function btnAdminEliminarCurso(id) {
+//                    alert("ELLIMNAR", id);
+//                    console.debug("ELLIMNAR", id);
+//                    $("#idElementSeleccionAccion").val(id)
+//                    $("#modalDeletoCursoAdmin").modal('show')
+//                }
+//
+//                function btnAdminEditarCurso(id) {
+//                    tablaTemariosEdit.iniciarTabla();
+//                    tablaParticipantesEdit.iniciarTabla();
+//                    tablaTemariosEdit.limpiartabla();
+//                    tablaParticipantesEdit.limpiartabla();
+//
+//                    let evidenciaCursoEditar = new FileUpload_Boton('evidenciasEditarCurso', {
+//                        url: 'Administracion_Cursos/Editar-Curso',
+//                        extensiones: ['jpg', 'jpeg', 'png'],
+//                        tituloAceptar: 'Agregar Archivos',
+//                        colorBotonAceptar: 'btn btn-success'});
+//                    evidenciaCursoEditar.iniciarFileUpload();
+//
+//                    $("#idElementSeleccionAccion").val(id)
+//
+//                    $('#modalSubirTemarios').modal('hide')
+//                    $('#modalValidateTemario').modal('hide')
+//                    $("#modalValidateParticipantes").modal('hide');
+//
+//                    $("#administracion-cursos").css('display', 'none')
+//                    $("#administracion-cursos_nuevoCurso").css('display', 'none')
+//                    $("#administracion-cursos-ver").css('display', 'none')
+//
+//                    $("#administracion-cursos-EDITAR").css('display', 'block')
+//
+//                    var datos = {
+//                        idCurso: id
+//                    };
+//
+//                    eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Obtener-Curso', datos, function (respuesta) {
+//                        if (!respuesta.success) {
+//                            evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido información del curso.', 5000);
+//                            return;
+//                        }
+//
+//                        let selectPuestoEditar = new SelectBasico('puestoEdit');
+//                        selectPuestoEditar.cargaDatosEnSelect(respuesta.data.infoCurso.selectPuesto);
+//
+//                        var cursos = respuesta.data.infoCurso.curso;
+//                        var perfiles = respuesta.data.infoCurso.perfiles;
+//                        var temas = respuesta.data.infoCurso.temas;
+//
+//                        $('#inputImgCursoEdit').val(),
+//                                $("#nombreCursoEdit").val(cursos.nombre),
+//                                $("#urlCursoEdit").val(cursos.url),
+//                                $("#textareaDescripcionCursoEdit").val(cursos.descripcion),
+//                                $("#certificadoCursoEdit").val(cursos.idTipoCertificado),
+//                                $("#costoCursoEdit").val(cursos.costo)
+//
+//                        if (respuesta.data.infoCurso.curso.imagen !== null) {
+//                            let imagenCurso = respuesta.data.infoCurso.curso.imagen;
+//                            $('#divEditarImagenCurso').attr('src', imagenCurso);
+//                        }
+//
+//
+//                        temas.forEach(element => {
+//                            if (element.estatus != 0 && element.estatus != '0') {
+//                                tablaTemariosEdit.agregarDatosFila([
+//                                    element.nombre,
+//                                    element.porcentaje + '%',
+//                                    element.id,
+//                                    element.idCurso,
+//                                    "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn-AdminEliminarTemario'></i></spand>"
+//                                ]);
+//                            }
+//                        });
+//
+//
+//                        perfiles.forEach(element => {
+//                            tablaParticipantesEdit.agregarDatosFila([
+//                                element.id,
+//                                element.idCurso,
+//                                element.idPerfil,
+//                                element.Nombre,
+//                                "<span><i class='fa fa-trash' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'  id='btn- AdminEliminarParticipant'></i></spand>"
+//
+//                            ]);
+//                        });
+//
+//                        $("#btn-editarDatosSave").off("click");
+//                        $("#btn-editarDatosSave").on('click', function (e) {
+//                            var id = $("#idElementSeleccionAccion").val()
+//                            var nombre = $("#nombreCursoEdit").val();
+//                            var url = $("#urlCursoEdit").val();
+//                            var descripcion = $("#textareaDescripcionCursoEdit").val();
+//
+//                            if (nombre == '' || url == '' || descripcion == '') {
+//                                eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'Por favor acompleta los campos marcados con (*), que son obligatorios.', 3000);
+//                                return false;
+//                            }
+//
+//                            var json = {
+//                                id: id,
+//                                curso: [
+//                                    $('#videnciasEditarCurso').val(),
+//                                    $("#nombreCursoEdit").val(),
+//                                    $("#urlCursoEdit").val(),
+//                                    $("#textareaDescripcionCursoEdit").val(),
+//                                    $("#certificadoCursoEdit").val(),
+//                                    $("#costoCursoEdit").val()
+//                                ]
+//                            }
+//
+//                            $("#nameCurso").text($("#nombreCursoEdit").val());
+//
+//                            if ($('#evidenciasEditarCurso').val() !== '') {
+//                                evidenciaCursoEditar.enviarPeticionServidor('evidenciasEditarCurso', json, function (respuesta) {
+//                                    if (!respuesta.success) {
+//                                        eventoPagina.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
+//                                        return;
+//                                    }
+//                                });
+//                            } else {
+//                                eventoPagina.enviarPeticionServidor('administracion-cursos', 'Administracion_Cursos/Editar-Curso', json, function (respuesta) {
+//                                    if (!respuesta.success) {
+//                                        evento.mostrarMensaje('#eventAccionEditarCurso', false, 'No se ha editado el curso.', 5000);
+//                                        return;
+//                                    }
+//                                });
+//                            }
+//
+//                            $('#modalresponseSaveEdit').modal('show');
+//                            location.reload();
+//                        });
+//                    });
+//                }
+//
+//                function btnAdminVerCurso(id) {
+//                    tablaListCursosVer.iniciarTabla();
+//                    tablaListCursosVer.limpiartabla();
+//
+//                    if (id != 0) {
+//                        $("#idElementSeleccionAccion").val(id)
+//                    } else {
+//                        id = $("#idElementSeleccionAccion").val()
+//                    }
+//
+//                    $('#modalSubirTemarios').modal('hide')
+//                    $('#modalValidateTemario').modal('hide')
+//                    $("#modalValidateParticipantes").modal('hide');
+//                    $("#modalDeletoCursoAdmin").modal('hide')
+//
+//                    $("#administracion-cursos").css('display', 'none')
+//                    $("#administracion-cursos-verAvance").css('display', 'none')
+//
+//                    $("#administracion-cursos_nuevoCurso").css('display', 'none')
+//
+//                    $("#administracion-cursos-ver").css('display', 'block')
+//                    $("#evidenciasVerAvance").css('display', 'block')
+//                    $("#evidenciasVerAvanceTema").css('display', 'none')
+//
+//                    var json = {
+//                        idCurso: id
+//                    }
+//
+//                    eventoPagina.enviarPeticionServidor('tablaAsigCursos', 'Administracion_Cursos/Ver-Curso', json, function (respuesta) {
+//                        if (!respuesta.success) {
+//                            evento.mostrarMensaje('.eventAccionEditarCurso', false, 'No se ha obtenido el curso.', 5000);
+//                            return;
+//                        }
+//
+//                        var perfiles = respuesta.data.infoCurso.perticipantes;
+//                        var total = respuesta.data.infoCurso.total;
+//                        var avance = respuesta.data.infoCurso.avance;
+//
+//                        $("#avanceVerCurso").text(avance);
+//                        $("#totalVerCurso").text(total);
+//
+//                        var tablaListCursosVer = []
+//
+//                        tablaListCursosVer = new TablaBasica('tabla-cursosAsignados');
+//                        tablaListCursosVer.limpiartabla();
+//
+//
+//                        perfiles.forEach(element => {
+//                            var porcentaje = '0';
+//                            if (element.Porcentaje != null && element.Porcentaje != '' && element.Porcentaje != 'null') {
+//                                porcentaje = element.Porcentaje;
+//                            }
+//                            tablaListCursosVer.agregarDatosFila([
+//                                element.nombreUsuario,
+//                                element.Nombre,
+//                                porcentaje + '%',
+//                                element.Id,
+//                                "<span><i class='fa fa-eye' style='cursor: pointer; margin: 5px; font-size: 17px;  color: #348fe2;'  id='btn-AdminVerCursoVerAvance'></i>Ver avances</spand>"
+//
+//                            ]);
+//                        });
+//                    });
+//                }
 
 
             </script>
