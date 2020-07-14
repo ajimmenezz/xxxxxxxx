@@ -12,6 +12,7 @@ $(function () {
     let firma = new Firma();
     let servicios = new Servicio();
     let bug = new Bug();
+    //let seg55 = new Seguimiento55();
 
     //Muestra la hora en el sistema
     evento.horaServidor($("#horaServidor").val());
@@ -22,7 +23,7 @@ $(function () {
     App.init();
 
     informacion.iniciarElementos();
-//    bitacora.iniciarElementos();
+    //    bitacora.iniciarElementos();
 
     tablaServicios.evento(function () {
         datosFila = tablaServicios.datosFila(this);
@@ -100,41 +101,41 @@ $(function () {
     function eventosBotonAcciones(datosServicio) {
         $("#btnNuevoServicioSeguimiento").off("click");
         $("#btnNuevoServicioSeguimiento").on("click", function () {
-            var data = {servicio: datosServicio.servicio.servicio};
+            var data = { servicio: datosServicio.servicio.servicio };
             servicios.nuevoServicio(
-                    data,
-                    datosServicio.servicio.ticket,
-                    datosServicio.servicio.solicitud,
-                    "Seguimiento/Servicio_Nuevo_Modal",
-                    "#panel-ticket",
-                    "Seguimiento/Servicio_Nuevo"
-                    );
+                data,
+                datosServicio.servicio.ticket,
+                datosServicio.servicio.solicitud,
+                "Seguimiento/Servicio_Nuevo_Modal",
+                "#panel-ticket",
+                "Seguimiento/Servicio_Nuevo"
+            );
         });
         //Encargado de cancelar servicio
         $("#btnCancelarServicioSeguimiento").off("click");
         $("#btnCancelarServicioSeguimiento").on("click", function () {
-            var data = {servicio: datosServicio.servicio.servicio, ticket: datosServicio.servicio.ticket};
+            var data = { servicio: datosServicio.servicio.servicio, ticket: datosServicio.servicio.ticket };
             servicios.cancelarServicio(
-                    data,
-                    "Seguimiento/Servicio_Cancelar_Modal",
-                    "#panel-ticket",
-                    "Seguimiento/Servicio_Cancelar"
-                    );
+                data,
+                "Seguimiento/Servicio_Cancelar_Modal",
+                "#panel-ticket",
+                "Seguimiento/Servicio_Cancelar"
+            );
         });
 
         servicios.initBotonReasignarServicio(
-                datosServicio.servicio.servicio,
-                datosServicio.servicio.ticket,
-                "#panel-ticket"
-                );
+            datosServicio.servicio.servicio,
+            datosServicio.servicio.ticket,
+            "#panel-ticket"
+        );
         //evento para crear nueva solicitud
         servicios.initBotonNuevaSolicitud(
-                datosServicio.servicio.servicio,
-                "#panel-ticket"
-                );
+            datosServicio.servicio.servicio,
+            "#panel-ticket"
+        );
 
         servicios.subirInformacionSD(datosServicio.servicio.servicio, "#panel-ticket");
-        servicios.botonAgregarVuelta({servicio: datosServicio.servicio.servicio},"#panel-ticket");
+        servicios.botonAgregarVuelta({ servicio: datosServicio.servicio.servicio }, "#panel-ticket");
     }
 
 });

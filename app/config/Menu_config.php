@@ -936,7 +936,8 @@ $config['Poliza'] = array(
             'V2/PaquetesTicket/Bitacora',
             'V2/PaquetesTicket/Firma',
             'Poliza/seguimiento',
-            'V2/PaquetesTicket/Controlller_Ticket'
+            'V2/PaquetesTicket/Controlller_Ticket',
+            'Poliza/Seguimientos/seg55'
         ),
         'pluginsJs' => array(
             'bootstrap-datepicker/js/bootstrap-datepicker',
