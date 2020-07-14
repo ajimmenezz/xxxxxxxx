@@ -75,6 +75,7 @@ $active_group = 'adist3';
 $query_builder = TRUE;
 
 $isSandbox = strpos($_SERVER['SERVER_NAME'], 'sandbox.siccob.solutions');
+$isProduction = strpos($_SERVER['SERVER_NAME'], 'siccob.solutions');
 
 $db['adist3'] = array(
     'dsn' => '',
@@ -216,18 +217,14 @@ $db['SAE7'] = array(
     'save_queries' => TRUE
 );
 
-
-
-//if ($posicion !== FALSE) {
-$hostNameGapsi = '192.168.0.30, 50742';
-$userNameGapsi = 'sa';
 $pwdGapsi = 'S1cc0b';
-//} else {
-//    $hostNameGapsi = '127.0.0.1, 50742';    
-//    $userNameGapsi = 'salocal';
-//    $pwdGapsi = 'S1cc0bS.';
-//}
-
+if ($isProduction !== FALSE) {
+    $hostNameGapsi = '192.168.0.30, 50742';
+    $userNameGapsi = 'sa';
+} else {
+    $hostNameGapsi = '127.0.0.1, 50420';
+    $userNameGapsi = 'sagapsi';    
+}
 
 $db['Gapsi'] = array(
     'dsn' => '',
