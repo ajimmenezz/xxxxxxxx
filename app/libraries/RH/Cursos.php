@@ -185,16 +185,26 @@ class Cursos extends General {
     }
 
     public function deleteElementCourse($datos) {
+        $this->DBS->iniciaTransaccion();
         if ($datos['tipoDato'] == 1) {
             $tabla = 't_curso_tema';
+            $temariosCurso = $this->DBS->getTemaryById($datos['idCurso']);
+            $totalTemasActivos = count($temariosCurso) - 1;
+            $porcentajeTemasActivos = 100 / $totalTemasActivos;
+            $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $porcentajeTemasActivos), array('idCurso' => $datos['idCurso']));
         } else {
             $tabla = 't_curso_relacion_perfil';
         }
-        $resultQuery = $this->DBS->deleteElementById($datos['idCurso'], $datos['id'], $tabla);
-        if ($resultQuery['code'] == 200) {
-            return true;
-        } else {
+
+        $this->DBS->deleteElementById($datos['idCurso'], $datos['id'], $tabla);
+
+        $this->DBS->terminaTransaccion();
+        if ($this->DBS->estatusTransaccion() === false) {
+            $this->DBS->roolbackTransaccion();
             return false;
+        } else {
+            $this->DBS->commitTransaccion();
+            return true;
         }
     }
 
@@ -229,7 +239,7 @@ class Cursos extends General {
         $infoUsuario['infoUsuario'] = $this->DBS->getInfoUserCurse($datos);
         $infoUsuario['infoCurso'] = $this->DBS->getCourseById($datos['idCurso']);
         $infoUsuario['cursos'] = $this->DBS->getMyCourses($datos['idUsuario']);
-        
+
         return $infoUsuario;
     }
 
