@@ -35,4 +35,10 @@ class Seguimiento55 extends General
             return $serviceInfo;
         }
     }
+
+    public function saveSOUpdateInfo(array $postData)
+    {
+        $result = $this->db->saveSOUpdateInfo($postData);
+        return $result;
+    }
 }

@@ -431,7 +431,10 @@ class Controller_Seguimiento extends Base
                 break;
             case 'ShowSOUpdateForm':
                 $resultado = $this->seguimiento55->getSOUpdateForm($this->input->post());
-            break;
+                break;
+            case 'SaveSOUpdateInfo':
+                $resultado = $this->seguimiento55->saveSOUpdateInfo($this->input->post());
+                break;
             default:
                 $resultado = FALSE;
                 break;

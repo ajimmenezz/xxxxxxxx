@@ -68,6 +68,83 @@ class Seguimiento55 extends Modelo_Base
 
     public function updateSOImpediments($serviceId)
     {
-        return $this->consulta("select * from t_actualizacion_so_impedimentos where IdServicio = '" . $serviceId . "'");
+        $request = $this->consulta("select * from t_actualizacion_so_impedimentos where IdServicio = '" . $serviceId . "'");
+        $response = [];
+        if (!empty($request)) {
+            foreach ($request as $k => $v) {
+                if (!array_key_exists($v['IdRegistroActualizacion'], $response)) {
+                    $response[$v['IdRegistroActualizacion']] = [];
+                }
+                array_push($response[$v['IdRegistroActualizacion']], $v['IdImpedimento']);
+            }
+        }
+
+        return $response;
+    }
+
+    public function saveSOUpdateInfo($postData)
+    {
+        $this->iniciaTransaccion();
+
+        $registryIds = [];
+
+        foreach ($postData['data'] as $k => $v) {
+            $registryId = $v['registryId'];
+            if ($v['registryId'] != '' && $v['registryId'] > 0) {
+                $this->actualizar("t_actualizacion_so", [
+                    "IdCenso" => $v['inventoryId'],
+                    "Actualizado" => $v['updated']
+                ], ['Id' => $v['registryId']]);
+
+                $this->queryBolean("
+                delete 
+                from t_actualizacion_so_impedimentos 
+                where IdRegistroActualizacion = '" . $v['registryId'] . "'");
+            } else {
+                $this->insertar("t_actualizacion_so", [
+                    'IdServicio' => $postData['serviceId'],
+                    "IdCenso" => $v['inventoryId'],
+                    "Actualizado" => $v['updated']
+                ]);
+
+                $registryId = $this->ultimoId();
+            }
+
+            array_push($registryIds, $registryId);
+
+            if (isset($v['impediments'])) {
+                foreach ($v['impediments'] as $kk => $vv) {
+                    $this->insertar("t_actualizacion_so_impedimentos", [
+                        'IdServicio' => $postData['serviceId'],
+                        'IdRegistroActualizacion' => $registryId,
+                        'IdImpedimento' => $vv
+                    ]);
+                }
+            }
+        }
+
+        $removeIds = implode(",", $registryIds);
+
+        $this->queryBolean("
+                delete 
+                from t_actualizacion_so_impedimentos 
+                where IdServicio = '" . $postData['serviceId'] . "' 
+                and IdRegistroActualizacion not in (" . $removeIds . ")");
+
+        $this->queryBolean("
+        delete from t_actualizacion_so
+        where IdServicio = '" . $postData['serviceId'] . "' 
+        and Id not in (" . $removeIds . ")");
+
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return ['code' => 200];
+        }
     }
 }
