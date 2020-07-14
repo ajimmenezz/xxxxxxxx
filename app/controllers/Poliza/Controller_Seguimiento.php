@@ -10,6 +10,7 @@ class Controller_Seguimiento extends Base
     private $ServiciosGeneral;
     private $Catalogo;
     private $ServiciosTicket;
+    private $seguimiento55;
 
     public function __construct()
     {
@@ -21,6 +22,7 @@ class Controller_Seguimiento extends Base
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->Poliza = \Librerias\Poliza\Poliza::factory();
         $this->ServiciosTicket = \Librerias\Generales\ServiciosTicket::factory();
+        $this->seguimiento55 = \Librerias\Poliza\Seguimientos\Seguimiento55::factory();
     }
 
     /*
@@ -427,6 +429,9 @@ class Controller_Seguimiento extends Base
             case 'VerificarDuplicidadCenso':
                 $resultado = $this->Seguimientos->verificarDuplicidadCenso($this->input->post());
                 break;
+            case 'ShowSOUpdateForm':
+                $resultado = $this->seguimiento55->getSOUpdateForm($this->input->post());
+            break;
             default:
                 $resultado = FALSE;
                 break;

@@ -107,6 +107,12 @@ function seguimientoOld(evento, datos, datosTabla) {
           idPerfil,
           respuesta.informacionServicioGeneral
         );
+        switch (datosDelServicio.IdTipoServicio) {
+          case "55":
+            let seg55 = new Seguimiento55();
+            seg55.init(datosTabla[0]);
+            break;
+        }
       } else {
         switch (datosDelServicio.IdTipoServicio) {
           //Servicio Censo
