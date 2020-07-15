@@ -1216,7 +1216,6 @@ class Seguimientos extends General {
         $data = array();
         $usuario = $this->Usuario->getDatosUsuario();
         $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
-
         $dataExtra = array(
             'Servicio' => $datos['servicio'],
             'Usuario' => $usuario['Id'],
@@ -1229,6 +1228,11 @@ class Seguimientos extends General {
         $this->cambiarEstatus(array('servicio' => $datos['servicio'], 'estatus' => '3'));
 
         $linkPDF = $this->getServicioToPdf($datos);
+
+        $verificarFolio = $this->DBS->consultaGeneralSeguimiento('SELECT 
+                                                                        (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
+                                                                    FROM t_servicios_ticket
+                                                                    WHERE Id =  "' . $datos['servicio'] . '"');
 
         if ($datos['tipoSolicitud'] === 'almacen') {
             $dataNuevoServicio = array(
@@ -1259,16 +1263,18 @@ class Seguimientos extends General {
                 $this->enviarCorreoConcluido(array($usuario['EmailCorporativo']), 'Solicitud de Refacción', $textoTecnico);
                 $this->InformacionServicios->setHTMLService($datos);
 
+                if (!empty($verificarFolio[0]['Folio']) && $verificarFolio[0]['Folio'] !== '0') {
+                    $idSD = $this->findTechnicalIdUsuario(array('SDKey' => $usuario['SDKey'], 'idUsuario' => $datos['atiende']));
+                    $this->ServiceDesk->reasignarFolioSD($verificarFolio[0]['Folio'], $idSD, $usuario['SDKey']);
+                }
+
                 return $this->consultaCorrectivosSolicitudRefaccion($datos['servicio']);
             } else {
                 return FALSE;
             }
         } else {
             $numeroServicio = $this->DBP->insertarCorrectivosSolicitudes($datos['refaccionesSolicitudes'], $dataExtra);
-            $verificarFolio = $this->DBS->consultaGeneralSeguimiento('SELECT 
-                                                                        (SELECT Folio FROM t_solicitudes WHERE Id = IdSolicitud) Folio
-                                                                    FROM t_servicios_ticket
-                                                                    WHERE Id =  "' . $datos['servicio'] . '"');
+
             if (!empty($verificarFolio)) {
                 if ($verificarFolio[0]['Folio'] !== NULL) {
                     if ($verificarFolio[0]['Folio'] !== '') {
@@ -4721,7 +4727,7 @@ class Seguimientos extends General {
         if (!empty($datos['idServicio'])) {
             $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
             $datosValidacion = $this->DBP->consultaDatosValidacion($datos);
-            
+
             if (!empty($datosAllab) && $datosValidacion) {
                 $dataValidacion['datosValidacion'] = $this->DBP->consultaDatosValidacion($datos);
             } else {
@@ -6681,6 +6687,33 @@ class Seguimientos extends General {
                         }
                     } else {
                         if ($datosAllab[0]['NombreUsuario'] . ' - Siccob' == $value->TECHNICIANNAME) {
+                            $idSD = $value->TECHNICIANID;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $idSD;
+    }
+
+    private function findTechnicalIdUsuario(array $dataFindTechnicalId) {
+        $idSD = '';
+
+        if ($this->ServiceDesk->validarAPIKey($dataFindTechnicalId['SDKey']) !== '') {
+            $sdTechnicalList = $this->ServiceDesk->getTecnicosSD($dataFindTechnicalId['SDKey']);
+            $datosUsuario = $this->DBS->consultaGeneralSeguimiento('SELECT nombreUsuario(Id) AS NombreUsuario FROM cat_v3_usuarios WHERE Id = ' . $dataFindTechnicalId['idUsuario']);
+
+            if (isset($sdTechnicalList->operation->details)) {
+                foreach ($sdTechnicalList->operation->details as $key => $value) {
+                    $pos = strpos($value->TECHNICIANNAME, 'Siccob');
+                    
+                    if (!$pos) {
+                        if ($datosUsuario[0]['NombreUsuario'] . '' == stripAccents($value->TECHNICIANNAME)) {
+                            $idSD = $value->TECHNICIANID;
+                        }
+                    } else {
+                        if ($datosUsuario[0]['NombreUsuario'] . ' - Siccob' == stripAccents($value->TECHNICIANNAME)) {
                             $idSD = $value->TECHNICIANID;
                         }
                     }

@@ -71,7 +71,7 @@ Tabla.prototype.filtrarColumna = function (elemento, col, valor) {
 Tabla.prototype.buscarEnTabla = function (elemento, valor, exacto) {
     if (exacto) {
         $(elemento).DataTable()
-            .search('^\\s' + valor +'\\s*$', true, false, true)
+            .search('^\\s' + valor + '\\s*$', true, false, true)
             .draw();
     } else {
         $(elemento).DataTable()
@@ -112,6 +112,7 @@ Tabla.prototype.generaTablaPersonal = function () {
     var habilitar = (typeof arguments[6] !== 'undefined' && arguments[6] !== null) ? arguments[6] : true;
     var domOrder = (typeof arguments[7] !== 'undefined' && arguments[7] !== null) ? arguments[7] : 'lfrtip';
     var paging = (typeof arguments[8] !== 'undefined' && arguments[8] !== null) ? arguments[8] : true;
+    var fixedHeader = (typeof arguments[9] !== 'undefined' && arguments[9] !== null) ? arguments[9] : false;
 
     if (columnasOcultas) {
         responsive = {
@@ -125,7 +126,8 @@ Tabla.prototype.generaTablaPersonal = function () {
             responsive: responsive,
             language: _this.getIdioma(),
             order: orden,
-            paging: paging
+            paging: paging,
+            fixedHeader: fixedHeader
         });
     } else {
         var table = $(arguments[0]).DataTable({
@@ -136,7 +138,8 @@ Tabla.prototype.generaTablaPersonal = function () {
             language: _this.getIdioma(),
             order: orden,
             dom: domOrder,
-            paging: paging
+            paging: paging,
+            fixedHeader: fixedHeader
         });
     }
 
