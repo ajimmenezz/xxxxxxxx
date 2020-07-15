@@ -164,7 +164,7 @@
                     <h4>Temario</h4>
                     <div class="underline m-b-15 m-t-15"></div>
                     <div class="table-responsive">
-                        <table id="tabla-temario" class="table table-striped table-bordered">
+                        <table class="tabla-temario table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <td class="never">IdCurso</td>
@@ -182,209 +182,64 @@
                 <div class="col-md-7">
                     <h4>Avances</h4>
                     <div class="underline m-b-15 m-t-15"></div>
-                    <p class="text-justify">                                        
-                        Realiza las siguientes instrucciones para registar tu avance: <br><br>
-                        1.- En la tabla de temarios identifica el tema que deseas subir a tu avanze. <br>
-                        2.- Da un clic sobre el botón terminar de la columna acciones. <br>
-                        3.- El sistema muestra un formulario.<br>
-                        4.- Ingresa un comentario del tema que estas ingresando.<br>
-                        5.- Sube tus evidencias (solo formatos png y jpg).<br>
-                        6.- Guarda tu avance. <br>
-                    </p>
-                    <b style="font-size:12px;">Nota: Cuando guardes el avance ya no podrás modificarlo solo te permitirá consultarlo.</b>
-                </div>
-            </div>
-        </div>
-    </div>  
+                    <div id="divAvances">
 
-    <!-- inicio contenido continuar, continuar curso evidencias -->
-    <div class="panel panel-inverse" data-sortable-id="ui-widget-1" id="temarioComenzarCurso" style="display:none;">
-        <div class="panel-heading">
-            <h4 class="panel-title">Cursos</h4>
-        </div>
-        <div class="panel-body">
-            <div class="row">
-
-                <div class="col-sm-12 col-md-5" style="float:left;">
-                    <span style="font-size:15px;"><b style="font-size:18px;">Curso </b> Gestión de proyectos</span>
-                    <p style="margin-top:25px;">En esta sección encuentras los temas que lleva el curso. Cada tema equivale a un porcentaje del total del
-                        curso por lo que la información del lado derechose estará actualizando. Ingresa a la siguiente liga para
-                        empezar el curso: <a href="#">https://url</a></p>
-                </div>
-
-                <div class="col-sm-12 col-md-7">
-                    <div class="row">
-                        <div class="col-sm-4"></div>
-                        <div class="col-sm-4">
-                            <div class="widget widget-stats bg-green">
-                                <div class="stats-icon"></div>
-                                <div class="stats-info">
-                                    <h4>Faltante total</h4>
-                                    <p class="divFaltante"></p>	
-                                </div>
-                                <div class="stats-link">
-                                    <a href="javascript:;"></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="widget widget-stats bg-red">
-                                <div class="stats-icon"></div>
-                                <div class="stats-info">
-                                    <h4>Avance total</h4>
-                                    <p class="divAvance"></p>	
-                                </div>
-                                <div class="stats-link">
-                                    <a href="javascript:;"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-5 div-tabla-temario">
-                    <h4>Temario</h4>
-                    <div class="underline m-b-15 m-t-15"></div>
-                    <div class="table-responsive">
-                        <table id="tabla-temario-completado" class="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <td class="never">IdCurso</td>
-                                    <td class="never">IdAvance</td>
-                                    <td class="all">Modulo</td>
-                                    <td class="all">Avance</td>
-                                    <td class="all">Acciones</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <h4>Avances</h4>
-                    <div class="underline m-b-15 m-t-15"></div>
-                    Comentarios <br>
-                    <textarea id="avanceComentario" class="form-control" placeholder="Comentarios" rows="5" disabled></textarea>
-                    <div id="gallery" class="gallery">
-                    </div>
-                    <div class="text-right">
-                        <button type="button" id="btnCerrarCompletarAvanceCurso" class="btn btn-white text-right" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>  
-    <!-- fin contenido continuar, continuar curso evidencias-->
-
-    <!-- inicio contenido continuar, terminar curso evidencias -->
-    <div id="temarioTerminarCurso" class="panel panel-inverse" data-sortable-id="ui-widget-1" style="display:none;">
-        <div class="panel-heading">
-            <h4 class="panel-title">Cursos</h4>
-        </div>
-        <div class="panel-body">
-            <div class="row">
-
-                <div class="col-sm-12 col-md-5" style="float:left;">
-                    <span style="font-size:15px;"><b style="font-size:18px;">Curso </b> Gestión de proyectos</span>
-
-                    <p style="margin-top:25px;">En esta sección encuentras los temas que lleva el curso. Cada tema equivale a un porcentaje del total del
-                        curso por lo que la información del lado derechose estará actualizando. Ingresa a la siguiente liga para
-                        empezar el curso: <a href="#">https://url</a></p>
-
-                </div>
-
-                <div class="col-sm-12 col-md-7" style="float-right">
-                    <div class="row">
-                        <div class="col-sm-4"></div>
-                        <div class="col-sm-4">
-                            <div class="widget widget-stats bg-green">
-                                <div class="stats-icon"></div>
-                                <div class="stats-info">
-                                    <h4>Faltante total</h4>
-                                    <p class="divFaltante"></p>	
-                                </div>
-                                <div class="stats-link">
-                                    <a href="javascript:;"></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="widget widget-stats bg-red">
-                                <div class="stats-icon"></div>
-                                <div class="stats-info">
-                                    <h4>Avance total</h4>
-                                    <p class="divAvance"></p>	
-                                </div>
-                                <div class="stats-link">
-                                    <a href="javascript:;"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-5 div-tabla-temario">
-                    <h4>Temario</h4>
-                    <div class="underline m-b-15 m-t-15"></div>
-                    <div class="table-responsive">
-                        <table id="tabla-temario-terminar" class="table table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <td class="never">IdCurso</td>
-                                    <td class="never">IdAvance</td>
-                                    <td>Modulo</td>
-                                    <td>Avance</td>
-                                    <td>Acciones</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <h4>Avances</h4>
-                    <div class="underline m-b-15 m-t-15"></div>
-
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p>Comentarios</p>
-                                    <textarea id="cometariosAvanceCurso" class="form-control" placeholder="Comentarios" rows="5"></textarea>
-                                </div>
-                            </div>
-                            <div class="row"> 
-                                <div class="col-md-12 m-t-10">
-                                    <div id="errorCometariosAvanceCurso"></div>
-                                </div>
-                            </div>
-                            <div class="row m-t-15">
-                                <div class="col-md-12 text-center">
-                                    <button id="btn-cancel-avance" type="button" class="btn btn-white m-r-5 m-b-5 btn-sm">Cancelar avance</button>
-                                    <button id="btn-registrar-avance" type="button" class="btn btn-success m-r-5 m-b-5 btn-sm">Registrar avance</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div class="row">
-                                <input id="evidencias" name="evidencias[]" type="file" multiple >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>  
 <!-- fin contenido continuar, terminar curso evidencias-->
 
-
-<!-- fin contenido continuar curso -->
-
+<div id="divInstrucciones" class="hidden">
+    <p class="text-justify">                                        
+        Realiza las siguientes instrucciones para registar tu avance: <br><br>
+        1.- En la tabla de temarios identifica el tema que deseas subir a tu avanze. <br>
+        2.- Da un clic sobre el botón terminar de la columna acciones. <br>
+        3.- El sistema muestra un formulario.<br>
+        4.- Ingresa un comentario del tema que estas ingresando.<br>
+        5.- Sube tus evidencias (solo formatos png y jpg).<br>
+        6.- Guarda tu avance. <br>
+    </p>
+    <b style="font-size:12px;">Nota: Cuando guardes el avance ya no podrás modificarlo solo te permitirá consultarlo.</b>
 </div>
-<!-- Finalizando #contenido -->
+
+<div id="formularioMostrarAvance" class="hidden">
+    Comentarios <br>
+    <textarea id="avanceComentario" class="form-control" placeholder="Comentarios" rows="5" disabled></textarea>
+    <div id="gallery" class="gallery">
+    </div>
+    <div class="text-right">
+        <button type="button" id="btnCerrarCompletarAvanceCurso" class="btn btn-white text-right" data-dismiss="modal">Cerrar</button>
+    </div>
+</div>
+
+<div id="formularioAgregarAvance" class="hidden">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Comentarios</p>
+                    <textarea id="cometariosAvanceCurso" class="form-control" placeholder="Comentarios" rows="5"></textarea>
+                </div>
+            </div>
+            <div class="row"> 
+                <div class="col-md-12 m-t-10">
+                    <div id="errorCometariosAvanceCurso"></div>
+                </div>
+            </div>
+            <div class="row m-t-15">
+                <div class="col-md-12 text-center">
+                    <button id="btn-cancel-avance" type="button" class="btn btn-white m-r-5 m-b-5 btn-sm">Cancelar avance</button>
+                    <button id="btn-registrar-avance" type="button" class="btn btn-success m-r-5 m-b-5 btn-sm">Registrar avance</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="row">
+                <input id="evidencias" name="evidencias[]" type="file" multiple >
+            </div>
+        </div>
+    </div>
+</div>

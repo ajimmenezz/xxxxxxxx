@@ -12,8 +12,6 @@ $(function () {
     //Inicializa funciones de la plantilla
     App.init();
 
-//    let tablaCursosAsignados = new TablaBasica('tabla-cursosAsignados');
-
     let botonesFilaCursos = [
         {
             targets: 6,
@@ -44,17 +42,9 @@ $(function () {
     let configTablaCursos = {columnas: botonesFilaCursos};
     let tablaCursosAsignados = new TablaRender('tabla-cursosAsignados', [], configTablaCursos);
     let tablaTemario = new TablaRender('tabla-temario', [], botonesFilaTemario);
-    let tablaTemarioTerminar = new TablaRender('tabla-temario-terminar', [], botonesFilaTemario);
-    let tablaTemarioCompletado = new TablaRender('tabla-temario-completado', [], botonesFilaTemario);
     let idUsuario = $('#valorIdUsuario').val();
     let idTema = null;
     let idCurso = null;
-    let evidenciaMaterial = new FileUpload_Boton('evidencias', {
-        url: 'Cursos_Asignados/Agregar-Avance',
-        extensiones: ['jpg', 'jpeg', 'png'],
-        tituloAceptar: 'Agregar Archivos',
-        colorBotonAceptar: 'btn btn-success'});
-    evidenciaMaterial.iniciarFileUpload();
 
     $("#cursoTablaContinuar").on('click', function (e) {
         $("#tablaAsigCursos").css('display', 'none');
@@ -87,7 +77,6 @@ $(function () {
         });
     });
 
-
     $("#btn-regresar-temario").off("click");
     $("#btn-regresar-temario").on('click', function (e) {
         $('#tablaAsigCursos').css('display', 'block');
@@ -99,66 +88,6 @@ $(function () {
     $("#btn-regresar-temario-completado").on('click', function (e) {
         regresarTemario();
     });
-
-    $("#btn-cancel-avance").off("click");
-    $("#btn-cancel-avance").on('click', function (e) {
-        $('#asigCursoContinuar').css('display', 'block');
-        $('#temarioTerminarCurso').css('display', 'none');
-    });
-
-    $("#btn-registrar-avance").off("click");
-    $("#btn-registrar-avance").on('click', function (e) {
-        let comentarios = $('#cometariosAvanceCurso').val();
-        let evidencias = $('#evidencias').val();
-        let idUsuario = $('#valorIdUsuario').val();
-        let data = {comentarios: comentarios, idUsuario: idUsuario, idTema: idTema, idCurso: idCurso};
-
-        if (evidencias !== '') {
-            if (comentarios !== '') {
-                evidenciaMaterial.enviarPeticionServidor('temarioTerminarCurso', data, function (respuesta) {
-                    evento.iniciarModal(
-                            "#modal-box",
-                            "<strong>Avance Tema</strong>",
-                            `<p class="text-center">Se registro el avance del curso con éxito.</p>                      
-                                <p class="text-center"><span class="fa-stack fa-2x text-success">
-                            <i class="fa fa-circle fa-stack-2x"></i>
-                            <i class="fa fa-check fa-stack-1x fa-inverse"></i>
-                        </span></i></p>`);
-
-                    $('#btnModalBoxConfirmar').addClass('hidden');
-                    $('#btnModalBoxAbortar').empty().html('Cerrar');
-                    $("#btnModalBoxAbortar").off("click");
-                    $("#btnModalBoxAbortar").on('click', function (e) {
-                        $('#cometariosAvanceCurso').val('');
-                        evidenciaMaterial.limpiarElemento();
-                        $("#temarioTerminarCurso").css('display', 'none');
-
-                        if (respuesta.data.temario.temas.length === 1) {
-                            location.reload();
-                        } else {
-                            respuesta.idCurso = idCurso;
-                            cargarTemarioUsuario(respuesta);
-                        }
-                    });
-                });
-            } else {
-                evento.mostrarMensaje("#errorCometariosAvanceCurso", false, "Agrega la comentarios.", 3000);
-            }
-        } else {
-            evento.mostrarMensaje("#errorCometariosAvanceCurso", false, "Agrega evidencia(s).", 3000);
-        }
-    });
-
-    $("#btnCerrarCompletarAvanceCurso").on('click', function (e) {
-        regresarTemario();
-    });
-
-    function regresarTemario() {
-        $('#asigCursoContinuar').css('display', 'block');
-        $('#temarioComenzarCurso').css('display', 'none');
-        $('#divMigajaTemarioCompletado').addClass('hidden');
-        $('#divMigajaTemario').removeClass('hidden');
-    }
 
     function recargarCursos(cursos) {
         tablaCursosAsignados.limpiartabla();
@@ -172,10 +101,9 @@ $(function () {
         $('#tablaAsigCursos').css('display', 'none');
         $('#asigCursoContinuar').css('display', 'block');
         $('#divMigajaTemario').removeClass("hidden");
+        $('#divAvances').empty().html($('#divInstrucciones').html());
 
         tablaTemario.limpiartabla();
-        tablaTemarioCompletado.limpiartabla();
-        tablaTemarioTerminar.limpiartabla();
 
         $('.divFaltante').empty().html(respuesta.data.temario.faltante + '%');
         $('.divAvance').empty().html(respuesta.data.temario.avance + '%');
@@ -191,10 +119,8 @@ $(function () {
                 idAvance = v.idAvance;
                 boton = `<span class="temarioTablaCompletado" data-avance="${v.idAvance}" style="cursor: pointer; margin: 5px; font-size: 13px;  color: #348fe2;"><i class="fa fa-check-square"></i> Completado</span>`;
             }
-//
+
             tablaTemario.agregarDatosFila([respuesta.idCurso, idAvance, v.nombre, v.porcentaje + '%', boton]);
-            tablaTemarioCompletado.agregarDatosFila([respuesta.idCurso, idAvance, v.nombre, v.porcentaje + '%', boton]);
-            tablaTemarioTerminar.agregarDatosFila([respuesta.idCurso, idAvance, v.nombre, v.porcentaje + '%', boton]);
         });
 
         tablaTemario.addListenerOnclik('.temarioTablaCompletado', function (dataRow, fila) {
@@ -203,6 +129,61 @@ $(function () {
 
         tablaTemario.addListenerOnclik('.temarioTablaTerminar', function (dataRow, fila) {
             eventoTerminarTemario(dataRow);
+
+            let evidenciaMaterial = new FileUpload_Boton('evidencias', {
+                url: 'Cursos_Asignados/Agregar-Avance',
+                extensiones: ['jpg', 'jpeg', 'png'],
+                tituloAceptar: 'Agregar Archivos',
+                colorBotonAceptar: 'btn btn-success'});
+            evidenciaMaterial.iniciarFileUpload();
+
+            $("#btn-cancel-avance").off("click");
+            $("#btn-cancel-avance").on('click', function (e) {
+                $('#divAvances').empty().html($('#divInstrucciones').html());
+            });
+
+            $("#btn-registrar-avance").off("click");
+            $("#btn-registrar-avance").on('click', function (e) {
+                let comentarios = $('#cometariosAvanceCurso').val();
+                let evidencias = $('#evidencias').val();
+                let idUsuario = $('#valorIdUsuario').val();
+                let data = {comentarios: comentarios, idUsuario: idUsuario, idTema: idTema, idCurso: idCurso};
+
+                if (evidencias !== '') {
+                    if (comentarios !== '') {
+                        evidenciaMaterial.enviarPeticionServidor('asigCursoContinuar', data, function (respuesta) {
+                            evento.iniciarModal(
+                                    "#modal-box",
+                                    "<strong>Avance Tema</strong>",
+                                    `<p class="text-center">Se registro el avance del curso con éxito.</p>                      
+                                            <p class="text-center"><span class="fa-stack fa-2x text-success">
+                                        <i class="fa fa-circle fa-stack-2x"></i>
+                                        <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                    </span></i></p>`);
+
+                            $('#btnModalBoxConfirmar').addClass('hidden');
+                            $('#btnModalBoxAbortar').empty().html('Cerrar');
+                            $("#btnModalBoxAbortar").off("click");
+                            $("#btnModalBoxAbortar").on('click', function (e) {
+                                $('#cometariosAvanceCurso').val('');
+                                evidenciaMaterial.limpiarElemento();
+                                $("#temarioTerminarCurso").css('display', 'none');
+
+                                if (respuesta.data.temario.temas.length === 1) {
+                                    location.reload();
+                                } else {
+                                    respuesta.idCurso = idCurso;
+                                    cargarTemarioUsuario(respuesta);
+                                }
+                            });
+                        });
+                    } else {
+                        evento.mostrarMensaje("#errorCometariosAvanceCurso", false, "Agrega la comentarios.", 3000);
+                    }
+                } else {
+                    evento.mostrarMensaje("#errorCometariosAvanceCurso", false, "Agrega evidencia(s).", 3000);
+                }
+            });
         });
 
     }
@@ -212,29 +193,32 @@ $(function () {
         let data = {idAvance: idAvance};
 
         evento.enviarEvento('Cursos_Asignados/Ver-Evidencias', data, '#asigCursoContinuar', function (respuesta) {
-            $("#tablaAsigCursos").css('display', 'none');
-            $("#asigCursoContinuar").css('display', 'none');
-            $("#temarioComenzarCurso").css('display', 'block');
-            $("#temarioTerminarCurso").css('display', 'none');
+            $('#divAvances').empty().html($('#formularioMostrarAvance').html());
             $('#avanceComentario').empty().val(respuesta.data.avance[0].comentarios);
-            $('#gallery').isotope( 'destroy' );
             $('#gallery').empty('');
-            
+
             crearGaleriaAvance(respuesta.data.avance);
             handleIsotopesGallery();
-            
+
             $('#divMigajaTemario').addClass('hidden');
             $('#divMigajaTemarioCompletado').removeClass('hidden');
+
+            $("#btnCerrarCompletarAvanceCurso").on('click', function (e) {
+                regresarTemario();
+            });
         });
+    }
+
+    function regresarTemario() {
+        $('#divAvances').empty().html($('#divInstrucciones').html());
+        $('#divMigajaTemarioCompletado').addClass('hidden');
+        $('#divMigajaTemario').removeClass('hidden');
     }
 
     function eventoTerminarTemario(dataRow) {
         idCurso = dataRow[0];
         idTema = dataRow[1];
-        $("#tablaAsigCursos").css('display', 'none');
-        $("#asigCursoContinuar").css('display', 'none');
-        $("#temarioComenzarCurso").css('display', 'none');
-        $("#temarioTerminarCurso").css('display', 'block');
+        $('#divAvances').empty().html($('#formularioAgregarAvance').html());
     }
 
     function crearGaleriaAvance(avances) {
@@ -267,7 +251,7 @@ $(function () {
         }
         return dividerValue;
     }
-    
+
     var handleIsotopesGallery = function () {
         "use strict";
         var container = $('#gallery');
@@ -313,5 +297,4 @@ $(function () {
             return false;
         });
     };
-
 });
