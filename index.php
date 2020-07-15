@@ -1,3 +1,6 @@
+<?php
+error_reporting(0);
+?>
 <!DOCTYPE html>
 <!--
 To change this license header, choose License Headers in Project Properties.

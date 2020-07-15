@@ -26,6 +26,9 @@ class Controller_PrinterLexmark extends Base
             case 'SetPerformanceByToner':
                 $resultado = $this->reporteLexmark->setPerformanceByToner($this->input->get());
                 break;
+            case 'SetTemporalLexmark':
+                $resultado = $this->reporteLexmark->setTemporalLexmark();
+            break;
             default:
                 $resultado = ['code' => 404, 'message' => "Not found"];
                 break;

@@ -228,4 +228,37 @@ class Modelo_PrinterLexmark extends Modelo_Base
             }
         }
     }
+
+    public function setTemporalLexmark()
+    {
+        $this->iniciaTransaccion();
+        $this->queryBolean("SET lc_time_names = 'es_ES'");
+        $this->queryBolean("truncate temp_lexmark");
+        $this->queryBolean("
+        insert into temp_lexmark
+        select 
+        vlcs.Semana, 
+        vlcs.FechaReal,
+        vlcs.UltimoDia,
+        vlcs.Mes,
+        vlcs.FechaLectura,
+        vlcs.Contacto,
+        regionCliente((select IdRegionCliente from cat_v3_sucursales where Alias = vlcs.Contacto limit 1)) as Zona,
+        vlcs.CarasCargadas,
+        (select CarasCargadas from v_lexmark_conteo_semanal where Semana = if(vlcs.Semana = 1, 52, (vlcs.Semana - 1)) and Contacto = vlcs.Contacto limit 1) as CarasSemanaPasada
+        from v_lexmark_conteo_semanal vlcs");
+        if ($this->estatusTransaccion() === FALSE) {
+            $this->roolbackTransaccion();
+            return [
+                'code' => 500,
+                'message' => $this->tipoError()
+            ];
+        } else {
+            $this->commitTransaccion();
+            return [
+                'code' => 200,
+                'message' => 'All was saved correctly'
+            ];
+        }
+    }
 }
