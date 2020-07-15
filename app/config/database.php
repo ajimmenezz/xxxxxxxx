@@ -98,10 +98,10 @@ $db['adist3'] = array(
 
 $db['pruebasAdist2'] = array(
     'dsn' => '',
-    'hostname' => 'siccob.com.mx',
-    'username' => 'usertest_usr',
+    'hostname' => 'siccob.solutions',
+    'username' => 'prod_usr',
     'password' => 'adist01.',
-    'database' => 'adist_usertest',
+    'database' => 'adist_prod',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
