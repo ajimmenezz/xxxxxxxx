@@ -173,6 +173,10 @@ $(function () {
             listaParticipantes: listaParticipantes
         }
         console.log(datos);
+        
+        evento.enviarEvento("Administracion_Cursos/Nuevo-Curso",datos,"",function (respuesta) {
+                      console.log(respuesta);
+                  });
     });
     // </editor-fold>  
 
