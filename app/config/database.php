@@ -74,32 +74,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $active_group = 'adist3';
 $query_builder = TRUE;
 
+$isProduction = false;
+$host = $_SERVER['SERVER_NAME'];
+if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
+    $isProduction = true;
+}
+
 $isSandbox = strpos($_SERVER['SERVER_NAME'], 'sandbox.siccob.solutions');
-$isProduction = strpos($_SERVER['SERVER_NAME'], 'siccob.solutions');
 
-$db['adist3'] = array(
-    'dsn' => '',
-    'hostname' => 'siccob.com.mx',
-    'username' => 'usertest_usr',
-    'password' => 'adist01.',
-    'database' => 'adist_usertest',
-    'dbdriver' => 'mysqli',
-    'dbprefix' => '',
-    'pconnect' => FALSE,
-    'db_debug' => (ENVIRONMENT !== 'production'),
-    'cache_on' => FALSE,
-    'cachedir' => '',
-    'char_set' => 'utf8',
-    'dbcollat' => 'utf8_general_ci',
-    'swap_pre' => '',
-    'encrypt' => FALSE,
-    'compress' => FALSE,
-    'stricton' => FALSE,
-    'failover' => array(),
-    'save_queries' => TRUE
-);
-
-$db['pruebasAdist2'] = array(
+$connectionParamsADV2 = [
     'dsn' => '',
     'hostname' => 'siccob.solutions',
     'username' => 'prod_usr',
@@ -119,29 +102,17 @@ $db['pruebasAdist2'] = array(
     'stricton' => FALSE,
     'failover' => array(),
     'save_queries' => TRUE
-);
+];
 
-$db['adist2'] = array(
-    'dsn' => '',
-    'hostname' => 'siccob.solutions',
-    'username' => 'prod_usr',
-    'password' => 'adist01.',
-    'database' => 'adist_prod',
-    'dbdriver' => 'mysqli',
-    'dbprefix' => '',
-    'pconnect' => FALSE,
-    'db_debug' => (ENVIRONMENT !== 'production'),
-    'cache_on' => FALSE,
-    'cachedir' => '',
-    'char_set' => 'utf8',
-    'dbcollat' => 'utf8_general_ci',
-    'swap_pre' => '',
-    'encrypt' => FALSE,
-    'compress' => FALSE,
-    'stricton' => FALSE,
-    'failover' => array(),
-    'save_queries' => TRUE
-);
+if ($isSandbox || !$isProduction) {
+    $connectionParamsADV2['database'] = 'adist_usertest';
+}
+
+$db['adist3'] = $connectionParamsADV2;
+
+$db['pruebasAdist2'] = $connectionParamsADV2;
+
+$db['adist2'] = $connectionParamsADV2;
 
 if ($isSandbox !== FALSE) {
     $database = 'adistv3_sandbox';
@@ -223,7 +194,7 @@ if ($isProduction !== FALSE) {
     $userNameGapsi = 'sa';
 } else {
     $hostNameGapsi = '127.0.0.1, 50420';
-    $userNameGapsi = 'sagapsi';    
+    $userNameGapsi = 'sagapsi';
 }
 
 $db['Gapsi'] = array(

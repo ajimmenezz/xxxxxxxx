@@ -57,7 +57,7 @@ class Base
     {
         if (empty(self::$DB_Adist2P)) {
             self::$DB_Adist2P = get_instance()->load->database('pruebasAdist2', TRUE);
-        }
+        }        
         return self::$DB_Adist2P;
     }
 
