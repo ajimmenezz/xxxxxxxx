@@ -19,6 +19,15 @@ class IWizard {
             });
         }, 3000);
     }
+    
+    activePanel(panel = '0'){
+        $(`#${this.wizard}`).bwizard('show', panel);
+    }
+    
+    resetPanel(){
+        $(`#${this.wizard}`).bwizard({'validating':false});
+        $(`#${this.wizard}`).bwizard('show',0);
+    }
 
 }
 

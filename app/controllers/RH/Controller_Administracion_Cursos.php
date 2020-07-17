@@ -18,15 +18,37 @@ class Controller_Administracion_Cursos extends Base {
         $response = new SmartResponse();
 
         switch ($evento) {
+
+            case 'Secciones-Admintrador-Cursos':
+                $datos = array();
+                $datos['cursos'] = $this->curso->getCourses();
+                $datos['perfiles'] = $this->curso->getProfile();
+                $datos['certificados'] = $this->curso->getCertificate();
+                $datos['tipoCursos'] = $this->curso->getTypeCourses();
+                $resultado = array(
+                    'NuevoCurso' => $this->load->view('RH/Cursos/NuevoCurso', $datos, TRUE),
+                    'EditarCurso' => $this->load->view('RH/Cursos/EditarCurso','', TRUE)
+                );
+                echo json_encode($resultado);
+                break;
             case 'Nuevo-Curso':
-                $resultado = $this->curso->newCourse($this->input->post());
-                if ($resultado['response']) {
-                    $cursosActualizados = $this->curso->getCourses();
-                    $response->onSuccess(HttpStatusCode::HTTP_OK);
-                    $response->addData("cursos", $cursosActualizados);
-                } else {
-                    $response->onError("Error", "Error al agregar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
-                }
+                $resultado = $this->input->post();
+                  echo '<pre>';
+                  $datos = json_decode($resultado['extraData'],true);
+                  var_dump($datos['temarios']);
+                  foreach ($datos['temarios'] as $key => $value) {
+                      var_dump($value['tema'].' porcentaje'.$value['porcentaje']);
+                  }
+                  var_dump($_FILES);
+                  
+//                $resultado = $this->curso->newCourse($this->input->post());
+//                if ($resultado['response']) {
+//                    $cursosActualizados = $this->curso->getCourses();
+//                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+//                    $response->addData("cursos", $cursosActualizados);
+//                } else {
+//                    $response->onError("Error", "Error al agregar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
+//                }
                 echo $response->toJsonString();
                 break;
             case 'Obtener-Curso':
@@ -90,7 +112,7 @@ class Controller_Administracion_Cursos extends Base {
                     $response->onError("Error", "Error al obtener la informacón", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
-            break;
+                break;
             case 'TemasCursoUsuario':
                 $resultado = $this->curso->TemaryCourseByUser($this->input->post());
                 if ($resultado) {

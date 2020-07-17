@@ -1,8 +1,9 @@
 $(function () {
 
     var evento = new Base();
-    var metodo = new Pagina();
-    var file = new Upload();
+    let nuevoCurso = new NuevoCurso();
+//    var Helper = new Pagina();
+//    var file = new Upload();
     //Muestra la hora en el sistema
     evento.horaServidor($('#horaServidor').val());
 
@@ -22,6 +23,12 @@ $(function () {
 
     App.init();
 
+    let secciones = {};
+
+    Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Secciones-Admintrador-Cursos/', {}, function (respond) {
+        secciones.nuevoCurso = respond.NuevoCurso;
+        secciones.editarCurso = respond.EditarCurso;
+    });
 
     // <editor-fold desc="Seccion Cursos"> 
     let botonesFilaCursos = [
@@ -40,10 +47,14 @@ $(function () {
     let configTablaCursos = {columnas: botonesFilaCursos};
     let tablaCursos = new TablaRender('tabla-cursos', [], configTablaCursos);
 
+
     $('#btn-nuevo-curso').on('click', function (e) {
-        metodo.ocultarElemento('seccion-cursos');
-        metodo.mostrarElemento('seccion-nuevo-curso');
-        $("#wizard").bwizard();
+        Helper.ocultarElemento('seccion-cursos');
+        Helper.agregarElemento('seccion', secciones.nuevoCurso);
+        Helper.mostrarElemento('seccion');
+        nuevoCurso.init();
+        nuevoCurso.events();
+
     });
 
     tablaCursos.addListenerOnclik('.show-avances', function (dataRow, fila) {
@@ -52,6 +63,10 @@ $(function () {
 
     tablaCursos.addListenerOnclik('.edit-curso', function (dataRow, fila) {
         console.log('Editar row id:' + dataRow[0]);
+        console.log(secciones.editarCurso);
+        Helper.ocultarElemento('seccion-cursos');
+        Helper.agregarElemento('seccion', secciones.editarCurso);
+        Helper.mostrarElemento('seccion');
     });
 
     tablaCursos.addListenerOnclik('.delete-curso', function (dataRow, fila) {
@@ -60,120 +75,153 @@ $(function () {
     // </editor-fold> 
 
     // <editor-fold desc="Seccion Nuevo Curso"> 
-    let botonesFilaNuevoTemario = [
-        {
-            targets: 2,
-            data: null,
-            render: function (data, type, row, meta) {
-                return `<i class='fa fa-trash delete-temario' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'></i>`;
-            }
-        }
-    ];
-    let botonesFilaNuevoParticipante = [
-        {
-            targets: 2,
-            data: null,
-            render: function (data, type, row, meta) {
-                return `<i class='fa fa-trash delete-participante' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'></i>`;
-            }
-        }
-    ];
-    let configTablaNuevoTemario = {
-        info: false,
-        pageLength: 3,
-        searching: false,
-        lengthChange: false,
-        columnas: botonesFilaNuevoTemario
-    };
-
-    let configTablaNuevoParicipante = {
-        info: false,
-        pageLength: 3,
-        searching: false,
-        lengthChange: false,
-        columnas: botonesFilaNuevoParticipante
-    };
-
-    let tablaTemario = new TablaRender('tabla-nuevo-curso-temarios', [], configTablaNuevoTemario);
-    let tablaParticipantes = new TablaRender('tabla-nuevo-cursos-participantes', [], configTablaNuevoParicipante);
-    let selectParticipante = new SelectBasico('select-participante');
-    let selectCertificado = new SelectBasico('select-certificado');
-
-    let validarExtrasWizard = {
-        '1': [tablaTemario]
-    };
-    let wizarNuevoCurso = new WizardValidation('wizard', {index: [0, 1, 2], validate: validarExtrasWizard});
-
-    $('#btn-agregar-nuevo-temario').on('click', function (e) {
-        let curso = $('#input-temario').val();
-        let temarios = tablaTemario.datosTabla();
-        let porcentaje = temarios.length ? 100 / (temarios.length + 1) : 100;
-
-        tablaTemario.limpiartabla();
-        tablaTemario.agregarDatosFila([curso, porcentaje.toFixed(2) + '%']);
-        $.each(temarios, function (key, value) {
-            tablaTemario.agregarDatosFila([value[0], porcentaje.toFixed(2) + '%']);
-        });
-        $('#input-temario').val('');
-    });
-
-    tablaTemario.addListenerOnclik('.delete-temario', function (dataRow, fila) {
-        tablaTemario.eliminarFila(fila);
-    });
-
-    $('#btn-nuevo-puestoParticipante').on('click', function (e) {
-        let participante = selectParticipante.obtenerTexto();
-        let idParticipante = selectParticipante.obtenerValor();
-        let datosTabla = tablaParticipantes.datosTabla();
-        let listId = [];
-
-        $.each(datosTabla, function (key, value) {
-            listId.push(value[0]);
-        });
-
-        if (idParticipante && listId.indexOf(idParticipante) === -1) {
-            tablaParticipantes.agregarDatosFila([idParticipante, participante]);
-        }
-        selectParticipante.limpiarElemento();
-    });
-
-    tablaParticipantes.addListenerOnclik('.delete-participante', function (dataRow, fila) {
-        tablaParticipantes.eliminarFila(fila);
-    });
-
-    $('#btn-generar-curso').on('click', function (e) {
-        
-        let datosParticipantes = tablaParticipantes.datosTabla();
-        
-        if(datosParticipantes.length === 0){
-            wizarNuevoCurso.showMensaje(' Debes ingresar al menos un pariticipante para poder generar el curso',2);
-            return false;
-        }
-        let datosCurso = [
-            $('#input-nombreCurso').val(),
-            $('#textarea-descripcionCurso').val(),
-            $('#input-urlCurso').val(),
-            selectCertificado.obtenerValor(),
-            $('#input-costoCurso').val() ? $('#input-costoCurso').val() : "00.00"
-        ];
-
-        let listaTemario = [];
-        $.each(tablaTemario.datosTabla(), function (key, value) {
-            listaTemario.push([value[0], '', parseFloat(value[1].replace('%', '')), '/'])
-        });
-
-        let listaParticipantes = [];
-        $.each(datosParticipantes, function (key, value) {
-            listaParticipantes.push(value[0]);
-        });
-        
-        let datos = {
-            datosCurso: datosCurso,
-            listaTemario: listaTemario,
-            listaParticipantes: listaParticipantes
-        }
-        console.log(datos);
-    });
+//    let botonesFilaNuevoTemario = [
+//        {
+//            targets: 2,
+//            data: null,
+//            render: function (data, type, row, meta) {
+//                return `<i class='fa fa-trash delete-temario' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'></i>`;
+//            }
+//        }
+//    ];
+//    let botonesFilaNuevoParticipante = [
+//        {
+//            targets: 2,
+//            data: null,
+//            render: function (data, type, row, meta) {
+//                return `<i class='fa fa-trash delete-participante' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'></i>`;
+//            }
+//        }
+//    ];
+//    let configTablaNuevoTemario = {
+//        info: false,
+//        pageLength: 3,
+//        searching: false,
+//        lengthChange: false,
+//        columnas: botonesFilaNuevoTemario
+//    };
+//
+//    let configTablaNuevoParicipante = {
+//        info: false,
+//        pageLength: 3,
+//        searching: false,
+//        lengthChange: false,
+//        columnas: botonesFilaNuevoParticipante
+//    };
+//
+//    let tablaTemario = new TablaRender('tabla-nuevo-curso-temarios', [], configTablaNuevoTemario);
+//    let tablaParticipantes = new TablaRender('tabla-nuevo-cursos-participantes', [], configTablaNuevoParicipante);
+//    let selectParticipante = new SelectBasico('select-participante');
+//    let selectCertificado = new SelectBasico('select-certificado');
+//
+//    let validarExtrasWizard = {
+//        '1': [tablaTemario]
+//    };
+//    let wizarNuevoCurso = new WizardValidation('wizard', {index: [0, 1, 2], validate: validarExtrasWizard});
+//    let file = new FileNativo('agregar-imagen', 'img-curso');
+//
+//    $('.btn-cancel-wizard').on('click', function () {
+//        file.clear();
+//        $('#input-nombreCurso').val('');
+//        $('#textarea-descripcionCurso').val('');
+//        $('#input-urlCurso').val('');
+//        selectCertificado.limpiarElemento();
+//        $('#input-costoCurso').val('00.00');
+//        tablaTemario.limpiartabla();
+//        $('#input-temario').val('');
+//        tablaParticipantes.limpiartabla();
+//        selectParticipante.limpiarElemento();
+//        $('#formDatosNewCurso').parsley().reset();
+//        $('#formDatosNewCurso').attr('data-parsley-validate', 'false');
+//        wizarNuevoCurso.resetPanel();
+////        Helper.ocultarElemento('seccion-nuevo-curso');
+////        Helper.mostrarElemento('seccion-cursos');
+//    });
+//
+//    $('#btn-imagen-curso').on('click', function () {
+//        $('#agregar-imagen').click();
+//    });
+//
+//    file.addListenerChange(["jpeg", "png"]);
+//
+//    $('#btn-agregar-nuevo-temario').on('click', function (e) {
+//        let curso = $('#input-temario').val();
+//
+//        if (curso) {
+//            let temarios = tablaTemario.datosTabla();
+//            let porcentaje = temarios.length ? 100 / (temarios.length + 1) : 100;
+//
+//            tablaTemario.limpiartabla();
+//            tablaTemario.agregarDatosFila([curso, porcentaje.toFixed(2) + '%']);
+//            $.each(temarios, function (key, value) {
+//                tablaTemario.agregarDatosFila([value[0], porcentaje.toFixed(2) + '%']);
+//            });
+//        }
+//        $('#input-temario').val('');
+//    });
+//
+//    tablaTemario.addListenerOnclik('.delete-temario', function (dataRow, fila) {
+//        tablaTemario.eliminarFila(fila);
+//    });
+//
+//    $('#btn-nuevo-puestoParticipante').on('click', function (e) {
+//        let participante = selectParticipante.obtenerTexto();
+//        let idParticipante = selectParticipante.obtenerValor();
+//        let datosTabla = tablaParticipantes.datosTabla();
+//        let listId = [];
+//
+//        $.each(datosTabla, function (key, value) {
+//            listId.push(value[0]);
+//        });
+//
+//        if (idParticipante && listId.indexOf(idParticipante) === -1) {
+//            tablaParticipantes.agregarDatosFila([idParticipante, participante]);
+//        }
+//        selectParticipante.limpiarElemento();
+//    });
+//
+//    tablaParticipantes.addListenerOnclik('.delete-participante', function (dataRow, fila) {
+//        tablaParticipantes.eliminarFila(fila);
+//    });
+//
+//    $('#btn-generar-curso').on('click', function (e) {
+//
+//        let datosParticipantes = tablaParticipantes.datosTabla();
+//
+//        if (datosParticipantes.length === 0) {
+//            wizarNuevoCurso.showMensaje(' Debes ingresar al menos un pariticipante para poder generar el curso', 2);
+//            return false;
+//        }
+//
+//        let datosCurso = [
+//            $('#input-nombreCurso').val(),
+//            $('#textarea-descripcionCurso').val(),
+//            $('#input-urlCurso').val(),
+//            selectCertificado.obtenerValor(),
+//            $('#input-costoCurso').val() ? $('#input-costoCurso').val() : "00.00"
+//        ];
+//
+//        let listaTemario = [];
+//        $.each(tablaTemario.datosTabla(), function (key, value) {
+//            listaTemario.push({tema: value[0], porcentaje: parseFloat(value[1].replace('%', ''))})
+//        });
+//
+//        let listaParticipantes = [];
+//        $.each(datosParticipantes, function (key, value) {
+//            listaParticipantes.push(value[0]);
+//        });
+//
+//        let datos = {
+//            'datosCurso': datosCurso,
+//            'temarios': listaTemario,
+//            'participantes': listaParticipantes
+//        };
+//
+//
+//        file.uploadServer('Administracion_Cursos/Nuevo-Curso', datos, function (respond) {
+//            console.log(respond);
+//        });
+//    });
     // </editor-fold>  
 
 
