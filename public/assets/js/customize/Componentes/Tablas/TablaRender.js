@@ -2,7 +2,13 @@ class TablaRender extends ITabla {
 
     iniciarTabla() {
         let _this = this;
-        let tabla = $(`#${this.tabla}`).DataTable({
+        let objeto = $(`#${this.tabla}`);
+
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
+
+        let tabla = objeto.DataTable({
             info: _this.config.hasOwnProperty('info') ? _this.config.info : true,
             pageLength: _this.config.hasOwnProperty('pageLength') ? _this.config.pageLength : 10,
             searching: _this.config.hasOwnProperty('searching') ? _this.config.searching : true,
@@ -20,7 +26,7 @@ class TablaRender extends ITabla {
             let tr = $(this).closest('tr');
             let dataTable = _this.objetoDataTable();
             let dataRow = dataTable.row(tr[0]).data();
-            callback(dataRow,tr[0]);
+            callback(dataRow, tr[0]);
         });
     }
 }

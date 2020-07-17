@@ -56,49 +56,50 @@ class Cursos extends General {
     }
 
     public function newCourse(array $infoCourse) {
+//        var_dump($infoCourse);
         $rutaImagen = $this->guardarImagen('evidencias');
-
+//
         if (!$rutaImagen) {
             $rutaImagen = NULL;
         }
-
-        $cursos = explode(',', $infoCourse['cursos']);
-        $datosCursos['nombre'] = $cursos[1];
-        $datosCursos['url'] = $cursos[2];
-        $datosCursos['descripcion'] = $cursos[3];
-        $datosCursos['certificado'] = $cursos[4];
-        $datosCursos['costo'] = $cursos[5];
+//
+////        $cursos = explode(',', $infoCourse['cursos']);
+        $datosCursos['nombre'] = $infoCourse['datosCurso'][0];
+        $datosCursos['url'] = $infoCourse['datosCurso'][1];
+        $datosCursos['descripcion'] = $infoCourse['datosCurso'][2];
+        $datosCursos['certificado'] = $infoCourse['datosCurso'][3];
+        $datosCursos['costo'] = $infoCourse['datosCurso'][4];
         $datosCursos['imagen'] = $rutaImagen;
-        $participantes = explode(",", $infoCourse['participantes']);
-        $temario = explode(",/", $infoCourse['temario']);
-        $arrayNuevoTemario = array();
-
-        foreach ($temario as $key => $value) {
-            if ($key !== 0) {
-                $value = substr($value, 1);
-            }
-
-            if (!empty($value)) {
-                $datosTemario = explode(",", $value);
-                $arrayNuevoTemario[$key] = $datosTemario;
-            }
-        }
-
-        $insertQuery = $this->DBS->insertCourse($datosCursos);
-
-        if ($insertQuery['code'] == 200) {
-            foreach ($arrayNuevoTemario as $value) {
-                $this->DBS->insertTemaryCourse($value, $insertQuery['id']);
-            }
-
-            foreach ($participantes as $value) {
-                $this->DBS->insertParticipantsCourse($value[0], $insertQuery['id']);
-            }
-        } else {
-            return ['response' => false, 'code' => 400];
-        }
-
-        return ['response' => true, 'code' => 200];
+////        $participantes = explode(",", $infoCourse['participantes']);
+////        $temario = explode(",/", $infoCourse['temario']);
+//        $arrayNuevoTemario = array();
+//        var_dump($datosCursos);
+//        foreach ($temario as $key => $value) {
+//            if ($key !== 0) {
+//                $value = substr($value, 1);
+//            }
+//
+//            if (!empty($value)) {
+//                $datosTemario = explode(",", $value);
+//                $arrayNuevoTemario[$key] = $datosTemario;
+//            }
+//        }
+        var_dump($infoCourse['listaTemario']);
+//        $insertQuery = $this->DBS->insertCourse($datosCursos);
+//
+//        if ($insertQuery['code'] == 200) {
+//            foreach ($arrayNuevoTemario as $value) {
+//                $this->DBS->insertTemaryCourse($value, $insertQuery['id']);
+//            }
+//
+//            foreach ($participantes as $value) {
+//                $this->DBS->insertParticipantsCourse($value[0], $insertQuery['id']);
+//            }
+//        } else {
+//            return ['response' => false, 'code' => 400];
+//        }
+//
+//        return ['response' => true, 'code' => 200];
     }
 
     public function guardarImagen(string $idEvidencia) {
@@ -185,16 +186,26 @@ class Cursos extends General {
     }
 
     public function deleteElementCourse($datos) {
+        $this->DBS->iniciaTransaccion();
         if ($datos['tipoDato'] == 1) {
             $tabla = 't_curso_tema';
+            $temariosCurso = $this->DBS->getTemaryById($datos['idCurso']);
+            $totalTemasActivos = count($temariosCurso) - 1;
+            $porcentajeTemasActivos = 100 / $totalTemasActivos;
+            $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $porcentajeTemasActivos), array('idCurso' => $datos['idCurso']));
         } else {
             $tabla = 't_curso_relacion_perfil';
         }
-        $resultQuery = $this->DBS->deleteElementById($datos['idCurso'], $datos['id'], $tabla);
-        if ($resultQuery['code'] == 200) {
-            return true;
-        } else {
+
+        $this->DBS->deleteElementById($datos['idCurso'], $datos['id'], $tabla);
+
+        $this->DBS->terminaTransaccion();
+        if ($this->DBS->estatusTransaccion() === false) {
+            $this->DBS->roolbackTransaccion();
             return false;
+        } else {
+            $this->DBS->commitTransaccion();
+            return true;
         }
     }
 
@@ -228,6 +239,8 @@ class Cursos extends General {
         $infoUsuario['faltante'] = $datosFaltanteAvance['faltante'];
         $infoUsuario['infoUsuario'] = $this->DBS->getInfoUserCurse($datos);
         $infoUsuario['infoCurso'] = $this->DBS->getCourseById($datos['idCurso']);
+        $infoUsuario['cursos'] = $this->DBS->getMyCourses($datos['idUsuario']);
+
         return $infoUsuario;
     }
 

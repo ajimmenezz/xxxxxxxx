@@ -77,7 +77,7 @@ class Modelo_Cursos extends Modelo_Base {
     }
 
     public function getTemaryById($idCurso) {
-        return $this->consulta("SELECT * FROM t_curso_tema WHERE idCurso = " . $idCurso);
+        return $this->consulta("SELECT * FROM t_curso_tema WHERE idCurso = " . $idCurso . " AND estatus = 1");
     }
 
     public function getPerfilById($idCurso) {
@@ -290,7 +290,8 @@ class Modelo_Cursos extends Modelo_Base {
                                     avance.id as idAvance 
                                 FROM t_curso_tema as tema
                                 LEFT JOIN t_curso_tema_relacion_avance_usuario as avance on avance.idTema = tema.id
-                                WHERE tema.idCurso = " . $datos['idCurso'] . " and avance.idUsuario = " . $datos['idUsuario']);
+                                WHERE tema.idCurso = " . $datos['idCurso'] . " and avance.idUsuario = " . $datos['idUsuario'] . "
+                                AND tema.estatus = 1");
     }
 
     public function getDetailCourse($idCurso) {
