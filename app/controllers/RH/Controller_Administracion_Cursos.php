@@ -31,8 +31,8 @@ class Controller_Administracion_Cursos extends Base {
                 echo json_encode($resultado);
                 break;
             case 'Nuevo-Curso':
-                $resultado = $this->input->post();
-                $datos = json_decode($resultado['extraData'], true);
+                $datosPost = $this->input->post();
+                $datos = json_decode($datosPost['extraData'], true);
                 $resultado = $this->curso->newCourse($datos);
                 if ($resultado['response']) {
                     $cursosActualizados = $this->curso->getCourses();
@@ -54,7 +54,9 @@ class Controller_Administracion_Cursos extends Base {
                 echo $response->toJsonString();
                 break;
             case 'Editar-Curso':
-                $resultado = $this->curso->editCourse($this->input->post());
+                $datosPost = $this->input->post();
+                $datos = json_decode($datosPost['extraData'], true);
+                $resultado = $this->curso->editCourse($datos);
                 if ($resultado['response']) {
                     $cursosActualizados = $this->curso->getCourses();
                     $response->onSuccess(HttpStatusCode::HTTP_OK);

@@ -57,7 +57,7 @@ class Cursos extends General {
 
     public function newCourse(array $infoCourse) {
         $this->DBS->iniciaTransaccion();
-        
+
         $rutaImagen = $this->guardarUnaImagen('image');
 
         if (!$rutaImagen) {
@@ -88,11 +88,11 @@ class Cursos extends General {
                 'idPerfil' => $value
             ));
         }
-        
+
         $cursos = $this->getCourses();
 
         $this->DBS->terminaTransaccion();
-        
+
         if ($this->DBS->estatusTransaccion() === false) {
             $this->DBS->roolbackTransaccion();
             return ['response' => false, 'code' => 400, 'data' => $cursos];
@@ -154,12 +154,11 @@ class Cursos extends General {
     public function editCourse($infoCourse) {
         $this->DBS->iniciaTransaccion();
         if (!empty($_FILES)) {
-            $rutaImagen = $this->guardarImagen('evidenciasEditarCurso');
+            $rutaImagen = $this->guardarUnaImagen('image');
 
             if (!$rutaImagen) {
                 $rutaImagen = NULL;
             }
-
             $datosCursos['imagen'] = $rutaImagen;
         } else {
             $datosCurso = $this->DBS->getCourseById($infoCourse['id']);
@@ -176,13 +175,14 @@ class Cursos extends General {
         $this->DBS->updateCourse($datosCursos);
 
         $this->DBS->terminaTransaccion();
+        $cursos = $this->getCourses();
 
         if ($this->DBS->estatusTransaccion() === false) {
             $this->DBS->roolbackTransaccion();
-            return false;
+            return ['response' => false, 'code' => 400];
         } else {
             $this->DBS->commitTransaccion();
-            return ['response' => true, 'code' => 200];
+            return ['response' => true, 'code' => 200, 'data' => $cursos];
         }
     }
 
