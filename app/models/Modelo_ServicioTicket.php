@@ -1080,7 +1080,7 @@ class Modelo_ServicioTicket extends Modelo_Base {
 
     public function getInstalaciones(string $idServicio) {
         $consulta = $this->consulta("SELECT tie.*,
-                                        (SELECT Nombre FROM cat_v3_tipos_operaciones WHERE Id = tie.IdOperacion) AS Operacion,
+                                        (SELECT Nombre FROM cat_v3_tipos_operaciones_poliza WHERE Id = tie.IdOperacion) AS Operacion,
                                         areaAtencion(tie.IdArea)  AS Area,
                                         modelo(tie.IdModelo)  AS Modelo
                                          FROM t_instalaciones_equipos_poliza tie
