@@ -201,17 +201,11 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
 
-    public function insertTemaryCourse($infoTema, $idCurso) {
+    public function insertTemaryCourse(array $infoTema) {
         $this->iniciaTransaccion();
-
-        $this->insertar('t_curso_tema', [
-            'nombre' => $infoTema[0],
-            'descripcion' => $infoTema[1],
-            'porcentaje' => $infoTema[2],
-            'idCurso' => $idCurso
-        ]);
-
+        $this->insertar('t_curso_tema', $infoTema);
         $this->terminaTransaccion();
+        
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
             return ['code' => 400];
@@ -221,17 +215,11 @@ class Modelo_Cursos extends Modelo_Base {
         }
     }
 
-    function insertParticipantsCourse($perfil, $idCurso) {
+    function insertParticipantsCourse(array $datos) {
         $this->iniciaTransaccion();
-
-        $this->insertar('t_curso_relacion_perfil', [
-            'idCurso' => $idCurso,
-            'idPerfil' => $perfil
-        ]);
+        $this->insertar('t_curso_relacion_perfil', $datos);
 
         $id = $this->consulta("select last_insert_id() as id");
-
-
 
         $this->terminaTransaccion();
         if ($this->estatusTransaccion() === false) {

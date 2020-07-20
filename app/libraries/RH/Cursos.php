@@ -56,7 +56,9 @@ class Cursos extends General {
     }
 
     public function newCourse(array $infoCourse) {
-        $rutaImagen = $this->guardarImagen('evidencias');
+        $this->DBS->iniciaTransaccion();
+        
+        $rutaImagen = $this->guardarUnaImagen('image');
 
         if (!$rutaImagen) {
             $rutaImagen = NULL;
@@ -68,22 +70,44 @@ class Cursos extends General {
         $datosCursos['certificado'] = $infoCourse['datosCurso'][3];
         $datosCursos['costo'] = $infoCourse['datosCurso'][4];
         $datosCursos['imagen'] = $rutaImagen;
+
         $insertQuery = $this->DBS->insertCourse($datosCursos);
 
-        foreach ($infoCourse['listaTemario'] as $value) {
-            $this->DBS->insertTemaryCourse($value, $insertQuery['id']);
+        foreach ($infoCourse['temarios'] as $value) {
+            $this->DBS->insertTemaryCourse(array(
+                'nombre' => $value['tema'],
+                'descripcion' => '',
+                'porcentaje' => $value['porcentaje'],
+                'idCurso' => $insertQuery['id']
+            ));
         }
 
-        foreach ($infoCourse['listaParticipantes'] as $value) {
-            $this->DBS->insertParticipantsCourse($value, $insertQuery['id']);
+        foreach ($infoCourse['participantes'] as $value) {
+            $this->DBS->insertParticipantsCourse(array(
+                'idCurso' => $insertQuery['id'],
+                'idPerfil' => $value
+            ));
         }
+        
+        $cursos = $this->getCourses();
 
+        $this->DBS->terminaTransaccion();
+        
         if ($this->DBS->estatusTransaccion() === false) {
             $this->DBS->roolbackTransaccion();
-            return ['response' => false, 'code' => 400];
+            return ['response' => false, 'code' => 400, 'data' => $cursos];
         } else {
             $this->DBS->commitTransaccion();
             return ['response' => true, 'code' => 200];
+        }
+    }
+
+    public function guardarUnaImagen(string $idEvidencia) {
+        if (!empty($_FILES)) {
+            $archivos = subirFichero('Cursos', $idEvidencia);
+            return $archivos;
+        } else {
+            return false;
         }
     }
 
