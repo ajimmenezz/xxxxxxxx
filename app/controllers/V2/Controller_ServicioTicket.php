@@ -85,11 +85,11 @@ class Controller_ServicioTicket extends CI_Controller {
 
     private function htmlBotonVuelta() {
         $boton = FALSE;
-        
+
         if (Usuario::getIdPerfil() === '83' || Usuario::getIdDepartamento() === '19') {
             $boton = TRUE;
         }
-        
+
         return $boton;
     }
 
@@ -98,10 +98,15 @@ class Controller_ServicioTicket extends CI_Controller {
         $this->datos['notasFolio'] = null;
         $this->datos['resolucionFolio'] = null;
 
-        if (!empty($folio)) {
-            $this->datos['folio'] = ServiceDesk::getDatos($folio);
-            $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
-            $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($folio);
+
+        try {
+            if (!empty($folio)) {
+                $this->datos['folio'] = ServiceDesk::getDatos($folio);
+                $this->datos['notasFolio'] = ServiceDesk::getNotas($folio);
+                $this->datos['resolucionFolio'] = ServiceDesk::getResolucion($folio);
+            }
+        } catch (\Exception $ex) {
+            
         }
     }
 
@@ -390,7 +395,11 @@ class Controller_ServicioTicket extends CI_Controller {
     }
 
     private function getHtmlFolio(array $datos) {
-        $this->datos['html']['folio'] = $this->load->view('V2/PaquetesTickets/InformacionFolio', $datos, TRUE);
+        if (!empty($this->datos['folio'])) {
+            $this->datos['html']['folio'] = $this->load->view('V2/PaquetesTickets/InformacionFolio', $datos, TRUE);
+        }else{
+            $this->datos['html']['folio'] = '<div class="text-center"><h5><strong>El folio proporcionado no es correcto.</strong></h5></div>';
+        }
     }
 
     private function getHtmlBitacora() {
