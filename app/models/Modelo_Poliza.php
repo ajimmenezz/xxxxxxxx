@@ -321,6 +321,10 @@ class Modelo_Poliza extends Modelo_Base {
         return $IdCorrectivoSoluciones;
     }
 
+    public function getDatosTablaReparacionRefaccionInventario($ids = ""){
+        return $this->consulta("select * from t_inventario where Id in ($ids)");
+    }
+
     public function insertarServicioCorrectivoSolicitudesSolucionRefaccion(array $dataCorrectivosSoluciones, array $dataCorrectivosSolucionesRefaccion) {
         $this->iniciaTransaccion();
 
