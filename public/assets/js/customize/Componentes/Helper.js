@@ -1,11 +1,6 @@
-class Utileria {
+class Helper {
 
-    constructor() {
-    }
-
-    //Evento de petición
-    enviar(objeto = null, url, datos = {}, callback = null){
-        let _this = this;
+    static enviarPeticionServidor(objeto = null, url, datos = {}, callback = null){
 
         $.ajax({
             url: url,
@@ -14,18 +9,18 @@ class Utileria {
             dataType: 'json',
             beforeSend: function () {
                 if (objeto !== null) {
-                    _this.empezarPantallaCargando(objeto);
+                    Helper.empezarPantallaCargando(objeto);
                 }
             }
         }).done(function (data) {
-//            _this.errorServidor(data);
-            _this.quitarPantallaCargando(objeto);
+            Helper.errorServidor(data);
+            Helper.quitarPantallaCargando(objeto);
             if (callback !== null) {
                 callback(data);
             }
         }).fail(function (jqXHR, textStatus, errorThrown) {
             try {
-                _this.quitarPantallaCargando(objeto);
+                Helper.quitarPantallaCargando(objeto);
                 if (jqXHR.status === 0) {
                     throw 'Not connect: Verify Network.';
                 } else if (jqXHR.status == 404) {
@@ -42,12 +37,20 @@ class Utileria {
                     throw 'Sin atrapar el Error: ' + jqXHR.responseText;
                 }
             } catch (exception) {
-                callback(undefined);
             }
         });
     }
 
-    empezarPantallaCargando(objeto) {
+    static errorServidor(data) {
+        if (data.hasOwnProperty('Error')) {
+            Helper.enviarPagina(data.Error);
+        } else if (data.hasOwnProperty('MensajeError')) {
+            console.log('mensaje error de el servidor');
+        }
+    }
+
+    static empezarPantallaCargando(objeto) {
+
         let panel = $(`#${objeto}`);
         let cuerpo;
 
@@ -74,7 +77,8 @@ class Utileria {
         }
     }
 
-    quitarPantallaCargando(objeto) {
+    static quitarPantallaCargando(objeto) {
+
         let panel = $(`#${objeto}`);
 
         if (panel.hasClass('panel')) {
@@ -87,26 +91,11 @@ class Utileria {
         } else {
             $('#iconCargando').remove();
         }
+
     }
 
-    errorServidor(data) {
-        if (data.hasOwnProperty('Error')) {
-            this.enviarPagina(data.Error);
-        } else if (data.hasOwnProperty('MensajeError')) {
-            console.log('mensaje error de el servidor');
-        }
-    }
+    static mostrarElemento(objeto = null) {
 
-    enviarPagina(url = null) {
-        if (typeof url === null) {
-            window.location.href = "Logout";
-        } else {
-            window.location.href = url;
-    }
-    }
-
-    //Plugin Elementos
-    mostrarElemento(objeto = null) {
         let elemento = $(`#${objeto}`);
 
         if (!elemento.length) {
@@ -118,7 +107,8 @@ class Utileria {
     }
     }
 
-    ocultarElemento(objeto = null) {
+    static ocultarElemento(objeto = null) {
+
         let elemento = $(`#${objeto}`);
 
         if (!elemento.length) {
@@ -127,46 +117,76 @@ class Utileria {
 
         if (!elemento.hasClass('hidden')) {
             elemento.addClass('hidden');
-        }
+    }
     }
 
-    insertarContenido(objeto = null, contenido = '') {
+    static cerrarSesion() {
+
+        let _this = this;
+        let datos = {tipoServicio: 'salir'};
+
+        Helper.enviarPeticionServidor(null, '/Api/reportar', datos, function (respuesta) {
+            _this.enviarPagina('/Logout');
+        });
+
+    }
+
+    static enviarPagina(url = null) {
+
+        if (typeof url === null) {
+            window.location.href = "Logout";
+        } else {
+            window.location.href = url;
+    }
+
+    }
+
+    static bloquearBoton(objeto = '') {
         let elemento = $(`#${objeto}`);
-        elemento.empty().append(contenido);
-    }
-    ;
-            mostrarMensaje(objeto, tipo, mensaje, duración) {
-        switch (tipo) {
-            case false:
-                var error = '<div class="alert alert-danger fade in m-b-15" id="mensajeError">\n\
-                                <strong>Error: </strong>\n\
-                               ' + mensaje + '\n\
-                            </div>';
-                $(objeto).empty().append(error);
-                setTimeout(function () {
-                    $('#mensajeError').fadeOut('slow', function () {
-                        $(this).remove();
-                    });
-                }, duración);
-                break;
 
-            case true:
-                var exito = '<div class="alert alert-success fade in m-b-15" id="mensajeExito">\n\
-                                <strong>Éxito: </strong>\n\
-                               ' + mensaje + '\n\
-                            </div>';
-                $(objeto).empty().append(exito);
-                setTimeout(function () {
-                    $('#mensajeExito').fadeOut('slow', function () {
-                        $(this).remove();
-                    });
-                }, duración);
-                break;
-            default:
-                break;
+        if (!elemento.length) {
+            elemento = $(`.${objeto}`);
         }
-    }
-    ;
-}
 
+        if (elemento.attr('disabled') === undefined) {
+            elemento.addClass('disabled');
+            elemento.attr('disabled', 'disabled');
+    }
+    }
+
+    static habilitarBoton(objeto = '') {
+        let elemento = $(`#${objeto}`);
+
+        if (!elemento.length) {
+            elemento = $(`.${objeto}`);
+        }
+
+        if (elemento.attr('disabled') !== undefined) {
+            elemento.removeAttr('disabled');
+            elemento.removeClass('disabled');
+    }
+    }
+
+    static agregarElemento(objeto = '', html = '') {
+
+        let elemento = $(`#${objeto}`);
+
+        if (!elemento.length) {
+            elemento = $(`.${objeto}`);
+        }
+
+        elemento.append(html);
+    }
+    
+    static quitarContenidoElemento(objeto = '', html = '') {
+
+        let elemento = $(`#${objeto}`);
+
+        if (!elemento.length) {
+            elemento = $(`.${objeto}`);
+        }
+
+        elemento.empty();
+    }
+}
 

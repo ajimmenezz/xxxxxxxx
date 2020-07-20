@@ -2,7 +2,7 @@ class IUpload {
 
     constructor(nombreFileUpload, configuracion = {}) {
         this.fileUpload = nombreFileUpload;
-        this.configuracion = configuracion;        
+        this.configuracion = configuracion;
         this.datosExtra = {};
         this.pagina = new Utileria();
     }
@@ -68,6 +68,31 @@ class IUpload {
         }
     }
 
+    obtenerConfiguracionBoton() {
+        let _this = this;
+        return {
+            uploadUrl: 'Sin definir url en FileUpload',
+            uploadAsync: false,
+            language: 'es',
+            showUpload: false,
+            showCaption: false,
+            dropZoneEnabled: false,
+            browseClass: 'btn btn-warning',
+            browseLabel: 'Examinar',
+            browseIcon: "",
+            removeIcon: " ",
+            removeClass: "btn btn-danger",
+            removeLabel: 'Borrar',
+            fileActionSettings: {
+                showUpload: false,
+            },
+            uploadExtraData: function () {
+                var datos = _this.obteniendoDatosExtra();
+                return datos;
+            }
+        }
+    }
+
     obteniendoDatosExtra() {
         return this.datosExtra;
     }
@@ -75,20 +100,19 @@ class IUpload {
     enviarPeticionServidor(panel = '', datos = {}, callback) {
         let _this = this;
         _this.definiendoDatosExtra(datos);
-
 //        if (_this.validarArchivos()) {
-            $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
-                _this.pagina.empezarPantallaCargando(panel);
-            }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
-                _this.pagina.quitarPantallaCargando(panel);
-                if (callback !== null) {
-                    callback(data.response);
-                }
-            }).on('filebatchuploaderror ', (event, data, msg) => {
-                _this.pagina.quitarPantallaCargando(panel);
-            });
+        $(`#${this.fileUpload}`).on('filebatchpreupload', function (event, data, previewId, index) {
+            _this.pagina.empezarPantallaCargando(panel);
+        }).on('filebatchuploadsuccess', function (event, data, previewId, index) {
+            _this.pagina.quitarPantallaCargando(panel);
+            if (callback !== null) {
+                callback(data.response);
+            }
+        }).on('filebatchuploaderror ', (event, data, msg) => {
+            _this.pagina.quitarPantallaCargando(panel);
+        });
 
-            $(`#${this.fileUpload}`).fileinput('upload');
+        $(`#${this.fileUpload}`).fileinput('upload');
 //    }
 
     }
@@ -103,6 +127,7 @@ class IUpload {
 
     definiendoDatosExtra(datos = {}){
         this.datosExtra = datos;
+        console.log(this.datosExtra);
     }
 
     totalArchivos() {
@@ -122,7 +147,7 @@ class IUpload {
     }
 
     setAtributos(valores = {}){
-        let _this = this;           
+        let _this = this;
         $.each(valores, function (key, value) {
             $(`#${_this.fileUpload}`).attr(key, value);
         });

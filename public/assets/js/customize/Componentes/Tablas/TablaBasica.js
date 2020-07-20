@@ -1,21 +1,30 @@
 class TablaBasica extends ITabla {
 
-    iniciarTabla() {        
+    iniciarTabla() {
         let tabla = $(`#${this.tabla}`).DataTable({
             responsive: true,
             language: super.obtenerIdioma()
-        });               
+        });
         tabla.draw();
     }
-    
-    iniciarTablaScroll() {        
+
+    iniciarTablaClass() {
+        let tabla = $(`.${this.tabla}`).DataTable({
+            responsive: true,
+            language: super.obtenerIdioma()
+        });
+        tabla.draw();
+    }
+
+    iniciarTablaScroll() {
         let tabla = $(`#${this.tabla}`).DataTable({
             responsive: true,
             language: super.obtenerIdioma(),
             paging: false
-        });               
+        });
         tabla.draw();
     }
-};
+}
+;
 
 

@@ -9,7 +9,7 @@
         switch (tipoServicio) {
             case 'Instalaciones':
                 this.objeto = new ServicioInstalaciones();
-                break;                    
+                break;                        
         }
         return this.objeto;
     }
