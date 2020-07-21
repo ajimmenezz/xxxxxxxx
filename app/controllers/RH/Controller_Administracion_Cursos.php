@@ -45,9 +45,7 @@ class Controller_Administracion_Cursos extends Base {
                 echo $response->toJsonString();
                 break;
             case 'Obtener-Curso':
-                $datosPost = $this->input->post();
-                $datos = json_decode($datosPost['extraData'], true);
-                $resultado = $this->curso->getCourse($datos);
+                $resultado = $this->curso->getCourse($this->input->post());
                 if ($resultado['response']) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("infoCurso", $resultado);
