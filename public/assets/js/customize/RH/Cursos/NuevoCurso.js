@@ -7,9 +7,12 @@ class NuevoCurso {
         this.selectCertificado = null;
         this.wizarNuevoCurso = null;
         this.file = null;
+        this.modal = new ModalBox('modal-box');
+        this.tablaCursos = null;
     }
 
-    init() {
+    init(tablaCurso) {
+        this.tablaCursos = tablaCurso;
         this.initTablas();
         this.initWizard();
         this.initFileUpload();
@@ -179,11 +182,82 @@ class NuevoCurso {
                 'participantes': listaParticipantes
             };
 
-
+            _this.showMensaje();
+            
             _this.file.uploadServer('Administracion_Cursos/Nuevo-Curso', datos, function (respond) {
-                console.log(respond);
+                
+               console.log(respond.success);
+               
+               if(respond.success){
+                   _this.showMensajeExito();
+                   _this.updateTablaCursos(respond.data);
+               }else{
+                   _this.showMensajeError();
+               }
             });
         });
+
+    }
+
+    showMensaje() {
+        let _this = this;
+
+        let contenido = `<div class="row">
+                            <div class="col-md-12 text-center">
+                                Estamos creando el nuevo curso                                
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <i class="fa fa-refresh"></i>                              
+                            </div>
+                         </div>`;
+        _this.modal.mostrarModal('Nuevo Curso', contenido);
+        _this.modal.ocultarBotonAceptar();
+        _this.modal.ocultarBotonCanelar();
+    }
+
+    showMensajeExito() {
+        this.modal.borrarContenido();
+        this.modal.agregarContenido(`<div class="row">
+                                        <div class="col-md-12 text-center">
+                                            Se a generado el curso                                
+                                        </div>
+                                        <div class="col-md-12 text-center">
+                                            <b>${$('#input-nombreCurso').val()}</b>                                
+                                        </div>
+                                        <div class="col-md-12 text-center">
+                                            con éxito.
+                                        </div>
+                                        <div class="col-md-12 text-center text-success">
+                                            <i class="fa fa-2x fa-check-circle "></i>
+                                        </div>
+                                     </div>`);
+        this.modal.mostrarBotonCancelar();
+        this.modal.cambiarValorBotonCanelar('Cerrar');
+    }
+
+    showMensajeError() {
+        this.modal.borrarContenido();
+        this.modal.agregarContenido(`<div class="row">
+                                        <div class="col-md-12 fa-2x text-center text-danger">
+                                            <i class="fa fa-exclamation-circle"></i> Error
+                                        </div>
+                                        <div class="col-md-12 text-center">
+                                            No se pudo realizar la creación del curso                               
+                                        </div>
+                                        <div class="col-md-12 text-center">
+                                            <b>${$('#input-nombreCurso').val()}</b>                                
+                                        </div>
+                                        <div class="col-md-12 text-center">
+                                            Favor de volver a intentarlo.
+                                        </div>
+                                        
+                                     </div>`);
+        this.modal.mostrarBotonCancelar();
+        this.modal.cambiarValorBotonCanelar('Cerrar');
+    }
+    
+    updateTablaCursos(datos){
+        console.log(datos.cursos);        
     }
 
 }

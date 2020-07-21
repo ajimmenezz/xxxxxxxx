@@ -2,6 +2,7 @@ $(function () {
 
     var evento = new Base();
     let nuevoCurso = new NuevoCurso();
+    let editarCurso = new EditarCurso();
 
     evento.horaServidor($('#horaServidor').val());
 
@@ -39,9 +40,8 @@ $(function () {
         Helper.ocultarElemento('seccion-cursos');
         Helper.agregarElemento('seccion', secciones.nuevoCurso);
         Helper.mostrarElemento('seccion');
-        nuevoCurso.init();
+        nuevoCurso.init(tablaCursos);
         nuevoCurso.events();
-
     });
 
     tablaCursos.addListenerOnclik('.show-avances', function (dataRow, fila) {
@@ -50,10 +50,11 @@ $(function () {
 
     tablaCursos.addListenerOnclik('.edit-curso', function (dataRow, fila) {
         console.log('Editar row id:' + dataRow[0]);
-        console.log(secciones.editarCurso);
         Helper.ocultarElemento('seccion-cursos');
         Helper.agregarElemento('seccion', secciones.editarCurso);
         Helper.mostrarElemento('seccion');
+        editarCurso.init(dataRow[0]);
+        editarCurso.events();
     });
 
     tablaCursos.addListenerOnclik('.delete-curso', function (dataRow, fila) {

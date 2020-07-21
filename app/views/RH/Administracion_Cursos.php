@@ -55,15 +55,7 @@
                                     <td class="all">Acciones</td>
                                 </tr>
                             </thead>
-                            <tbody>                               
-                                <tr>
-                                    <td>1</td>
-                                    <td>Programacion</td>
-                                    <td>Prueba</td>
-                                    <td>10</td>
-                                    <td>Activo</td>
-                                    <td></td>
-                                </tr>          
+                            <tbody>                                        
                                 <?php
                                 foreach ($datos['cursos'] as $value) {
                                     echo "<tr>";
@@ -100,9 +92,9 @@
 
 
 
-<!-- Empezando #contenido MODALS-->
+<!-- Empezando #contenido MODALS
 
-<!-- subir temarios -->
+ subir temarios 
 <div id="modalSubirTemarios" class="modal fade" >
     <div class="modal-dialog " role="document">
         <div class="modal-content">
@@ -146,9 +138,9 @@
                 </div>
             </div>
 
-            <!-- fin subir temarios -->
+             fin subir temarios 
 
-            <!--  temarios por lo menos 1 -->
+              temarios por lo menos 1 
             <div id="modalValidateTemario" class="modal fade ">
                 <div class="modal-dialog ">
                     <div class="modal-content">
@@ -178,10 +170,10 @@
                 </div>
             </div>
 
-            <!-- fin  temarios 1-->
+             fin  temarios 1
 
 
-            <!--  participantes por lo menos 1 -->
+              participantes por lo menos 1 
             <div id="modalValidateParticipantes" class="modal fade ">
                 <div class="modal-dialog" >
                     <div class="modal-content">
@@ -211,9 +203,9 @@
                 </div>
             </div>
 
-            <!-- fin participantes 1-->
+             fin participantes 1
 
-            <!--  guardar curso  -->
+              guardar curso  
             <div id="modalresponseSave" class="modal fade ">
                 <div class="modal-dialog" >
                     <div class="modal-content">
@@ -243,9 +235,9 @@
                 </div>
             </div>
 
-            <!-- fin guardar curso-->
+             fin guardar curso
 
-            <!-- FIN #contenido MODALS-->
+             FIN #contenido MODALS-->
 
             <script>
 //                var eventoPagina = new Pagina();
@@ -456,9 +448,9 @@
             </script>
 
             <!-- ver cursos -->
-
+<!--
             <div id="administracion-cursos-ver" class="content" style="display:none; margin-top:15px;">
-                <!-- begin page-header -->
+                 begin page-header 
                 <div class="row">
                     <div class="col-sm-8">
                         <h1 class="page-header"> <b>Curso </b> Gestión de proyectos.</h1>
@@ -471,7 +463,7 @@
 
                     </div>
                 </div>
-                <!-- end page-header -->
+                 end page-header 
                 <div class="panel panel-inverse" data-sortable-id="ui-widget-1" id="tablaAsigCursos">
                     <div class="panel-heading">
                         <h4 class="panel-title">Cursos</h4>
@@ -518,7 +510,7 @@
 
                     </div>
 
-                    <!-- begin tabla cursos -->
+                     begin tabla cursos 
                     <div class="row" style="margin-top:50px;">
                         <div class="col-md-12">
                             <div class="table-responsive">
@@ -538,15 +530,15 @@
                                 </table>
                             </div>
                         </div>
-                        <!-- end tabla cursos -->
+                         end tabla cursos 
                     </div>
                 </div>
             </div>
 
 
-            <!-- ver avance -->
+             ver avance 
             <div id="administracion-cursos-verAvance" class="content" style="display:none; margin-top:15px;">
-                <!-- begin page-header -->
+                 begin page-header 
                 <div class="row">
                     <div class="col-sm-8">
                         <h1 class="page-header"> <b>Curso </b> Gestión de proyectos.</h1>
@@ -560,7 +552,7 @@
 
                     </div>
                 </div>
-                <!-- end page-header -->
+                 end page-header 
                 <div  class="panel panel-inverse" data-sortable-id="ui-widget-1" >
                     <div class="panel-heading">
                         <h4 class="panel-title">Avance de participante</h4>
@@ -677,15 +669,15 @@
                     </div>
                 </div> 
             </div> 
-            <!-- ver avance -->
-            <!--  fin ver cursos -->
+             ver avance 
+              fin ver cursos 
 
 
-            <!--  EDITAR curso -->
+              EDITAR curso 
 
 
             <div id="administracion-cursos-EDITAR" class="content" style="display:none; margin-top:15px;">
-                <!-- begin page-header -->
+                 begin page-header 
                 <div class="row">
                     <div class="col-sm-8">
                         <h1 class="page-header"> <b>Curso </b> Gestión de proyectos.</h1>
@@ -697,7 +689,7 @@
                         </ol>
 
                     </div>
-                    <!-- end page-header -->
+                     end page-header 
 
 
                     <div class="col-sm-12" style="margin-top:15px;">
@@ -715,9 +707,9 @@
                                 <form id="formDatosNewCursoEdit" data-parsley-validate="true" enctype="multipart/form-data">
                                     <div class="row"  style="margin:40px 45px;">
                                         <div class="col-xs-4">
-                                            <!-- <div class="col-xs-12">
+                                             <div class="col-xs-12">
                                             <img class="img-fluid" style="width:90%; margin-left:12px;"   src="/assets/img/user-12.jpg" alt="img-curso">
-                                            </div> -->
+                                            </div> 
                                             <div class="col-xs-12" style="text-align: center;  margin-top: 10px;">
 
                                                 <div class="profile-image text-center">
@@ -732,33 +724,33 @@
                                         </div>
                                         <div class="col-xs-8">
 
-                                            <!-- begin row -->
+                                             begin row 
                                             <div class="row">
-                                                <!-- begin col-4 -->
+                                                 begin col-4 
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Nombre del curso *</label>
                                                         <input disabled type="text" id="nombreCursoEdit" name="Nombre" placeholder="Nombre" class="form-control" data-parsley-required="true" />
                                                     </div>
                                                 </div>
-                                                <!-- end col-4 -->
-                                                <!-- begin col-4 -->
+                                                 end col-4 
+                                                 begin col-4 
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Url *</label>
                                                         <input disabled type="text" id="urlCursoEdit" name="url" placeholder="http://" class="form-control" data-parsley-required="true"/>
                                                     </div>
                                                 </div>
-                                                <!-- end col-4 -->
-                                                <!-- begin col-4 -->
+                                                 end col-4 
+                                                 begin col-4 
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label for="nuevoArchivo">Descripción *</label>
                                                         <textarea disabled id="textareaDescripcionCursoEdit" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6" data-parsley-required="true"/></textarea>
                                                     </div>
                                                 </div>
-                                                <!-- end col-4 -->
-                                                <!-- begin col-4 -->
+                                                 end col-4 
+                                                 begin col-4 
                                                 <div class=" col-xs-12 col-md-6">
                                                     <?php
                                                     // var_dump($datos['certificados']);
@@ -778,17 +770,17 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <!-- end col-4 -->
-                                                <!-- begin col-4 -->
+                                                 end col-4 
+                                                 begin col-4 
                                                 <div class=" col-xs-12 col-md-6">
                                                     <div class="form-group">
                                                         <label>Costo </label>
                                                         <input disabled type="text" id="costoCursoEdit" name="costo" placeholder="$00.00" class="form-control" />
                                                     </div>
                                                 </div>
-                                                <!-- end col-4 -->
+                                                 end col-4 
                                             </div>
-                                            <!-- end row -->
+                                             end row 
                                         </div>
 
                                         <div class="col-sm-12">
@@ -827,7 +819,7 @@
                                                 </b>
                                             </div>
                                             <div class="col-xs-12" style="text-align: center; margin-top:30px;" >
-                                                <!-- <button id="btn-loadExcel-temarioEDit" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-file"></i> Subir Excel</button> -->
+                                                 <button id="btn-loadExcel-temarioEDit" type="button" class="btn btn-success m-r-5 m-b-5" ><i class="fa fa-file"></i> Subir Excel</button> 
                                             </div>
                                         </div>
                                     </div>
@@ -934,7 +926,7 @@
 
             </div>
 
-            <!--  modal editar curso  -->
+              modal editar curso  
             <div id="modalresponseSaveEdit" class="modal fade ">
                 <div class="modal-dialog" >
                     <div class="modal-content">
@@ -965,12 +957,12 @@
                 </div>
             </div>
 
-            <!-- fin modal edit curso-->
+             fin modal edit curso
 
-            <!-- fin EDITAR curso -->
+             fin EDITAR curso 
 
 
-            <!-- mdals eliminar cursos -->
+             mdals eliminar cursos 
 
 
             <div id="modalDeletoCursoAdmin" class="modal fade " >
@@ -1014,5 +1006,5 @@
                 </div>
             </div>
 
-            <!-- modals fin modal cursos -->
+             modals fin modal cursos -->
 

@@ -26,7 +26,7 @@ class Controller_Administracion_Cursos extends Base {
                 $datos['tipoCursos'] = $this->curso->getTypeCourses();
                 $resultado = array(
                     'NuevoCurso' => $this->load->view('RH/SeccionesCursos/NuevoCurso', $datos, TRUE),
-                    'EditarCurso' => $this->load->view('RH/SeccionesCursos/EditarCurso', '', TRUE)
+                    'EditarCurso' => $this->load->view('RH/SeccionesCursos/EditarCurso', $datos, TRUE)
                 );
                 echo json_encode($resultado);
                 break;

@@ -55,9 +55,15 @@ class FileNativo {
 
     setFormData(listaImage = []) {
         let _this = this;
+        let multiple = $(`#${this.inputFile}`).attr('multiple');
+        
+        if(multiple === undefined){
+            _this.formData.delete('image');
+        }
+        
         for (let imagen of listaImage) {
             _this.formData.append('image', imagen);
-    }
+        }
     }
 
     uploadServer(url = '', datos = {}, callback){
