@@ -11,6 +11,7 @@ class ITabla {
         this.objetoTabla = objeto;
         this.datos = datos;
         this.config = config;
+        this.order = this.config.hasOwnProperty('order') ? this.config.order : [[0, 'asc']];
 
         if (config.scroll) {
             this.iniciarTablaScroll();
