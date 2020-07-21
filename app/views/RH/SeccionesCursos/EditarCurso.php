@@ -11,52 +11,60 @@
             </ul>
             <div class="tab-content">
                 <div id="datos-curso" class="tab-pane fade active in">
-                    <div class="row m-t-30 m-b-30">
-                        <div class="col-md-offset-1 col-md-3 p-l-40 p-r-40">
-                            <!-- begin profile-image -->
-                            <div id="img-edit-curso" class="profile-image">
-                                <img src="/assets/img/Iconos/no-thumbnail.jpg" />
+                    <form id="form-edit-datos-curso"  enctype="multipart/form-data" data-parsley-validate="true">
+                        <div class="row m-t-30 m-b-30">
+                            <div class="col-md-offset-1 col-md-3 p-l-40 p-r-40">
+                                <!-- begin profile-image -->
+                                <div id="contenedor-edit-imagen" class="profile-image">
+                                    <img src="/assets/img/Iconos/no-thumbnail.jpg" />
+                                </div>
+                                <!-- end profile-image -->
+                                <div class="m-b-10">
+                                    <a id="btn-edit-imagen" href="#" class="btn btn-warning btn-block btn-sm disabled" disabled>Establecer Imagen</a>
+                                </div>
+                                <!-- begin profile-highlight -->
+                                <input id="file-edit-imagen" type="file" class="hidden"/>
                             </div>
-                            <!-- end profile-image -->
-                            <div class="m-b-10">
-                                <a id="btn-imagen-curso" href="#" class="btn btn-warning btn-block btn-sm">Establecer Imagen</a>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Nombre del curso *</label>
+                                    <input id="input-edit-nombre" type="text" name="Nombre" placeholder="Nombre" class="form-control"  data-parsley-group="wizard-step-1" required disabled/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nuevoArchivo">Descripción *</label>
+                                    <textarea id="textarea-edit-descripcion" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6"  data-parsley-group="wizard-step-1" required disabled/></textarea>
+                                </div>
                             </div>
-                            <!-- begin profile-highlight -->
-                            <input id="edit-agregar-imagen" type="file" class="hidden"/>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Url *</label>
+                                    <input id="input-edit-url" type="text" name="url" placeholder="http://" class="form-control"  data-parsley-group="wizard-step-1" required  disabled/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nuevoArchivo">Certificado </label>
+                                    <select id="select-edit-certificado" class="form-control" style="width: 100%" disabled>
+                                        <?php
+                                        foreach ($certificados as $value) {
+
+                                            echo '<option value="' . $value['id'] . '">' . $value['nombre'] . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Costo </label>
+                                    <input id="input-edit-costo" type="text" name="costo" placeholder="$00.00" class="form-control"  disabled/>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Nombre del curso *</label>
-                                <input type="text" id="input-edit-nombreCurso" name="Nombre" placeholder="Nombre" class="form-control"  data-parsley-group="wizard-step-1" required disabled/>
-                            </div>
-                            <div class="form-group">
-                                <label for="nuevoArchivo">Descripción *</label>
-                                <textarea id="textarea-edit-descripcionCurso" class="form-control" name="textareaDescripcionCurso" placeholder="Ingresa una descripción del curso" rows="6"  data-parsley-group="wizard-step-1" required disabled/></textarea>
+                        <div class="row m-t-30 m-b-30">
+                            <div class="text-right col-md-11">
+                                <button id="btn-edit-cancelar" type="button" class="btn btn-white m-r-5 m-b-5 hidden">Cancelar</button>
+                                <button id="btn-edit-guardar" type="button" class="btn btn-success m-r-5 m-b-5 hidden">Guardar</button>
+                                <button id="btn-edit-habilitar" type="button" class="btn btn-info m-r-5 m-b-5">Editar Datos</button>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Url *</label>
-                                <input type="text" id="input-edit-urlCurso" name="url" placeholder="http://" class="form-control"  data-parsley-group="wizard-step-1" required  disabled/>
-                            </div>
-                            <div class="form-group">
-                                <label for="nuevoArchivo">Certificado </label>
-                                <select id="select-edit-certificado" class="form-control" style="width: 100%"  disabled>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Costo </label>
-                                <input type="text" id="input-edit-costoCurso" name="costo" placeholder="$00.00" class="form-control"  disabled/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row m-t-30 m-b-30">
-                        <div class="text-right col-md-11">
-                            <button type="button" class="btn btn-white m-r-5 m-b-5 hidden">Cancelar</button>
-                            <button type="button" class="btn btn-success m-r-5 m-b-5 hidden">Guardar</button>
-                            <button id="btn-edit-datos" type="button" class="btn btn-info m-r-5 m-b-5">Editar Datos</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div id="temarios" class="tab-pane fade">
                     <div class="row m-30">

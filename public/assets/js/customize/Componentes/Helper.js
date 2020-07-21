@@ -141,7 +141,7 @@ class Helper {
 
     }
 
-    static bloquearBoton(objeto = '') {
+    static bloquear(objeto = '') {
         let elemento = $(`#${objeto}`);
 
         if (!elemento.length) {
@@ -151,10 +151,10 @@ class Helper {
         if (elemento.attr('disabled') === undefined) {
             elemento.addClass('disabled');
             elemento.attr('disabled', 'disabled');
-    }
+        }
     }
 
-    static habilitarBoton(objeto = '') {
+    static habilitar(objeto = '') {
         let elemento = $(`#${objeto}`);
 
         if (!elemento.length) {
@@ -164,7 +164,7 @@ class Helper {
         if (elemento.attr('disabled') !== undefined) {
             elemento.removeAttr('disabled');
             elemento.removeClass('disabled');
-    }
+        }
     }
 
     static agregarElemento(objeto = '', html = '') {
@@ -177,7 +177,7 @@ class Helper {
 
         elemento.append(html);
     }
-    
+
     static quitarContenidoElemento(objeto = '', html = '') {
 
         let elemento = $(`#${objeto}`);

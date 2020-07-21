@@ -1871,6 +1871,7 @@ $config['RH'] = array(
             'Componentes/Modal/ModalBase',
             'Componentes/Modal/Alertas',
             'Componentes/Modal/Modal',
+            'Componentes/Modal/ModalBox',
             'Componentes/HerramientasWeb/Utileria',
             'Componentes/Selects/ISelect',
             'Componentes/Selects/SelectBasico',
@@ -1879,7 +1880,6 @@ $config['RH'] = array(
             'Componentes/FileUpload/FileUpload_Boton',
             'Componentes/FileUpload/FileUpload_Basico',
             'Componentes/FileUpload/FileNativo',
-//            'Componentes/Pagina',
             'Componentes/Helper',
             'Componentes/Tablas/ITabla',
             'Componentes/Tablas/TablaBasica',
@@ -1887,6 +1887,7 @@ $config['RH'] = array(
             'Componentes/Wizard/IWizard',
             'Componentes/Wizard/WizardValidation',
             'RH/Cursos/NuevoCurso',
+            'RH/Cursos/EditarCurso',
             'RH/Administracion_Cursos',
             'Base/fileUpload'
         ),
