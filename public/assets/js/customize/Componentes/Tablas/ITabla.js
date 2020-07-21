@@ -2,7 +2,6 @@ class ITabla {
 
     constructor(tabla = '', datos = [], config = {}) {
         let objeto = $(`#${this.tabla}`);
-        
         if (objeto[0] === undefined) {
             objeto = $(`.${this.tabla}`);
         }
@@ -48,8 +47,9 @@ class ITabla {
     }
 
     agregarContenidoTabla(filas) {
-        let tabla = this.objetoTabla.DataTable();
-
+        // Recibe un arreglo de arreglos [[],[],]
+        let tabla = $(`#${this.tabla}`).DataTable();
+        
         $.each(filas, function (key, value) {
             tabla.row.add(value).draw(false);
         });

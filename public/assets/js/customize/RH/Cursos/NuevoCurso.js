@@ -183,17 +183,14 @@ class NuevoCurso {
             };
 
             _this.showMensaje();
-            
+
             _this.file.uploadServer('Administracion_Cursos/Nuevo-Curso', datos, function (respond) {
-                
-               console.log(respond.success);
-               
-               if(respond.success){
-                   _this.showMensajeExito();
-                   _this.updateTablaCursos(respond.data);
-               }else{
-                   _this.showMensajeError();
-               }
+                if (respond.success) {
+                    _this.updateTablaCursos(respond.data);
+                    _this.showMensajeExito();
+                } else {
+                    _this.showMensajeError();
+                }
             });
         });
 
@@ -216,6 +213,7 @@ class NuevoCurso {
     }
 
     showMensajeExito() {
+        let _this = this;
         this.modal.borrarContenido();
         this.modal.agregarContenido(`<div class="row">
                                         <div class="col-md-12 text-center">
@@ -232,7 +230,10 @@ class NuevoCurso {
                                         </div>
                                      </div>`);
         this.modal.mostrarBotonCancelar();
-        this.modal.cambiarValorBotonCanelar('Cerrar');
+        this.modal.funcionalidadBotonCancelar('Cerrar', function () {
+            $('.btn-cancel-wizard').click();
+            _this.modal.cerrarModal();
+        });
     }
 
     showMensajeError() {
@@ -255,9 +256,23 @@ class NuevoCurso {
         this.modal.mostrarBotonCancelar();
         this.modal.cambiarValorBotonCanelar('Cerrar');
     }
-    
-    updateTablaCursos(datos){
-        console.log(datos.cursos);        
+
+    updateTablaCursos(datos) {
+        let listaCursos = [];
+        this.tablaCursos.limpiartabla();
+
+        $.each(datos.cursos, function (key, value) {
+            listaCursos.push([
+                value['Id'],
+                value['Nombre'],
+                value['Descripcion'],
+                value['Participantes'],
+                value['Estatus'] === '1' ? 'Activo' : 'Inactivo',
+                null
+            ]);
+        });
+        this.tablaCursos.agregarContenidoTabla(listaCursos);
+        this.tablaCursos.reordenarTabla(0,'asc');
     }
 
 }
