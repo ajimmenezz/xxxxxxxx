@@ -156,7 +156,7 @@ class Cursos extends General {
             return ['response' => false, 'code' => 400];
         } else {
             $this->DBS->commitTransaccion();
-            return ['response' => true, 'code' => 200, 'data' => $infoCurso];
+            return ['response' => true, 'code' => 200, 'dataCurso' => $infoCurso];
         }
     }
 
