@@ -41,16 +41,24 @@ class Controller_Administracion_Cursos extends Base {
                 } else {
                     $response->onError("Error", "Error al agregar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
+
                 echo $response->toJsonString();
                 break;
             case 'Obtener-Curso':
-                $resultado = $this->curso->getCourse($this->input->post());
-                if ($resultado) {
+                $datosPost = $this->input->post();
+                $datos = json_decode($datosPost['extraData'], true);
+                $resultado = $this->curso->getCourse($datos);
+                if ($resultado['response']) {
                     $response->onSuccess(HttpStatusCode::HTTP_OK);
                     $response->addData("infoCurso", $resultado);
                 } else {
                     $response->onError("Error", "Error al obtener el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
+
+
+                //codigo de para mostrar error
+                //$error = $error;
+
                 echo $response->toJsonString();
                 break;
             case 'Editar-Curso':
@@ -64,6 +72,8 @@ class Controller_Administracion_Cursos extends Base {
                 } else {
                     $response->onError("Error", "Error al aditar el curso", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
+                //codigo de para mostrar error
+                //$error = $error;
                 echo $response->toJsonString();
                 break;
             case 'Eliminar-Curso':
