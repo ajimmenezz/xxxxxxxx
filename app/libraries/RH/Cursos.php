@@ -57,7 +57,7 @@ class Cursos extends General {
 
     public function newCourse(array $infoCourse) {
         $this->DBS->iniciaTransaccion();
-        
+
         $rutaImagen = $this->guardarUnaImagen('image');
 
         if (!$rutaImagen) {
@@ -88,17 +88,17 @@ class Cursos extends General {
                 'idPerfil' => $value
             ));
         }
-        
+
         $cursos = $this->getCourses();
 
         $this->DBS->terminaTransaccion();
-        
+
         if ($this->DBS->estatusTransaccion() === false) {
             $this->DBS->roolbackTransaccion();
-            return ['response' => false, 'code' => 400, 'data' => $cursos];
+            return ['response' => false, 'code' => 400];
         } else {
             $this->DBS->commitTransaccion();
-            return ['response' => true, 'code' => 200];
+            return ['response' => true, 'code' => 200, 'data' => $cursos];
         }
     }
 
@@ -122,12 +122,13 @@ class Cursos extends General {
         }
     }
 
-    public function getCourse($idCurso) {
+    public function getCourse(array $datos) {
+        $this->DBS->iniciaTransaccion();
         $arrayIdPerfil = array();
         $arrayPerfiles = array();
-        $curso = $this->DBS->getCourseById($idCurso['idCurso']);
-        $temasCurso = $this->DBS->getTemaryById($idCurso['idCurso']);
-        $perfilesCurso = $this->DBS->getPerfilById($idCurso['idCurso']);
+        $curso = $this->DBS->getCourseById($datos['id']);
+        $temasCurso = $this->DBS->getTemaryById($datos['id']);
+        $perfilesCurso = $this->DBS->getPerfilById($datos['id']);
         $datosPerfiles = $this->getProfile();
         $contador = 0;
 
@@ -148,41 +149,51 @@ class Cursos extends General {
         $infoCurso['perfiles'] = $perfilesCurso;
         $infoCurso['selectPuesto'] = $arrayPerfiles;
 
-        return $infoCurso;
+        $this->DBS->terminaTransaccion();
+
+        if ($this->DBS->estatusTransaccion() === false) {
+            $this->DBS->roolbackTransaccion();
+            return ['response' => false, 'code' => 400];
+        } else {
+            $this->DBS->commitTransaccion();
+            return ['response' => true, 'code' => 200, 'data' => $infoCurso];
+        }
     }
 
     public function editCourse($infoCourse) {
         $this->DBS->iniciaTransaccion();
+
         if (!empty($_FILES)) {
-            $rutaImagen = $this->guardarImagen('evidenciasEditarCurso');
+            $rutaImagen = $this->guardarUnaImagen('image');
 
             if (!$rutaImagen) {
                 $rutaImagen = NULL;
             }
-
             $datosCursos['imagen'] = $rutaImagen;
         } else {
             $datosCurso = $this->DBS->getCourseById($infoCourse['id']);
             $datosCursos['imagen'] = $datosCurso[0]['imagen'];
         }
 
-        $datosCursos['nombre'] = $infoCourse['curso'][1];
-        $datosCursos['url'] = $infoCourse['curso'][2];
-        $datosCursos['descripcion'] = $infoCourse['curso'][3];
-        $datosCursos['certificado'] = $infoCourse['curso'][4];
-        $datosCursos['costo'] = $infoCourse['curso'][5];
+        $datosCursos['nombre'] = $infoCourse['nombre'];
+        $datosCursos['url'] = $infoCourse['url'];
+        $datosCursos['descripcion'] = $infoCourse['descripcion'];
+        $datosCursos['certificado'] = $infoCourse['certificado'];
+        $datosCursos['costo'] = $infoCourse['costo'];
         $datosCursos['idCurso'] = $infoCourse['id'];
 
         $this->DBS->updateCourse($datosCursos);
+
+        $cursos = $this->getCourses();
 
         $this->DBS->terminaTransaccion();
 
         if ($this->DBS->estatusTransaccion() === false) {
             $this->DBS->roolbackTransaccion();
-            return false;
+            return ['response' => false, 'code' => 400];
         } else {
             $this->DBS->commitTransaccion();
-            return ['response' => true, 'code' => 200];
+            return ['response' => true, 'code' => 200, 'data' => $cursos];
         }
     }
 
