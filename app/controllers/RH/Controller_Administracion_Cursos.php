@@ -101,7 +101,17 @@ class Controller_Administracion_Cursos extends Base {
                     $response->addData("info", $resultado['info']);
                     $response->addData("id", $resultado['id']);
                 } else {
-                    $response->onError("Error", "Error al realizar esta acció", HttpStatusCode::HTTP_BAD_REQUEST);
+                    $response->onError("Error", "Error al realizar esta acción", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
+            case 'Agregar-Temario':
+                $resultado = $this->curso->addTemary($this->input->post());
+                if ($resultado['response']) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                    $response->addData("infoCurso", $resultado);
+                } else {
+                    $response->onError("Error", "Error al realizar esta acción", HttpStatusCode::HTTP_BAD_REQUEST);
                 }
                 echo $response->toJsonString();
                 break;
