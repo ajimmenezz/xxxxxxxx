@@ -35,7 +35,7 @@ class EditarCurso {
     getDatosCurso() {
         let _this = this;
         Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
-            console.log(respond.data.infoCurso.dataCurso);
+//            console.log(respond.data.infoCurso.dataCurso);
             _this.datosCurso.idCurso = _this.idCurso;
             _this.datosCurso.imagen = respond.data.infoCurso.dataCurso.curso.imagen;
             _this.datosCurso.nombre = respond.data.infoCurso.dataCurso.curso.nombre;
