@@ -169,20 +169,13 @@ class Cursos extends General {
             if (!$rutaImagen) {
                 $rutaImagen = NULL;
             }
-            $datosCursos['imagen'] = $rutaImagen;
+            $infoCourse['imagen'] = $rutaImagen;
         } else {
-            $datosCurso = $this->DBS->getCourseById($infoCourse['id']);
-            $datosCursos['imagen'] = $datosCurso[0]['imagen'];
+            $datosCurso = $this->DBS->getCourseById($infoCourse['idCurso']);
+            $infoCourse['imagen'] = $datosCurso[0]['imagen'];
         }
 
-        $datosCursos['nombre'] = $infoCourse['nombre'];
-        $datosCursos['url'] = $infoCourse['url'];
-        $datosCursos['descripcion'] = $infoCourse['descripcion'];
-        $datosCursos['certificado'] = $infoCourse['certificado'];
-        $datosCursos['costo'] = $infoCourse['costo'];
-        $datosCursos['idCurso'] = $infoCourse['id'];
-
-        $this->DBS->updateCourse($datosCursos);
+        $this->DBS->updateCourse($infoCourse);
 
         $cursos = $this->getCourses();
 
