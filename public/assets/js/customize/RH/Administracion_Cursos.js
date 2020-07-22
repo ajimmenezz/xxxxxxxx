@@ -53,7 +53,7 @@ $(function () {
         Helper.ocultarElemento('seccion-cursos');
         Helper.agregarElemento('seccion', secciones.editarCurso);
         Helper.mostrarElemento('seccion');
-        editarCurso.init(dataRow[0]);
+        editarCurso.init(dataRow[0],tablaCursos);
         editarCurso.events();
     });
 

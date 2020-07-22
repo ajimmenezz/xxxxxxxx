@@ -1,6 +1,6 @@
 class EditarCurso {
 
-    constructor() {        
+    constructor() {
         this.idCurso;
         this.datosCurso = {};
         this.selectCertificado;
@@ -11,19 +11,41 @@ class EditarCurso {
         this.file;
         this.formulario;
         this.modal = new ModalBox('modal-box');
+        this.alerta = new Alertas('modal-alerta-error');
         this.tablaCursos;
         this.datosTablaCursos;
+        this.tablaTemarios;
     }
 
-    init(idCurso,tablaCursos) {
+    init(idCurso, tablaCursos) {
         this.idCurso = idCurso;
         this.tablaCursos = tablaCursos;
+        this.getDatosCurso();
         this.initDatosCurso();
+        this.initTemarios();
     }
 
     events() {
         this.eventRegresarCursos();
         this.eventDatosCurso();
+        this.eventTemarios();
+    }
+
+    getDatosCurso() {
+        let _this = this;
+        Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
+            console.log(respond.data.infoCurso.dataCurso);
+            _this.datosCurso.idCurso = _this.idCurso;
+            _this.datosCurso.imagen = respond.data.infoCurso.dataCurso.curso.imagen;
+            _this.datosCurso.nombre = respond.data.infoCurso.dataCurso.curso.nombre;
+            _this.datosCurso.descripcion = respond.data.infoCurso.dataCurso.curso.descripcion;
+            _this.datosCurso.url = respond.data.infoCurso.dataCurso.curso.url;
+            _this.datosCurso.certificado = respond.data.infoCurso.dataCurso.curso.idTipoCertificado;
+            _this.datosCurso.costo = respond.data.infoCurso.dataCurso.curso.costo;
+            _this.datosCurso.temarios = respond.data.infoCurso.dataCurso.temas;
+            _this.setDatosCurso();
+            _this.setTemarios();
+        });
     }
 
     initDatosCurso() {
@@ -34,25 +56,41 @@ class EditarCurso {
         this.inputCosto = $(`#input-edit-costo`);
         this.file = new FileNativo('file-edit-imagen', 'contenedor-edit-imagen');
         this.formulario = $(`#form-edit-datos-curso`);
-        this.getDatosCurso();
     }
 
-    getDatosCurso() {
+    initTemarios() {
+        let botonFilaTemario = [
+            {
+                targets: 3,
+                data: null,
+                render: function (data, type, row, meta) {
+                    return `<i class='fa fa-trash delete-temario' style='cursor: pointer; margin: 5px; font-size: 17px;  color: red;'></i>`;
+                }
+            }
+        ];
+        let configTablaTemario = {
+            info: false,
+            pageLength: 3,
+            searching: false,
+            lengthChange: false,
+            columnas: botonFilaTemario
+        };
+        this.tablaTemarios = new TablaRender('tabla-edita-temarios', [], configTablaTemario);
+    }
+
+    setDatosCurso() {
+        this.inputNombre.val(this.datosCurso.nombre);
+        this.textDescripcion.val(this.datosCurso.descripcion);
+        this.inputUrl.val(this.datosCurso.url);
+        this.inputCosto.val(parseInt(this.datosCurso.costo) > 0 ? this.datosCurso.costo : '');
+        this.selectCertificado.definirValor(this.datosCurso.certificado);
+        this.file.setImage(this.datosCurso.imagen);
+    }
+
+    setTemarios() {
         let _this = this;
-        Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
-            console.log(respond.data.infoCurso.dataCurso.curso);
-            _this.id = _this.idCurso;
-            _this.datosCurso.nombre = respond.data.infoCurso.dataCurso.curso.nombre;
-            _this.datosCurso.descripcion = respond.data.infoCurso.dataCurso.curso.descripcion;
-            _this.datosCurso.url = respond.data.infoCurso.dataCurso.curso.url;
-            _this.datosCurso.certificado = respond.data.infoCurso.dataCurso.curso.idTipoCertificado;
-            _this.datosCurso.costo = respond.data.infoCurso.dataCurso.curso.costo;
-            _this.inputNombre.val(_this.datosCurso.nombre);
-            _this.textDescripcion.val(_this.datosCurso.descripcion);
-            _this.inputUrl.val(_this.datosCurso.url);
-            _this.inputCosto.val(parseInt(_this.datosCurso.costo) > 0 ? _this.datosCurso.costo : '');
-            _this.selectCertificado.definirValor(_this.datosCurso.certificado);
-            _this.file.setImage(respond.data.infoCurso.dataCurso.curso.imagen);
+        $.each(_this.datosCurso.temarios, function (key, value) {
+            _this.tablaTemarios.agregarDatosFila([value['id'], value['nombre'], value['porcentaje'] + '%', '']);
         });
     }
 
@@ -110,6 +148,57 @@ class EditarCurso {
         _this.file.addListenerChange(["jpeg", "png"]);
     }
 
+    eventTemarios() {
+        let _this = this;
+
+        $('#btn-edti-agregar-temario').on('click', function (e) {
+            let curso = $('#input-edit-temario').val();
+
+            if (curso) {
+                let temarios = _this.tablaTemarios.datosTabla();
+                let porcentaje = temarios.length ? 100 / (temarios.length + 1) : 100;
+
+                let nuevoTemario = {
+                    idCurso: _this.idCurso,
+                    tema: curso,
+                    porcentaje: parseFloat(porcentaje.toFixed(2))
+                };
+                console.log(nuevoTemario);
+//                Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
+                        _this.tablaTemarios.limpiartabla();
+                        _this.updateTablaTemarios(temarios,{id: 2, nombre : curso, porcentaje : porcentaje.toFixed(2) + '%'});
+                        $('#input-temario').val('');
+//                });
+            }
+        });
+
+        _this.tablaTemarios.addListenerOnclik('.delete-temario', function (dataRow, fila) {
+            let temarios = _this.tablaTemarios.datosTabla();
+            if (temarios.length > 1) {
+                _this.tablaTemarios.eliminarFila(fila);
+                temarios = _this.tablaTemarios.datosTabla();
+                let porcentaje = temarios.length ? 100 / temarios.length : 100;
+                _this.updateTablaTemarios(temarios, {porcentaje : porcentaje.toFixed(2) + '%'});
+            }else{
+                _this.alerta.mostrarMensajeError('alerta-temarios','No se puede dejar sin temas al curso');
+            }
+        });
+    }
+
+    updateTablaTemarios(temarios = [], nuevoTemario = []) {
+        let _this = this;
+
+        _this.tablaTemarios.limpiartabla();
+        console.log(nuevoTemario);
+        if (nuevoTemario.curso) {
+            _this.tablaTemarios.agregarDatosFila([nuevoTemario.id,nuevoTemario.nombre, nuevoTemario.porcentaje]);
+        }
+
+        $.each(temarios, function (key, value) {
+            _this.tablaTemarios.agregarDatosFila([value[0],value[1],nuevoTemario.porcentaje]);
+        });
+    }
+
     uploadFile(datos = {}){
         let _this = this;
         this.file.uploadServer('Administracion_Cursos/Editar-Curso', datos, function (respond) {
@@ -122,14 +211,6 @@ class EditarCurso {
                 _this.showMensajeError();
             }
         });
-    }
-
-    setDatosCurso() {
-        this.inputNombre.val(this.datosCurso.nombre);
-        this.textDescripcion.val(this.datosCurso.descripcion);
-        this.inputUrl.val(this.datosCurso.url);
-        this.selectCertificado.definirValor(this.datosCurso.certificado);
-        this.inputCosto.val(this.datosCurso.costo);
     }
 
     hiddenBotonesDatos(hidden = true) {
@@ -200,7 +281,7 @@ class EditarCurso {
         this.modal.mostrarBotonCancelar();
         this.modal.cambiarValorBotonCanelar('Cerrar');
     }
-    
+
     updateTablaCursos() {
         let listaCursos = [];
         this.tablaCursos.limpiartabla();
@@ -216,10 +297,9 @@ class EditarCurso {
             ]);
         });
         this.tablaCursos.agregarContenidoTabla(listaCursos);
-        this.tablaCursos.reordenarTabla(0,'asc');
+        this.tablaCursos.reordenarTabla(0, 'asc');
     }
-    
-    
+
 }
 
 

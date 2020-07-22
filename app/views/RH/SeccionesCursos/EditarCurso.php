@@ -93,18 +93,19 @@
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <div class="input-group">
-                                        <input type="text" id="input-temario" name="Nombre" placeholder="Nombre del temario" class="form-control"/>
+                                        <input id="input-edit-temario" type="text" name="Nombre" placeholder="Nombre del temario" class="form-control"/>
                                         <div class="input-group-btn">
                                             <label>&nbsp;</label> 
-                                            <button type="button" id="btn-agregar-nuevo-temario"  class="btn btn-success"><i class="fa fa-plus"></i> Agregar</button>
+                                            <button id="btn-edti-agregar-temario" type="button" class="btn btn-success"><i class="fa fa-plus"></i> Agregar</button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-12">
-                                    <table id="tabla-nuevo-curso-temarios" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                    <table id="tabla-edita-temarios" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                         <thead>
                                             <tr>
+                                                <th class="never">Id</th>
                                                 <th>Temario</th>
                                                 <th>Porcentaje</th>
                                                 <th>Acciones</th>
@@ -113,9 +114,10 @@
                                         <tbody>
                                         </tbody>
                                     </table>
-                                </div>
+                                </div>                                                               
                             </div>
                         </div>
+                        <div id="alerta-temarios" class="col-md-12 m-t-20"></div>
                     </div>
                 </div>
                 <div id="participantes" class="tab-pane fade" >
