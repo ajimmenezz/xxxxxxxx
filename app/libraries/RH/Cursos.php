@@ -93,12 +93,12 @@ class Cursos extends General {
 
         $this->DBS->terminaTransaccion();
 
-        if ($this->DBS->estatusTransaccion() === false) {
+        if ($this->DBS->estatusTransaccion() === FALSE) {
             $this->DBS->roolbackTransaccion();
-            return ['response' => false, 'code' => 400];
+            return ['response' => FALSE, 'code' => 400];
         } else {
             $this->DBS->commitTransaccion();
-            return ['response' => true, 'code' => 200, 'data' => $cursos];
+            return ['response' => TRUE, 'code' => 200, 'data' => $cursos];
         }
     }
 
@@ -107,7 +107,7 @@ class Cursos extends General {
             $archivos = subirFichero('Cursos', $idEvidencia);
             return $archivos;
         } else {
-            return false;
+            return FALSE;
         }
     }
 
@@ -151,12 +151,12 @@ class Cursos extends General {
 
         $this->DBS->terminaTransaccion();
 
-        if ($this->DBS->estatusTransaccion() === false) {
+        if ($this->DBS->estatusTransaccion() === FALSE) {
             $this->DBS->roolbackTransaccion();
-            return ['response' => false, 'code' => 400];
+            return ['response' => FALSE, 'code' => 400];
         } else {
             $this->DBS->commitTransaccion();
-            return ['response' => true, 'code' => 200, 'dataCurso' => $infoCurso];
+            return ['response' => TRUE, 'code' => 200, 'dataCurso' => $infoCurso];
         }
     }
 
@@ -188,12 +188,12 @@ class Cursos extends General {
 
         $this->DBS->terminaTransaccion();
 
-        if ($this->DBS->estatusTransaccion() === false) {
+        if ($this->DBS->estatusTransaccion() === FALSE) {
             $this->DBS->roolbackTransaccion();
-            return ['response' => false, 'code' => 400];
+            return ['response' => FALSE, 'code' => 400];
         } else {
             $this->DBS->commitTransaccion();
-            return ['response' => true, 'code' => 200, 'data' => $cursos];
+            return ['response' => TRUE, 'code' => 200, 'data' => $cursos];
         }
     }
 
@@ -221,12 +221,12 @@ class Cursos extends General {
         $this->DBS->deleteElementById($datos['idCurso'], $datos['id'], $tabla);
 
         $this->DBS->terminaTransaccion();
-        if ($this->DBS->estatusTransaccion() === false) {
+        if ($this->DBS->estatusTransaccion() === FALSE) {
             $this->DBS->roolbackTransaccion();
-            return false;
+            return FALSE;
         } else {
             $this->DBS->commitTransaccion();
-            return true;
+            return TRUE;
         }
     }
 
@@ -247,9 +247,9 @@ class Cursos extends General {
         $info['perfiles'] = $perfilesCurso;
 
         if ($resultQuery['code'] == 200) {
-            return ['response' => true, 'info' => $info, 'id' => $resultQuery['id']];
+            return ['response' => TRUE, 'info' => $info, 'id' => $resultQuery['id']];
         } else {
-            return false;
+            return FALSE;
         }
     }
 
@@ -322,7 +322,7 @@ class Cursos extends General {
         if ($resultQuery['code'] == 200) {
             return $this->TemaryCourseByUser($infoUsuario);
         } else {
-            return false;
+            return FALSE;
         }
     }
 
@@ -331,7 +331,7 @@ class Cursos extends General {
         if ($resultQuery) {
             return $resultQuery;
         } else {
-            return false;
+            return FALSE;
         }
     }
 
@@ -345,7 +345,7 @@ class Cursos extends General {
         if ($resultQuery['code'] == 200) {
             return $this->TemaryCourseByUser($infoAvence);
         } else {
-            return false;
+            return FALSE;
         }
     }
 
