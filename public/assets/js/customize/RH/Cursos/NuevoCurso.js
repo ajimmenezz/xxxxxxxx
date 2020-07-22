@@ -123,6 +123,14 @@ class NuevoCurso {
 
         _this.tablaTemario.addListenerOnclik('.delete-temario', function (dataRow, fila) {
             _this.tablaTemario.eliminarFila(fila);
+            let temarios = _this.tablaTemario.datosTabla();
+            if (temarios.length > 1) {
+                _this.tablaTemario.limpiartabla();
+                let porcentaje = temarios.length ? 100 / temarios.length : 100;
+                $.each(temarios, function (key, value) {
+                    _this.tablaTemario.agregarDatosFila([value[0], porcentaje.toFixed(2) + '%']);
+                });
+            }
         });
     }
 
@@ -272,7 +280,7 @@ class NuevoCurso {
             ]);
         });
         this.tablaCursos.agregarContenidoTabla(listaCursos);
-        this.tablaCursos.reordenarTabla(0,'asc');
+        this.tablaCursos.reordenarTabla(0, 'asc');
     }
 
 }
