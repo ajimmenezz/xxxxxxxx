@@ -188,13 +188,19 @@ if (!function_exists('eliminarArchivo')) {
 if (!function_exists('subirFichero')) {
 
     function subirFichero($directorio_destino, $nombre_fichero) {
+        $carpeta = './storage/Archivos/' . $directorio_destino;
+
+        if (!file_exists($carpeta)) {
+            mkdir($carpeta, 0775, true);
+        }
+
         $tmp_name = $_FILES[$nombre_fichero]['tmp_name'];
         $directorio = './storage/Archivos/' . $directorio_destino;
 
         if (is_dir('./storage/Archivos/' . $directorio_destino) && is_uploaded_file($tmp_name)) {
             $img_file = $_FILES[$nombre_fichero]['name'];
             $img_type = $_FILES[$nombre_fichero]['type'];
-            
+
             if (((strpos($img_type, "gif") || strpos($img_type, "jpeg") ||
                     strpos($img_type, "jpg")) || strpos($img_type, "png"))) {
 

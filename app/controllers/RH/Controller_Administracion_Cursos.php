@@ -32,7 +32,7 @@ class Controller_Administracion_Cursos extends Base {
                 break;
             case 'Nuevo-Curso':
                 $datosPost = $this->input->post();
-                $datos = json_decode($datosPost['extraData'], true);
+                $datos = json_decode($datosPost['extraData'], TRUE);
                 $resultado = $this->curso->newCourse($datos);
                 if ($resultado['response']) {
                     $cursosActualizados = $this->curso->getCourses();
@@ -61,7 +61,7 @@ class Controller_Administracion_Cursos extends Base {
                 break;
             case 'Editar-Curso':
                 $datosPost = $this->input->post();
-                $datos = json_decode($datosPost['extraData'], true);
+                $datos = json_decode($datosPost['extraData'], TRUE);
                 $resultado = $this->curso->editCourse($datos);
                 if ($resultado['response']) {
                     $cursosActualizados = $this->curso->getCourses();
