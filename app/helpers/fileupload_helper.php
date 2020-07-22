@@ -199,7 +199,7 @@ if (!function_exists('subirFichero')) {
                     strpos($img_type, "jpg")) || strpos($img_type, "png"))) {
 
                 if (move_uploaded_file($tmp_name, $directorio . '/' . $img_file)) {
-                    return 'storage/Archivos/' . $directorio_destino . '/' . $img_file;
+                    return '/storage/Archivos/' . $directorio_destino . '/' . $img_file;
                 }
             }
         }
