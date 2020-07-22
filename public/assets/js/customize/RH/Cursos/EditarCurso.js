@@ -20,6 +20,7 @@ class EditarCurso {
     init(idCurso, tablaCursos) {
         this.idCurso = idCurso;
         this.tablaCursos = tablaCursos;
+        this.file = null;
         this.getDatosCurso();
         this.initDatosCurso();
         this.initTemarios();
