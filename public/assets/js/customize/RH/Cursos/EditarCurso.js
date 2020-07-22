@@ -13,7 +13,7 @@ class EditarCurso {
         this.modal = new ModalBox('modal-box');
         this.alerta = new Alertas('modal-alerta-error');
         this.tablaCursos;
-        this.datosTablaCursos;
+        this.datosTablaCursos = {};
         this.tablaTemarios;
     }
 
@@ -100,7 +100,10 @@ class EditarCurso {
             Helper.ocultarElemento('seccion');
             Helper.quitarContenidoElemento('seccion');
             Helper.mostrarElemento('seccion-cursos');
-            _this.updateTablaCursos();
+
+            if (_this.datosTablaCursos.hasOwnProperty('cursos')){
+                _this.updateTablaCursos();
+            }
         });
     }
 
@@ -119,23 +122,13 @@ class EditarCurso {
 
         $('#btn-edit-guardar').on('click', function () {
             if (_this.formulario.parsley().validate()) {
-                _this.datosCurso.nombre = _this.inputNombre.val();
-                _this.datosCurso.descripcion = _this.textDescripcion.val();
-                _this.datosCurso.url = _this.inputUrl.val();
-                _this.datosCurso.certificado = _this.selectCertificado.obtenerValor();
-                _this.datosCurso.costo = _this.inputCosto.val() ? _this.inputCosto.val() : "00.00";
                 _this.showMensaje();
-                _this.uploadFile(_this.datosCurso);
+                _this.uploadFile();
             }
         });
 
         $('#btn-edit-cancelar').on('click', function () {
-            Helper.bloquear('input-edit-nombre');
-            Helper.bloquear('textarea-edit-descripcion');
-            Helper.bloquear('input-edit-url');
-            Helper.bloquear('input-edit-costo');
-            Helper.bloquear('btn-edit-imagen');
-            _this.selectCertificado.bloquearElemento();
+            _this.bloquearDatosCurso();
             _this.hiddenBotonesDatos(true);
             _this.setDatosCurso();
             _this.formulario.parsley().reset();
@@ -183,16 +176,16 @@ class EditarCurso {
 
         if (nuevo) {
 //            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
-                  datosFila.id = 2;
-                _this.updateTablaTemarios(datosFila);
-                $('#input-edit-temario').val('');
+            datosFila.id = 2;
+            _this.updateTablaTemarios(datosFila);
+            $('#input-edit-temario').val('');
 //            });
         } else {
 //            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', datosFila, function (respond) {
-                _this.tablaTemarios.eliminarFila(fila);
-                _this.updateTablaTemarios(datosFila);
+            _this.tablaTemarios.eliminarFila(fila);
+            _this.updateTablaTemarios(datosFila);
 //            });
-        }
+    }
     }
 
     updateTablaTemarios(datosTemario = []) {
@@ -210,18 +203,42 @@ class EditarCurso {
         });
     }
 
-    uploadFile(datos = {}){
+    uploadFile() {
         let _this = this;
+        let datos = {
+            idCurso: _this.idCurso,
+            nombre: _this.inputNombre.val(),
+            descripcion: _this.textDescripcion.val(),
+            url: _this.inputUrl.val(),
+            certificado: _this.selectCertificado.obtenerValor(),
+            costo: _this.inputCosto.val() ? _this.inputCosto.val() : "00.00"
+        }
         this.file.uploadServer('Administracion_Cursos/Editar-Curso', datos, function (respond) {
             console.log(respond);
             if (respond.success) {
                 _this.datosTablaCursos = respond.data;
+                _this.datosCurso.nombre = _this.inputNombre.val();
+                _this.datosCurso.descripcion = _this.textDescripcion.val();
+                _this.datosCurso.url = _this.inputUrl.val();
+                _this.datosCurso.certificado = _this.selectCertificado.obtenerValor();
+                _this.datosCurso.costo = _this.inputCosto.val() ? _this.inputCosto.val() : "00.00";
                 _this.showMensajeExito();
                 _this.hiddenBotonesDatos(true);
+                _this.bloquearDatosCurso();
+                _this.formulario.parsley().reset();
             } else {
                 _this.showMensajeError();
             }
         });
+    }
+
+    bloquearDatosCurso() {
+        Helper.bloquear('input-edit-nombre');
+        Helper.bloquear('textarea-edit-descripcion');
+        Helper.bloquear('input-edit-url');
+        Helper.bloquear('input-edit-costo');
+        Helper.bloquear('btn-edit-imagen');
+        this.selectCertificado.bloquearElemento();
     }
 
     hiddenBotonesDatos(hidden = true) {
@@ -296,7 +313,7 @@ class EditarCurso {
     updateTablaCursos() {
         let listaCursos = [];
         this.tablaCursos.limpiartabla();
-
+        
         $.each(this.datosTablaCursos.cursos, function (key, value) {
             listaCursos.push([
                 value['Id'],
