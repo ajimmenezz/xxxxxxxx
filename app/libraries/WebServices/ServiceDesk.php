@@ -474,8 +474,12 @@ class ServiceDesk extends General
         return $returnArray;
     }
 
-    public function consultarValidadoresTI(string $key)
+    public function consultarValidadoresTI(string $key = '')
     {
+        if ($key == '') {
+            $key =  $this->modeloServiceDesck->apiKeyUsuario(2);
+        }
+
         $input_data = '{"operation":{"details":{"department":""}}}';
         $this->FIELDS = 'format=json&OPERATION_NAME=GET_ALL&INPUT_DATA=' . urlencode($input_data) . '&TECHNICIAN_KEY=' . $key;
         $datosSD = $this->getDatosSD($this->UrlUsers . '?' . $this->FIELDS);
