@@ -246,6 +246,26 @@ class Cursos extends General {
         }
     }
 
+    public function addTemary(array $datos) {
+        $this->DBS->iniciaTransaccion();
+        $this->DBS->terminaTransaccion();
+
+        $resultQuery = $this->DBS->insertTemaryCourseEdit($datos['temario'], NULL, $datos['porcentaje'], $datos['idCurso']);
+        $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $datos['porcentaje']), array('idCurso' => $datos['idCurso']));
+
+        $info = array('id' => $resultQuery['id'], 'tema' => $datos['temario'], 'porcentaje' => $datos['porcentaje']);
+        
+        $this->DBS->terminaTransaccion();
+
+        if ($this->DBS->estatusTransaccion() === FALSE) {
+            $this->DBS->roolbackTransaccion();
+            return ['response' => FALSE, 'code' => 400];
+        } else {
+            $this->DBS->commitTransaccion();
+            return ['response' => TRUE, 'code' => 200, 'data' => $info];
+        }
+    }
+
     public function TemaryCourseByUser($datos) {
         $datosFaltanteAvance = $this->faltanteAvance($datos);
         $infoUsuario['temas'] = $datosFaltanteAvance['temp_array'];
