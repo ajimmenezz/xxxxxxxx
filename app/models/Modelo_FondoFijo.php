@@ -1026,7 +1026,8 @@ class Modelo_FondoFijo extends Modelo_Base {
                     INNER JOIN
                 cat_v3_usuarios cu ON tfs.IdUsuario = cu.Id
                     INNER JOIN
-                cat_v3_fondofijo_tipos_cuenta cat ON tfs.IdTipoCuenta = cat.id";
+                cat_v3_fondofijo_tipos_cuenta cat ON tfs.IdTipoCuenta = cat.id
+                GROUP BY cu.Id";
         }
 
 
