@@ -1,6 +1,6 @@
 class EditarCurso {
 
-    constructor() {
+    constructor() {        
         this.idCurso;
         this.datosCurso = {};
         this.selectCertificado;
@@ -11,10 +11,13 @@ class EditarCurso {
         this.file;
         this.formulario;
         this.modal = new ModalBox('modal-box');
+        this.tablaCursos;
+        this.datosTablaCursos;
     }
 
-    init(idCurso) {
+    init(idCurso,tablaCursos) {
         this.idCurso = idCurso;
+        this.tablaCursos = tablaCursos;
         this.initDatosCurso();
     }
 
@@ -31,27 +34,35 @@ class EditarCurso {
         this.inputCosto = $(`#input-edit-costo`);
         this.file = new FileNativo('file-edit-imagen', 'contenedor-edit-imagen');
         this.formulario = $(`#form-edit-datos-curso`);
-//        this.getDatosCurso();
+        this.getDatosCurso();
     }
 
     getDatosCurso() {
         let _this = this;
-        _this.datosCurso.nombre = '';
-        _this.datosCurso.descripcion = '';
-        _this.datosCurso.url = '';
-        _this.datosCurso.certificado = '';
-        _this.datosCurso.costo = '';
         Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
-            console.log(respond);
-
+            console.log(respond.data.infoCurso.dataCurso.curso);
+            _this.id = _this.idCurso;
+            _this.datosCurso.nombre = respond.data.infoCurso.dataCurso.curso.nombre;
+            _this.datosCurso.descripcion = respond.data.infoCurso.dataCurso.curso.descripcion;
+            _this.datosCurso.url = respond.data.infoCurso.dataCurso.curso.url;
+            _this.datosCurso.certificado = respond.data.infoCurso.dataCurso.curso.idTipoCertificado;
+            _this.datosCurso.costo = respond.data.infoCurso.dataCurso.curso.costo;
+            _this.inputNombre.val(_this.datosCurso.nombre);
+            _this.textDescripcion.val(_this.datosCurso.descripcion);
+            _this.inputUrl.val(_this.datosCurso.url);
+            _this.inputCosto.val(parseInt(_this.datosCurso.costo) > 0 ? _this.datosCurso.costo : '');
+            _this.selectCertificado.definirValor(_this.datosCurso.certificado);
+            _this.file.setImage(respond.data.infoCurso.dataCurso.curso.imagen);
         });
     }
 
     eventRegresarCursos() {
+        let _this = this;
         $('#btn-regresar-cursos').on('click', function () {
             Helper.ocultarElemento('seccion');
             Helper.quitarContenidoElemento('seccion');
             Helper.mostrarElemento('seccion-cursos');
+            _this.updateTablaCursos();
         });
     }
 
@@ -100,9 +111,16 @@ class EditarCurso {
     }
 
     uploadFile(datos = {}){
-        this.showMensajeExito();
+        let _this = this;
         this.file.uploadServer('Administracion_Cursos/Editar-Curso', datos, function (respond) {
-
+            console.log(respond);
+            if (respond.success) {
+                _this.datosTablaCursos = respond.data;
+                _this.showMensajeExito();
+                _this.hiddenBotonesDatos(true);
+            } else {
+                _this.showMensajeError();
+            }
         });
     }
 
@@ -182,6 +200,26 @@ class EditarCurso {
         this.modal.mostrarBotonCancelar();
         this.modal.cambiarValorBotonCanelar('Cerrar');
     }
+    
+    updateTablaCursos() {
+        let listaCursos = [];
+        this.tablaCursos.limpiartabla();
+
+        $.each(this.datosTablaCursos.cursos, function (key, value) {
+            listaCursos.push([
+                value['Id'],
+                value['Nombre'],
+                value['Descripcion'],
+                value['Participantes'],
+                value['Estatus'] === '1' ? 'Activo' : 'Inactivo',
+                null
+            ]);
+        });
+        this.tablaCursos.agregarContenidoTabla(listaCursos);
+        this.tablaCursos.reordenarTabla(0,'asc');
+    }
+    
+    
 }
 
 

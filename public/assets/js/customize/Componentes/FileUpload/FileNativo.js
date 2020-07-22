@@ -56,14 +56,14 @@ class FileNativo {
     setFormData(listaImage = []) {
         let _this = this;
         let multiple = $(`#${this.inputFile}`).attr('multiple');
-        
-        if(multiple === undefined){
+
+        if (multiple === undefined) {
             _this.formData.delete('image');
         }
-        
+
         for (let imagen of listaImage) {
             _this.formData.append('image', imagen);
-        }
+    }
     }
 
     uploadServer(url = '', datos = {}, callback){
@@ -94,18 +94,27 @@ class FileNativo {
 
     setExtraData(datos) {
         let _this = this;
-        
+
         if (datos) {
             _this.formData.delete('extraData');
-            _this.formData.append('extraData', JSON.stringify(datos));         
+            _this.formData.append('extraData', JSON.stringify(datos));
         }
     }
-    
-    clear(){
+
+    clear() {
         $(`#${this.contenedor}`).empty().append(`<img src="/assets/img/Iconos/no-thumbnail.jpg" />`);
         $(`#${this.inputFile}`).val('');
         this.formData.delete('image');
         this.formData.delete('extraData');
+    }
+
+    setImage(url = '') {
+        if (url) {
+            this.setFormData([url]);
+            this.insertPreview();
+        } else {
+            this.clear();
+        }
     }
 }
 
