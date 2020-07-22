@@ -110,8 +110,7 @@ class FileNativo {
 
     setImage(url = '') {
         if (url) {
-            this.setFormData([url]);
-            this.insertPreview();
+            $(`#${this.contenedor}`).empty().append(`<img src="${url}" />`);
         } else {
             this.clear();
         }

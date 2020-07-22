@@ -150,52 +150,63 @@ class EditarCurso {
 
     eventTemarios() {
         let _this = this;
+        let temarios = null;
+        let porcentaje = null;
+        let datosUpload = {};
 
         $('#btn-edti-agregar-temario').on('click', function (e) {
             let curso = $('#input-edit-temario').val();
 
             if (curso) {
-                let temarios = _this.tablaTemarios.datosTabla();
-                let porcentaje = temarios.length ? 100 / (temarios.length + 1) : 100;
-
-                let nuevoTemario = {
-                    idCurso: _this.idCurso,
-                    tema: curso,
-                    porcentaje: parseFloat(porcentaje.toFixed(2))
-                };
-                console.log(nuevoTemario);
-//                Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
-                        _this.tablaTemarios.limpiartabla();
-                        _this.updateTablaTemarios(temarios,{id: 2, nombre : curso, porcentaje : porcentaje.toFixed(2) + '%'});
-                        $('#input-temario').val('');
-//                });
+                temarios = _this.tablaTemarios.datosTabla();
+                porcentaje = temarios.length ? 100 / (temarios.length + 1) : 100;
+                datosUpload = {idCurso: _this.idCurso, tema: curso, porcentaje: parseFloat(porcentaje.toFixed(2))};
+                _this.uploadTemarios(true, datosUpload);
             }
         });
 
         _this.tablaTemarios.addListenerOnclik('.delete-temario', function (dataRow, fila) {
-            let temarios = _this.tablaTemarios.datosTabla();
+            temarios = _this.tablaTemarios.datosTabla();
             if (temarios.length > 1) {
-                _this.tablaTemarios.eliminarFila(fila);
-                temarios = _this.tablaTemarios.datosTabla();
-                let porcentaje = temarios.length ? 100 / temarios.length : 100;
-                _this.updateTablaTemarios(temarios, {porcentaje : porcentaje.toFixed(2) + '%'});
-            }else{
-                _this.alerta.mostrarMensajeError('alerta-temarios','No se puede dejar sin temas al curso');
+                porcentaje = temarios.length ? 100 / (temarios.length - 1) : 100;
+                datosUpload = {idCurso: _this.idCurso, idTema: dataRow[0], porcentaje: porcentaje.toFixed(2)};
+                _this.uploadTemarios(false, datosUpload, fila);
+
+            } else {
+                _this.alerta.mostrarMensajeError('alerta-temarios', 'No se puede dejar sin temas al curso');
             }
         });
     }
 
-    updateTablaTemarios(temarios = [], nuevoTemario = []) {
+    uploadTemarios(nuevo = true, datosFila = {}, fila = null) {
         let _this = this;
 
+        if (nuevo) {
+//            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
+                  datosFila.id = 2;
+                _this.updateTablaTemarios(datosFila);
+                $('#input-edit-temario').val('');
+//            });
+        } else {
+//            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', datosFila, function (respond) {
+                _this.tablaTemarios.eliminarFila(fila);
+                _this.updateTablaTemarios(datosFila);
+//            });
+        }
+    }
+
+    updateTablaTemarios(datosTemario = []) {
+        let _this = this;
+        let temarios = _this.tablaTemarios.datosTabla();
+
         _this.tablaTemarios.limpiartabla();
-        console.log(nuevoTemario);
-        if (nuevoTemario.curso) {
-            _this.tablaTemarios.agregarDatosFila([nuevoTemario.id,nuevoTemario.nombre, nuevoTemario.porcentaje]);
+
+        if (datosTemario.tema) {
+            _this.tablaTemarios.agregarDatosFila([datosTemario.id, datosTemario.tema, datosTemario.porcentaje + '%']);
         }
 
         $.each(temarios, function (key, value) {
-            _this.tablaTemarios.agregarDatosFila([value[0],value[1],nuevoTemario.porcentaje]);
+            _this.tablaTemarios.agregarDatosFila([value[0], value[1], datosTemario.porcentaje + '%']);
         });
     }
 
