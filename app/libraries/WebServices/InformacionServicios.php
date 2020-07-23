@@ -1626,25 +1626,26 @@ class InformacionServicios extends General
 
     public function definirPDFTraslado(array $datos)
     {
-        $this->pdf = new PDFAux();
-        $header = 'Movimientos a laboratorio';
+        $this->pdf = new PDFAux();        
 
         $this->pdf->AliasNbPages();
 
-        $generals = $this->db->getMovementGeneralsForPdf($datos['servicio']);
+        $generals = $this->db->getMovementGeneralsForPdf($datos['servicio']);                
         $datos['folio'] = $generals['Folio'];
 
         $carpeta = $this->pdf->definirArchivo('Servicios/Servicio-' . $datos['servicio'] . '/Pdf/', str_replace(' ', '_', 'Ticket_' . $generals['Ticket'] . '_Servicio_' . $datos['servicio'] . '_' . str_replace(" ", "_", $generals['TipoServicio']) . 'Traslado'));
 
         if (file_exists($carpeta)) {
             unlink($carpeta);
-        }
+        }        
 
-        $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
-
-        if ($datos['folio'] != '' || $datos['folio'] != null) {
+        $header = 'Resumen de Ticket '.$datos['Ticket'];
+        if($datos['folio'] != null && $datos['folio'] > 0 && $datos['folio'] != ''){        
             $this->informacionSD($datos['folio']);
+            $header = "Resumen de Incidente Service Desk", $datos['folio'];
         }
+
+        $this->setHeaderPDF($header);
 
         $this->setCoordinates(10, $this->y + 5);
         $this->setStyleHeader();
@@ -1692,7 +1693,7 @@ class InformacionServicios extends General
 
         if (!empty($receiptHistory)) {
             if (($this->y + 26) > 270) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                $this->setHeaderPDF($header);
             }
 
             $this->setCoordinates(10, $this->y + 5);
@@ -1710,7 +1711,7 @@ class InformacionServicios extends General
             $bol = true;
             foreach ($receiptHistory as $k => $v) {
                 if (($this->y + 26) > 270) {
-                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    $this->setHeaderPDF($header);
 
                     $this->setCoordinates(10, $this->y + 5);
                     $this->setStyleHeader();
@@ -1741,7 +1742,7 @@ class InformacionServicios extends General
         if (!empty($laboratoryCommentsHistory)) {
             $this->setCoordinates(10, $this->y + 5);
             if (($this->y + 26) > 270) {
-                $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                $this->setHeaderPDF($header);
             }
             $this->setCoordinates(10);
             $this->setStyleHeader();
@@ -1749,7 +1750,7 @@ class InformacionServicios extends General
 
             foreach ($laboratoryCommentsHistory as $key => $value) {
                 if (($this->y + 26) > 270) {
-                    $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
+                    $this->setHeaderPDF($header);
                 }
                 $this->setStyleTitle();
                 $this->setCellValue(25, 5, "Usuario:", 'R', true);
