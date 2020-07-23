@@ -50,7 +50,8 @@ class FileNativo {
         for (let file of this.formData.values()) {
             let imagenCodificada = URL.createObjectURL(file);
             $(`#${this.contenedor}`).append(`<img src="${imagenCodificada}" />`);
-        }
+        }        
+        URL.revokeObjectURL();
     }
 
     setFormData(listaImage = []) {
