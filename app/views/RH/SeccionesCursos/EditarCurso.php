@@ -140,19 +140,25 @@
                             <div class="form-group ">
                                 <div class="col-md-12">
                                     <div class="input-group">
-                                        <select id="select-participante" class="form-control" style="width: 100%">
-                                            <option value="">Seleccionar</option>                                          
+                                        <select id="select-edit-participante" class="form-control" style="width: 100%">
+                                            <option value="">Seleccionar</option> 
+                                            <?php
+                                            foreach ($perfiles as $value) {
+
+                                                echo '<option value="' . $value['Id'] . '">' . $value['Nombre'] . '</option>';
+                                            }
+                                            ?>
                                         </select>
                                         <div class="input-group-btn">
-                                            <button id="btn-nuevo-puestoParticipante" type="button" class="btn btn-success btn-block"><i class="fa fa-plus"></i> Agregar</button>
+                                            <button id="btn-agregar-participante" type="button" class="btn btn-success btn-block"><i class="fa fa-plus"></i> Agregar</button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <table id="tabla-nuevo-cursos-participantes" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
+                                    <table id="tabla-edit-participantes" class="table table-hover table-striped table-bordered no-wrap" style="cursor:pointer" width="100%">
                                         <thead>
                                             <tr>
-                                                <th class="never">id</th>
+                                                <th class="never">Id</th>
                                                 <th class="all">Puesto</th>
                                                 <th class="all">Acciones</th>
                                             </tr>
