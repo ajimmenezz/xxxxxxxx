@@ -429,14 +429,14 @@ Servicio.prototype.ServicioSinClasificar = function () {
                 var data = {servicio: servicio, descripcion: descripcion, previews: archivosPreview, evidencias: evidencias, sucursal: sucursal, datosConcluir: {servicio: servicio, descripcion: descripcion, sucursal: sucursal}};
 //                _this.enviarEvento('/Generales/Servicio/VerificarFolioServicio', data, panel, function (respuesta) {
 //                    if (respuesta === true) {
-                        _this.validarTecnicoPoliza();
+                _this.validarTecnicoPoliza();
 
-                        var html = '';
+                var html = '';
 
-                        $('#btnModalConfirmar').addClass('hidden');
-                        $('#btnModalConfirmar').off('click');
-                        _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
-                        _this.validarCamposFirma(ticket, servicio, true, true, '5', data);
+                $('#btnModalConfirmar').addClass('hidden');
+                $('#btnModalConfirmar').off('click');
+                _this.mostrarModal('Firma', _this.modalCampoFirmaExtra(html, 'Firma'));
+                _this.validarCamposFirma(ticket, servicio, true, true, '5', data);
 //                    } else {
 //                        _this.mensajeModal('No cuenta con Folio este servicio.', 'Advertencia', true);
 //                    }
@@ -556,7 +556,7 @@ Servicio.prototype.ServicioSinClasificar = function () {
             window.open(respuesta.link);
         });
     });
-    
+
     $("#btnDocumentacionFirmaSinEspecificar").off("click");
     $("#btnDocumentacionFirmaSinEspecificar").on("click", function () {
         _this.modalCampoFirma(null, {servicio: servicio, operacion: '1', estatus: datosDelServicio.IdEstatus, sucursal: idSucursal}, '/Generales/Servicio/GuardarDocumentacionFirma');
@@ -589,7 +589,7 @@ Servicio.prototype.colocarBotonGuardarCambiosSinClasificar = function () {
     var archivo = arguments[1];
     var _this = this;
 
-    if (datosServicio.Firma !== null) {
+    if (datosServicio.Firma !== null && datosServicio.Firma !== '') {
         $('.divBotonesServicioSinClasificar').addClass('hidden');
         $('.divGuardarCambiosServicioSinClasificar').removeClass('hidden');
         _this.file.crearUpload('#evidenciaCambiosSinClasificar',
@@ -1209,12 +1209,14 @@ Servicio.prototype.modalCampoFirma = function () {
                                 _this.enviarEvento(controladorEventoExtra, dataMandar, '#modal-dialogo', function (respuesta) {
                                     if (respuesta === true) {
                                         $('#modal-dialogo').modal('hide');
+                                        location.reload();
 //                                        _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                     } else if (respuesta instanceof Array || respuesta instanceof Object) {
                                         _this.tabla.limpiarTabla('#data-table-documetacion-firmada');
                                         var columnas = _this.datosTablaDocumentacionFirmada();
                                         _this.tabla.generaTablaPersonal('#data-table-documetacion-firmada', respuesta, columnas, null, null, [[0, 'desc']]);
                                         $('#modal-dialogo').modal('hide');
+                                        location.reload();
 //                                        _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                     } else {
                                         $('#modal-dialogo').modal('hide');
@@ -1228,9 +1230,11 @@ Servicio.prototype.modalCampoFirma = function () {
                                 _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', dataMandar, function (respuesta) {
                                     if (respuesta.result === true) {
                                         $('#modal-dialogo').modal('hide');
+                                        location.reload();
 //                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                     } else if (respuesta === true) {
                                         $('#modal-dialogo').modal('hide');
+                                        location.reload();
 //                                        _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                     } else {
                                         $('#modal-dialogo').modal('hide');
@@ -1273,11 +1277,13 @@ Servicio.prototype.modalCampoFirma = function () {
                                 if (respuesta === true) {
                                     $('#modal-dialogo').modal('hide');
                                     _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
+                                    location.reload();
                                 } else if (respuesta instanceof Array || respuesta instanceof Object) {
                                     _this.tabla.limpiarTabla('#data-table-documetacion-firmada');
                                     var columnas = _this.datosTablaDocumentacionFirmada();
                                     _this.tabla.generaTablaPersonal('#data-table-documetacion-firmada', respuesta, columnas, null, null, [[0, 'desc']]);
                                     $('#modal-dialogo').modal('hide');
+                                    location.reload();
 //                                    _this.mensajeModal('Se envio el reporte correctamente', 'Correcto', true);
                                 } else {
                                     $('#modal-dialogo').modal('hide');
@@ -1291,9 +1297,11 @@ Servicio.prototype.modalCampoFirma = function () {
                             _this.file.enviarArchivos('#evidenciaSinClasificar', '/Generales/Servicio/Concluir_SinClasificar', '#modal-dialogo', dataMandar, function (respuesta) {
                                 if (respuesta.result === true) {
                                     $('#modal-dialogo').modal('hide');
+                                    location.reload();
 //                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                 } else if (respuesta === true) {
                                     $('#modal-dialogo').modal('hide');
+                                    location.reload();
 //                                    _this.mensajeModal('Se Concluyó correctamente el servicio', 'Correcto');
                                 } else {
                                     $('#modal-dialogo').modal('hide');
@@ -1462,9 +1470,9 @@ Servicio.prototype.validarCamposFirma = function () {
 ////                                var imgFirmaTecnico = myBoardTecnico.getImg();
 ////                                var imgInputFirmaTecnico = (myBoardTecnico.blankCanvas == imgFirmaTecnico) ? '' : imgFirmaTecnico;
 //
-                                if (encargadoTI === undefined) {
-                                    encargadoTI = null
-                                }
+                            if (encargadoTI === undefined) {
+                                encargadoTI = null
+                            }
 
 //                                var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
 //                                if (imgInputFirmaTecnico !== '') {
@@ -1485,22 +1493,22 @@ Servicio.prototype.validarCamposFirma = function () {
 //                                    evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del Tecnico.', 3000);
 //                                }
 //                            } else {
-                                var imgFirmaTecnico = null;
+                            var imgFirmaTecnico = null;
 //                                encargadoTI = null;
-                                var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
-                                _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
-                                    if (respuesta === true) {
-                                        if (evidencias != false) {
-                                            _this.enviarEvidenciaAsociado(evidencias);
-                                        } else {
-                                            _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
-                                        }
+                            var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
+                            _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
+                                if (respuesta === true) {
+                                    if (evidencias != false) {
+                                        _this.enviarEvidenciaAsociado(evidencias);
                                     } else {
-                                        _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+                                        _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
                                     }
-                                    myBoard.clearWebStorage();
+                                } else {
+                                    _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+                                }
+                                myBoard.clearWebStorage();
 //                                    myBoardTecnico.clearWebStorage();
-                                });
+                            });
 //                            }
                         } else {
                             evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma de quien Recibe.', 3000);
@@ -1514,9 +1522,9 @@ Servicio.prototype.validarCamposFirma = function () {
 //                            var imgFirmaTecnico = myBoardTecnico.getImg();
 //                            var imgInputFirmaTecnico = (myBoardTecnico.blankCanvas == imgFirmaTecnico) ? '' : imgFirmaTecnico;
 
-                            if (encargadoTI === undefined) {
-                                encargadoTI = null
-                            }
+                        if (encargadoTI === undefined) {
+                            encargadoTI = null
+                        }
 
 //                            var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
 //                            if (imgInputFirmaTecnico !== '') {
@@ -1537,22 +1545,22 @@ Servicio.prototype.validarCamposFirma = function () {
 //                                evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma del Tecnico.', 3000);
 //                            }
 //                        } else {
-                            var imgFirmaTecnico = null;
+                        var imgFirmaTecnico = null;
 //                            encargadoTI = null;
-                            var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
-                            _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
-                                if (respuesta === true) {
-                                    if (evidencias != false) {
-                                        _this.enviarEvidenciaAsociado(evidencias);
-                                    } else {
-                                        _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
-                                    }
+                        var dataNuevo = {ticket: ticket, servicio: servicio, img: imgFirma, imgFirmaTecnico: imgFirmaTecnico, correo: correo, recibe: recibe, encargadoTI: encargadoTI, concluirServicio: concluirServicio, estatus: estatus};
+                        _this.enviarEvento('/Generales/Servicio/Enviar_Reporte_PDF', dataNuevo, '#modal-dialogo', function (respuesta) {
+                            if (respuesta === true) {
+                                if (evidencias != false) {
+                                    _this.enviarEvidenciaAsociado(evidencias);
                                 } else {
-                                    _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+                                    _this.mensajeModal('Se envió el reporte correctamente', 'Correcto');
                                 }
-                                myBoard.clearWebStorage();
+                            } else {
+                                _this.mensajeModal('Ocurrió el error "' + respuesta + '" Por favor contacte al administrador del Sistema AdIST.', 'Error');
+                            }
+                            myBoard.clearWebStorage();
 //                                myBoardTecnico.clearWebStorage();
-                            });
+                        });
 //                        }
                     } else {
                         evento.mostrarMensaje('.errorFirma', false, 'Debes llenar el campo Firma de quien Recibe.', 3000);

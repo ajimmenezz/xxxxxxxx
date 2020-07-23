@@ -53,7 +53,7 @@ $(function () {
             var valor;
             var valorMostrar = '';
             switch (tipoCampo) {
-                case 'cat' :
+                case 'cat':
                     valor = $("#selectValor").val();
                     if (valor !== null) {
                         $("#selectValor option:selected").each(function () {
@@ -68,7 +68,7 @@ $(function () {
                         return false;
                     }
                     break;
-                case 'tag' :
+                case 'tag':
                     valor = $("#tagValor").tagit("assignedTags");
                     if (valor.length > 0) {
                         valorMostrar = valor.toString();
@@ -86,7 +86,7 @@ $(function () {
                         return false;
                     }
                     break;
-                default :
+                default:
                     break;
             }
 
@@ -140,7 +140,7 @@ $(function () {
     });
 
     $("#btnExportarExcel").on("click", function () {
-        var info = $('#data-table-busqueda-reporte').DataTable().rows({search: 'applied'}).data();
+        var info = $('#data-table-busqueda-reporte').DataTable().rows({ search: 'applied' }).data();
         var realInfo = new Array();
         $.each(info, function (k, v) {
             if (!isNaN(k)) {
@@ -165,7 +165,7 @@ $(function () {
             $("#valorFiltro").empty();
             $("#operadorComparacion > option").prop('disabled="disabled"');
             switch (tipoCampo) {
-                case 'cat' :
+                case 'cat':
                     htmlCriterio += '<option value="es">es</option><option value="noes">no es</option>';
                     var htmlSelect = '<select class="form-control" style="width: 100%" id="selectValor" multiple="multiple">';
                     switch (campo) {
@@ -211,7 +211,7 @@ $(function () {
                     $("#valorFiltro").empty().append(htmlSelect);
                     select.crearSelectMultiple("#selectValor", "Seleccionar");
                     break;
-                case 'tag' :
+                case 'tag':
                     htmlCriterio += '<option value="es">es</option><option value="noes">no es</option>';
                     var htmlTag = '<ul id="tagValor"></ul>';
                     $("#valorFiltro").empty().append(htmlTag);
@@ -224,7 +224,7 @@ $(function () {
                     var htmlInput = '<input type="text" id="inputValor" class="form-control" placeholder="Ingresa texto"/>';
                     $("#valorFiltro").empty().append(htmlInput);
                     break;
-                default :
+                default:
                     break;
             }
             htmlCriterio += '</select>';
@@ -267,17 +267,17 @@ $(function () {
     var getDetalles = function (datos) {
         $("#seccion-reporte").addClass("hidden");
         $("#seccion-detalles").removeClass("hidden");
-        evento.enviarEvento('Buscar/Detalles', {datos: datos}, '#seccion-detalles', function (respuesta) {
+        evento.enviarEvento('Buscar/Detalles', { datos: datos }, '#seccion-detalles', function (respuesta) {
             var servicio = datos[1];
             var ticket = datos[2];
             var tipoServicio = datos[15];
-            
-            if(tipoServicio == "Censo"){
+
+            if (tipoServicio == "Censo") {
                 $("#btnDownloadTemplateCenso").removeClass("hidden");
-            }else{
+            } else {
                 $("#btnDownloadTemplateCenso").addClass("hidden");
             }
-            
+
             $("#panel-detalles-solicitud").empty().append(respuesta.solicitud);
             $("#panel-detalles-servicio").empty().append(respuesta.servicio);
             $("#panel-historial-servicio").empty().append(respuesta.historial);
@@ -285,15 +285,46 @@ $(function () {
             $("#btnExportarPdf").attr("data-id-servicio", datos[1]);
             $("#btnRechazarServicioConcluido").attr("data-id-servicio", datos[1]);
             $("#btnSubirInfoSD").attr("data-id-servicio", datos[1]);
-            
+
             $('#btnDownloadTemplateCenso').off("click");
             $('#btnDownloadTemplateCenso').on('click', function () {
                 var data = {
                     servicio: servicio
                 }
                 evento.enviarEvento('Buscar/ExportarCenso', data, '#seccion-detalles', function (respuesta) {
-                    window.open(respuesta.ruta, '_blank');
+                    if (respuesta.ruta !== 500) {
+                        window.open(respuesta.ruta, '_blank');
+                    } else {
+                        evento.mostrarModal("Aviso", '<h3 class="text-center">' + respuesta.mensaje + '</h3>');
+                        $('#btnModalConfirmar').addClass('hidden');
+                        $('#btnModalAbortar').empty().append('Cerrar');
+                    }
                 });
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+            tabla.generaTablaPersonal(
+                ".counting-table",
+                null,
+                null,
+                true,
+                false,
+                [],
+                null,
+                null,
+                false
+            );
+
+            $(".missing-device").off("click");
+            $(".missing-device").on("click", function () {
+                tabla.buscarEnTabla("#missing-devices-table", $(this).attr("data-name"));
+                $('a[href="#difFaltantes"]').tab("show");
+            });
+
+            $(".leftover-device").off("click");
+            $(".leftover-device").on("click", function () {
+                tabla.buscarEnTabla("#leftover-devices-table", $(this).attr("data-name"));
+                $('a[href="#difSobrantes"]').tab("show");
             });
 
             $("#btnSubirInfoSD").off("click");
@@ -325,13 +356,13 @@ $(function () {
 
             $('#btnCancelarServicioSeguimiento').off('click');
             $('#btnCancelarServicioSeguimiento').on('click', function () {
-                var data = {servicio: servicio, ticket: ticket};
+                var data = { servicio: servicio, ticket: ticket };
                 servicios.cancelarServicio(
-                        data,
-                        'Servicio/Servicio_Cancelar_Modal',
-                        '#modal-dialogo',
-                        'Servicio/Servicio_Cancelar'
-                        );
+                    data,
+                    'Servicio/Servicio_Cancelar_Modal',
+                    '#modal-dialogo',
+                    'Servicio/Servicio_Cancelar'
+                );
             });
 
             $("#btnExportarPdf").off("click");
@@ -387,7 +418,7 @@ $(function () {
                         $('#btnGuardarDescripionServicio').on('click', function () {
                             if (evento.validarFormulario('#formRechazarFormulario')) {
                                 var descripcion = $('#inputDescripcionRecharzarServicio').val();
-                                var data = {'servicio': datos[1], idSolicitud: datos[0], descripcion: descripcion, ticket: datos[2]};
+                                var data = { 'servicio': datos[1], idSolicitud: datos[0], descripcion: descripcion, ticket: datos[2] };
                                 $('#btnGuardarDescripionServicio').attr('disabled', 'disabled');
                                 $('#btnCancelarRechazarServicio').attr('disabled', 'disabled');
                                 evento.enviarEvento('Servicio/Reabrir_Servicio', data, '#seccionRechazarServicio', function (respuesta) {

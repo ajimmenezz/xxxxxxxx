@@ -1,13 +1,12 @@
 class Formulario {
 
-    constructor(nombreFormulario, elementos, pagina) {
+    constructor(nombreFormulario, elementos) {
 
         this.formulario = nombreFormulario;
         this.selects = new Map();
         this.fechas = new Map();
         this.filesUpload = new Map();
-        this.inputs = new Map();
-        this.pagina = pagina;
+        this.inputs = new Map();        
 
         elementos.hasOwnProperty('selects') ? this.crearSelects(elementos.selects) : null;
         elementos.hasOwnProperty('fechas') ? this.crearFechas(elementos.fechas) : null;
@@ -56,7 +55,7 @@ class Formulario {
 
             switch (value.tipo) {
                 case 'basico':
-                    upload = new FileUpload_Basico(key, value, _this.pagina);
+                    upload = new FileUpload_Basico(key, value);
                     break;
             }
 
@@ -198,7 +197,7 @@ class Formulario {
                 let elementoObjeto = objeto.get(elemento);
                 elementoObjeto.iniciarPlugin();
             }
-    }
+        }
     }
 
     obtenerElemento(elemento = '') {

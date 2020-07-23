@@ -26,11 +26,11 @@
                 <label for="catalogoActualizarSucursales">Técnico Responsable *</label>
                 <select id="selectActualizarResponsableSucursales" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $habilitar ?>>
                     <option value="">Seleccionar</option>
-<?php
-foreach ($usuarios as $item) {
-    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . ' ' . $item['ApPaterno'] . '</option>';
-}
-?>
+                    <?php
+                    foreach ($usuarios as $item) {
+                        echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . ' ' . $item['ApPaterno'] . '</option>';
+                    }
+                    ?>
                 </select>
             </div>
         </div>
@@ -41,11 +41,11 @@ foreach ($usuarios as $item) {
                 <label for="catalogoActualizarSucursales">Cliente *</label>
                 <select id="selectActualizarClienteSucursales" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $habilitar ?>>
                     <option value="">Seleccionar</option>
-<?php
-foreach ($clientes as $item) {
-    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-}
-?>
+                    <?php
+                    foreach ($clientes as $item) {
+                        echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                    }
+                    ?>
                 </select>
             </div>
         </div>
@@ -54,11 +54,11 @@ foreach ($clientes as $item) {
                 <label for="catalogoActualizarSucursales">Región</label>
                 <select id="selectActualizarRegionSucursales" class="form-control" style="width: 100%">
                     <option value="">Seleccionar</option>
-<?php
-foreach ($regiones as $item) {
-    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-}
-?>
+                    <?php
+                    foreach ($regiones as $item) {
+                        echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                    }
+                    ?>
                 </select>
             </div>
         </div>
@@ -67,11 +67,11 @@ foreach ($regiones as $item) {
                 <label for="catalogoActualizarSucusales">Unidad de Negocio *</label>
                 <select id="selectActualizarUnidadNegocioSucursales" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $habilitar ?>>
                     <option value="">Seleccionar</option>
-<?php
-foreach ($unidadesNegocio as $item) {
-    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-}
-?>
+                    <?php
+                    foreach ($unidadesNegocio as $item) {
+                        echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                    }
+                    ?>
                 </select>
             </div>
         </div>
@@ -82,11 +82,11 @@ foreach ($unidadesNegocio as $item) {
                 <label for="catalogoActualizarSucursales">País *</label>
                 <select id="selectActualizarPaisSucursales" class="form-control" style="width: 100%" data-parsley-required="true" <?php echo $habilitar ?>>
                     <option value="">Seleccionar</option>
-<?php
-foreach ($paises as $item) {
-    echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
-}
-?>
+                    <?php
+                    foreach ($paises as $item) {
+                        echo '<option value="' . $item['Id'] . '">' . $item['Nombre'] . '</option>';
+                    }
+                    ?>
                 </select>
             </div>
         </div>
@@ -166,14 +166,46 @@ foreach ($paises as $item) {
                 <input type="tel" class="form-control" id="inputActualizarDominio" placeholder="000" maxlength="4" style="width: 100%" <?php echo $habilitar ?>/>                            
             </div>
         </div>
+    </div>
+    <div class="row m-t-10">
+        <div class="col-md-2">
+            <label>Local / Foraneo *</label>
+            <select id="selectActualizarLocalForaneoSucursales" class="form-control" style="width: 100%" data-parsley-required="true">
+                <?php
+                if (!empty($localForaneo)) {
+                    foreach ($localForaneo as $item) {
+                        if ($item['Local'] === '1') {
+                            ?>
+                            <option value="">Seleccionar...</option>
+                            <option value="1" selected>Local</option>
+                            <option value="0">Foraneo</option>
+                            <?php
+                        } else {
+                            ?>
+                            <option value="">Seleccionar...</option>
+                            <option value="1">Local</option>
+                            <option value="0" selected>Foraneo</option>
+                            <?php
+                        }
+                    }
+                } else {
+                    ?>
+                    <option value="">Seleccionar...</option>
+                    <option value="1">Local</option>
+                    <option value="0">Foraneo</option>
+                    <?php
+                }
+                ?>
+            </select>
+        </div>
         <div id='estatus' class="col-md-2">
             <div class="form-group">
                 <label for="CatalogoActualizarSucursales">Estatus</label>
                 <select id="selectActualizarEstatusSucursales" class="form-control" style="width: 100%" <?php echo $habilitar ?>>
-<?php
-foreach ($flag as $item) {
-    if ($item['Flag'] === '1') {
-        ?>
+                    <?php
+                    foreach ($flag as $item) {
+                        if ($item['Flag'] === '1') {
+                            ?>
                             <option value="1" selected>Activo</option>
                             <option value="0">Inactivo</option>
                             <?php
@@ -189,33 +221,34 @@ foreach ($flag as $item) {
             </div>
         </div>
     </div>
-    <div class="row m-t-12">
-        <div class="col-md-9">
-            <div class="form-group">
-                <label for="alias">Alias</label>
-                <textarea id="inputAlias" type="text" class="form-control" maxlength="200" style="width: 100%" rows="3"></textarea>                    
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="centroCostos">Centro de Costos</label>
-                <input id="inputCentroCostos" type="text" class="form-control" maxlength="6" style="width: 100%"/>                            
-            </div>
+</div>
+<div class="row m-t-12">
+    <div class="col-md-9">
+        <div class="form-group">
+            <label for="alias">Alias</label>
+            <textarea id="inputAlias" type="text" class="form-control" maxlength="200" style="width: 100%" rows="3"></textarea>                    
         </div>
     </div>
-    <div class="row m-t-10">
-        <!--Empezando error--> 
-        <div class="col-md-12">
-            <div class="errorActualizarSucursales"></div>
-        </div>
-        <!--Finalizando Error-->
-    </div>   
-    <div class="row m-t-10">
-        <div class="col-md-12">
-            <div class="form-group text-center">
-                <br>
-                <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarSucursales"><i class="fa fa-save"></i> Guardar</a>
-            </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="centroCostos">Centro de Costos</label>
+            <input id="inputCentroCostos" type="text" class="form-control" maxlength="6" style="width: 100%"/>                            
         </div>
     </div>
+</div>
+<div class="row m-t-10">
+    <!--Empezando error--> 
+    <div class="col-md-12">
+        <div class="errorActualizarSucursales"></div>
+    </div>
+    <!--Finalizando Error-->
+</div>   
+<div class="row m-t-10">
+    <div class="col-md-12">
+        <div class="form-group text-center">
+            <br>
+            <a href="javascript:;" class="btn btn-primary m-r-5 " id="btnGuardarSucursales"><i class="fa fa-save"></i> Guardar</a>
+        </div>
+    </div>
+</div>
 </form>

@@ -61,4 +61,97 @@ Class Modelo_GestorServicio extends Base {
         return $consulta;
     }
 
+    public function getTodosServiciosCableado() {
+        $consulta = array();
+        try {
+            $consulta = $this->consulta("SELECT 
+                                            tst.Id, 
+                                            tst.Ticket, 
+                                            tst.IdSolicitud, 
+                                            csd.Nombre AS TipoServicio, 
+                                            tst.FechaCreacion,
+                                            nombreUsuario(tst.Atiende) Atiende,
+                                            tst.Descripcion, 
+                                            ce.Nombre As Estatus, 
+                                            ts.Folio 
+                                        FROM t_servicios_ticket AS tst 
+                                        JOIN cat_v3_estatus AS ce ON tst.IdEstatus = ce.Id 
+                                        JOIN cat_v3_servicios_departamento AS csd ON tst.IdTipoServicio = csd.Id 
+                                        JOIN t_solicitudes AS ts ON tst.IdSolicitud = ts.Id 
+                                        WHERE tst.IdEstatus IN(1, 2, 5, 3, 10, 12)
+                                        AND tst.IdTipoServicio = 49");
+        } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
+    }
+
+    public function getOperacionesPoliza() {
+        $consulta = array();
+        try {
+            $consulta = $this->consulta("SELECT * FROM cat_v3_tipos_operaciones_poliza WHERE Flag = 1");
+        } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
+    }
+
+    public function getInstalaciones(string $idServicio) {
+        $consulta = array();
+        try {
+            $consulta = $this->consulta("SELECT 
+                                        tie.*,
+                                        (SELECT 
+                                                Nombre
+                                            FROM
+                                                cat_v3_tipos_operaciones_poliza
+                                            WHERE
+                                                Id = tie.IdOperacion) AS Operacion,
+                                        AREAATENCION(tie.IdArea) AS Area,
+                                        CASE tie.IdOperacion
+                                            WHEN
+                                                1
+                                            THEN
+                                                (SELECT 
+                                                        MODELO(IdProducto)
+                                                    FROM
+                                                        t_inventario
+                                                    WHERE
+                                                        Id = tie.IdModelo)
+                                            ELSE MODELO(tie.IdModelo)
+                                        END AS Modelo
+                                    FROM
+                                        t_instalaciones_equipos_poliza tie
+                                         WHERE IdServicio = '" . $idServicio . "'");
+        } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
+    }
+
+    public function setInstalaciones(array $datos) {
+        $this->insertarArray('t_instalaciones_equipos_poliza', array(
+            'IdServicio' => $datos['id'],
+            'IdOperacion' => $datos['idOperacion'],
+            'IdArea' => $datos['idArea'],
+            'Punto' => $datos['punto'],
+            'IdModelo' => $datos['idModelo'],
+            'Serie' => $datos['serie'],
+            'Archivos' => $datos['archivos']
+        ));
+    }
+
+    public function deleteInstalacion(string $id) {
+        $consulta = array();
+        try {
+            $consulta = $this->borrar("DELETE FROM t_instalaciones_equipos_poliza
+                                         WHERE Id = '" . $id . "'");
+        } catch (\Exception $ex) {
+            var_dump($ex->getMessage());
+        }
+        return $consulta;
+    }
+
+
+
 }

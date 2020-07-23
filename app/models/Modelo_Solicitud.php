@@ -444,5 +444,4 @@ class Modelo_Solicitud extends Modelo_Base {
 			WHERE Folio ='" . $folio . "'");
         return $consulta;
     }
-
 }

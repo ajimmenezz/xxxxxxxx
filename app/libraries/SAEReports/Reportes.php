@@ -195,6 +195,8 @@ class Reportes extends General
 
     public function exportaMovimientosAlmacenesSAE(array $datos = null)
     {
+        ini_set('memory_limit', '2048M');
+        set_time_limit('1200');
         $movimientos = $datos['movimientos'];
 
         /* Begin Hoja 2 */

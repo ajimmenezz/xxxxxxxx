@@ -36,6 +36,7 @@ class Perfil_Usuario extends General {
         $data['datosSoftware'] = $this->DBU->consultaTRHSoftware(array('IdUsuario' => $usuario['Id']));
         $data['datosSistemas'] = $this->DBU->consultaTRHSistemas(array('IdUsuario' => $usuario['Id']));
         $data['datosDependientes'] = $this->DBU->consultaTRHDependientes(array('IdUsuario' => $usuario['Id']));
+        $data['datosCovid'] = $this->DBU->consultaTRHCovid(array('idUsuario' => $usuario['Id']));
         $data['nivelEstudio'] = $this->catalogo->catRhNivelEstudio('3');
         $data['documentosEstudio'] = $this->catalogo->catRhDocumentosEstudio('3');
         $data['habilidadesIdioma'] = $this->catalogo->catRhHabilidadesIdioma('3');
@@ -166,7 +167,7 @@ class Perfil_Usuario extends General {
             $usuario = $this->usuario->getDatosUsuario();
             $datos['idUsuario'] = $usuario['Id'];
         }
-        
+
         $consulta = $this->DBU->getPersonal('SELECT * FROM t_rh_conduccion WHERE IdUsuario = "' . $datos['idUsuario'] . '"');
 
         if (empty($consulta)) {
@@ -343,12 +344,30 @@ class Perfil_Usuario extends General {
                 $datosArray = $this->DBU->consultaTRHDependientes(array('IdUsuario' => $datos['idUsuario']));
                 break;
         }
-//        var_dump($datosArray);
 
         if (!empty($resultado)) {
             return $datosArray;
         } else {
             return FALSE;
+        }
+    }
+
+    public function guardarDatosCovid(array $datos) {
+        $usuario = $this->usuario->getDatosUsuario();
+        $datos['idUsuario'] = $usuario['Id'];
+
+        try {
+            $datosCovid = $this->DBU->consultaTRHCovid($datos);
+
+            if (empty($datosCovid)) {
+                $this->DBU->insertarTRHCovid($datos);
+            } else {
+                $this->DBU->actualizarTRHCovid($datos);
+            }
+
+            return ['code' => 200, 'message' => 'Se ha guadado lo datos correctamente.'];
+        } catch (\Exception $ex) {
+            return ['code' => 400, 'message' => $ex->getMessage()];
         }
     }
 

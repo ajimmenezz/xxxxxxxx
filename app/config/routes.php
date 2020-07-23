@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
   | -------------------------------------------------------------------------
@@ -92,6 +92,24 @@ $route['Poliza/ReportesPoliza/(:any)'] = 'Poliza/Controller_ReportesPoliza/manej
 $route['Poliza/Tester/(:any)'] = 'Generales/Controller_Tester/manejarEvento/$1';
 $route['Poliza/EventoCatalogoRevisionFisica/(:any)'] = 'Poliza/Controller_Poliza/manejarEvento/$1';
 $route['Poliza/Inventarios/(:any)'] = 'Poliza/Controller_ReportesPoliza/manejarEvento/$1';
+$route['Poliza/Seguimiento/Servicio/Atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
+$route['Poliza/Seguimiento/Servicio/GuardarInformacionGeneral'] = 'V2/Controller_ServicioTicket/guardarInformacionGeneral';
+$route['Poliza/Seguimiento/Servicio/Folio/(:any)'] = 'V2/Controller_ServicioTicket/setFolio';
+$route['Poliza/Seguimiento/Servicio/agregarProblema'] = 'V2/Controller_ServicioTicket/setProblema';
+$route['Poliza/Seguimiento/Servicio/elminarAvanceProblema'] = 'V2/Controller_ServicioTicket/deleteAvenceProblema';
+$route['Poliza/Seguimiento/Servicio/eliminarEvidenciaProblema'] = 'V2/Controller_ServicioTicket/deleteAvidenciaProblema';
+$route['Poliza/Seguimiento/Servicio/equipoCensadosAreaEquipo'] = 'V2/Controller_ServicioTicket/getEquipoCensadosAreaPunto';
+$route['Poliza/Seguimiento/Servicio/Accion/(:any)'] = 'V2/Controller_ServicioTicket/runEvento/$1';
+$route['Poliza/Seguimiento/Servicio/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
+$route['Poliza/Seguimiento/Servicio/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
+$route['Poliza/Seguimiento/Servicio/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
+$route['Poliza/Seguimiento/Servicio/Seguimiento'] = 'V2/Controller_ServicioTicket/seguimientoServicio';
+$route['Poliza/EventoCatalogoUnidadNegocio/(:any)'] = 'Poliza/Controller_UnidadesNegocio/manejarEvento/$1';
+$route['Poliza/EventoCatalogoUnidadNegocioArea/(:any)'] = 'Poliza/Controller_UnidadesNegocioArea/manejarEvento/$1';
+$route['Poliza/EventoCatalogoSublineasArea/(:any)'] = 'Poliza/Controller_SublineasArea/manejarEvento/$1';
+$route['Poliza/EventoCatalogoModelosArea/(:any)'] = 'Poliza/Controller_ModelosArea/manejarEvento/$1';
+$route['Poliza/SLA/(:any)'] = 'Poliza/Controller_SLA/manejarEvento/$1';
+
 
 /* Routers para el manejo nuevo de Proyectos */
 $route['Proyectos2/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
@@ -201,16 +219,20 @@ $route['Salas4D/EventoCatalogos/(:any)'] = 'Salas4D/Controller_Catalogos/manejar
 /* Routers para el manejo de Redes */
 $route['Redes/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Redes/Seguimiento/(:any)'] = 'Redes/Controller_Seguimiento/manejarEvento/$1';
-$route['Redes/SeguimientoCE/SeguimientoGeneral/Atender/(:any)'] = 'V2/Controller_ServicioTicket/atenderServicio/$1';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/Atender'] = 'V2/Controller_ServicioTicket/atenderServicio';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Seguimiento/(:any)'] = 'V2/Controller_ServicioTicket/seguimientoServicio/$1';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Folio/(:any)'] = 'V2/Controller_ServicioTicket/setFolio';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/Accion/(:any)'] = 'V2/Controller_ServicioTicket/runEvento/$1';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/agregarProblema'] = 'V2/Controller_ServicioTicket/setProblema';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/eliminarFolio'] = 'V2/Controller_ServicioTicket/eliminarFolio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/material'] = 'V2/Controller_ServicioTicket/getMaterial';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/guardarSolucion'] = 'V2/Controller_ServicioTicket/setSolucion';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/concluir'] = 'V2/Controller_ServicioTicket/setConcluir';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/exportarPDF'] = 'V2/Controller_ServicioTicket/getPDF';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/borrarEvidencias'] = 'V2/Controller_ServicioTicket/deleteEvidencias';
 $route['Redes/SeguimientoCE/SeguimientoGeneral/validarServicio'] = 'V2/Controller_ServicioTicket/validarServicio';
+$route['Redes/SeguimientoCE/SeguimientoGeneral/rechazarServicio'] = 'V2/Controller_ServicioTicket/rechazarServicio';
+$route['Redes/SeguimientoCE/Catalogo/(:any)'] = 'Almacen/Controller_Catalogos/manejarEvento/$1';
 
 /* Routers para el manejo de MesaDeAyuda */
 $route['MesaDeAyuda/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
@@ -299,9 +321,13 @@ $route['Prime/(:any)'] = 'Controller_Acceso/desplegarPantalla/$1';
 $route['Prime/Inventario/(:any)'] = 'Prime/Controller_Inventario/manejarEvento/$1';
 
 $route['SegundoPlano/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/$1';
+$route['SegundoPlano/setNotificacionesSLA/(:any)'] = 'SegundoPlano/Controller_SegundoPlano/detenerNotificacionesSLA/$1';
 
 $route['Reportes/Lexmark/(:any)'] = 'Reportes/Controller_PrinterLexmark/manejarEvento/$1';
+$route['Reportes/Censos/(:any)'] = 'Reportes/Controller_CensoReports/manejarEvento/$1';
 $route['Reportes/SD/(:any)'] = 'Reportes/Controller_Servicedesk/manejarEvento/$1';
+
+$route['Agenda/(:any)'] = 'Generales/Controller_Agenda/manejarEvento/$1';
 
 $route['P/(:any)'] = 'Pruebas/Controller_Pruebas/manejarEvento/$1';
 

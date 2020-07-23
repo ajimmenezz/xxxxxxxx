@@ -10,6 +10,7 @@ class Controller_Seguimiento extends Base
     private $ServiciosGeneral;
     private $Catalogo;
     private $ServiciosTicket;
+    private $seguimiento55;
 
     public function __construct()
     {
@@ -21,6 +22,7 @@ class Controller_Seguimiento extends Base
         $this->Catalogo = \Librerias\Generales\Catalogo::factory();
         $this->Poliza = \Librerias\Poliza\Poliza::factory();
         $this->ServiciosTicket = \Librerias\Generales\ServiciosTicket::factory();
+        $this->seguimiento55 = \Librerias\Poliza\Seguimientos\Seguimiento55::factory();
     }
 
     /*
@@ -366,6 +368,9 @@ class Controller_Seguimiento extends Base
             case 'CargaEquiposPuntoCenso':
                 $resultado = $this->Seguimientos->cargaEquiposPuntoCenso($this->input->post());
                 break;
+            case 'CargaDiferenciasCenso':
+                $resultado = $this->Seguimientos->cargaDiferenciasCenso($this->input->post());
+                break;
             case 'CargaFormularioCapturaCenso':
                 $resultado = $this->Seguimientos->cargaFormularioCapturaCenso($this->input->post());
                 break;
@@ -423,6 +428,12 @@ class Controller_Seguimiento extends Base
                 break;
             case 'VerificarDuplicidadCenso':
                 $resultado = $this->Seguimientos->verificarDuplicidadCenso($this->input->post());
+                break;
+            case 'ShowSOUpdateForm':
+                $resultado = $this->seguimiento55->getSOUpdateForm($this->input->post());
+                break;
+            case 'SaveSOUpdateInfo':
+                $resultado = $this->seguimiento55->saveSOUpdateInfo($this->input->post());
                 break;
             default:
                 $resultado = FALSE;

@@ -1,12 +1,23 @@
-class Tabla {
+class ITabla {
 
-    constructor(tabla = '', datos = []) {
+    constructor(tabla = '', datos = [], config = {}) {
+        let objeto = $(`#${this.tabla}`);
+        
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
 
         this.tabla = tabla;
-        this.objetoTabla = $(`#${this.tabla}`);
+        this.objetoTabla = objeto;
         this.datos = datos;
+        this.config = config;
+        this.order = this.config.hasOwnProperty('order') ? this.config.order : [[0, 'asc']];
 
-        this.iniciarTabla();
+        if (config.scroll) {
+            this.iniciarTablaScroll();
+        } else {
+            this.iniciarTabla();
+        }
         this.agregarContenidoTabla(datos);
     }
 
@@ -38,7 +49,6 @@ class Tabla {
     }
 
     agregarContenidoTabla(filas) {
-
         let tabla = this.objetoTabla.DataTable();
 
         $.each(filas, function (key, value) {
@@ -47,14 +57,18 @@ class Tabla {
     }
 
     limpiartabla() {
+        let objeto = $(`#${this.tabla}`);
 
-        let tabla = $(`#${this.tabla}`).DataTable();
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
+
+        let tabla = objeto.DataTable();
 
         tabla.clear().draw();
     }
 
     crearTablaDinamica(titulos = []) {
-
         let columnas = '';
         let tablaNueva;
 
@@ -77,8 +91,13 @@ class Tabla {
     }
 
     agregarDatosFila(datos = []) {
+        let objeto = $(`#${this.tabla}`);
 
-        let tabla = $(`#${this.tabla}`).DataTable();
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
+
+        let tabla = objeto.DataTable();
 
         if (datos instanceof Array) {
             tabla.row.add(datos).draw(false);
@@ -89,8 +108,13 @@ class Tabla {
     }
 
     datosFila(fila = '') {
+        let objeto = $(`#${this.tabla}`);
 
-        let filaDatos = $(`#${this.tabla}`).DataTable().row(fila).data();
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
+
+        let filaDatos = objeto.DataTable().row(fila).data();
         let datos = {};
 
         if (filaDatos !== undefined) {
@@ -102,11 +126,23 @@ class Tabla {
     }
 
     evento(callback) {
-        $(`#${this.tabla} tbody`).on('click', 'tr', callback);
+        let objeto = $(`#${this.tabla} tbody`);
+
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla} tbody`);
+        }
+
+        objeto.on('click', 'tr', callback);
     }
 
     eliminarFila(fila) {
-        let tabla = $(`#${this.tabla}`).DataTable();
+        let objeto = $(`#${this.tabla}`);
+
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
+
+        let tabla = objeto.DataTable();
         tabla.row(fila).remove().draw(false);
     }
 
@@ -123,11 +159,16 @@ class Tabla {
     }
 
     datosTabla() {
-        return $(`#${this.tabla}`).DataTable().rows().data();
+        let objeto = $(`#${this.tabla}`);
+
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
+
+        return objeto.DataTable().rows().data();
     }
 
     validarFilaRepetida(datos = [], elementosComparar = []) {
-
         let _this = this;
         let filas = _this.datosTabla();
         let filaNueva = [];
@@ -184,10 +225,22 @@ class Tabla {
     }
 
     objetoDataTable() {
-        return $(`#${this.tabla}`).DataTable();
+        let objeto = $(`#${this.tabla}`);
+
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
+
+        return objeto.DataTable();
     }
-    
+
     reordenarTabla(column, order) {
-        $(`#${this.tabla}`).DataTable().order( [ column, order ] ).draw();
+        let objeto = $(`#${this.tabla}`);
+
+        if (objeto[0] === undefined) {
+            objeto = $(`.${this.tabla}`);
+        }
+
+        objeto.DataTable().order([column, order]).draw();
     }
 }

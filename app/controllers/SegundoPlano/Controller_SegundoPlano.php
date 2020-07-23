@@ -5,8 +5,7 @@
  *
  * @author Freddy
  */
-class Controller_SegundoPlano extends \CI_Controller
-{
+class Controller_SegundoPlano extends \CI_Controller {
 
     private $DB;
     private $DBS;
@@ -18,8 +17,7 @@ class Controller_SegundoPlano extends \CI_Controller
     private $sae;
     private $pruebas;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         ini_set('max_execution_time', 300);
         $this->DB = \Modelos\Modelo_SegundoPlano::factory();
@@ -33,8 +31,7 @@ class Controller_SegundoPlano extends \CI_Controller
         $this->pruebas = \Librerias\Pruebas\Pruebas::factory();
     }
 
-    public function actulizarTablaEquiposSae()
-    {
+    public function actulizarTablaEquiposSae() {
         $materiales = $this->DB->obtenerMaterialSae();
         $this->DB->truncar('truncate tmp_cat_v3_equipos_sae');
         foreach ($materiales as $material) {
@@ -44,14 +41,12 @@ class Controller_SegundoPlano extends \CI_Controller
         echo 'Termino de actualizar material SAE en las base de datos adist3';
     }
 
-    private function getViewFilterId($apiKey = '')
-    {
+    private function getViewFilterId($apiKey = '') {
         $filterId = $this->SD->getViewId('Todos Ingenieros', $apiKey);
         return $filterId;
     }
 
-    public function getAllRequests()
-    {
+    public function getAllRequests() {
         $apiKey = $this->DB->getApiKeyByUser(2);
         $filterId = $this->getViewFilterId($apiKey);
 
@@ -159,7 +154,7 @@ class Controller_SegundoPlano extends \CI_Controller
                     $datos = $value;
                     $datos['fechaLectura'] = $infoDatabase['FechaLectura'];
                     $mensaje = ''
-                        . '<p>Se han detectado algunos cambios en el Folio ' . $datos['folio'] . ' y es posible que pueda ser de su interés.</p>';
+                            . '<p>Se han detectado algunos cambios en el Folio ' . $datos['folio'] . ' y es posible que pueda ser de su interés.</p>';
                     foreach ($cambios as $kc => $vc) {
                         switch ($kc) {
                             case 'Creador':
@@ -207,8 +202,7 @@ class Controller_SegundoPlano extends \CI_Controller
         }
     }
 
-    public function getAsignacionesSD()
-    {
+    public function getAsignacionesSD() {
         date_default_timezone_set("America/Mexico_City");
         $apiKey = $this->DB->getApiKeyByUser('2');
         //var_dump($apiKey);
@@ -290,12 +284,12 @@ class Controller_SegundoPlano extends \CI_Controller
                 }
 
                 $sucursal = $this->DB->consulta("select "
-                    . "cs.Id, "
-                    . "(select EmailCorporativo from cat_v3_usuarios where Id = cs.IdResponsable) as Email, "
-                    . "(select EmailCorporativo from cat_v3_usuarios where Id = (select IdResponsableInterno from cat_v3_regiones_cliente where Id = cs.IdRegionCliente)) as EmailSupervisor "
-                    . "from cat_v3_sucursales cs "
-                    . "where NombreCinemex = '" . $details->CREATEDBY . "' "
-                    . "or NombreCinemex = '" . $details->REQUESTER . "' limit 1");
+                        . "cs.Id, "
+                        . "(select EmailCorporativo from cat_v3_usuarios where Id = cs.IdResponsable) as Email, "
+                        . "(select EmailCorporativo from cat_v3_usuarios where Id = (select IdResponsableInterno from cat_v3_regiones_cliente where Id = cs.IdRegionCliente)) as EmailSupervisor "
+                        . "from cat_v3_sucursales cs "
+                        . "where NombreCinemex = '" . $details->CREATEDBY . "' "
+                        . "or NombreCinemex = '" . $details->REQUESTER . "' limit 1");
                 if (!empty($sucursal)) {
                     if (!in_array($sucursal[0]['Email'], ['', 'NULL'])) {
                         array_push($correos, $sucursal[0]['Email']);
@@ -361,10 +355,10 @@ class Controller_SegundoPlano extends \CI_Controller
 
                     //                    $correos = ['ajimenez@siccob.com.mx'];
                     $texto = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $arrayInsert['Folio'] . '</strong>.</p>'
-                        . '<p><strong>Solicitante:</strong> ' . $details->REQUESTER . ' </p>'
-                        . '<p><strong>Asunto:</strong> ' . $arrayInsertAsunto['Asunto'] . ' </p>'
-                        . '<p><strong>Descripción:</strong> ' . $arrayInsertAsunto['Descripcion'] . ' </p>'
-                        . '<br><br>';
+                            . '<p><strong>Solicitante:</strong> ' . $details->REQUESTER . ' </p>'
+                            . '<p><strong>Asunto:</strong> ' . $arrayInsertAsunto['Asunto'] . ' </p>'
+                            . '<p><strong>Descripción:</strong> ' . $arrayInsertAsunto['Descripcion'] . ' </p>'
+                            . '<br><br>';
                     $mensaje = $this->mail->mensajeCorreo('Nueva Solicitud por Folio ' . $arrayInsert['Folio'], $texto);
                     $this->mail->enviarCorreo('notificaciones@siccob.solutions', $correos, 'Nueva Solicitud por Folio ' . $arrayInsert['Folio'], $mensaje);
                 }
@@ -379,7 +373,6 @@ class Controller_SegundoPlano extends \CI_Controller
         }
 
         //        echo $cont;
-
         //Se coloca en Completado los SD que anteriormente no cambio su estatus 
         $logSDCierres = $this->DBS->consultarFlagLogSDCierres();
 
@@ -394,8 +387,7 @@ class Controller_SegundoPlano extends \CI_Controller
         }
     }
 
-    public function checkUbicaphoneEstatus()
-    {
+    public function checkUbicaphoneEstatus() {
         //        $result = $this->ubicaphone->getAllDevices();
         //        $array = [];
         //        date_default_timezone_set("America/Mexico_City");
@@ -437,8 +429,7 @@ class Controller_SegundoPlano extends \CI_Controller
         //        echo "</pre>";
     }
 
-    public function getUbicaphoneGeofenceActivations()
-    {
+    public function getUbicaphoneGeofenceActivations() {
         //        $from = strtotime("2018-10-30 00:00:00");
         //        $to = strtotime("2018-10-30 23:59:59");
         //        $data = [
@@ -495,18 +486,11 @@ class Controller_SegundoPlano extends \CI_Controller
         //        echo "</pre>";
     }
 
-    public function concluirSolicitudesAbiertas()
-    {
-        $this->solicitud->concluirSolicitudesAbiertas();
-    }
-
-    public function cancelarPermisos()
-    {
+    public function cancelarPermisos() {
         $permisosPendientes = $this->DB->getPermisosSNArchivo();
     }
 
-    public function enviarReportes()
-    {
+    public function enviarReportes() {
         $correosPoliza = $this->DB->getCorreosPoliza();
 
         $reporteFolios = $this->solicitud->getFolios();
@@ -522,18 +506,145 @@ class Controller_SegundoPlano extends \CI_Controller
         $this->mail->enviarCorreo('notificaciones@siccob.solutions', $correosPoliza[0], 'Reportes de Folios', $mensaje);
     }
 
-    public function updateRequestWithSDInfo()
-    {
+    public function updateRequestWithSDInfo() {
         $this->solicitud->updateRequestWithSDInfo();
     }
 
-    public function getComprobantesPagoSAE7()
-    {
+    public function getComprobantesPagoSAE7() {
         $this->sae->getComprobantesPagoSAE7();
     }
 
-    public function getPersonalSiccob()
-    {
+    public function getPersonalSiccob() {
         $this->pruebas->getActivePersonal();
     }
+
+    public function setNotificacionesSLA() {
+        $datosTicket = $this->DB->getTicketValidacion();
+        $fecha = mdate('%Y-%m-%d %H:%i:%s', now('America/Mexico_City'));
+
+        foreach ($datosTicket as $key => $value) {
+            echo '<pre>';
+            var_dump($value);
+            var_dump($value['Folio']);
+//            var_dump($this->conversorSegundosHoras($value['TiempoTranscurrido']));
+            if ($value['LocalForaneo'] === 'SLALocal') {
+                $localForaneo = 'Local';
+            } else {
+                $localForaneo = 'Foraneo';
+            }
+
+            $datosPrioridades = $this->DB->catalogo_Prioridades(array(
+                'LocalForaneo' => $value['LocalForaneo'],
+                'IdPrioridad' => $value['IdPrioridad'],
+                'TextoLocalForaneo' => $localForaneo));
+            $tiempo = $datosPrioridades[0]['tiempo'];
+            $tiempoSegundaNotificacion = $tiempo - $datosPrioridades[0]['segundosSegundaNotificacion'];
+//            $tiempoTerceraNotificacion = $tiempo - $datosPrioridades[0]['segundosTerceraNotificacion'];
+            $correoTecnico = $this->DB->consulta("SELECT EmailCorporativo FROM cat_v3_usuarios where ID = '" . $value['Atiende'] . "'");
+            $datosSupervisor = $this->DB->consulta('SELECT 
+                                                (SELECT EmailCorporativo FROM cat_v3_usuarios WHERE Id = cvrc.IdResponsableInterno) AS CorreoSupervisor,
+                                                usuario(cvrc.IdResponsableInterno) NombreSupervisor
+                                            FROM 
+                                                cat_v3_sucursales cvs
+                                            INNER JOIN cat_v3_regiones_cliente cvrc
+                                                ON cvrc.Id = cvs.IdRegionCliente
+                                            WHERE cvs.Id = "' . $value['IdSucursal'] . '"');
+
+//            var_dump($this->conversorSegundosHoras($tiempo));
+
+            if ($value['TiempoTranscurrido'] <= $tiempo) {
+                if ($value['TiempoTranscurrido'] >= $datosPrioridades[0]['segundosPrimeraNotificacion'] && empty($value['NumeroNotificacion'])) {
+                    $numeroNotificacion = 'Notificación num. 1';
+                    $this->DB->setTChekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 1, 'FechaNotificacion' => $fecha));
+                } elseif ($value['TiempoTranscurrido'] >= $tiempoSegundaNotificacion && $value['NumeroNotificacion'] === '1') {
+                    $numeroNotificacion = 'Notificación num. 2';
+                    $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 2, 'FechaNotificacion' => $fecha));
+                }
+            } else {
+                $host = $_SERVER['SERVER_NAME'];
+//                var_dump($tiempo);
+//                var_dump($tiempo + 7200);
+                var_dump($this->conversorSegundosHoras($value['TiempoTranscurridoNotificacion']));
+                var_dump($this->conversorSegundosHoras(28800));
+                if ($value['NumeroNotificacion'] === '2') {
+                    $numeroNotificacion = 'Notificación num. 3';
+                    $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 3, 'FechaNotificacion' => $fecha));
+                } elseif ($value['TiempoTranscurridoNotificacion'] >= 7200 && $value['NumeroNotificacion'] === '3') {
+                    $numeroNotificacion = 'Notificación num. 4';
+                    $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 4, 'FechaNotificacion' => $fecha));
+                } elseif ($value['TiempoTranscurridoNotificacion'] >= 21600 && $value['NumeroNotificacion'] === '4') {
+                    $numeroNotificacion = 'Notificación num. 5';
+                    $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 5, 'FechaNotificacion' => $fecha));
+                } elseif ($value['TiempoTranscurridoNotificacion'] >= 28800 && $value['NumeroNotificacion'] === '5') {
+                    $numeroNotificacion = 'Notificación num. 6';
+                    $this->DB->updateTCkekingTicket(array('Folio' => $value['Folio'], 'NumeroNotificacion' => 6, 'FechaNotificacion' => $fecha));
+                }
+            }
+//                $textoSupervisor = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $value['Folio'] . '</strong>.</p>
+//                    <p><strong>Asunto:</strong> ' . $numeroNotificacion . '  </p>
+//                    <p><strong>Descripción:</strong>Se le informa qu el Folio: ' . $value['Folio'] . ' todavía no se ha tendido. </p>
+//                    <br><br>';
+//                $mensaje = $this->mail->mensajeCorreo('Seguimiento Folio ' . $value['Folio'], $textoSupervisor);
+//                $this->mail->enviarCorreo('notificaciones@siccob.solutions', [$datosSupervisor[0]['CorreoSupervisor']], 'Seguimiento Folio ' . $value['Folio'], $mensaje);
+//            }
+//            elseif ($value['TiempoTranscurrido'] >= $tiempoTerceraNotificacion && $value['NumeroNotificacion'] === '3') {
+//                $arrayCorreos = array();
+//                $numeroNotificacion = 'Notificación num. 3';
+//                $correosCoordinadores = $this->DB->consulta("SELECT EmailCorporativo FROM cat_v3_usuarios WHERE IdPerfil = 46");
+//
+//                if (!empty($correosCoordinadores)) {
+//                    foreach ($correosCoordinadores as $k => $v) {
+//                        array_push($arrayCorreos, $v['EmailCorporativo']);
+//                    }
+//                }
+//
+//                array_push($arrayCorreos, $datosSupervisor[0]['CorreoSupervisor']);
+//
+//                $textoCoordinador = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $value['Folio'] . '</strong>.</p>
+//                    <p><strong>Asunto:</strong> ' . $numeroNotificacion . '  </p>
+//                    <p><strong>Descripción:</strong>Se le informa que el Folio: ' . $value['Folio'] . ' todavía no se ha tendido. </p>
+//                    <br><br>';
+//                $mensaje = $this->mail->mensajeCorreo('Seguimiento Folio ' . $value['Folio'], $textoCoordinador);
+//                $this->mail->enviarCorreo('notificaciones@siccob.solutions', $arrayCorreos, 'Seguimiento Folio ' . $value['Folio'], $mensaje);
+//            }
+            $linkDetenerNotificacionSLA = 'http://' . $host . '/SegundoPlano/setNotificacionesSLA/' . $value['IdCheking'];
+            $textoTecnico = '<p>Se ha generado una solicitud automática ligada al Folio: <strong>' . $value['Folio'] . '</strong>.</p>
+                    Si quiere parar la recepción de notificaciones dar click <a href="' . $linkDetenerNotificacionSLA . '" target="_blank">Aquí</a>
+                    <p><strong>Asunto:</strong> ' . $numeroNotificacion . '  </p>
+                    <p><strong>Descripción:</strong> Favor te de atender el Folio ' . $value['Folio'] . '. </p>
+                    <br><br>';
+            $mensaje = $this->mail->mensajeCorreo('Seguimiento Folio ' . $value['Folio'], $textoTecnico);
+            var_dump($mensaje);
+//            $this->mail->enviarCorreo('notificaciones@siccob.solutions', [$correoTecnico[0]['EmailCorporativo']], 'Seguimiento Folio ' . $value['Folio'], $mensaje);
+            echo '</pre>';
+            die();
+        }
+    }
+
+    private function conversorSegundosHoras($tiempo_en_segundos) {
+        $horas = floor($tiempo_en_segundos / 3600);
+        $minutos = floor(($tiempo_en_segundos - ($horas * 3600)) / 60);
+        $segundos = $tiempo_en_segundos - ($horas * 3600) - ($minutos * 60);
+
+        if ($minutos == (float) 0) {
+            $minutos = '00';
+        } else {
+            $minutos = (string) $minutos;
+        }
+
+        if ($segundos == (float) 0) {
+            $segundos = '00';
+        } else {
+            $segundos = (string) $segundos;
+        }
+
+        return $horas . ':' . $minutos . ":" . $segundos;
+    }
+
+    public function detenerNotificacionesSLA(string $valor) {
+        $this->DB->updateTCkekingTicket(array('Flag' => 0), array('Id' => $valor));
+        $html = '<input name="button" type="button" onclick="window.close();" value="Cerrar esta ventana" />';
+        echo $html;
+    }
+
 }

@@ -4,8 +4,7 @@ namespace Librerias\Generales;
 
 use Controladores\Controller_Datos_Usuario as General;
 
-class Secciones extends General
-{
+class Secciones extends General {
 
     private $Catalogo;
     private $Notificacion;
@@ -50,14 +49,12 @@ class Secciones extends General
     private $CatalogoRechazoPermiso;
     private $CatalogoCancelacionPermiso;
     private $motivosCancelacion;
-
     private $gestorProyectos;
     private $gestorDashboard;
     private $inventarios;
     private $rehabilitacion;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         parent::getCI()->config->load('Menu_config');
         parent::getCI()->config->load('Pagina_config');
@@ -107,6 +104,7 @@ class Secciones extends General
         $this->seccionCE = new \Librerias\V2\PaquetesTicket\GestorServicios();
         $this->inventarios = \Librerias\Poliza\Inventario::factory();
         $this->rehabilitacion = \Librerias\Laboratorio\Rehabilitacion::factory();
+        $this->sla = \Librerias\Poliza\SLA::factory();
 
         $this->factoryCatalogos = new \Librerias\V2\Factorys\FactoryCatalogos();
         $this->CatalogoMotivosPermiso = $this->factoryCatalogos->getCatalogo('CatalogoMotivoPermisos');
@@ -123,8 +121,7 @@ class Secciones extends General
      * @return array regresa la lista de menu y modulos para el usuario
      */
 
-    public function getSecciones(array $usuario)
-    {
+    public function getSecciones(array $usuario) {
         $menu = array();
         $permisos = array();
         $catalogo = null;
@@ -164,8 +161,7 @@ class Secciones extends General
      * Se encarga de obtener la notificaciones del usuario.
      */
 
-    public function getNotificaciones(string $usuario)
-    {
+    public function getNotificaciones(string $usuario) {
         return $this->Notificacion->getNotificacionesMenuCabecera($usuario);
     }
 
@@ -177,8 +173,7 @@ class Secciones extends General
      *  
      */
 
-    public function getDatosPagina(string $url)
-    {
+    public function getDatosPagina(string $url) {
         $datos = array();
         $usuario = $this->Usuario->getDatosUsuario();
         switch ($url) {
@@ -588,6 +583,9 @@ class Secciones extends General
             case 'Redes/SeguimientoCE':
                 $datos['infoServicios'] = $this->seccionCE->getServicios();
                 break;
+            case 'Redes/CatalogoSwitch':
+                $datos['infoSwitch'] = $this->seccionCE->getCatalogoSwitch();
+                break;
 
             case 'FondoFijo/SaldosTecnico':
                 $datos['SaldoTecnico'] = $this->fondoFijo->getTecnicos();
@@ -602,6 +600,15 @@ class Secciones extends General
             case 'Laboratorio/SeguimientoRehabilitacion':
                 $datos['equipos'] = $this->rehabilitacion->getAlmacenUsuario();
                 break;
+            case 'Poliza/Unidades_Negocio':
+            case 'Poliza/UnidadesNegocioSublineasArea':
+            case 'Poliza/UnidadesNegocioModelosArea':
+            case 'Poliza/UnidadesNegocioArea':
+                $datos['ListaUnidadeNegocio'] = $this->Catalogo->CatUnidadesNegocio("3");
+                break;
+            case 'Poliza/SLA':
+                $datos['folios'] = $this->sla->getSla();
+                break;
             default:
                 break;
         }
@@ -613,8 +620,7 @@ class Secciones extends General
      * 
      */
 
-    public function getAlcance($tipoProyecto, $idProyecto)
-    {
+    public function getAlcance($tipoProyecto, $idProyecto) {
         $data = array();
         $indice = array();
         $data['tipoProyecto'] = $tipoProyecto;
@@ -653,8 +659,8 @@ class Secciones extends General
      * 
      */
 
-    public function getAyuda(string $ayuda)
-    {
+    public function getAyuda(string $ayuda) {
         return array('informacion' => parent::getCI()->load->view('Ayuda/' . $ayuda, '', TRUE));
     }
+
 }

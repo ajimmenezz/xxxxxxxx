@@ -1735,7 +1735,7 @@ class Solicitud extends General {
 
                     if (!empty($value['Ticket'])) {
                         $servicios = $this->DBT->getServiciosSolicitud($value['Ticket']);
-                        
+
                         if (!empty($servicios)) {
                             foreach ($servicios as $key => $value) {
                                 if ($value['IdEstatus'] !== '4' && $value['IdEstatus'] !== '6') {
@@ -2017,5 +2017,7 @@ class Solicitud extends General {
             return ['code' => 200];
         }
     }
+
+    
 
 }
