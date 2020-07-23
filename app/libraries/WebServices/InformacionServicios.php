@@ -1642,7 +1642,7 @@ class InformacionServicios extends General
         $header = 'Resumen de Ticket '.$datos['Ticket'];
         if($datos['folio'] != null && $datos['folio'] > 0 && $datos['folio'] != ''){        
             $this->informacionSD($datos['folio']);
-            $header = "Resumen de Incidente Service Desk", $datos['folio'];
+            $header = "Resumen de Incidente Service Desk". $datos['folio'];
         }
 
         $this->setHeaderPDF($header);
