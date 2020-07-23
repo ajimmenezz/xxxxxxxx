@@ -250,10 +250,10 @@ class Cursos extends General {
         $this->DBS->iniciaTransaccion();
         $this->DBS->terminaTransaccion();
 
-        $resultQuery = $this->DBS->insertTemaryCourseEdit($datos['temario'], NULL, $datos['porcentaje'], $datos['idCurso']);
+        $resultQuery = $this->DBS->insertTemaryCourseEdit($datos['tema'], NULL, $datos['porcentaje'], $datos['idCurso']);
         $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $datos['porcentaje']), array('idCurso' => $datos['idCurso']));
 
-        $info = array('id' => $resultQuery['id'], 'tema' => $datos['temario'], 'porcentaje' => $datos['porcentaje']);
+        $info = array('id' => $resultQuery['id'], 'tema' => $datos['tema'], 'porcentaje' => $datos['porcentaje']);
         
         $this->DBS->terminaTransaccion();
 

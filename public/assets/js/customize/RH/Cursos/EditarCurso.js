@@ -101,7 +101,7 @@ class EditarCurso {
             Helper.quitarContenidoElemento('seccion');
             Helper.mostrarElemento('seccion-cursos');
 
-            if (_this.datosTablaCursos.hasOwnProperty('cursos')){
+            if (_this.datosTablaCursos.hasOwnProperty('cursos')) {
                 _this.updateTablaCursos();
             }
         });
@@ -175,11 +175,11 @@ class EditarCurso {
         let _this = this;
 
         if (nuevo) {
-//            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', {id: this.idCurso}, function (respond) {
-            datosFila.id = 2;
-            _this.updateTablaTemarios(datosFila);
-            $('#input-edit-temario').val('');
-//            });
+            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Agregar-Temario', datosFila, function (respond) {
+                datosFila.id = 2;
+                _this.updateTablaTemarios(datosFila);
+                $('#input-edit-temario').val('');
+            });
         } else {
 //            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', datosFila, function (respond) {
             _this.tablaTemarios.eliminarFila(fila);
@@ -313,7 +313,7 @@ class EditarCurso {
     updateTablaCursos() {
         let listaCursos = [];
         this.tablaCursos.limpiartabla();
-        
+
         $.each(this.datosTablaCursos.cursos, function (key, value) {
             listaCursos.push([
                 value['Id'],
