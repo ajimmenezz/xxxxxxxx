@@ -5012,7 +5012,7 @@ class Seguimientos extends General
         ));
         $data['listRefaccionesUtilizadasServicio'] = $this->DBP->consultaListaRefaccionesUtilizadasServicio($datos['idServicio']);
         $data['cotizacionAnterior'] = $this->DBP->previousQuoteQuery($datos['idServicio']);
-        $data['validatorsSD'] = $this->ServiceDesk->consultarValidadoresTII($this->usuario['SDKey']);
+        $data['validatorsSD'] = $this->ServiceDesk->consultarValidadoresTI();
         $data['quoteRequest'] = $this->db->getQuoteRequestInfo($datos['idServicio']);
 
         $formulario = array('formularioRevisionHistorial' => parent::getCI()->load->view('Poliza/Modal/6FormularioRevisionHistorial', $data, TRUE), 'datos' => $data);
