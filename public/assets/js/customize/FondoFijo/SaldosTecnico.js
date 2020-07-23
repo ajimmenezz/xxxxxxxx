@@ -314,7 +314,7 @@ function getDatos(id, concepto)
         evento.iniciarModal("#modalEdit", "Detalles del depósito / ajuste", respuesta.html);
         $("#btnGuardarCambios").hide();
         $("#btnCancelarMovimiento").off("click");
-        $('#userReg').html(respuesta.generales[0].Autoriza);
+        $('#userReg').html(respuesta.generales[0].Registra);
         $('#userMov').html(respuesta.generales[0].TipoMovimiento);
         $('#userConce').html(respuesta.generales[0].Nombre);
         $('#userMont').html("$" + respuesta.generales[0].Monto);
