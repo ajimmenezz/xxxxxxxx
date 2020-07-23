@@ -182,10 +182,10 @@ class EditarCurso {
                 $('#input-edit-temario').val('');
             });
         } else {
-//            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Obtener-Curso', datosFila, function (respond) {
-            _this.tablaTemarios.eliminarFila(fila);
-            _this.updateTablaTemarios(datosFila);
-//            });
+            Helper.enviarPeticionServidor('panel-cursos', 'Administracion_Cursos/Eliminar-Temario', datosFila, function (respond) {
+                _this.tablaTemarios.eliminarFila(fila);
+                _this.updateTablaTemarios(datosFila);
+            });
     }
     }
 

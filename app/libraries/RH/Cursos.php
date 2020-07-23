@@ -133,21 +133,21 @@ class Cursos extends General {
         $contador = 0;
 
         foreach ($perfilesCurso as $key => $value) {
-            array_push($arrayIdPerfil, $value['idPerfil']);
+            array_push($arrayIdPerfil, $value['Id']);
         }
 
-        foreach ($datosPerfiles as $key => $value) {
-            if (!in_array($value['Id'], $arrayIdPerfil)) {
-                $arrayPerfiles[$contador]['id'] = $value['Id'];
-                $arrayPerfiles[$contador]['text'] = $value['Nombre'];
-                $contador++;
-            }
-        }
+//        foreach ($datosPerfiles as $key => $value) {
+//            if (!in_array($value['Id'], $arrayIdPerfil)) {
+//                $arrayPerfiles[$contador]['id'] = $value['Id'];
+//                $arrayPerfiles[$contador]['text'] = $value['Nombre'];
+//                $contador++;
+//            }
+//        }
 
         $infoCurso['curso'] = $curso[0];
         $infoCurso['temas'] = $temasCurso;
         $infoCurso['perfiles'] = $perfilesCurso;
-        $infoCurso['selectPuesto'] = $arrayPerfiles;
+//        $infoCurso['selectPuesto'] = $arrayPerfiles;
 
         $this->DBS->terminaTransaccion();
 
@@ -199,52 +199,71 @@ class Cursos extends General {
         }
     }
 
-    public function deleteElementCourse($datos) {
-        $this->DBS->iniciaTransaccion();
-        if ($datos['tipoDato'] == 1) {
-            $tabla = 't_curso_tema';
-            $temariosCurso = $this->DBS->getTemaryById($datos['idCurso']);
-            $totalTemasActivos = count($temariosCurso) - 1;
-            $porcentajeTemasActivos = 100 / $totalTemasActivos;
-            $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $porcentajeTemasActivos), array('idCurso' => $datos['idCurso']));
-        } else {
-            $tabla = 't_curso_relacion_perfil';
-        }
+//    public function deleteElementCourse($datos) {
+//        $this->DBS->iniciaTransaccion();
+//        if ($datos['tipoDato'] == 1) {
+//            $tabla = 't_curso_tema';
+//            $temariosCurso = $this->DBS->getTemaryById($datos['idCurso']);
+//            $totalTemasActivos = count($temariosCurso) - 1;
+//            $porcentajeTemasActivos = 100 / $totalTemasActivos;
+//            $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $porcentajeTemasActivos), array('idCurso' => $datos['idCurso']));
+//        } else {
+//            $tabla = 't_curso_relacion_perfil';
+//        }
+//
+//        $this->DBS->deleteElementById($datos['idCurso'], $datos['id'], $tabla);
+//
+//        $this->DBS->terminaTransaccion();
+//        if ($this->DBS->estatusTransaccion() === FALSE) {
+//            $this->DBS->roolbackTransaccion();
+//            return FALSE;
+//        } else {
+//            $this->DBS->commitTransaccion();
+//            return TRUE;
+//        }
+//    }
 
-        $this->DBS->deleteElementById($datos['idCurso'], $datos['id'], $tabla);
+    public function deleteTemary(array $datos) {
+        $this->DBS->iniciaTransaccion();
+        $temariosCurso = $this->DBS->getTemaryById($datos['idCurso']);
+        $totalTemasActivos = count($temariosCurso) - 1;
+        $porcentajeTemasActivos = 100 / $totalTemasActivos;
+
+        $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $porcentajeTemasActivos), array('idCurso' => $datos['idCurso']));
+        $this->DBS->deleteElementById($datos['idCurso'], $datos['idTema'], 't_curso_tema');
 
         $this->DBS->terminaTransaccion();
         if ($this->DBS->estatusTransaccion() === FALSE) {
             $this->DBS->roolbackTransaccion();
-            return FALSE;
+            return ['response' => FALSE, 'code' => 400];
         } else {
             $this->DBS->commitTransaccion();
-            return TRUE;
+            return ['response' => TRUE, 'code' => 200];
         }
     }
 
-    public function addElementCourse($datos) {
-        $temasCurso = [];
-        $perfilesCurso = [];
-
-        if ($datos['tipoDato'] == 1) {
-            $resultQuery = $this->DBS->insertTemaryCourseEdit($datos['nombre'], $datos['descripcion'], $datos['porcentaje'], $datos['idCurso']);
-            $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $datos['porcentaje']), array('idCurso' => $datos['idCurso']));
-            $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
-        } else {
-            $resultQuery = $this->DBS->insertParticipantsCourseEdit($datos['idPerfil'], $datos['idCurso']);
-            $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
-        }
-
-        $info['temas'] = $temasCurso;
-        $info['perfiles'] = $perfilesCurso;
-
-        if ($resultQuery['code'] == 200) {
-            return ['response' => TRUE, 'info' => $info, 'id' => $resultQuery['id']];
-        } else {
-            return FALSE;
-        }
-    }
+//    public function addElementCourse($datos) {
+//        $temasCurso = [];
+//        $perfilesCurso = [];
+//
+//        if ($datos['tipoDato'] == 1) {
+//            $resultQuery = $this->DBS->insertTemaryCourseEdit($datos['nombre'], $datos['descripcion'], $datos['porcentaje'], $datos['idCurso']);
+//            $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $datos['porcentaje']), array('idCurso' => $datos['idCurso']));
+//            $temasCurso = $this->DBS->getTemaryById($datos['idCurso']);
+//        } else {
+//            $resultQuery = $this->DBS->insertParticipantsCourseEdit($datos['idPerfil'], $datos['idCurso']);
+//            $perfilesCurso = $this->DBS->getPerfilById($datos['idCurso']);
+//        }
+//
+//        $info['temas'] = $temasCurso;
+//        $info['perfiles'] = $perfilesCurso;
+//
+//        if ($resultQuery['code'] == 200) {
+//            return ['response' => TRUE, 'info' => $info, 'id' => $resultQuery['id']];
+//        } else {
+//            return FALSE;
+//        }
+//    }
 
     public function addTemary(array $datos) {
         $this->DBS->iniciaTransaccion();
@@ -254,7 +273,7 @@ class Cursos extends General {
         $this->DBS->updateTemaryCourseEdit(array('porcentaje' => $datos['porcentaje']), array('idCurso' => $datos['idCurso']));
 
         $info = array('id' => $resultQuery['id'], 'tema' => $datos['tema'], 'porcentaje' => $datos['porcentaje']);
-        
+
         $this->DBS->terminaTransaccion();
 
         if ($this->DBS->estatusTransaccion() === FALSE) {

@@ -82,8 +82,8 @@ class Modelo_Cursos extends Modelo_Base {
 
     public function getPerfilById($idCurso) {
         return $this->consulta("SELECT 
-                                    relacionPerfil.*, 
-                                    perfil.Nombre 
+                                    perfil.Id,
+                                    perfil.Nombre
                                 FROM t_curso_relacion_perfil as relacionPerfil
                                 inner join cat_perfiles as perfil on perfil.Id = relacionPerfil.idPerfil
                                 WHERE idCurso = " . $idCurso . " AND estatus = 1");

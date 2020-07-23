@@ -94,6 +94,15 @@ class Controller_Administracion_Cursos extends Base {
                 }
                 echo $response->toJsonString();
                 break;
+            case 'Eliminar-Temario':
+                $resultado = $this->curso->deleteTemary($this->input->post());
+                if ($resultado) {
+                    $response->onSuccess(HttpStatusCode::HTTP_OK);
+                } else {
+                    $response->onError("Error", "Error al realizar esta acción", HttpStatusCode::HTTP_BAD_REQUEST);
+                }
+                echo $response->toJsonString();
+                break;
             case 'Agregar-ElementoCurso':
                 $resultado = $this->curso->addElementCourse($this->input->post());
                 if ($resultado['response']) {
