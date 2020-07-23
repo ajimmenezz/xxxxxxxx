@@ -1121,7 +1121,7 @@ class Modelo_Poliza extends Modelo_Base {
                                     INNER JOIN v_equipos ve ON ve.Id = tea.IdModelo
                                     WHERE
                                     (CASE
-                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '34')
+                                        WHEN tea.IdTipoMovimiento = '1' THEN tea.IdEstatus IN ('12', '26', '27', '30', '34') OR tea.IdEstatus = '48' AND Flag = '1'
                                         WHEN tea.IdTipoMovimiento = '3' THEN tea.IdEstatus IN ('12', '26', '27', '34') OR tea.IdEstatus = '38' AND Flag = '0'
                                     END)
                                     AND tea.IdEstatus <> '6'");

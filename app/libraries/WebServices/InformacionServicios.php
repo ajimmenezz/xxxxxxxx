@@ -20,6 +20,7 @@ class InformacionServicios extends General {
     private $pdf;
     private $x;
     private $y;
+    private $db;
 
     public function __construct() {
         parent::__construct();
@@ -408,15 +409,15 @@ class InformacionServicios extends General {
             }
 
             $descripcion = "<br>"
-                . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
-                . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
-                . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
-                . $datosFalla
-                . $observaciones
-                . $linkImagenesDiagnostico
-                . $informacionProblema
-                . $solucionDiv
-                . $documentoPdf;
+                    . "<div>***DIAGNÓSTICO DEL EQUIPO***</div>"
+                    . "<div>" . $informacionSolicitud['sucursal'] . " &nbsp " . $informacionCorrectivo[0]['NombreArea'] . " " . $informacionCorrectivo[0]['Punto'] . " &nbsp " . $informacionCorrectivo[0]['Equipo'] . "&nbsp Serie: " . $informacionCorrectivo[0]['Serie'] . "&nbsp Terminal: " . $informacionCorrectivo[0]['Serie'] . "</div>"
+                    . "<div>" . $informacionDiagnostico[0]['NombreTipoDiagnostico'] . " &nbsp " . $componente . "</div>"
+                    . $datosFalla
+                    . $observaciones
+                    . $linkImagenesDiagnostico
+                    . $informacionProblema
+                    . $solucionDiv
+                    . $documentoPdf;
 
             return $descripcion;
         }
@@ -848,8 +849,7 @@ class InformacionServicios extends General {
         $this->Correo->enviarCorreo('notificaciones@siccob.solutions', $correo, $titulo, $mensaje);
     }
 
-    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE, bool $concluirSD = TRUE)
-    {
+    public function guardarDatosServiceDesk(string $servicio, bool $servicioConcluir = FALSE, bool $concluirSD = TRUE) {
         $folio = $this->DBST->consultaFolio($servicio);
 
         if ($folio !== '0') {
@@ -1615,7 +1615,7 @@ class InformacionServicios extends General {
             unlink($carpeta);
         }
 
-        $header = 'Resumen de Ticket ' . $generals['Ticket'];
+        $header = 'Resumen de Ticket ' . $generales['Ticket'];
         if ($datos['folio'] != null && $datos['folio'] > 0 && $datos['folio'] != '') {
             $this->informacionSD($datos['folio']);
             $header = "Resumen de Incidente Service Desk" . $datos['folio'];
@@ -1673,66 +1673,68 @@ class InformacionServicios extends General {
                 $this->setHeaderPDF($header);
             }
 
-        if (!empty($equipoAllab)) {
-            $recepcionesAllab = $this->DBP->consultaEquiposAllabRecepciones($equipoAllab[0]['Id']);
-            $recepcionesAllabLaboratorio = $this->DBP->consultaEquiposAllabRecepcionesLaboratorio($equipoAllab[0]['Id']);
-            if (!empty($recepcionesAllab)) {
+            if (!empty($equipoAllab)) {
+                $recepcionesAllab = $this->DBP->consultaEquiposAllabRecepciones($equipoAllab[0]['Id']);
+                $recepcionesAllabLaboratorio = $this->DBP->consultaEquiposAllabRecepcionesLaboratorio($equipoAllab[0]['Id']);
+                if (!empty($recepcionesAllab)) {
 
-            $this->setStyleTitle();
-            $this->setCellValue(75, 5, "Estatus", 'C', true);
-            $this->setCoordinates(85, $this->y - 5);
-            $this->setCellValue(75, 5, "Usuario Recibe", 'C', true);
-            $this->setCoordinates(160, $this->y - 5);
-            $this->setCellValue(40, 5, "Fecha", 'C', true);
-            $this->setCoordinates(10);
-            $this->setStyleSubtitle();
-            $bol = true;
-            foreach ($receiptHistory as $k => $v) {
-                if (($this->y + 26) > 270) {
-                    $this->setHeaderPDF($header);
-
-                    $this->setCoordinates(10, $this->y + 5);
-                    $this->setStyleHeader();
-                    $this->setHeaderValue($value['Estatus']);
                     $this->setStyleTitle();
-                    $this->setCellValue(30, 5, "Atiende:", 'R', true);
-                    $this->setCellValue(30, 5, "Fecha:", 'R');
+                    $this->setCellValue(75, 5, "Estatus", 'C', true);
+                    $this->setCoordinates(85, $this->y - 5);
+                    $this->setCellValue(75, 5, "Usuario Recibe", 'C', true);
+                    $this->setCoordinates(160, $this->y - 5);
+                    $this->setCellValue(40, 5, "Fecha", 'C', true);
+                    $this->setCoordinates(10);
                     $this->setStyleSubtitle();
-                    $this->setCoordinates(40, $this->y - 10);
-                    $this->setCellValue(0, 5, $value['UsuarioRecepcion'] . " (" . $value['Perfil'] . ")", 'L', true);
-                    $this->setCellValue(0, 5, $value['Fecha'], 'L');
-                    $this->setEvidenciasPDF($datos, $value['Archivos'], $value['Estatus']);
+                    $bol = true;
+                    foreach ($receiptHistory as $k => $v) {
+                        if (($this->y + 26) > 270) {
+                            $this->setHeaderPDF($header);
 
-        $laboratoryCommentsHistory = $this->db->getLaboratoryCommentsHistory($datos['servicio']);
-
-        if (!empty($laboratoryCommentsHistory)) {
-            $this->setCoordinates(10, $this->y + 5);
-            if (($this->y + 26) > 270) {
-                $this->setHeaderPDF($header);
-            }
-            $this->setCoordinates(10);
-            $this->setStyleHeader();
-            $this->setHeaderValue("Comentarios de Revisión del laboratorio");
-
-            foreach ($laboratoryCommentsHistory as $key => $value) {
-                if (($this->y + 26) > 270) {
-                    $this->setHeaderPDF($header);
-                }
-                $this->setStyleTitle();
-                $this->setCellValue(25, 5, "Usuario:", 'R', true);
-                $this->setCoordinates(125, $this->y - 5);
-                $this->setCellValue(25, 5, "Fecha:", 'R', true);
-
+                            $this->setCoordinates(10, $this->y + 5);
+                            $this->setStyleHeader();
+                            $this->setHeaderValue($value['Estatus']);
+                            $this->setStyleTitle();
+                            $this->setCellValue(30, 5, "Atiende:", 'R', true);
+                            $this->setCellValue(30, 5, "Fecha:", 'R');
                             $this->setStyleSubtitle();
-                            $this->setCoordinates(40, $this->y - 15);
-                            $this->setCellValue(0, 5, $recepcionesAllabLaboratorio[0]['UsuarioLab'] . " (" . $recepcionesAllabLaboratorio[0]['Perfil'] . ")", 'L', true);
-                            $this->setCellValue(0, 5, $recepcionesAllabLaboratorio[0]['Comentarios'], 'L');
-                            $this->setCellValue(70, 5, $recepcionesAllabLaboratorio[0]['Fecha'], 'L', true);
-                            $this->setCoordinates(127, $this->y - 5);
+                            $this->setCoordinates(40, $this->y - 10);
+                            $this->setCellValue(0, 5, $value['UsuarioRecepcion'] . " (" . $value['Perfil'] . ")", 'L', true);
+                            $this->setCellValue(0, 5, $value['Fecha'], 'L');
+                            $this->setEvidenciasPDF($datos, $value['Archivos'], $value['Estatus']);
 
-                            $this->setCellValue(73, 5, $recepcionesAllabLaboratorio[0]['Estatus'], 'L', true);
+                            $laboratoryCommentsHistory = $this->db->getLaboratoryCommentsHistory($datos['servicio']);
 
-                            $this->setEvidenciasPDF($datos, $recepcionesAllabLaboratorio[0]['Archivos'], 'Revisión de Laboratorio');
+                            if (!empty($laboratoryCommentsHistory)) {
+                                $this->setCoordinates(10, $this->y + 5);
+                                if (($this->y + 26) > 270) {
+                                    $this->setHeaderPDF($header);
+                                }
+                                $this->setCoordinates(10);
+                                $this->setStyleHeader();
+                                $this->setHeaderValue("Comentarios de Revisión del laboratorio");
+
+                                foreach ($laboratoryCommentsHistory as $key => $value) {
+                                    if (($this->y + 26) > 270) {
+                                        $this->setHeaderPDF($header);
+                                    }
+                                    $this->setStyleTitle();
+                                    $this->setCellValue(25, 5, "Usuario:", 'R', true);
+                                    $this->setCoordinates(125, $this->y - 5);
+                                    $this->setCellValue(25, 5, "Fecha:", 'R', true);
+
+                                    $this->setStyleSubtitle();
+                                    $this->setCoordinates(40, $this->y - 15);
+                                    $this->setCellValue(0, 5, $recepcionesAllabLaboratorio[0]['UsuarioLab'] . " (" . $recepcionesAllabLaboratorio[0]['Perfil'] . ")", 'L', true);
+                                    $this->setCellValue(0, 5, $recepcionesAllabLaboratorio[0]['Comentarios'], 'L');
+                                    $this->setCellValue(70, 5, $recepcionesAllabLaboratorio[0]['Fecha'], 'L', true);
+                                    $this->setCoordinates(127, $this->y - 5);
+
+                                    $this->setCellValue(73, 5, $recepcionesAllabLaboratorio[0]['Estatus'], 'L', true);
+
+                                    $this->setEvidenciasPDF($datos, $recepcionesAllabLaboratorio[0]['Archivos'], 'Revisión de Laboratorio');
+                                }
+                            }
                         }
                     }
                 }
@@ -1968,8 +1970,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function getFirmasServicio(int $servicio)
-    {
+    private function getFirmasServicio(int $servicio) {
         $consulta = $this->DBS->consulta("
         select 
         Firma,
@@ -2131,8 +2132,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setInstalaciones(int $id, array $datos)
-    {
+    private function setInstalaciones(int $id, array $datos) {
         $registros = $this->DBST->getInstalaciones($id);
 
         if (!empty($registros)) {
@@ -2185,8 +2185,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setPDFContentCorrectivo(int $id, array $datos)
-    {
+    private function setPDFContentCorrectivo(int $id, array $datos) {
         $diagnostico = $this->getDiagnosticoCorrectivoForPDF($id);
 
         if (!empty($diagnostico)) {
@@ -2507,8 +2506,7 @@ class InformacionServicios extends General {
         $this->setCensos($datos, $datosDiferencias['actual']);
     }
 
-    private function getCensoDiferenciaKitFull($inventario, $unidadNegocio)
-    {
+    private function getCensoDiferenciaKitFull($inventario, $unidadNegocio) {
         $kit = $this->createArrayKitSublineaForCompare($unidadNegocio);
         $kitsCenso = $this->getKitsPuntos($inventario, $kit);
         $kitsCensoAux = $kitsCenso;
@@ -2528,7 +2526,7 @@ class InformacionServicios extends General {
         $sobrantes = [];
 
         foreach ($inventarioAux as $kinventario => $vinventario) {
-            $totales['censados']++;
+            $totales['censados'] ++;
             if (!isset($censados['sublineas'][$vinventario['Sublinea']])) {
                 $censados['sublineas'][$vinventario['Sublinea']] = [
                     'censados' => 0,
@@ -2548,8 +2546,8 @@ class InformacionServicios extends General {
                 ];
             }
 
-            $censados['sublineas'][$vinventario['Sublinea']]['censados']++;
-            $censados['areas'][$vinventario['Area']]['censados']++;
+            $censados['sublineas'][$vinventario['Sublinea']]['censados'] ++;
+            $censados['areas'][$vinventario['Area']]['censados'] ++;
 
             if ($censados['areas'][$vinventario['Area']]['puntos'] < $vinventario['Punto']) {
                 $censados['areas'][$vinventario['Area']]['puntos'] = $vinventario['Punto'];
@@ -2568,7 +2566,7 @@ class InformacionServicios extends General {
                 foreach ($kitsCensoAux[$vinventario['Area']][$vinventario['Punto']] as $kkit => $vkit) {
                     if ($vinventario['IdSublinea'] == $vkit['IdSublinea']) {
                         $remove = true;
-                        $kitsCensoAux[$vinventario['Area']][$vinventario['Punto']][$kkit]['Cantidad']--;
+                        $kitsCensoAux[$vinventario['Area']][$vinventario['Punto']][$kkit]['Cantidad'] --;
                         if ($kitsCensoAux[$vinventario['Area']][$vinventario['Punto']][$kkit]['Cantidad'] == 0) {
                             unset($kitsCensoAux[$vinventario['Area']][$vinventario['Punto']][$kkit]);
                         }
@@ -2611,9 +2609,9 @@ class InformacionServicios extends General {
         }
 
         foreach ($inventarioAux as $kinventario => $vinventario) {
-            $censados['sublineas'][$vinventario['Sublinea']]['sobrantes']++;
-            $censados['areas'][$vinventario['Area']]['sobrantes']++;
-            $totales['sobrantes']++;
+            $censados['sublineas'][$vinventario['Sublinea']]['sobrantes'] ++;
+            $censados['areas'][$vinventario['Area']]['sobrantes'] ++;
+            $totales['sobrantes'] ++;
             array_push($sobrantes, $vinventario);
         }
 
@@ -2627,8 +2625,7 @@ class InformacionServicios extends General {
         ];
     }
 
-    private function getKitsPuntos($inventario, $kit)
-    {
+    private function getKitsPuntos($inventario, $kit) {
         $kitsCenso = [];
         foreach ($inventario as $kinventario => $vinventario) {
             if (!isset($kitsCenso[$vinventario['Area']])) {
@@ -2641,8 +2638,7 @@ class InformacionServicios extends General {
         return $kitsCenso;
     }
 
-    private function setCensos(array $datos, array $datosExtra)
-    {
+    private function setCensos(array $datos, array $datosExtra) {
         $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         $this->setCoordinates(10);
         $this->setHeadersCensoData();
@@ -2768,8 +2764,7 @@ class InformacionServicios extends General {
         $this->setCellValue(30, 5, 'Total', 'C', true);
     }
 
-    private function setResumenDiferencias(array $datos, array $datosExtra)
-    {
+    private function setResumenDiferencias(array $datos, array $datosExtra) {
         if (($this->y + 26) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         }
@@ -2806,8 +2801,7 @@ class InformacionServicios extends General {
         $this->setCellValue(31, 5, (int) $datosExtra['totales']['sobrantes'] - (int) $datosExtra['totales']['faltantes'], 'C');
     }
 
-    private function setDiferenciaPuntosArea(array $datos, array $datosExtra)
-    {
+    private function setDiferenciaPuntosArea(array $datos, array $datosExtra) {
         if (($this->y + 21) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -2845,8 +2839,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeadersDiferenciaPuntosArea()
-    {
+    private function setHeadersDiferenciaPuntosArea() {
         $this->setStyleHeader();
         $this->setHeaderValue("Diferencia de Puntos x Área");
 
@@ -2858,8 +2851,7 @@ class InformacionServicios extends General {
         $this->setCellValue(90, 5, 'Total de Puntos', 'C', true);
     }
 
-    private function setHeadersDiferenciaLineas()
-    {
+    private function setHeadersDiferenciaLineas() {
         $this->setStyleHeader();
         $this->setHeaderValue("Diferencia de Líneas");
 
@@ -2871,8 +2863,7 @@ class InformacionServicios extends General {
         $this->setCellValue(90, 5, 'Total de Equipo', 'C', true);
     }
 
-    private function setDiferenciaLineas(array $datos, array $datosExtra)
-    {
+    private function setDiferenciaLineas(array $datos, array $datosExtra) {
         if (($this->y + 21) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -2910,8 +2901,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeadersDiferenciaSublineas()
-    {
+    private function setHeadersDiferenciaSublineas() {
         $this->setStyleHeader();
         $this->setHeaderValue("Diferencia de Sublíneas");
 
@@ -2935,8 +2925,7 @@ class InformacionServicios extends General {
         $this->setCellValue(25, 5, 'Diferencia', 'C', true);
     }
 
-    private function setDiferenciaSublineas(array $datos, array $datosExtra)
-    {
+    private function setDiferenciaSublineas(array $datos, array $datosExtra) {
         if (($this->y + 21) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -3013,8 +3002,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeadersDiferenciaAreas()
-    {
+    private function setHeadersDiferenciaAreas() {
         $this->setStyleHeader();
         $this->setHeaderValue("Diferencia de Equipos en Áreas");
 
@@ -3041,8 +3029,7 @@ class InformacionServicios extends General {
         $this->setCellValue(17, 5, 'Diferencia', 'C', true);
     }
 
-    private function setDiferenciaAreas(array $datos, array $datosExtra)
-    {
+    private function setDiferenciaAreas(array $datos, array $datosExtra) {
         if (($this->y + 21) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -3125,15 +3112,13 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeadersEquiposNoExistenCenso(string $fecha)
-    {
+    private function setHeadersEquiposNoExistenCenso(string $fecha) {
         $this->setStyleHeader();
         $this->setHeaderValue("Equipos que no existen en el censo de " . $fecha);
         $this->titulosCensosVarios();
     }
 
-    private function titulosCensosVarios()
-    {
+    private function titulosCensosVarios() {
         $this->setCoordinates(10);
         $this->setStyleTitle();
         $this->setCellValue(30, 5, "Área", 'C', true);
@@ -3157,8 +3142,7 @@ class InformacionServicios extends General {
         $this->setCellValue(38, 5, 'Serie', 'C', true);
     }
 
-    private function setEquiposNoExistenCensoAnterior(array $datos, array $datosExtra)
-    {
+    private function setEquiposNoExistenCensoAnterior(array $datos, array $datosExtra) {
         if (($this->y + 21) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -3175,8 +3159,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setEquiposNoExistenCensoActual(array $datos, array $datosExtra)
-    {
+    private function setEquiposNoExistenCensoActual(array $datos, array $datosExtra) {
         if (($this->y + 21) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -3193,8 +3176,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function datosEquipoNoExisteCenso(array $datos, array $datosExtra)
-    {
+    private function datosEquipoNoExisteCenso(array $datos, array $datosExtra) {
         foreach ($datosExtra as $key => $value) {
             $this->setCoordinates(10);
             $this->setStyleMinisubtitle();
@@ -3218,8 +3200,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeadersDiferenciaModelos()
-    {
+    private function setHeadersDiferenciaModelos() {
         $this->setStyleHeader();
         $this->setHeaderValue("Diferencia de Modelos");
 
@@ -3231,8 +3212,7 @@ class InformacionServicios extends General {
         $this->setCellValue(90, 5, 'Total de Equipo', 'C', true);
     }
 
-    private function setDiferenciaModelos(array $datos, array $datosExtra)
-    {
+    private function setDiferenciaModelos(array $datos, array $datosExtra) {
         if (($this->y + 21) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -3271,8 +3251,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeadersCambiosSerie()
-    {
+    private function setHeadersCambiosSerie() {
         $this->setStyleHeader();
         $this->setHeaderValue("Equipos que posiblemente cambiaron de tener Serie a ser ILEGIBLE");
 
@@ -3302,8 +3281,7 @@ class InformacionServicios extends General {
         $this->setCellValue(22, 5, 'Serie Actual', 'C', true);
     }
 
-    private function setCambiosSerie(array $datos, array $datosExtra)
-    {
+    private function setCambiosSerie(array $datos, array $datosExtra) {
         if (($this->y + 21) > 270) {
             $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
             $this->setCoordinates(10);
@@ -3343,8 +3321,7 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeadersFaltantes()
-    {
+    private function setHeadersFaltantes() {
         $this->setStyleHeader();
         $this->setHeaderValue("Equipos que faltan basado en el Kit Estandar de Área");
 
@@ -3365,8 +3342,7 @@ class InformacionServicios extends General {
         $this->setCellValue(15, 5, 'Cantidad', 'C', true);
     }
 
-    private function setFaltantes(array $datos, array $datosExtra)
-    {
+    private function setFaltantes(array $datos, array $datosExtra) {
         $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         $this->setCoordinates(10);
 
@@ -3396,15 +3372,13 @@ class InformacionServicios extends General {
         }
     }
 
-    private function setHeadersSobrantes()
-    {
+    private function setHeadersSobrantes() {
         $this->setStyleHeader();
         $this->setHeaderValue("Equipos que sobran basado en el Kit Estandar de Área");
         $this->titulosCensosVarios();
     }
 
-    private function setSobrantes(array $datos, array $datosExtra)
-    {
+    private function setSobrantes(array $datos, array $datosExtra) {
         $this->setHeaderPDF("Resumen de Incidente Service Desk", $datos['folio']);
         $this->setCoordinates(10);
 
@@ -3824,19 +3798,18 @@ class InformacionServicios extends General {
         return $todaEvidencia;
     }
 
-    private function getPossibleSeriesChange($actual, $ultimo)
-    {
+    private function getPossibleSeriesChange($actual, $ultimo) {
         $cambiosSerie = [];
         foreach ($ultimo as $ku => $vu) {
             foreach ($actual as $ka => $va) {
                 if (
-                    $vu['IdArea'] == $va['IdArea'] &&
-                    $vu['Punto'] == $va['Punto'] &&
-                    $vu['IdLinea'] == $va['IdLinea'] &&
-                    $vu['IdSublinea'] == $va['IdSublinea'] &&
-                    $vu['IdMarca'] == $va['IdMarca'] &&
-                    $vu['IdModelo'] == $va['IdModelo'] &&
-                    $vu['Serie'] != 'ILEGIBLE' && $va['Serie'] == 'ILEGIBLE'
+                        $vu['IdArea'] == $va['IdArea'] &&
+                        $vu['Punto'] == $va['Punto'] &&
+                        $vu['IdLinea'] == $va['IdLinea'] &&
+                        $vu['IdSublinea'] == $va['IdSublinea'] &&
+                        $vu['IdMarca'] == $va['IdMarca'] &&
+                        $vu['IdModelo'] == $va['IdModelo'] &&
+                        $vu['Serie'] != 'ILEGIBLE' && $va['Serie'] == 'ILEGIBLE'
                 ) {
                     array_push($cambiosSerie, $vu);
                     unset($ultimo[$ku]);
@@ -3848,8 +3821,7 @@ class InformacionServicios extends General {
         return ['cambiosSerie' => $cambiosSerie, 'diferenciasActual' => $actual, 'diferenciasUltimo' => $ultimo];
     }
 
-    private function getCensoDiferenciasSublineasKit($diferenciasKit)
-    {
+    private function getCensoDiferenciasSublineasKit($diferenciasKit) {
         $arrayReturn = [];
         $faltantes = 0;
         $sobrantes = 0;
@@ -3862,7 +3834,7 @@ class InformacionServicios extends General {
                             'faltantes' => 0
                         ];
                     }
-                    $arrayReturn[$v['Sublinea']]['faltantes']--;
+                    $arrayReturn[$v['Sublinea']]['faltantes'] --;
                     $faltantes++;
                 }
             }
@@ -3877,7 +3849,7 @@ class InformacionServicios extends General {
                             'faltantes' => 0
                         ];
                     }
-                    $arrayReturn[$v['Sublinea']]['sobrantes']++;
+                    $arrayReturn[$v['Sublinea']]['sobrantes'] ++;
                     $sobrantes++;
                 }
             }
@@ -3891,16 +3863,15 @@ class InformacionServicios extends General {
         return $arrayReturn;
     }
 
-    private function getCensoDiferenciasSeries($actual, $ultimo)
-    {
+    private function getCensoDiferenciasSeries($actual, $ultimo) {
         $diferencias = [];
         foreach ($actual as $ka => $va) {
             array_push($diferencias, $va);
 
             foreach ($ultimo as $ku => $vu) {
                 if (
-                    ($va['IdModelo'] == $vu['IdModelo'] && $this->convertSeries($va['Serie']) == $this->convertSeries($vu['Serie'])) ||
-                    ($this->convertSeries($va['Serie']) == $this->convertSeries($vu['Serie']) && $va['Serie'] != 'ILEGIBLE')
+                        ($va['IdModelo'] == $vu['IdModelo'] && $this->convertSeries($va['Serie']) == $this->convertSeries($vu['Serie'])) ||
+                        ($this->convertSeries($va['Serie']) == $this->convertSeries($vu['Serie']) && $va['Serie'] != 'ILEGIBLE')
                 ) {
                     unset($ultimo[$ku]);
                     array_pop($diferencias);
@@ -3911,13 +3882,11 @@ class InformacionServicios extends General {
         return $diferencias;
     }
 
-    private function convertSeries($serie)
-    {
+    private function convertSeries($serie) {
         return strtoupper(str_replace(' ', '', $serie));
     }
 
-    private function getCensoDiferenciasAreas($actual, $ultimo)
-    {
+    private function getCensoDiferenciasAreas($actual, $ultimo) {
         $areasActual = $this->getArrayConteoAreas($actual);
         $areasUltimo = $this->getArrayConteoAreas($ultimo);
         $diferencia = [];
@@ -3938,8 +3907,7 @@ class InformacionServicios extends General {
         return $diferencia;
     }
 
-    private function getArrayConteoAreas($inventario)
-    {
+    private function getArrayConteoAreas($inventario) {
         $areas = [];
         foreach ($inventario as $k => $v) {
             if (!array_key_exists($v['Area'], $areas)) {
@@ -3954,8 +3922,7 @@ class InformacionServicios extends General {
         return $areas;
     }
 
-    private function getCensoDiferenciasLineas($actual, $ultimo)
-    {
+    private function getCensoDiferenciasLineas($actual, $ultimo) {
         $lineasActual = $this->getArrayConteoLineas($actual);
         $lineasUltimo = $this->getArrayConteoLineas($ultimo);
         $diferencia = [];
@@ -3976,8 +3943,7 @@ class InformacionServicios extends General {
         return $diferencia;
     }
 
-    private function getCensoDiferenciasSubineas($actual, $ultimo)
-    {
+    private function getCensoDiferenciasSubineas($actual, $ultimo) {
         $sublineasActual = $this->getArrayConteoSublineas($actual);
         $sublineasUltimo = $this->getArrayConteoSublineas($ultimo);
         $diferencia = [];
@@ -3998,8 +3964,7 @@ class InformacionServicios extends General {
         return $diferencia;
     }
 
-    private function getCensoDiferenciasModelos($actual, $ultimo)
-    {
+    private function getCensoDiferenciasModelos($actual, $ultimo) {
         $modelosActual = $this->getArrayConteoModelos($actual);
         $modelosUltimo = $this->getArrayConteoModelos($ultimo);
         $diferencia = [];
@@ -4020,8 +3985,7 @@ class InformacionServicios extends General {
         return $diferencia;
     }
 
-    private function getCensoDiferenciasAreasKit($actual, $diferenciasKit, $kitAreas)
-    {
+    private function getCensoDiferenciasAreasKit($actual, $diferenciasKit, $kitAreas) {
         $arrayReturn = [];
         foreach ($actual as $k => $v) {
             if (!array_key_exists($v['Area'], $arrayReturn)) {
@@ -4038,13 +4002,13 @@ class InformacionServicios extends General {
             if ($arrayReturn[$v['Area']]['Puntos'] < $v['Punto']) {
                 $arrayReturn[$v['Area']]['Puntos'] = $v['Punto'];
             }
-            $arrayReturn[$v['Area']]['TotalCensado']++;
+            $arrayReturn[$v['Area']]['TotalCensado'] ++;
         }
 
         foreach ($diferenciasKit['faltantes'] as $kArea => $vArea) {
             foreach ($vArea as $kPunto => $vPunto) {
                 foreach ($vPunto as $k => $v) {
-                    $arrayReturn[$kArea]['Faltantes']--;
+                    $arrayReturn[$kArea]['Faltantes'] --;
                 }
             }
         }
@@ -4052,7 +4016,7 @@ class InformacionServicios extends General {
         foreach ($diferenciasKit['sobrantes'] as $kArea => $vArea) {
             foreach ($vArea as $kPunto => $vPunto) {
                 foreach ($vPunto as $k => $v) {
-                    $arrayReturn[$kArea]['Sobrantes']++;
+                    $arrayReturn[$kArea]['Sobrantes'] ++;
                 }
             }
         }
@@ -4060,8 +4024,7 @@ class InformacionServicios extends General {
         return $arrayReturn;
     }
 
-    private function getCensoDiferenciasKit($inventario, $unidadNegocio)
-    {
+    private function getCensoDiferenciasKit($inventario, $unidadNegocio) {
         $kit = $this->createArrayKitSublineaForCompare($unidadNegocio);
         $faltantes = [];
         $inventarioXPunto = $this->createInventoryArrayByPoint($inventario);
@@ -4097,8 +4060,7 @@ class InformacionServicios extends General {
         return ['sobrantes' => $inventarioXPunto, 'faltantes' => $faltantes];
     }
 
-    private function createInventoryArrayByPoint($inventario)
-    {
+    private function createInventoryArrayByPoint($inventario) {
         $arrayReturn = [];
         foreach ($inventario as $k => $v) {
             if (!isset($arrayReturn[$v['Area']])) {
@@ -4108,14 +4070,14 @@ class InformacionServicios extends General {
             if (!isset($arrayReturn[$v['Area']]['P' . $v['Punto']])) {
                 $arrayReturn[$v['Area']]['P' . $v['Punto']] = [];
             }
-            array_push($arrayReturn[$v['Area']]['P' . $v['Punto']], $v);;
+            array_push($arrayReturn[$v['Area']]['P' . $v['Punto']], $v);
+            ;
         }
 
         return $arrayReturn;
     }
 
-    private function getArrayConteoLineas($inventario)
-    {
+    private function getArrayConteoLineas($inventario) {
         $lineas = [];
         foreach ($inventario as $k => $v) {
             if (!array_key_exists($v['Linea'], $lineas)) {
@@ -4126,8 +4088,7 @@ class InformacionServicios extends General {
         return $lineas;
     }
 
-    private function getArrayConteoSublineas($inventario)
-    {
+    private function getArrayConteoSublineas($inventario) {
         $sublineas = [];
         foreach ($inventario as $k => $v) {
             if (!array_key_exists($v['Sublinea'], $sublineas)) {
@@ -4138,8 +4099,7 @@ class InformacionServicios extends General {
         return $sublineas;
     }
 
-    private function getArrayConteoModelos($inventario)
-    {
+    private function getArrayConteoModelos($inventario) {
         $modelos = [];
         foreach ($inventario as $k => $v) {
             if (!array_key_exists($v['Modelo'], $modelos)) {
@@ -4150,8 +4110,7 @@ class InformacionServicios extends General {
         return $modelos;
     }
 
-    private function createArrayKitSublineaForCompare($unidadNegocio)
-    {
+    private function createArrayKitSublineaForCompare($unidadNegocio) {
         $kit = $this->DBC->getKitSublineasXArea($unidadNegocio);
         $kitReturn = [];
         foreach ($kit as $k => $v) {
@@ -4170,6 +4129,7 @@ class InformacionServicios extends General {
 
         return $kitReturn;
     }
+
 }
 
 class PDFAux extends PDF {
