@@ -124,8 +124,9 @@ class NuevoCurso {
         _this.tablaTemario.addListenerOnclik('.delete-temario', function (dataRow, fila) {
             _this.tablaTemario.eliminarFila(fila);
             let temarios = _this.tablaTemario.datosTabla();
-            if (temarios.length > 1) {
+            if (temarios.length >= 1) {
                 _this.tablaTemario.limpiartabla();
+                console.log(temarios.length);
                 let porcentaje = temarios.length ? 100 / temarios.length : 100;
                 $.each(temarios, function (key, value) {
                     _this.tablaTemario.agregarDatosFila([value[0], porcentaje.toFixed(2) + '%']);
@@ -137,7 +138,7 @@ class NuevoCurso {
     eventWizardPaso3() {
         let _this = this;
 
-        $('#btn-nuevo-puestoParticipante').on('click', function (e) {
+        $('#btn-agregar-participante').on('click', function (e) {
             let participante = _this.selectParticipante.obtenerTexto();
             let idParticipante = _this.selectParticipante.obtenerValor();
             let datosTabla = _this.tablaParticipantes.datosTabla();
