@@ -335,7 +335,7 @@ class Controller_ServicioTicket extends CI_Controller {
             $idSolicitud = $this->servicio->getDatos();
             $solicitud = new Solicitud($idSolicitud['solicitud']);
 
-            $this->servicio->setEstatus('4');
+//            $this->servicio->setEstatus('4');
             $solicitud->verificarServiciosParaConcluirSolicitudTicket();
             $this->servicio->enviarServicioConcluido($datosServicio);
             $this->procesoConcluirServicio($datosServicio);
