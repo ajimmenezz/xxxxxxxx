@@ -4,16 +4,19 @@ namespace Modelos;
 
 use Librerias\Modelos\Base as Modelo_Base;
 
-class Modelo_DeviceTransfer extends Modelo_Base {
+class Modelo_DeviceTransfer extends Modelo_Base
+{
 
     private $user;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->user = \Librerias\Generales\Usuario::getCI()->session->userdata();
     }
 
-    public function getTransferOrRequestDeviceValidators() {
+    public function getTransferOrRequestDeviceValidators()
+    {
         return $this->consulta("
         select
         cu.Id,
@@ -24,7 +27,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         order by cu.Nombre");
     }
 
-    public function getAvailableDeviceForServiceSolution($serviceId) {
+    public function getAvailableDeviceForServiceSolution($serviceId)
+    {
         return $this->consulta("
         select 
         ti.IdProducto,
@@ -42,7 +46,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         and lineaByModelo(ti.IdProducto) = (select lineaByModelo(IdModelo) from t_correctivos_generales where IdServicio = '" . $serviceId . "')");
     }
 
-    public function getGeneralsService($serviceId) {
+    public function getGeneralsService($serviceId)
+    {
         return $this->consulta("
         select 
         (select IdSucursal from t_servicios_ticket where Id = tcg.IdServicio) as Sucursal,
@@ -51,11 +56,13 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         where tcg.IdServicio = '" . $serviceId . "'");
     }
 
-    public function getDiagnosticService($serviceId) {
+    public function getDiagnosticService($serviceId)
+    {
         return $this->consulta("select * from t_correctivos_diagnostico where IdServicio = '" . $serviceId . "' order by Id desc limit 1");
     }
 
-    public function cancelMovementDeviceTransfer($data) {
+    public function cancelMovementDeviceTransfer($data)
+    {
         $this->iniciaTransaccion();
         $generalsService = $this->getGeneralsService($data['serviceId'])[0];
         $movementInfo = $this->getDeviceMovementData(null, $data['movementId'])[0];
@@ -81,14 +88,16 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    private function rollbackWarehouses($serviceId, $branchWarehouseId, $technicianWarehouseId) {
+    private function rollbackWarehouses($serviceId, $branchWarehouseId, $technicianWarehouseId)
+    {
         $this->returnDeviceToCenso($serviceId);
         $censoInfo = $this->getCensoIdFromService($serviceId, 1);
         $deviceInfo = $this->getDeviceInventoryInfoFromPreviusCenso($serviceId, $censoInfo);
         $this->transferDeviceToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId);
     }
 
-    private function getDeviceInventoryInfoFromPreviusCenso($serviceId, $censoInfo) {
+    private function getDeviceInventoryInfoFromPreviusCenso($serviceId, $censoInfo)
+    {
         $sqlText = "
         select 
         ti.*
@@ -111,7 +120,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    private function returnDeviceToCenso($serviceId) {
+    private function returnDeviceToCenso($serviceId)
+    {
         $generalsService = $this->getGeneralsService($serviceId)[0];
         $this->queryBolean("
         update 
@@ -136,12 +146,14 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         and Danado = 1");
     }
 
-    private function rollbackWarehousesBackupUse($deviceInfo, $serviceId, $branchWarehouseId, $technicianWarehouseId) {
+    private function rollbackWarehousesBackupUse($deviceInfo, $serviceId, $branchWarehouseId, $technicianWarehouseId)
+    {
         $this->removeBackupFromCenso($serviceId, $deviceInfo);
         $this->transferBackupToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId);
     }
 
-    private function removeBackupFromCenso($serviceId, $deviceInfo) {
+    private function removeBackupFromCenso($serviceId, $deviceInfo)
+    {
         $generalsService = $this->getGeneralsService($serviceId)[0];
         $this->queryBolean("
         delete        
@@ -160,12 +172,13 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         and Serie = '" . $deviceInfo['Serie'] . "'");
     }
 
-    private function transferBackupToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId) {
+    private function transferBackupToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId)
+    {
         $this->actualizar('t_inventario', [
             'IdAlmacen' => $technicianWarehouseId,
             'Bloqueado' => 0,
             'IdEstatus' => 17
-                ], ['Id' => $deviceInfo['Id']]);
+        ], ['Id' => $deviceInfo['Id']]);
 
         //Inserta el movimiento de salida del equipo de respaldo de la sucursal al almacén del técnico
         $this->insertar("t_movimientos_inventario", [
@@ -197,12 +210,13 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         ]);
     }
 
-    private function transferDeviceToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId) {
+    private function transferDeviceToTechnicianWareahouse($serviceId, $deviceInfo, $technicianWarehouseId, $branchWarehouseId)
+    {
         $this->actualizar('t_inventario', [
             'IdAlmacen' => $branchWarehouseId,
             'Bloqueado' => 0,
             'IdEstatus' => 17
-                ], ['Id' => $deviceInfo['Id']]);
+        ], ['Id' => $deviceInfo['Id']]);
 
         //Inserta el movimiento de salida del equipo de respaldo de la sucursal al almacén del técnico
         $this->insertar("t_movimientos_inventario", [
@@ -234,7 +248,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         ]);
     }
 
-    public function saveDeviceTransfer($data) {
+    public function saveDeviceTransfer($data)
+    {
         $this->iniciaTransaccion();
         $generalsService = $this->getGeneralsService($data['serviceId'])[0];
 
@@ -273,7 +288,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    private function updateWarehousesBackupUse($deviceTransferData, $censoInfo, $branchWarehouseId, $technicianWarehouseId) {
+    private function updateWarehousesBackupUse($deviceTransferData, $censoInfo, $branchWarehouseId, $technicianWarehouseId)
+    {
         $deviceInfo = $this->getDeviceInventoryInfo($deviceTransferData['backupDevice']);
         $this->insertar("t_censos", [
             'IdServicio' => $censoInfo['IdServicio'],
@@ -289,7 +305,7 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         $this->actualizar("t_inventario", [
             'IdAlmacen' => $branchWarehouseId,
             'Bloqueado' => 0
-                ], ['Id' => $deviceTransferData['backupDevice']]);
+        ], ['Id' => $deviceTransferData['backupDevice']]);
 
         //Inserta el movimiento de salida del equipo de respaldo del almacén del técnico
         $this->insertar("t_movimientos_inventario", [
@@ -321,13 +337,16 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         ]);
     }
 
-    private function updateWarehousesForTransfer($deviceTransferData, $censoInfo, $branchWarehouseId, $technicianWarehouseId) {
+    public function updateWarehousesForTransfer($deviceTransferData, $censoInfo, $branchWarehouseId, $technicianWarehouseId)
+    {
         $this->actualizar(
-                "t_censos", [
-            'Danado' => 1,
-            'Existe' => 0,
-            'IdEstatus' => 22
-                ], ['Id' => $censoInfo['Id']]
+            "t_censos",
+            [
+                'Danado' => 1,
+                'Existe' => 0,
+                'IdEstatus' => 22
+            ],
+            ['Id' => $censoInfo['Id']]
         );
 
         //Agrega el equipo dañado al almacen virtual del técnico
@@ -343,7 +362,7 @@ class Modelo_DeviceTransfer extends Modelo_Base {
                 'IdAlmacen' => $technicianWarehouseId,
                 'IdEstatus' => 22,
                 'Bloqueado' => 0
-                    ], ['Id' => $inventoryId[0]['Id']]);
+            ], ['Id' => $inventoryId[0]['Id']]);
             $newInventoryId = $inventoryId[0]['Id'];
         } else {
             $this->insertar("t_inventario", [
@@ -390,7 +409,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         return $newInventoryId;
     }
 
-    private function getBranchWarehouseId($branchid) {
+    private function getBranchWarehouseId($branchid)
+    {
         $query = $this->consulta("
         select 
         Id 
@@ -411,7 +431,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    private function getTechnicianWareahouseId($userId) {
+    public  function getTechnicianWareahouseId($userId)
+    {
         $query = $this->consulta("
         select 
         Id 
@@ -432,7 +453,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    private function getCensoIdFromService($serviceId, $exists = 1) {
+    private function getCensoIdFromService($serviceId, $exists = 1)
+    {
         $generalsService = $this->getGeneralsService($serviceId)[0];
         return $this->consulta("
         select 
@@ -454,11 +476,13 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         limit 1")[0];
     }
 
-    private function getDeviceInventoryInfo($inventoryId) {
+    private function getDeviceInventoryInfo($inventoryId)
+    {
         return $this->consulta("select * from t_inventario where Id = '" . $inventoryId . "'")[0];
     }
 
-    public function getDeviceMovementData($serviceId = null, $movementId = null) {
+    public function getDeviceMovementData($serviceId = null, $movementId = null)
+    {
         $condition = '';
         if (!is_null($serviceId)) {
             $condition .= " and tea.IdServicio = '" . $serviceId . "' and tea.IdEstatus <> 6";
@@ -486,11 +510,13 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         where 1=1 " . $condition);
     }
 
-    public function getLogisticCompanies() {
+    public function getLogisticCompanies()
+    {
         return $this->consulta("select * from cat_v3_paqueterias where Flag = 1");
     }
 
-    public function requestLogisticGuide($dataFormRequest, $bodyText) {
+    public function requestLogisticGuide($dataFormRequest, $bodyText)
+    {
         $this->iniciaTransaccion();
         $this->insertar("t_equipos_allab_envio_tecnico", [
             'IdRegistro' => $dataFormRequest['movementId'],
@@ -516,7 +542,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    public function cancelRequestLogisticGuide($logisticGuideRequestId) {
+    public function cancelRequestLogisticGuide($logisticGuideRequestId)
+    {
         $this->iniciaTransaccion();
         $requestLogisticGuideInfo = $this->consulta("
         select 
@@ -531,7 +558,7 @@ class Modelo_DeviceTransfer extends Modelo_Base {
             'IdEstatus' => 2,
             'FechaEstatus' => date('Y-m-d H:i:s'),
             'Flag' => 0
-                ], ['Id' => $requestLogisticGuideInfo['IdRegistro']]);
+        ], ['Id' => $requestLogisticGuideInfo['IdRegistro']]);
 
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
@@ -542,7 +569,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    public function saveShipingInfo($formData) {
+    public function saveShipingInfo($formData)
+    {
         $this->iniciaTransaccion();
         if ($formData['shipingId'] > 0) {
             $this->actualizar("t_equipos_allab_envio_tecnico", [
@@ -550,7 +578,7 @@ class Modelo_DeviceTransfer extends Modelo_Base {
                 'IdPaqueteria' => $formData['logisticCompanie'],
                 'Guia' => $formData['logisticTrackNumber'],
                 'Fecha' => date('Y-m-d H:i:s')
-                    ], ['Id' => $formData['shipingId']]);
+            ], ['Id' => $formData['shipingId']]);
         } else {
             $this->insertar("t_equipos_allab_envio_tecnico", [
                 'IdRegistro' => $formData['movementId'],
@@ -568,7 +596,7 @@ class Modelo_DeviceTransfer extends Modelo_Base {
             'IdEstatus' => 12,
             'FechaEstatus' => date('Y-m-d H:i:s'),
             'Flag' => 1
-                ], ['Id' => $formData['movementId']]);
+        ], ['Id' => $formData['movementId']]);
 
         if ($this->estatusTransaccion() === false) {
             $this->roolbackTransaccion();
@@ -579,7 +607,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    public function getTechnicianLogicticInfo($movementId) {
+    public function getTechnicianLogicticInfo($movementId)
+    {
         return $this->consulta("
         select
         (select Nombre from cat_v3_paqueterias where Id = teaet.IdPaqueteria) as Paqueteria, 
@@ -589,7 +618,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         and teaet.IdEstatusEnvio <> 6");
     }
 
-    public function requestQuote($data) {
+    public function requestQuote($data)
+    {
         $this->iniciaTransaccion();
 
         $serviceInfo = $this->getServiceInfo($data['serviceId']);
@@ -621,7 +651,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    private function insertQuoteRequest($serviceInfo, $annotations, $files) {
+    private function insertQuoteRequest($serviceInfo, $annotations, $files)
+    {
         $this->insertar("t_solicitudes", [
             'IdTipoSolicitud' => 3,
             'IdEstatus' => 1,
@@ -645,7 +676,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         return $requestId;
     }
 
-    private function getLaboratoryCheckInfo($movementId) {
+    private function getLaboratoryCheckInfo($movementId)
+    {
         $result = $this->consulta("
         select 
         * 
@@ -664,7 +696,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    public function getServiceInfo($serviceId) {
+    public function getServiceInfo($serviceId)
+    {
         return $this->consulta("
         select 
         tst.Id as IdServicio,
@@ -675,7 +708,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         where tst.Id = '" . $serviceId . "'")[0];
     }
 
-    public function getQuoteRequestInfo($serviceId) {
+    public function getQuoteRequestInfo($serviceId)
+    {
         return $this->consulta("
         select 
         tearl.IdRegistro,
@@ -696,7 +730,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         )");
     }
 
-    public function cancelQuoteRequest($commentId) {
+    public function cancelQuoteRequest($commentId)
+    {
         $this->iniciaTransaccion();
 
         $commentInfo = $this->consulta("
@@ -720,7 +755,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         }
     }
 
-    public function getMovementGeneralsForPdf($serviceId) {
+    public function getMovementGeneralsForPdf($serviceId)
+    {
         return $this->consulta("
         select
         folioByServicio(tst.Id) as Folio,
@@ -761,7 +797,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         where tst.Id = '" . $serviceId . "'")[0];
     }
 
-    public function getReceiptHistory($serviceId) {
+    public function getReceiptHistory($serviceId)
+    {
         return $this->consulta("
         select 
         estatus(tear.IdEstatus) as Estatus,
@@ -772,7 +809,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         order by Fecha desc");
     }
 
-    public function getLaboratoryCommentsHistory($serviceId) {
+    public function getLaboratoryCommentsHistory($serviceId)
+    {
         return $this->consulta("
         select 
         nombreUsuario(tearlh.IdUsuario) as Usuario,
@@ -785,7 +823,8 @@ class Modelo_DeviceTransfer extends Modelo_Base {
         where tearl.IdRegistro = (select Id from t_equipos_allab where IdServicio = '" . $serviceId . "' and IdEstatus <> 6)");
     }
 
-    public function getLaboratoryRevisionHistory($serviceId) {
+    public function getLaboratoryRevisionHistory($serviceId)
+    {
         return $this->consulta("SELECT
                                 tearlh.*
                                 FROM t_equipos_allab_revision_laboratorio_historial tearlh
@@ -793,5 +832,4 @@ class Modelo_DeviceTransfer extends Modelo_Base {
                                         ON tearlh.IdRevision = tearl.Id
                                 where tearl.IdRegistro = (select Id from t_equipos_allab where IdServicio = '" . $serviceId . "' and IdEstatus <> 6)");
     }
-
 }

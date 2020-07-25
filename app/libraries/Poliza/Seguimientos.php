@@ -5184,7 +5184,7 @@ class Seguimientos extends General {
                 $resultado = $this->DBP->insertarEquiposAllabRecepcionesCambiarEstatus($datos);
             } else {
                 $resultado = $this->DBP->actualizarEquiposAllabRecepciones($datos);
-            }
+            }            
 
             if ($resultado['code'] === 200) {
                 $datosAllab = $this->DBP->consultaEquiposAllab($datos['idServicio']);
