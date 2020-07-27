@@ -40,8 +40,8 @@ class Solicitud {
 //            $this->DBServicioTicket->concluirTicketAdist2($datosAdist2);
         }
     }
-    
-    public function folioSolicitudes(array $datos){
+
+    public function folioSolicitudes(array $datos) {
         $folioSolicitudes = $this->DBServicioTicket->folioSolicitudes($datos);
         return $folioSolicitudes;
     }

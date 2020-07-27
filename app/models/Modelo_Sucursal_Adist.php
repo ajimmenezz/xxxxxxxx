@@ -72,18 +72,13 @@ class Modelo_Sucursal_Adist extends Base {
 
     public function getServicioUltimoCensoSucursal(string $sucursal) {
         $consulta = $this->consulta('SELECT 
-                                        tcapr.IdServicio
+                                        MAX(tcg.IdServicio) AS IdServicio
                                     FROM
-                                        t_censos_areas_puntos_revisados tcapr
+                                        t_censos_generales tcg
+                                            INNER JOIN
+                                        t_servicios_ticket tst ON tcg.IdServicio = tst.Id
                                     WHERE
-                                        IdServicio = (SELECT 
-                                                MAX(tcg.IdServicio)
-                                            FROM
-                                                t_censos_generales tcg
-                                                    INNER JOIN
-                                                t_servicios_ticket tst ON tcg.IdServicio = tst.Id
-                                            WHERE
-                                                tcg.IdSucursal = ' . $sucursal . ' AND tst.IdEstatus = 4)
+                                        tcg.IdSucursal = ' . $sucursal . ' AND tst.IdEstatus = 4
                                     LIMIT 1');
         return $consulta;
     }
