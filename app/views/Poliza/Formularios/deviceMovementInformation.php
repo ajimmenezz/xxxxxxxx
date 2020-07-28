@@ -32,6 +32,10 @@ if ($deviceMovementData[0]['IdEstatus'] == 2) {
     <div class="col-md-4 col-sm-6 col-xs-12 form-group hidden">
         <label class="f-s-13 f-w-600">¿A quién solicita el equipo o refacción? *</label>
     </div>
+    <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+        <label class="f-s-13 f-w-600">Estatus del Movimiento *</label>
+        <label class="form-control f-s-12 f-w-600"><?php echo $deviceMovementData[0]['Estatus']; ?><label>
+    </div>
 </div>
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -70,6 +74,53 @@ if ($deviceMovementData[0]['IdEstatus'] == 2) {
     </div>
 </div>
 <?php
+if (isset($deviceReceptions) && count($deviceReceptions) > 0) {
+?>
+    <div class="row">
+        <div class="col-md-8 col-sm-9 col-xs-12">
+            <h4>Historial de Recepciones</h4>
+        </div>
+        <?php
+        if ($deviceMovementData[0]['IdEstatus'] == 48) {
+            echo '
+            <div class="col-md-4 col-sm-3 col-xs-12">
+                <a id="btnRecepcionarEquipoTecnico" class="pull-right btn btn-success btn-small f-w-600">Recepcionar Equipo</a>
+            </div>
+            ';
+        }
+        ?>
+        <div class="col-md-12 col-sm-12 col-xs-12 underline"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12 p-t-20">
+            <ul class="timeline">
+                <?php
+                foreach ($deviceReceptions as $k => $v) {
+                    $date = new DateTime($v['Fecha']);
+                    echo '
+                    <li>
+                        <div class="timeline-time">
+                            <span class="date">' . $date->format('F j, Y') . '</span>
+                            <span class="time">' . $date->format('h:i a') . '</span>
+                        </div>
+                        <div class="timeline-icon">
+                            <a style="' . ($k == 0 ? 'background:#3c763d !important;' : '') . '" href="javascript:;"><i class="fa fa-check-circle"></i></a>
+                        </div>
+                        <div class="timeline-body bg-white">
+                            <div class="timeline-header">
+                                <span class="userimage"><img src="' . $v['Foto'] . '" alt="" /></span>
+                                <span class="username">' . $v['Usuario'] . '</span>
+                                <span class="pull-right f-w-600">' . $v['Estatus'] . '</span>
+                            </div>
+                        </div>
+                    </li>';
+                }
+                ?>
+            </ul>
+        </div>
+    </div>
+<?php
+}
 if ($deviceMovementData[0]['IdTipoMovimiento'] == 1) {
 ?>
     <div class="row">

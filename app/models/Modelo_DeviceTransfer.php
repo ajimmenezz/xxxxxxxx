@@ -50,6 +50,7 @@ class Modelo_DeviceTransfer extends Modelo_Base
     {
         return $this->consulta("
         select 
+        (select Atiende from t_servicios_ticket where Id = tcg.IdServicio) as Atiende,
         (select IdSucursal from t_servicios_ticket where Id = tcg.IdServicio) as Sucursal,
         tcg.*
         from t_correctivos_generales tcg 
@@ -409,7 +410,7 @@ class Modelo_DeviceTransfer extends Modelo_Base
         return $newInventoryId;
     }
 
-    private function getBranchWarehouseId($branchid)
+    public function getBranchWarehouseId($branchid)
     {
         $query = $this->consulta("
         select 
@@ -453,7 +454,7 @@ class Modelo_DeviceTransfer extends Modelo_Base
         }
     }
 
-    private function getCensoIdFromService($serviceId, $exists = 1)
+    public function getCensoIdFromService($serviceId, $exists = 1)
     {
         $generalsService = $this->getGeneralsService($serviceId)[0];
         return $this->consulta("
@@ -503,11 +504,36 @@ class Modelo_DeviceTransfer extends Modelo_Base
         folioByServicio(tst.Id) as Folio,
         nombreUsuario('" . $this->user['Id'] . "') as UsuarioActual,
         sucursal(tst.IdSucursal) as Sucursal,
+        estatus(tea.IdEstatus) as Estatus,
         tea.* 
         from t_equipos_allab tea 
         inner join t_servicios_ticket tst on tea.IdServicio = tst.Id
         left join t_inventario ti on tea.IdInventarioRespaldo = ti.Id
         where 1=1 " . $condition);
+    }
+
+    public function getDeviceReceptions($serviceId = null, $movementId = null)
+    {
+        $condition = '';
+        if (!is_null($serviceId)) {
+            $condition .= " and tea.IdServicio = '" . $serviceId . "' and tea.IdEstatus <> 6";
+        }
+
+        if (!is_null($movementId)) {
+            $condition .= " and tea.Id = '" . $movementId . "'";
+        }
+
+        return $this->consulta("
+        select 
+        tea.Id,
+        nombreUsuario(tear.IdUsuario) as Usuario,
+        fotoUsuario(tear.IdUsuario) as Foto,
+        tear.Fecha,
+        estatus(tear.IdEstatus) as Estatus,
+        tear.Archivos
+        from t_equipos_allab tea
+        inner join t_equipos_allab_recepciones tear on tea.Id = tear.IdRegistro
+        where 1 = 1 " . $condition . " order by Fecha desc, Id desc");
     }
 
     public function getLogisticCompanies()

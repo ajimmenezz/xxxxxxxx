@@ -9702,7 +9702,7 @@ function seguimientoOld(evento, datos, datosTabla) {
       "/Poliza/DeviceTransfer/DeviceTransferAndDeviceRequestForm",
       { serviceId: serviceId },
       "#DeviceTransfers",
-      function(response) {
+      function (response) {
         $("#DeviceTransfers").append(response.form);
         switch (response.init) {
           case "transferRequestForm":
@@ -9725,11 +9725,31 @@ function seguimientoOld(evento, datos, datosTabla) {
     initCancelRequestGuideButton();
     initSaveShipingButton();
     initCancelMovementButton();
+    initReceiveDeviceButton();
+  }
+
+  function initReceiveDeviceButton() {
+    $("#btnRecepcionarEquipoTecnico").off("click");
+    $("#btnRecepcionarEquipoTecnico").on("click", function () {
+      var data = {
+        id: $("#movementId").val(),
+        idServicio: $("#serviceId").val()
+      };
+
+      evento.enviarEvento(
+        "/Poliza/Seguimiento/GuardarRecepcionTecnico",
+        data,
+        "#DeviceTransfers",
+        function (response) {
+          deviceTransferAndDeviceRequestForm($("#serviceId").val())
+        }
+      );
+    });
   }
 
   function initCancelMovementButton() {
     $("#cancelMovementButton").off("click");
-    $("#cancelMovementButton").on("click", function() {
+    $("#cancelMovementButton").on("click", function () {
       evento.mostrarModal(
         "Cancelar traslado o solicitud de equipo",
         `<p class='f-s-15 f-w-600'>
@@ -9737,7 +9757,7 @@ function seguimientoOld(evento, datos, datosTabla) {
         <br />¿Desea continuar?</p>`
       );
       $("#btnModalConfirmar").off("click");
-      $("#btnModalConfirmar").on("click", function() {
+      $("#btnModalConfirmar").on("click", function () {
         evento.enviarEvento(
           "/Poliza/DeviceTransfer/CancelMovementDeviceTransfer",
           {
@@ -9745,7 +9765,7 @@ function seguimientoOld(evento, datos, datosTabla) {
             serviceId: $("#serviceId").val()
           },
           "#modal-dialogo",
-          function(response) {
+          function (response) {
             if (response.code == 200) {
               evento.cerrarModal();
               deviceTransferAndDeviceRequestForm(
@@ -9767,7 +9787,7 @@ function seguimientoOld(evento, datos, datosTabla) {
 
   function initRequestGuideButton() {
     $("#requestGuideButton").off("click");
-    $("#requestGuideButton").on("click", function() {
+    $("#requestGuideButton").on("click", function () {
       $("#requestGuideButton").addClass("hidden");
       let formData = {
         movementId: $("#movementId").val(),
@@ -9794,7 +9814,7 @@ function seguimientoOld(evento, datos, datosTabla) {
           "/Poliza/DeviceTransfer/RequestLogisticGuide",
           formData,
           "#TrackNumberRequest",
-          function(response) {
+          function (response) {
             if (response.code == 200) {
               deviceTransferAndDeviceRequestForm(
                 $("#DeviceTransfers #serviceId").val()
@@ -9816,19 +9836,19 @@ function seguimientoOld(evento, datos, datosTabla) {
 
   function initCancelRequestGuideButton() {
     $("#cancelRequestGuideButton").off("click");
-    $("#cancelRequestGuideButton").on("click", function() {
+    $("#cancelRequestGuideButton").on("click", function () {
       let logisticGuideRequestId = $(this).attr("data-id");
       evento.mostrarModal(
         "Cancelar solicitud de guía",
         "<p class='f-s-15 f-w-600'>Está a punto de cancelar la solicitud de su guía.<br />¿Desea continuar?</p>"
       );
       $("#btnModalConfirmar").off("click");
-      $("#btnModalConfirmar").on("click", function() {
+      $("#btnModalConfirmar").on("click", function () {
         evento.enviarEvento(
           "/Poliza/DeviceTransfer/CancelRequestLogisticGuide",
           { logisticGuideRequestId: logisticGuideRequestId },
           "#modal-dialogo",
-          function(response) {
+          function (response) {
             if (response.code == 200) {
               evento.cerrarModal();
               deviceTransferAndDeviceRequestForm(
@@ -9851,7 +9871,7 @@ function seguimientoOld(evento, datos, datosTabla) {
 
   function initSaveShipingButton() {
     $("#saveShipingButton").off("click");
-    $("#saveShipingButton").on("click", function() {
+    $("#saveShipingButton").on("click", function () {
       $("#saveShipingButton").addClass("hidden");
       let formData = {
         logisticCompanie: $("#logisticCompaniesList option:selected").val(),
@@ -9882,7 +9902,7 @@ function seguimientoOld(evento, datos, datosTabla) {
       "/Poliza/DeviceTransfer/SaveShipingInfo",
       formData,
       "#DeviceTransfers",
-      function(response) {
+      function (response) {
         if (response.code == 200) {
           deviceTransferAndDeviceRequestForm(
             $("#DeviceTransfers #serviceId").val()
@@ -9898,7 +9918,7 @@ function seguimientoOld(evento, datos, datosTabla) {
   function getBoxesValues() {
     var boxes = [];
 
-    $("#boxForGuideRequestTable tbody tr").each(function() {
+    $("#boxForGuideRequestTable tbody tr").each(function () {
       let values = {
         weight: $.trim(
           $(this)
@@ -9937,7 +9957,7 @@ function seguimientoOld(evento, datos, datosTabla) {
 
   function initAddBoxButton() {
     $("#addBoxButton").off("click");
-    $("#addBoxButton").on("click", function() {
+    $("#addBoxButton").on("click", function () {
       let htmlRow = `
       <tr>
         <td></td>
@@ -9955,9 +9975,9 @@ function seguimientoOld(evento, datos, datosTabla) {
   }
 
   function initRemoveBoxButton() {
-    $(".removeBoxButton").each(function() {
+    $(".removeBoxButton").each(function () {
       $(this).off("click");
-      $(this).on("click", function() {
+      $(this).on("click", function () {
         if ($("#boxForGuideRequestTable tbody tr").length > 1) {
           $(this)
             .closest("tr")
@@ -9970,7 +9990,7 @@ function seguimientoOld(evento, datos, datosTabla) {
 
   function reloadBoxNumbersInTable() {
     var c = 0;
-    $("#boxForGuideRequestTable > tbody > tr").each(function() {
+    $("#boxForGuideRequestTable > tbody > tr").each(function () {
       c++;
       $(this)
         .children("td:first")
@@ -9989,7 +10009,7 @@ function seguimientoOld(evento, datos, datosTabla) {
   }
 
   function movementsListChange() {
-    $("#movementsList").on("change", function() {
+    $("#movementsList").on("change", function () {
       $("#warehousesDiv, #backupDeviceDiv").addClass("hidden");
       if ($("#movementsList option:selected").val() !== "") {
         $("#backupDeviceDiv").removeClass("hidden");
@@ -10014,7 +10034,7 @@ function seguimientoOld(evento, datos, datosTabla) {
       false
     );
 
-    $("#technicianInventoryTable").on("click", "tr", function() {
+    $("#technicianInventoryTable").on("click", "tr", function () {
       var check = $(this).find(".checkEquipoStock");
       if (check.hasClass("fa-square-o")) {
         $(".checkEquipoStock").removeClass("fa-check-square-o");
@@ -10030,9 +10050,9 @@ function seguimientoOld(evento, datos, datosTabla) {
 
   function initSaveDeviceTransferButton() {
     $("#saveDeviceTransferButton").off("click");
-    $("#saveDeviceTransferButton").on("click", function() {
+    $("#saveDeviceTransferButton").on("click", function () {
       var backupDevice = "";
-      $("#technicianInventoryTable .checkEquipoStock").each(function() {
+      $("#technicianInventoryTable .checkEquipoStock").each(function () {
         if ($(this).hasClass("fa-check-square-o")) {
           backupDevice = $(this).attr("data-id");
         }
@@ -10060,7 +10080,7 @@ function seguimientoOld(evento, datos, datosTabla) {
       "/Poliza/DeviceTransfer/SaveDeviceTransferOrDeviceRequest",
       formData,
       "#DeviceTransfers",
-      function(response) {
+      function (response) {
         deviceTransferAndDeviceRequestForm($("#serviceId").val());
       }
     );

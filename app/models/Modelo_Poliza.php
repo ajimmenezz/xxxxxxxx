@@ -2072,11 +2072,11 @@ class Modelo_Poliza extends Modelo_Base
         $productInfo = $this->consulta("select * from t_inventario where Id = '" . $allabData['IdInventarioRetiro'] . "'");
         $userWarehouseId = $this->dbDeviceTransfer->getTechnicianWareahouseId($this->usuario['Id']);
         if (empty($productInfo)) {
-            $generalsService = $this->deviceTransfer->getGeneralsService($allabData['IdServicio'])[0];
-            $branchWarehouseId = $this->deviceTransfer->getBranchWarehouseId($generalsService['Sucursal']);
+            $generalsService = $this->dbDeviceTransfer->getGeneralsService($allabData['IdServicio'])[0];
+            $branchWarehouseId = $this->dbDeviceTransfer->getBranchWarehouseId($generalsService['Sucursal']);
             $technicianWarehouseId = $this->dbDeviceTransfer->getTechnicianWareahouseId($generalsService['Atiende']);
-            $censoInfo = $this->deviceTransfer->getCensoIdFromService($allabData['IdServicio']);
-            $inventoryId = $this->deviceTransfer->updateWarehousesForTransfer(['serviceId' => $allabData['IdServicio']], $censoInfo, $branchWarehouseId, $technicianWarehouseId);
+            $censoInfo = $this->dbDeviceTransfer->getCensoIdFromService($allabData['IdServicio']);
+            $inventoryId = $this->dbDeviceTransfer->updateWarehousesForTransfer(['serviceId' => $allabData['IdServicio']], $censoInfo, $branchWarehouseId, $technicianWarehouseId);
             $productInfo = $this->consulta("select * from t_inventario where Id = '" . $inventoryId . "'");
         }
 

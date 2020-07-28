@@ -30,7 +30,8 @@ class DeviceTransfer extends General
             'posibleBackupDevices' => $this->db->getAvailableDeviceForServiceSolution($data['serviceId']),
             'generalsService' => $this->db->getGeneralsService($data['serviceId']),
             'diagnosticService' => $this->db->getDiagnosticService($data['serviceId']),
-            'deviceMovementData' => $this->db->getDeviceMovementData($data['serviceId'])
+            'deviceMovementData' => $this->db->getDeviceMovementData($data['serviceId']),
+            'deviceReceptions' => $this->db->getDeviceReceptions($data['serviceId'])
         ];
 
         $init = 'transferRequestForm';
