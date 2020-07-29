@@ -245,7 +245,14 @@ class Modelo_PrinterLexmark extends Modelo_Base
         vlcs.Contacto,
         regionCliente((select IdRegionCliente from cat_v3_sucursales where Alias = vlcs.Contacto limit 1)) as Zona,
         vlcs.CarasCargadas,
-        (select CarasCargadas from v_lexmark_conteo_semanal where Semana = if(vlcs.Semana = 1, 52, (vlcs.Semana - 1)) and Contacto = vlcs.Contacto limit 1) as CarasSemanaPasada
+        (select 
+            CarasCargadas 
+            from v_lexmark_conteo_semanal 
+            where Semana = if(vlcs.Semana = 1, 52, (vlcs.Semana - 1)) 
+            and Anio = if(vlcs.Semana = 1, vlcs.Anio - 1, vlcs.Anio)
+            and Contacto = vlcs.Contacto 
+            limit 1
+        ) as CarasSemanaPasada
         from v_lexmark_conteo_semanal vlcs");
         if ($this->estatusTransaccion() === FALSE) {
             $this->roolbackTransaccion();
