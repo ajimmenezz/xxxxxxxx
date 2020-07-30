@@ -37,7 +37,7 @@ class SLA extends General {
                     $datosSucursal = $this->db->consultaGral("SELECT Local FROM cat_v3_sucursales WHERE Id =  " . $value["IdSucursal"]);
                     $datosSolicitud = $this->db->consultaGral("SELECT IdPrioridad FROM t_solicitudes WHERE Id =  " . $value["IdSolicitud"]);
 
-                    if ($datosSucursal[0]["Local"] = 0) {
+                    if ($datosSucursal[0]["Local"] === '0') {
                         $localForaneo = "SLALocal";
                         $stringLocalForaneo = "Local";
                     } else {
