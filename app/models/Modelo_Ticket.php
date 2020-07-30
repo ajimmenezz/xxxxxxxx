@@ -9,9 +9,11 @@ use Librerias\Modelos\Base as Modelo_Base;
  *
  * @author Freddy
  */
-class Modelo_Ticket extends Modelo_Base {
+class Modelo_Ticket extends Modelo_Base
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -22,7 +24,8 @@ class Modelo_Ticket extends Modelo_Base {
      * @return string regresa el Id_Orden de la insercion al adist2
      */
 
-    public function setTicketAdist2(string $cliente, string $observaciones, string $folio = null) {
+    public function setTicketAdist2(string $cliente, string $observaciones, string $folio = null)
+    {
         $query = 'insert t_servicios set 
                     F_Start = curdate() + 0,
                     H_Start = curtime(),
@@ -44,15 +47,8 @@ class Modelo_Ticket extends Modelo_Base {
                     Enlace = 0,
                     PersonalTI = 0,
                     Prioridad = 0';
-        
-        $host = $_SERVER['SERVER_NAME'];
-        if ($host === 'siccob.solutions' || $host === 'www.siccob.solutions') {
-            $consulta = parent::connectDBAdist2()->query($query);
-            return parent::connectDBAdist2()->insert_id();
-        } else {
-            $consulta = parent::connectDBAdist2P()->query($query);
-            return parent::connectDBAdist2P()->insert_id();
-        }
-    }
 
+        $consulta = parent::connectDBAdist2()->query($query);
+        return parent::connectDBAdist2()->insert_id();
+    }
 }
