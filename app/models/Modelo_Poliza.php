@@ -2068,24 +2068,38 @@ class Modelo_Poliza extends Modelo_Base
 
     public function transferDeviceOnReception(int $registerAllabId)
     {
-        $allabData = $this->consulta("select * from t_equipos_allab where Id = '" . $registerAllabId . "'")[0];
-        $productInfo = $this->consulta("select * from t_inventario where Id = '" . $allabData['IdInventarioRetiro'] . "'");
         $userWarehouseId = $this->dbDeviceTransfer->getTechnicianWareahouseId($this->usuario['Id']);
-        if (empty($productInfo)) {
-            $generalsService = $this->dbDeviceTransfer->getGeneralsService($allabData['IdServicio'])[0];
-            $branchWarehouseId = $this->dbDeviceTransfer->getBranchWarehouseId($generalsService['Sucursal']);
-            $technicianWarehouseId = $this->dbDeviceTransfer->getTechnicianWareahouseId($generalsService['Atiende']);
-            $censoInfo = $this->dbDeviceTransfer->getCensoIdFromService($allabData['IdServicio']);
-            $inventoryId = $this->dbDeviceTransfer->updateWarehousesForTransfer(['serviceId' => $allabData['IdServicio']], $censoInfo, $branchWarehouseId, $technicianWarehouseId);
-            $productInfo = $this->consulta("select * from t_inventario where Id = '" . $inventoryId . "'");
+        $allabData = $this->consulta("select * from t_equipos_allab where Id = '" . $registerAllabId . "'")[0];
+        $generalsService = $this->dbDeviceTransfer->getGeneralsService($allabData['IdServicio'])[0];
+                $branchWarehouseId = $this->dbDeviceTransfer->getBranchWarehouseId($generalsService['Sucursal']);
+
+        if (in_array($allabData['IdTipoMovimiento'], [1, 2, '1', '2'])) {
+            $productInfo = $this->consulta("select * from t_inventario where Id = '" . $allabData['IdInventarioRetiro'] . "'");
+            if (empty($productInfo)) {
+                $technicianWarehouseId = $this->dbDeviceTransfer->getTechnicianWareahouseId($generalsService['Atiende']);
+                $censoInfo = $this->dbDeviceTransfer->getCensoIdFromService($allabData['IdServicio']);
+                $inventoryId = $this->dbDeviceTransfer->updateWarehousesForTransfer(['serviceId' => $allabData['IdServicio']], $censoInfo, $branchWarehouseId, $technicianWarehouseId);
+                $productInfo = $this->consulta("select * from t_inventario where Id = '" . $inventoryId . "'");
+            }
+            $this->actualizar("t_equipos_allab", [
+                'IdInventarioRetiro' => $productInfo[0]['Id']
+            ], ['Id' => $registerAllabId]);
+
+        } else if (in_array($allabData['IdTipoMovimiento'], [3, '3'])) {
+            $productInfo = $this->consulta("
+            select * from t_inventario where Id = (
+                select 
+                IdInventario
+                from t_equipos_allab_solicitud_refaccion_refacciones ref
+                inner join t_equipos_allab_solicitud_refaccion solref on ref.IdSolicitudRefaccion = solref.Id
+                inner join t_equipos_allab tea on solref.IdRegistro = tea.Id
+                where tea.Id = '" . $allabData['Id'] . "'
+            )");
         }
 
-        $this->actualizar("t_equipos_allab", [
-            'IdInventarioRetiro' => $productInfo[0]['Id']
-        ], ['Id' => $registerAllabId]);
-
         $this->actualizar("t_inventario", [
-            'IdAlmacen' => $userWarehouseId
+            'IdAlmacen' => $userWarehouseId,
+            'Bloqueado' => 0
         ], ['Id' => $productInfo[0]['Id']]);
 
         $this->insertar("t_movimientos_inventario", [
@@ -2126,7 +2140,7 @@ class Modelo_Poliza extends Modelo_Base
                                         t_servicios_ticket tst
                                     WHERE
                                         tst.Atiende = "' . $datos['usuario'] . '"
-                                    AND tst.IdEstatus = "' . $datos['estatus'] . '"
+                                    AND tst.IdEstatus not in (4,6)
                                     AND tst.Id NOT IN (SELECT IdServicio FROM t_equipos_allab WHERE IdServicio = tst.Id)
                                     GROUP BY Ticket');
         return $consulta;
@@ -2511,10 +2525,13 @@ class Modelo_Poliza extends Modelo_Base
         $consulta = $this->consulta('select 
                                         ti.Id,
                                         ti.Serie,
-                                        (CASE 
-                                                WHEN IdTipoProducto = "1" THEN (SELECT Nombre FROM cat_v3_modelos_equipo WHERE Id = IdProducto)
-                                                WHEN IdTipoProducto = "2" THEN (SELECT Nombre FROM cat_v3_componentes_equipo WHERE Id = IdProducto)
-                                        END) AS Producto
+                                        CASE 
+                                            WHEN IdTipoProducto = "1" THEN 
+                                                (SELECT Nombre FROM cat_v3_modelos_equipo WHERE Id = IdProducto)
+                                            WHEN IdTipoProducto = "2" THEN 
+                                                (SELECT concat(Nombre, " [",modelo(cce.IdModelo),"]") FROM cat_v3_componentes_equipo cce WHERE Id = IdProducto)
+                                        END AS Producto
+
                                         from t_inventario ti
                                         where ti.IdAlmacen in (
                                                 select 
@@ -2559,26 +2576,12 @@ class Modelo_Poliza extends Modelo_Base
     public function consultaRefaccionEquipoUtilizadoAlmacen(array $datos)
     {
         $consulta = $this->consulta('SELECT 
-                                            (CASE
-                                                WHEN
-                                                    ti.IdTipoProducto = "1"
-                                                THEN
-                                                    (SELECT 
-                                                            Nombre
-                                                        FROM
-                                                            cat_v3_modelos_equipo
-                                                        WHERE
-                                                            Id = ti.IdProducto)
-                                                WHEN
-                                                    ti.IdTipoProducto = "2"
-                                                THEN
-                                                    (SELECT 
-                                                            Nombre
-                                                        FROM
-                                                            cat_v3_componentes_equipo
-                                                        WHERE
-                                                            Id = ti.IdProducto)
-                                            END) AS Producto,
+                                            CASE 
+                                                WHEN IdTipoProducto = "1" THEN 
+                                                    (SELECT Nombre FROM cat_v3_modelos_equipo WHERE Id = IdProducto)
+                                                WHEN IdTipoProducto = "2" THEN 
+                                                    (SELECT concat(Nombre, " [",modelo(cce.IdModelo),"]") FROM cat_v3_componentes_equipo cce WHERE Id = IdProducto)
+                                            END AS Producto,
                                             ti.Serie
                                         FROM
                                             t_equipos_allab_solicitud_refaccion_refacciones teasrr
